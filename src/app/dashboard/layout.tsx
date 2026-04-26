@@ -22,6 +22,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const { data: memberships } = await supabase.from('memberships').select('agency_id').eq('user_id', user.id).limit(1)
+  
+  if (!memberships || memberships.length === 0) {
+    redirect('/onboarding')
+  }
+
   const { data: profile } = await supabase.from('profiles').select('full_name, role, avatar_url').eq('id', user.id).single()
   const roleDisplay = (profile as any)?.role === 'admin' ? 'CEO / Admin' : (profile as any)?.role;
 
