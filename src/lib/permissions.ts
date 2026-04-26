@@ -89,10 +89,12 @@ export class PermissionDeniedError extends Error {
 export interface PermissionContext {
   actorId: string
   role:    UserRole
+  permissions?: string[] // Added
 }
 
 export interface PermissionCheckerInstance {
   can:       (action: PermissionAction) => boolean
+  has:       (permission: string) => boolean // Added
   require:   (action: PermissionAction) => void
   canAny:    (actions: PermissionAction[]) => boolean
   requireAny:(actions: PermissionAction[]) => void
@@ -103,8 +105,18 @@ export function createPermissionChecker(
 ): PermissionCheckerInstance {
 
   function can(action: PermissionAction): boolean {
+    // 1. Fallback to hardcoded role mapping for legacy support
     const allowedRoles = PERMISSIONS[action]
-    return (allowedRoles as readonly string[]).includes(ctx.role)
+    if ((allowedRoles as readonly string[]).includes(ctx.role)) return true
+
+    // 2. Check dynamic permissions if available
+    if (ctx.permissions && ctx.permissions.includes(action)) return true
+
+    return false
+  }
+
+  function has(permission: string): boolean {
+    return !!ctx.permissions?.includes(permission)
   }
 
   function require(action: PermissionAction): void {
@@ -127,7 +139,7 @@ export function createPermissionChecker(
     }
   }
 
-  return { can, require, canAny, requireAny }
+  return { can, has, require, canAny, requireAny }
 }
 
 // =============================================================================
@@ -226,9 +238,24 @@ export async function resolvePermissionContext(
     throw new PermissionDeniedError('anonymous', 'finance.read', 'anonymous')
   }
 
+  // Fetch profile with joined role and permissions if needed
   const { data: profile, error: profileErr } = await db
     .from('profiles')
-    .select('id, role')
+    .select(`
+      id, 
+      role,
+      role_id,
+      roles (
+        id,
+        name,
+        role_permissions (
+          permissions (
+            resource,
+            action
+          )
+        )
+      )
+    `)
     .eq('id', user.id)
     .single()
 
@@ -236,8 +263,15 @@ export async function resolvePermissionContext(
     throw new PermissionDeniedError(user.id, 'finance.read', 'unknown')
   }
 
+  // Map permissions to a flat array of strings like "leads.view"
+  const rawPerms = (profile as any).roles?.role_permissions ?? []
+  const permissions = rawPerms.map((rp: any) => 
+    `${rp.permissions.resource}.${rp.permissions.action}`
+  )
+
   return {
     actorId: user.id,
     role:    (profile.role as UserRole) ?? 'agent',
+    permissions, // Added permissions list
   }
 }
