@@ -1,10 +1,11 @@
 // src/lib/auth.ts
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Profile, UserRole } from '@/types/app'
 
 export interface AuthenticatedUser {
   id:       string
   agencyId: string
-  role:     'admin' | 'manager' | 'agent'
+  role:     UserRole
   email:    string
 }
 
@@ -28,13 +29,13 @@ export async function requireAuth(db: SupabaseClient): Promise<AuthenticatedUser
     .eq('id', user.id)
     .single()
 
-  if (!profile || !(profile as any).is_active) throw new AuthError('UNAUTHORIZED: Account inactive')
-  if (!(profile as any).agency_id) throw new AuthError('UNAUTHORIZED: No agency assigned')
+  if (!profile || !profile.is_active) throw new AuthError('UNAUTHORIZED: Account inactive')
+  if (!profile.agency_id) throw new AuthError('UNAUTHORIZED: No agency assigned')
 
   return {
     id:       user.id,
-    agencyId: (profile as any).agency_id,
-    role:     (profile as any).role as AuthenticatedUser['role'],
+    agencyId: profile.agency_id,
+    role:     profile.role,
     email:    user.email!,
   }
 }

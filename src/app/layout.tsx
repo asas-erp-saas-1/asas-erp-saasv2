@@ -3,6 +3,10 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
+import { env } from '@/lib/env'
+
+// Validate env on start
+console.log('[ASAS] Booting application in', env.NODE_ENV);
 
 const inter = Inter({
   subsets: ['latin'],

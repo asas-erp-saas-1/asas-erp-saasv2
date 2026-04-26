@@ -1,6 +1,7 @@
 // src/lib/apiMiddleware.ts
 // Request middleware: latency tracking, rate limiting, structured request logging
 
+import { NextResponse } from 'next/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 // =============================================================================
@@ -52,15 +53,12 @@ interface RateLimitOptions {
 export function withRateLimit(
   db:      SupabaseClient,
   options: RateLimitOptions,
-  handler: RouteHandler,
-): RouteHandler {
-  return async (req: Request, ...args: unknown[]): Promise<Response> => {
+  handler: () => Promise<NextResponse>,
+): () => Promise<NextResponse> {
+  return async (): Promise<NextResponse> => {
     // Extract user from auth header (Supabase session)
-    const authHeader = req.headers.get('authorization')
-    if (!authHeader) return handler(req, ...args)
-
-    const { data: { user } } = await db.auth.getUser(authHeader.replace('Bearer ', ''))
-    if (!user) return handler(req, ...args)
+    const { data: { user } } = await db.auth.getUser()
+    if (!user) return handler()
 
     const { data: allowed } = await db.rpc('fn_check_rate_limit', {
       p_user_id: user.id,
@@ -69,13 +67,13 @@ export function withRateLimit(
     })
 
     if (allowed === false) {
-      return new Response(
-        JSON.stringify({ error: 'Rate limit exceeded', action: options.action, limit: options.limit }),
-        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '3600' } }
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', action: options.action, limit: options.limit },
+        { status: 429, headers: { 'Retry-After': '3600' } }
       )
     }
 
-    return handler(req, ...args)
+    return handler()
   }
 }
 

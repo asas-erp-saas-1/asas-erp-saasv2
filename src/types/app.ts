@@ -14,6 +14,7 @@ export type ClientType    = 'buyer' | 'seller' | 'tenant' | 'investor'
 
 export interface Profile {
   id:         string
+  agency_id:  string | null
   full_name:  string
   phone:      string | null
   email:      string | null
@@ -21,6 +22,7 @@ export interface Profile {
   is_active:  boolean
   avatar_url: string | null
   created_at: string
+  updated_at?: string
 }
 
 export interface Client {

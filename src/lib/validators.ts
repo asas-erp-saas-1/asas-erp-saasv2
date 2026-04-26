@@ -1,13 +1,50 @@
 import { z } from 'zod';
 
-export const leadSchema = z.object({
+export class ValidationError extends Error {
+  constructor(public message: string, public field?: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+export class BusinessRuleError extends Error {
+  constructor(public message: string, public code: string, public details?: any) {
+    super(message);
+    this.name = 'BusinessRuleError';
+  }
+}
+
+export function parseAndValidate<T>(schema: z.ZodSchema<T>, data: unknown, contextName = ''): T {
+  try {
+    return schema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const firstError = error.errors[0];
+      throw new ValidationError(
+        `${contextName ? contextName + ': ' : ''}${firstError.message}`,
+        firstError.path.join('.')
+      );
+    }
+    throw error;
+  }
+}
+
+export const LeadCreateSchema = z.object({
   client_id: z.string().uuid('Client identifier is required'),
+  assigned_agent: z.string().uuid().optional().nullable(),
   project_id: z.string().uuid().optional().nullable(),
   source: z.string().min(2, 'Source is too short').max(50),
   budget_min: z.number().min(0).optional(),
   budget_max: z.number().min(0).optional(),
   notes: z.string().max(1000).optional(),
-  status: z.enum(['new', 'contacted', 'interested', 'visit_scheduled', 'converted', 'lost']).default('new'),
+});
+
+export const LeadUpdateSchema = LeadCreateSchema.partial();
+
+export const ActivityCreateSchema = z.object({
+  lead_id: z.string().uuid(),
+  type: z.enum(['call', 'email', 'meeting', 'viewing', 'note', 'whatsapp']),
+  notes: z.string().min(1, 'Notes are required').max(2000),
 });
 
 export const clientSchema = z.object({
@@ -36,6 +73,7 @@ export const profileSchema = z.object({
   role: z.enum(['admin', 'manager', 'agent']),
 });
 
-export type LeadInput = z.infer<typeof leadSchema>;
+export type LeadCreateInput = z.infer<typeof LeadCreateSchema>;
+export type LeadUpdateInput = z.infer<typeof LeadUpdateSchema>;
 export type ClientInput = z.infer<typeof clientSchema>;
 export type DealInput = z.infer<typeof dealSchema>;

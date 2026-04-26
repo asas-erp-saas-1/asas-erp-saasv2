@@ -2,9 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
-
-// Keep profile dynamic to avoid strict type dependencies for this example
-type Profile = any;
+import type { Profile } from '@/types/app';
 
 type AuthContextType = {
   session:     Session | null;
