@@ -33,13 +33,24 @@ CREATE TABLE IF NOT EXISTS public.role_permissions (
 
 -- 4. Create Memberships Table
 CREATE TABLE IF NOT EXISTS public.memberships (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
   role_id UUID NOT NULL REFERENCES public.roles(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  PRIMARY KEY (user_id, agency_id)
+  UNIQUE(user_id, agency_id)
 );
+
+-- Make legacy columns nullable and ensure schema is correct for transition
+DO $$
+BEGIN
+  BEGIN ALTER TABLE public.memberships ALTER COLUMN organization_id DROP NOT NULL; EXCEPTION WHEN OTHERS THEN END;
+  BEGIN ALTER TABLE public.memberships ALTER COLUMN role DROP NOT NULL; EXCEPTION WHEN OTHERS THEN END;
+  BEGIN ALTER TABLE public.memberships ADD COLUMN agency_id UUID REFERENCES public.agencies(id) ON DELETE CASCADE; EXCEPTION WHEN OTHERS THEN END;
+  BEGIN ALTER TABLE public.memberships ADD COLUMN role_id UUID REFERENCES public.roles(id) ON DELETE CASCADE; EXCEPTION WHEN OTHERS THEN END;
+  BEGIN ALTER TABLE public.memberships ADD UNIQUE (user_id, agency_id); EXCEPTION WHEN OTHERS THEN END;
+END $$;
 
 -- 5. Helper Functions for RBAC
 CREATE OR REPLACE FUNCTION public.current_orgs()
@@ -153,9 +164,23 @@ BEGIN
     SELECT id INTO v_role_id FROM public.roles WHERE agency_id = r.agency_id AND name = default_role LIMIT 1;
     
     IF v_role_id IS NOT NULL THEN
-      INSERT INTO public.memberships (user_id, agency_id, role_id)
-      VALUES (r.id, r.agency_id, v_role_id)
-      ON CONFLICT (user_id, agency_id) DO UPDATE SET role_id = EXCLUDED.role_id;
+      -- Use UPDATE/INSERT instead of ON CONFLICT to avoid unique constraint requirement for migration
+      BEGIN
+        UPDATE public.memberships
+        SET role_id = v_role_id, organization_id = r.agency_id, role = default_role
+        WHERE user_id = r.id AND agency_id = r.agency_id;
+
+        IF NOT FOUND THEN
+          INSERT INTO public.memberships (user_id, agency_id, role_id, organization_id, role)
+          VALUES (r.id, r.agency_id, v_role_id, r.agency_id, default_role);
+        END IF;
+      EXCEPTION WHEN OTHERS THEN
+        UPDATE public.memberships SET role_id = v_role_id WHERE user_id = r.id AND agency_id = r.agency_id;
+        IF NOT FOUND THEN
+          INSERT INTO public.memberships (user_id, agency_id, role_id)
+          VALUES (r.id, r.agency_id, v_role_id);
+        END IF;
+      END;
     END IF;
   END LOOP;
 END;
