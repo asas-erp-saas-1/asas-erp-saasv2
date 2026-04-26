@@ -36,10 +36,29 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Security Headers
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://*.stripe.com;")
+
   // Protect /dashboard routes
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // Quick check: fetch profile to see if they completed onboarding/belongs to agency
+    // Note: In real production, you might want to cache this or use JWT claims to avoid DB hit every request
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('agency_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.agency_id && !request.nextUrl.pathname.includes('/onboarding')) {
+      return NextResponse.redirect(new URL('/onboarding', request.url))
     }
   }
 

@@ -1,68 +1,66 @@
 // src/app/api/leads/route.ts
-import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { resolvePermissionContext, createPermissionService } from '@/lib/permissions'
-import { getLeads, createLead } from '@/services/leadService'
-import { createEventBus } from '@/core/eventBus'
-import type { LeadFilters } from '@/types/app'
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase-server';
+import { resolvePermissionContext, createPermissionService } from '@/lib/permissions';
+import { getLeads, createLead } from '@/services/leadService';
+import { handleApiRequest, successResponse, errorResponse } from '@/lib/api-utils';
+import { leadSchema } from '@/lib/validators';
+import type { LeadFilters } from '@/types/app';
 
-export const runtime = 'edge'
+export const runtime = 'edge';
 
-// GET /api/leads?status=new&status=contacted&agentId=&page=1&limit=20
+// GET /api/leads
 export async function GET(req: NextRequest) {
-  try {
-    const db    = await createServerSupabaseClient()
-    const ctx   = await resolvePermissionContext(db)
-    const perms = createPermissionService(db, ctx)
-    await perms.enforce('lead.read.own')
+  return handleApiRequest(async () => {
+    const db = await createClient();
+    const ctx = await resolvePermissionContext(db);
+    const perms = createPermissionService(db, ctx);
+    
+    // Check RBAC - using the new has method or enforcement
+    await perms.enforce('lead.read.own');
 
-    const { searchParams } = new URL(req.url)
-    const page   = Math.max(1, Number(searchParams.get('page')  ?? '1'))
-    const limit  = Math.min(Number(searchParams.get('limit') ?? '20'), 100)
-    const statuses = searchParams.getAll('status')
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, Number(searchParams.get('page') ?? '1'));
+    const limit = Math.min(Number(searchParams.get('limit') ?? '30'), 100);
+    const statuses = searchParams.getAll('status');
 
     const filters: LeadFilters = {
-      status:         statuses.length === 1 ? statuses[0] as LeadFilters['status'] : undefined,
-      assignedAgent:  ctx.role === 'agent' ? ctx.actorId : (searchParams.get('agentId') ?? undefined),
-      source:         searchParams.get('source') ?? undefined,
-      dateFrom:       searchParams.get('dateFrom') ?? undefined,
-      dateTo:         searchParams.get('dateTo')   ?? undefined,
-    }
+      status: statuses.length === 1 ? statuses[0] as LeadFilters['status'] : undefined,
+      assignedAgent: ctx.role === 'agent' ? ctx.actorId : (searchParams.get('agentId') ?? undefined),
+      source: searchParams.get('source') ?? undefined,
+      dateFrom: searchParams.get('dateFrom') ?? undefined,
+      dateTo: searchParams.get('dateTo') ?? undefined,
+    };
 
-    const { data: result } = await getLeads(filters)
-    return NextResponse.json(result)
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e.message || e) }, { status: 500 })
-  }
+    const result = await getLeads(filters, page, limit);
+    return successResponse(result);
+  });
 }
 
-// POST /api/leads — create lead
+// POST /api/leads
 export async function POST(req: NextRequest) {
-  try {
-    const db    = await createServerSupabaseClient()
-    const ctx   = await resolvePermissionContext(db)
-    const perms = createPermissionService(db, ctx)
-    await perms.enforce('lead.create')
+  return handleApiRequest(async () => {
+    const db = await createClient();
+    const ctx = await resolvePermissionContext(db);
+    const perms = createPermissionService(db, ctx);
+    
+    await perms.enforce('lead.create');
 
-    const body = await req.json()
-    const { clientId, assignedAgent, projectId, source, budgetMin, budgetMax, notes } = body
-
-    if (!clientId) {
-      return NextResponse.json({ error: 'clientId is required' }, { status: 422 })
-    }
+    const body = await req.json();
+    
+    // Safe validation with Zod
+    const validatedData = leadSchema.parse(body);
 
     const lead = await createLead({
-      client_id: clientId,
-      assigned_agent: assignedAgent ?? (ctx.role === 'agent' ? ctx.actorId : undefined),
-      project_id:     projectId  ?? undefined,
-      source:        source     ?? undefined,
-      budget_min:     budgetMin  ? Number(budgetMin)  : undefined,
-      budget_max:     budgetMax  ? Number(budgetMax)  : undefined,
-      notes:         notes      ?? undefined,
-    }, ctx.actorId)
+      client_id: validatedData.client_id,
+      assigned_agent: ctx.role === 'agent' ? ctx.actorId : (body.assignedAgent ?? ctx.actorId),
+      project_id: validatedData.project_id ?? undefined,
+      source: validatedData.source,
+      budget_min: validatedData.budget_min,
+      budget_max: validatedData.budget_max,
+      notes: validatedData.notes,
+    }, ctx.actorId);
 
-    return NextResponse.json(lead, { status: 201 })
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e.message || e) }, { status: 500 })
-  }
+    return successResponse(lead, 201);
+  });
 }
