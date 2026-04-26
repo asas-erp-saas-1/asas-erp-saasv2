@@ -1,6 +1,80 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-:root { --brand:#1A2A4A; --brand-gold:#D4A017; }
-* { box-sizing:border-box; }
-body { @apply bg-gray-50 text-gray-900 antialiased; }
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --color-brand: #1A2A4A;
+  --color-brand-light: #243656;
+  --color-brand-gold: #D4A017;
+}
+
+:root { 
+  --brand: #1A2A4A; 
+  --brand-gold: #D4A017; 
+}
+
+* { 
+  box-sizing: border-box; 
+}
+
+body { 
+  @apply bg-gray-50 text-gray-900 antialiased; 
+  font-family: var(--font-sans);
+}
+
+/* Modern Scrollbar io2026 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(26, 42, 74, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 42, 74, 0.2);
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(26, 42, 74, 0.1);
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(26, 42, 74, 0.2);
+  }
+
+  .animate-in {
+    animation: animate-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "Remix: ASAS Accounting System",
-  "description": "A simple accounting system for ASAS real estate agency to track sales, expenses, and agent commissions.",
+  "name": "ASAS Real Estate OS",
+  "description": "Enterprise-grade real estate operating system for tracking sales, leads, and commissions.",
   "requestFramePermissions": []
 }

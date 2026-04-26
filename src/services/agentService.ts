@@ -146,14 +146,42 @@ export async function getAgentKPIById(agentId: string): Promise<AgentKPI | null>
 }
 
 export async function getAgentRankings(): Promise<AgentRanking[]> {
-  throw new Error('Not implemented: agent_kpi_snapshots does not exist')
+  const supabase = await createServerSupabaseClient()
+  const { data, error } = await supabase
+    .from('agent_kpi_snapshots')
+    .select('rank, agent_id, profiles(full_name), performance_score, closed_deals, total_revenue')
+    .order('snapshot_date', { ascending: false })
+    .order('rank', { ascending: true })
+    .limit(20)
+
+  if (error) return []
+
+  return (data ?? []).map((s: any) => ({
+    rank:             s.rank,
+    agentId:          s.agent_id,
+    agentName:        s.profiles?.full_name ?? 'Unknown',
+    performanceScore: s.performance_score,
+    closedDeals:      s.closed_deals,
+    totalRevenue:     s.total_revenue,
+    tier:             _determineTier(s.closed_deals, s.total_revenue),
+    delta:            null
+  }))
 }
 
 export async function getKPIHistory(
   agentId: string,
   days = 30
 ): Promise<Array<any>> {
-  throw new Error('Not implemented: agent_kpi_snapshots does not exist')
+  const supabase = await createServerSupabaseClient()
+  const { data, error } = await supabase
+    .from('agent_kpi_snapshots')
+    .select('*')
+    .eq('agent_id', agentId)
+    .gte('snapshot_date', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString())
+    .order('snapshot_date', { ascending: true })
+
+  if (error) return []
+  return data ?? []
 }
 
 // =============================================================================

@@ -142,9 +142,9 @@ async function getOfflineDB() {
     const req = indexedDB.open('asas-offline', 1)
     req.onupgradeneeded = (event) => {
       const db    = event.target.result
-      const store = db.createObjectStore('mutations', { keyPath: 'id', autoIncrement: true })
-      store.createIndex('status', 'status')
-      store.createIndex('capturedAt', 'capturedAt')
+      db.createObjectStore('mutations', { keyPath: 'id', autoIncrement: true })
+        .createIndex('status', 'status')
+      db.createObjectStore('config')
     }
     req.onsuccess = (event) => {
       offlineDB = event.target.result
@@ -279,17 +279,29 @@ function inferEntityType(url) {
 }
 
 async function getDeviceId() {
-  const key = 'asas-device-id'
-  let id    = localStorage.getItem(key)
-  if (!id) {
-    const arr = new Uint8Array(16)
-    crypto.getRandomValues(arr)
-    id = Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('')
-    localStorage.setItem(key, id)
-  }
-  return id
+  const db = await getOfflineDB()
+  return new Promise((resolve) => {
+    const tx = db.transaction('config', 'readonly')
+    const store = tx.objectStore('config')
+    const req = store.get('device-id')
+    req.onsuccess = () => {
+      if (req.result) resolve(req.result)
+      else {
+        const id = crypto.randomUUID()
+        const tx2 = db.transaction('config', 'readwrite')
+        tx2.objectStore('config').put(id, 'device-id')
+        resolve(id)
+      }
+    }
+  })
 }
 
 async function getAgentId() {
-  return localStorage.getItem('asas-agent-id') ?? 'unknown'
+  const db = await getOfflineDB()
+  return new Promise((resolve) => {
+    const tx = db.transaction('config', 'readonly')
+    const store = tx.objectStore('config')
+    const req = store.get('agent-id')
+    req.onsuccess = () => resolve(req.result ?? 'unknown')
+  })
 }
