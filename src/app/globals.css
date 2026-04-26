@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root { --brand:#1A2A4A; --brand-gold:#D4A017; }
+* { box-sizing:border-box; }
+body { @apply bg-gray-50 text-gray-900 antialiased; }

@@ -1,0 +1,5 @@
+{
+  "name": "Remix: ASAS Accounting System",
+  "description": "A simple accounting system for ASAS real estate agency to track sales, expenses, and agent commissions.",
+  "requestFramePermissions": []
+}
