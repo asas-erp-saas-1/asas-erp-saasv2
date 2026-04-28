@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { CheckSquare, Clock, AlertTriangle, Check, Zap, ListTodo } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 
 interface Task {

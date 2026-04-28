@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Building2, Check, Loader2, KeyRound, Mail, User, ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 export default function RegisterPage() {
   const router  = useRouter()

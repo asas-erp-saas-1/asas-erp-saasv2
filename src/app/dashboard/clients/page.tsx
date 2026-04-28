@@ -2,7 +2,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Users, Plus, Search, Phone, Mail, ChevronRight, Globe, FileUser } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 
 interface Client {

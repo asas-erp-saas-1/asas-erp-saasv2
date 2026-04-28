@@ -12,8 +12,8 @@ export const createAdminSupabaseClient = () => {
   })
 }
 
-export const createServerSupabaseClient = () => {
-  const cookieStore = cookies()
+export const createServerSupabaseClient = async () => {
+  const cookieStore = await cookies()
 
   return createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,

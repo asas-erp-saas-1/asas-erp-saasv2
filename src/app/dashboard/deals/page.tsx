@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Handshake, AlertTriangle, Clock, ChevronRight, Plus, Search, Filter } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 import { DealIntelligencePanel } from '@/modules/deals/components/DealIntelligencePanel'
 import type { Deal } from '@/types/app'

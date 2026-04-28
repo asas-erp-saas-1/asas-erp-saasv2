@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { Building2, ArrowRight, ShieldCheck, BarChart3, Users, Zap, CheckCircle2, ChevronRight, Globe, Lock } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 export default function LandingPage() {
   return (

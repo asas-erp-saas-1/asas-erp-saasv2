@@ -1,7 +1,7 @@
 // src/modules/deals/components/DealIntelligencePanel.tsx
 'use client'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText } from 'lucide-react'
 import { clsx } from 'clsx'
 

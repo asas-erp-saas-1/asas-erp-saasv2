@@ -1,7 +1,7 @@
 // src/modules/overview/components/CEODashboard.tsx
 'use client'
 import { useEffect, useState } from 'react'
-import { motion, Variants } from 'framer-motion'
+import { motion, Variants } from 'motion/react'
 import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
