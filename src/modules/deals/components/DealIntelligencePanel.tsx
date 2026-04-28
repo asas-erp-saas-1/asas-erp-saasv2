@@ -41,14 +41,14 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
       {/* Header section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="border-b border-gray-100 flex items-center justify-between px-6 py-4 bg-gray-50/50">
+      <div className="bg-[#050505] rounded-2xl shadow-2xl border border-white/5 overflow-hidden">
+        <div className="border-b border-white/5 flex items-center justify-between px-6 py-4 bg-[#0A0A0A]/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900 tracking-tight leading-none mb-1">
+              <h2 className="text-lg font-bold text-white tracking-tight leading-none mb-1">
                 Transaction #{dealId.substring(0,8).toUpperCase()}
               </h2>
               <p className="text-sm text-gray-500 flex items-center gap-2">
@@ -57,22 +57,22 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
               </p>
             </div>
           </div>
-          <button className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+          <button className="px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm">
             Générer Contrat
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5">
           <div className="p-6">
             <p className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-gray-400" /> Montant total convenu
+              <DollarSign className="w-4 h-4 text-gray-500" /> Montant total convenu
             </p>
-            <p className="text-3xl font-bold text-gray-900">
-              {(deal.agreed_price / 1_000_000).toFixed(1)} <span className="text-lg text-gray-500 font-medium">M DZD</span>
+            <p className="text-3xl font-bold text-white">
+              {(deal.agreed_price / 1_000_000).toFixed(1)} <span className="text-lg text-gray-600 font-medium">M DZD</span>
             </p>
-            <div className="mt-3 w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+            <div className="mt-3 w-full bg-[#171717] h-1.5 rounded-full overflow-hidden">
               <div 
-                className={clsx("h-full rounded-full transition-all duration-1000", deal.total_payments_received >= deal.agreed_price ? 'bg-emerald-500' : 'bg-[#1A2A4A]')} 
+                className={clsx("h-full rounded-full transition-all duration-1000", deal.total_payments_received >= deal.agreed_price ? 'bg-emerald-500' : 'bg-blue-500')} 
                 style={{ width: `${Math.min((deal.total_payments_received / deal.agreed_price) * 100, 100)}%` }}
               />
             </div>
@@ -83,24 +83,24 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           
           <div className="p-6">
              <p className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
-              <User className="w-4 h-4 text-gray-400" /> Informations Client
+              <User className="w-4 h-4 text-gray-500" /> Informations Client
             </p>
-            <p className="text-base font-semibold text-gray-900 mb-1">{deal.clients?.full_name}</p>
-            <p className="text-sm text-gray-600 mb-1">{deal.clients?.phone}</p>
-            <a href="#" className="text-sm text-blue-600 hover:underline inline-flex items-center gap-1 font-medium mt-1">
+            <p className="text-base font-semibold text-white mb-1">{deal.clients?.full_name}</p>
+            <p className="text-sm text-gray-400 mb-1">{deal.clients?.phone}</p>
+            <a href="#" className="text-sm text-blue-400 hover:underline inline-flex items-center gap-1 font-medium mt-1">
               Voir profil client <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
 
           <div className="p-6">
              <p className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
-              <Building className="w-4 h-4 text-gray-400" /> Propriété & Projet
+              <Building className="w-4 h-4 text-gray-500" /> Propriété & Projet
             </p>
-            <p className="text-base font-semibold text-gray-900 mb-1">{deal.properties?.projects?.name || 'Projet inconnu'}</p>
-            <p className="text-sm text-gray-600 flex items-center gap-1 mb-2">
-              <MapPin className="w-3 h-3 text-gray-400" /> {deal.properties?.reference || 'Réf: ---'}
+            <p className="text-base font-semibold text-white mb-1">{deal.properties?.projects?.name || 'Projet inconnu'}</p>
+            <p className="text-sm text-gray-400 flex items-center gap-1 mb-2">
+              <MapPin className="w-3 h-3 text-gray-500" /> {deal.properties?.reference || 'Réf: ---'}
             </p>
-            <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium">
+            <span className="inline-flex px-2 py-1 bg-[#171717] text-gray-400 border border-white/5 text-xs rounded-md font-medium">
               Type: {deal.properties?.property_type || 'N/A'}
             </span>
           </div>
@@ -109,26 +109,26 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
       {/* AI Insights & Risk */}
       {isCritical ? (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-50 p-5 rounded-2xl border border-red-200 flex gap-4 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl" />
-          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center shrink-0 border border-red-200">
-             <AlertTriangle className="w-6 h-6 text-red-600" />
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-500/10 p-5 rounded-2xl border border-red-500/20 flex gap-4 shadow-sm relative overflow-hidden backdrop-blur-sm">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/20 rounded-full blur-3xl" />
+          <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center shrink-0 border border-red-500/30 backdrop-blur-md">
+             <AlertTriangle className="w-6 h-6 text-red-500" />
           </div>
           <div className="relative z-10">
-            <h3 className="text-base font-bold text-red-900 mb-1">Alerte de Risque Intelligence Artificielle</h3>
-            <p className="text-sm text-red-800 leading-relaxed">
+            <h3 className="text-base font-bold text-red-400 mb-1">Alerte de Risque Intelligence Artificielle</h3>
+            <p className="text-sm text-red-300/80 leading-relaxed">
               Le modèle d'apprentissage a détecté un risque {deal.risk_level} pour cette transaction en raison de retards de paiement historiques sur des profils similaires. Il est recommandé de demander une avance de trésorerie supérieure ou de vérifier les garanties de financement avant l'étape de clôture.
             </p>
           </div>
         </motion.div>
       ) : (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-blue-50 p-5 rounded-2xl border border-blue-100 flex gap-4 shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0 border border-blue-200">
-             <CheckCircle2 className="w-6 h-6 text-blue-600" />
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-blue-500/10 p-5 rounded-2xl border border-blue-500/20 flex gap-4 shadow-sm backdrop-blur-sm">
+          <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0 border border-blue-500/30 backdrop-blur-md">
+             <CheckCircle2 className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-blue-900 mb-1">Analyse ASAS AI</h3>
-            <p className="text-sm text-blue-800 leading-relaxed">
+            <h3 className="text-base font-bold text-blue-400 mb-1">Analyse ASAS AI</h3>
+            <p className="text-sm text-blue-300/80 leading-relaxed">
               La probabilité de clôture est évaluée à 85%. Le client a un profil fiable. Prochaine étape recommandée : Planifier une visite finale et préparer les documents de l'acte de vente.
             </p>
           </div>
@@ -137,48 +137,48 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
       {/* Process & Checklists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-gray-400" /> Calendrier de la Transaction
+        <div className="bg-[#050505] rounded-2xl p-6 border border-white/5 shadow-2xl">
+           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-gray-500" /> Calendrier de la Transaction
           </h3>
-          <div className="relative pl-6 border-l-2 border-gray-100 space-y-6">
+          <div className="relative pl-6 border-l-2 border-[#171717] space-y-6">
             <div className="relative">
-              <div className="absolute w-3 h-3 bg-[#1A2A4A] rounded-full -left-[29px] top-1.5" />
-              <p className="text-sm font-semibold text-gray-900 mb-0.5">Création de la transaction</p>
+              <div className="absolute w-3 h-3 bg-gray-600 rounded-full -left-[29px] top-1.5" />
+              <p className="text-sm font-semibold text-white mb-0.5">Création de la transaction</p>
               <p className="text-xs text-gray-500">{new Date(deal.created_at).toLocaleDateString()}</p>
             </div>
              <div className="relative">
-              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[29px] top-1.5 ring-4 ring-blue-50" />
-              <p className="text-sm font-semibold text-gray-900 mb-0.5">Négociation en cours</p>
-              <p className="text-xs text-blue-600 font-medium">Actuel</p>
+              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[29px] top-1.5 ring-4 ring-[#0A0A0A]" />
+              <p className="text-sm font-semibold text-white mb-0.5">Négociation en cours</p>
+              <p className="text-xs text-blue-400 font-medium">Actuel</p>
             </div>
              <div className="relative opacity-40">
-              <div className="absolute w-3 h-3 bg-gray-300 rounded-full -left-[29px] top-1.5" />
-              <p className="text-sm font-semibold text-gray-900 mb-0.5">Signature finale (Prévue)</p>
+              <div className="absolute w-3 h-3 bg-[#262626] rounded-full -left-[29px] top-1.5" />
+              <p className="text-sm font-semibold text-white mb-0.5">Signature finale (Prévue)</p>
               <p className="text-xs text-gray-500">Dans 14 jours</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+        <div className="bg-[#050505] rounded-2xl p-6 border border-white/5 shadow-2xl flex flex-col justify-between">
            <div>
-             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-gray-400" /> Commission Agent
+             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-gray-500" /> Commission Agent
             </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Basé sur le plan de commissionement <strong>Standard (3%)</strong>, l'agent assigné percevra la commission lors de la réception totale des fonds.
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Basé sur le plan de commissionement <strong className="text-white">Standard (3%)</strong>, l'agent assigné percevra la commission lors de la réception totale des fonds.
             </p>
            </div>
            
-           <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+           <div className="mt-6 p-4 bg-[#0A0A0A] rounded-xl border border-white/5">
              <div className="flex justify-between items-center mb-2">
                <span className="text-sm text-gray-500 font-medium">Estimation Commission</span>
-               <span className="text-lg font-bold text-gray-900">{((deal.agreed_price * 0.03) / 1000).toFixed(1)}k DZD</span>
+               <span className="text-lg font-bold text-white">{((deal.agreed_price * 0.03) / 1000).toFixed(1)}k DZD</span>
              </div>
-             <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-               <div className="h-full bg-blue-600 rounded-full w-1/4 opacity-50" />
+             <div className="w-full h-1.5 bg-[#171717] rounded-full overflow-hidden">
+               <div className="h-full bg-blue-500 rounded-full w-1/4 opacity-50 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
              </div>
-             <p className="text-xs text-center text-gray-400 mt-2">Dépends du paiement final du client</p>
+             <p className="text-xs text-center text-gray-500 mt-2">Dépends du paiement final du client</p>
            </div>
         </div>
       </div>

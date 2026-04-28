@@ -10,19 +10,19 @@ export function AgentDashboard({ agentId, agentName }: { agentId: string, agentN
       .then(r => r.json()).then(setData)
   }, [agentId])
 
-  if (!data) return <div className="p-6">Loading profile...</div>
+  if (!data) return <div className="p-6 md:p-8 text-gray-500 text-xs font-bold uppercase tracking-widest animate-pulse">Décryptage du profil...</div>
 
   return (
-    <div className="p-6 bg-white border border-gray-200 rounded-xl m-6">
-      <h2 className="text-xl font-bold mb-4">{agentName} Performance</h2>
+    <div className="p-6 md:p-8 bg-[#050505] border-y lg:border border-white/5 lg:rounded-3xl lg:m-6 shadow-2xl">
+      <h2 className="text-xl font-extrabold text-white mb-6 uppercase tracking-wide">{agentName} <span className="text-gray-500">I-Performance</span></h2>
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-500">Pipeline Closed</p>
-          <p className="text-2xl font-bold text-gray-900">{data.closed_deals} deals</p>
+        <div className="p-5 bg-[#0A0A0A] border border-white/5 rounded-2xl">
+          <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500">Pipeline Liquidé</p>
+          <p className="text-2xl font-extrabold text-white mt-2">{data.closed_deals} <span className="text-sm text-gray-500 font-bold uppercase tracking-widest">Protocoles</span></p>
         </div>
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-500">Sales Conversion</p>
-          <p className="text-2xl font-bold text-blue-600">{data.close_rate_pct}%</p>
+        <div className="p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl">
+          <p className="text-[10px] uppercase font-bold tracking-widest text-blue-400">Conversion Réussie</p>
+          <p className="text-2xl font-extrabold text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] mt-2">{data.close_rate_pct}%</p>
         </div>
       </div>
     </div>

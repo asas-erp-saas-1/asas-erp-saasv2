@@ -22,16 +22,16 @@ interface Task {
 
 const PRIORITY_STYLE: Record<string, string> = {
   urgent: 'border-l-[6px] border-red-500',
-  high:   'border-l-[6px] border-orange-400',
-  medium: 'border-l-[6px] border-blue-400',
-  low:    'border-l-[6px] border-gray-300',
+  high:   'border-l-[6px] border-orange-500',
+  medium: 'border-l-[6px] border-blue-500',
+  low:    'border-l-[6px] border-gray-600',
 }
 
 const PRIORITY_BADGE: Record<string, string> = {
-  urgent: 'bg-red-100 text-red-700 border-red-200',
-  high:   'bg-orange-100 text-orange-700 border-orange-200',
-  medium: 'bg-blue-100 text-blue-700 border-blue-200',
-  low:    'bg-gray-100 text-gray-600 border-gray-200',
+  urgent: 'bg-red-500/10 text-red-400 border-red-500/20',
+  high:   'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  medium: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  low:    'bg-white/5 text-gray-400 border-white/10',
 }
 
 function isOverdue(dueDate: string | null): boolean {
@@ -45,10 +45,10 @@ function formatDue(dueDate: string | null): string {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const diff  = Math.floor((d.getTime() - today.getTime()) / 86_400_000)
-  if (diff < 0)  return `En retard de ${Math.abs(diff)} jour${Math.abs(diff) !== 1 ? 's' : ''}`
+  if (diff < 0)  return `Retard de ${Math.abs(diff)} j`
   if (diff === 0) return "Aujourd'hui"
   if (diff === 1) return 'Demain'
-  return `Dans ${diff} jours`
+  return `T+${diff}`
 }
 
 export default function TasksPage() {
@@ -94,22 +94,22 @@ export default function TasksPage() {
   const overdueCount = tasks.filter(t => isOverdue(t.due_date) && t.status !== 'done').length
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#000000] p-6 md:p-8 font-sans text-gray-100">
       <div className="max-w-4xl mx-auto space-y-8">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-white/5">
            <div>
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                 <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <CheckSquare className="h-5 w-5 text-blue-600" /> 
+              <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    <CheckSquare className="h-6 w-6 text-white" /> 
                  </div>
-                 Tâches
+                 Opérations
               </h1>
-              <p className="text-sm font-medium text-gray-500 mt-2">{tasks.filter(t => t.status === 'pending').length} en attente · <span className="text-red-500">{overdueCount} en retard</span></p>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{tasks.filter(t => t.status === 'pending').length} en file d'attente · <span className="text-red-500">{overdueCount} critiques</span></p>
            </div>
            {urgentCount > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-100 text-red-700 rounded-xl text-sm font-bold shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-xs uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                  <AlertTriangle className="h-4 w-4" /> {urgentCount} Urgentes
               </div>
            )}
@@ -127,8 +127,8 @@ export default function TasksPage() {
               key={f.key}
               onClick={() => setFilter(f.key as typeof filter)}
               className={clsx(
-                'px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm focus:outline-none focus:ring-4',
-                filter === f.key ? 'bg-[#1A2A4A] text-white focus:ring-[#1A2A4A]/20' : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-gray-200 focus:ring-gray-100'
+                'px-5 py-2.5 rounded-full text-[10px] uppercase font-bold tracking-widest transition-all focus:outline-none focus:ring-1',
+                filter === f.key ? 'bg-white text-black focus:ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'bg-[#050505] text-gray-400 hover:bg-[#0A0A0A] hover:text-white border border-white/5 focus:ring-white/20'
               )}
             >
               {f.label}
@@ -137,18 +137,18 @@ export default function TasksPage() {
         </div>
 
         {/* Task list */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {loading ? (
             [...Array(5)].map((_, i) => (
-              <div key={i} className="h-24 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+              <div key={i} className="h-24 bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse" />
             ))
           ) : sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-gray-400 bg-white rounded-3xl border border-gray-100 shadow-sm blur-[0.2px]">
-               <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                  <ListTodo className="h-10 w-10 text-gray-300" />
+            <div className="flex flex-col items-center justify-center py-24 text-gray-500 bg-[#0A0A0A] rounded-3xl border border-white/5 border-dashed shadow-sm">
+               <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
+                  <ListTodo className="h-8 w-8 text-gray-400" />
                </div>
-              <p className="text-lg font-bold text-gray-900">Tout est à jour !</p>
-              <p className="text-sm mt-1 font-medium">Aucune tâche en attente {filter !== 'all' ? `pour le filtre '${filter}'` : ''}.</p>
+              <p className="text-lg font-bold text-white mb-2">Protocoles achevés</p>
+              <p className="text-xs uppercase tracking-widest mt-1 font-bold">Aucune opération en attente {filter !== 'all' ? `pour le filtre '${filter}'` : ''}.</p>
             </div>
           ) : (
              <AnimatePresence>
@@ -160,40 +160,40 @@ export default function TasksPage() {
                 exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 key={task.id} 
-                className={clsx('bg-white rounded-2xl p-5 flex items-start gap-5 shadow-sm hover:shadow-md transition-shadow border-y border-r border-gray-100 group', PRIORITY_STYLE[task.priority])}
+                className={clsx('bg-[#050505] rounded-2xl p-5 flex items-start gap-5 shadow-lg border-y border-r border-white/5 group hover:border-white/10 transition-all', PRIORITY_STYLE[task.priority])}
               >
                 {/* Checkbox */}
                 <button
                   onClick={() => markDone(task.id)}
-                  className="mt-0.5 h-6 w-6 rounded border-2 border-gray-300 flex items-center justify-center shrink-0 hover:border-emerald-500 hover:bg-emerald-50 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 transition-all cursor-pointer"
+                  className="mt-0.5 h-6 w-6 rounded border-2 border-white/10 bg-[#0A0A0A] flex items-center justify-center shrink-0 hover:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all cursor-pointer"
                 >
-                  {task.status === 'done' && <Check className="h-4 w-4 text-emerald-600" />}
+                  {task.status === 'done' && <Check className="h-4 w-4 text-emerald-500 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]" />}
                 </button>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
-                     <div className="flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 flex-wrap">
-                           <p className="text-base font-bold text-gray-900 group-hover:text-blue-900 transition-colors uppercase">{task.title}</p>
-                           <span className={clsx('text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-lg font-bold shrink-0 border border-transparent', PRIORITY_BADGE[task.priority])}>
+                     <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3 flex-wrap">
+                           <p className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors tracking-wide">{task.title}</p>
+                           <span className={clsx('text-[8px] uppercase tracking-widest px-2 py-0.5 rounded font-bold shrink-0 border border-transparent', PRIORITY_BADGE[task.priority])}>
                               {task.priority}
                            </span>
                            {task.is_automated && (
-                              <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-lg border border-purple-200 bg-purple-50 text-purple-700 font-bold flex items-center gap-1 shrink-0">
+                              <span className="text-[8px] uppercase tracking-widest px-2 py-0.5 rounded border border-purple-500/20 bg-purple-500/10 text-purple-400 font-bold flex items-center gap-1 shrink-0">
                                  <Zap className="h-3 w-3" /> Auto
                               </span>
                            )}
                         </div>
                         {task.description && (
-                           <p className="text-sm font-medium text-gray-500 leading-relaxed max-w-2xl">{task.description}</p>
+                           <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 leading-relaxed max-w-2xl">{task.description}</p>
                         )}
                      </div>
 
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between border-t border-gray-50 pt-3">
-                     <p className={clsx('text-xs font-bold flex items-center gap-1.5', isOverdue(task.due_date) ? 'text-red-600' : 'text-gray-400')}>
+                  <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+                     <p className={clsx('text-[10px] uppercase tracking-widest font-bold flex items-center gap-1.5', isOverdue(task.due_date) ? 'text-red-500' : 'text-gray-500')}>
                         <Clock className="h-3.5 w-3.5" />
                         {formatDue(task.due_date)}
                      </p>
