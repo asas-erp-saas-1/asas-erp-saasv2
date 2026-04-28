@@ -44,7 +44,7 @@ export default function RegisterPage() {
     if (authError) {
       let errorMessage = authError.message
       if (errorMessage.includes('Invalid API key') || errorMessage.includes('invalid api key')) {
-        errorMessage = "Erreur: Clé API Supabase manquante ou invalide. Vérifiez vos variables d'environnement dans les paramètres du projet."
+        errorMessage = "Erreur: Clé API Supabase invalide. Si vous êtes sur Vercel, assurez-vous d'avoir préfixé les variables par 'NEXT_PUBLIC_' et d'avoir REDÉPLOYÉ l'application."
       }
       setError(errorMessage)
       setLoading(false)

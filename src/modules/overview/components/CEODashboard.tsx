@@ -5,6 +5,8 @@ import { motion, Variants } from 'motion/react'
 import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
+import { AICommandCenter } from './AICommandCenter'
+
 export function CEODashboard() {
   const [kpis, setKpis] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -200,6 +202,9 @@ export function CEODashboard() {
           </div>
         </div>
       </motion.div>
+
+      {/* AI Intelligence Layer */}
+      <AICommandCenter />
     </div>
   )
 }
