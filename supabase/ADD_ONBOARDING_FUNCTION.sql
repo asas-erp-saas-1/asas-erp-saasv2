@@ -1,5 +1,10 @@
 -- Function to create an agency securely from client side
-CREATE OR REPLACE FUNCTION public.create_agency(agency_name TEXT)
+CREATE OR REPLACE FUNCTION public.create_agency(
+  agency_name TEXT,
+  phone_number TEXT DEFAULT NULL,
+  user_role_title TEXT DEFAULT NULL,
+  billing_email TEXT DEFAULT NULL
+)
 RETURNS UUID LANGUAGE plpgsql SECURITY DEFINER AS $$
 DECLARE
   v_agency_id UUID;
@@ -12,8 +17,8 @@ BEGIN
   v_slug := v_slug || '-' || floor(random() * 10000)::text;
 
   -- Insert the new agency
-  INSERT INTO public.agencies (name, slug)
-  VALUES (agency_name, v_slug)
+  INSERT INTO public.agencies (name, slug, billing_email)
+  VALUES (agency_name, v_slug, COALESCE(billing_email, auth.jwt()->>'email'))
   RETURNING id INTO v_agency_id;
 
   -- Ensure roles are created
@@ -26,9 +31,12 @@ BEGIN
   INSERT INTO public.memberships (user_id, agency_id, role_id, organization_id, role)
   VALUES (auth.uid(), v_agency_id, v_admin_role_id, v_agency_id, 'Admin');
 
-  -- Update profile for legacy compatibility
+  -- Update profile for legacy compatibility and extra data
   UPDATE public.profiles 
-  SET agency_id = v_agency_id, role = 'admin' 
+  SET 
+    agency_id = v_agency_id, 
+    role = 'admin',
+    phone = COALESCE(phone_number, phone)
   WHERE id = auth.uid();
 
   RETURN v_agency_id;
@@ -36,4 +44,4 @@ END;
 $$;
 
 -- Grant permissions so users can actually call it
-GRANT EXECUTE ON FUNCTION public.create_agency(TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_agency(TEXT, TEXT, TEXT, TEXT) TO authenticated;

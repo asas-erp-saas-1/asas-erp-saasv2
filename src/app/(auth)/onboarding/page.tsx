@@ -11,6 +11,9 @@ export default function OnboardingPage() {
   const [error, setError] = useState<string | null>(null)
   const [step, setStep] = useState(1)
   const [agencyName, setAgencyName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [userRole, setUserRole] = useState('')
+  const [agencySize, setAgencySize] = useState('1-5')
   const supabase = createBrowserSupabaseClient()
 
   async function handleCreateWorkspace(e: React.FormEvent) {
@@ -23,7 +26,9 @@ export default function OnboardingPage() {
     try {
       // Create agency using our secure Postgres RPC
       const { data, error: rpcError } = await supabase.rpc('create_agency', { 
-        agency_name: agencyName 
+        agency_name: agencyName,
+        phone_number: phoneNumber || null,
+        user_role_title: userRole || null
       })
 
       if (rpcError) {
@@ -75,7 +80,7 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            <form onSubmit={handleCreateWorkspace} className="space-y-6">
+            <form onSubmit={handleCreateWorkspace} className="space-y-5">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
                   Nom de l'agence
@@ -87,14 +92,66 @@ export default function OnboardingPage() {
                   placeholder="Ex: ASAS Immobilier" 
                   autoFocus
                   required
-                  className="w-full px-4 py-3 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-md font-medium text-gray-900 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400" 
+                  className="w-full px-4 py-3 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400" 
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Téléphone
+                  </label>
+                  <input 
+                    type="tel" 
+                    value={phoneNumber}
+                    onChange={e => setPhoneNumber(e.target.value)}
+                    placeholder="+213..." 
+                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Votre rôle
+                  </label>
+                  <select 
+                    value={userRole}
+                    onChange={e => setUserRole(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                  >
+                    <option value="">Sélectionner</option>
+                    <option value="Directeur">Directeur / Gérant</option>
+                    <option value="Agent">Agent Immobilier</option>
+                    <option value="Administratif">Administratif</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Taille de l'agence
+                </label>
+                <div className="flex gap-2">
+                  {['1-5', '6-20', '21-50', '50+'].map(size => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setAgencySize(size)}
+                      className={`flex-1 py-2 text-sm font-bold rounded-xl border transition-all ${
+                        agencySize === size 
+                          ? 'bg-blue-50 border-blue-200 text-blue-700 ring-2 ring-blue-500/20' 
+                          : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <button 
                 type="submit" 
                 disabled={loading || !agencyName.trim()} 
-                className="w-full py-3.5 bg-[#1A2A4A] text-white rounded-xl text-sm font-bold shadow-sm hover:bg-[#243554] hover:shadow disabled:opacity-60 flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-4 focus:ring-[#1A2A4A]/20"
+                className="w-full mt-4 py-3.5 bg-[#1A2A4A] text-white rounded-xl text-sm font-bold shadow-sm hover:bg-[#243554] hover:shadow disabled:opacity-60 flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-4 focus:ring-[#1A2A4A]/20"
               >
                 {loading ? (
                   <>
