@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 import { Building2, Plus, Search, Filter, CheckCircle, XCircle, Clock, Tag } from 'lucide-react'
 import { clsx } from 'clsx'
 

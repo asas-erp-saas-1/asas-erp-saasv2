@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldCheck, Zap } from 'lucide-react'
-import { motion, Variants } from 'motion/react'
+import { motion, Variants } from 'framer-motion'
 import { clsx } from 'clsx'
 
 type Config = {

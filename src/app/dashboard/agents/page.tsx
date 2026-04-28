@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { Users, TrendingUp, TrendingDown, ChevronRight, Award } from 'lucide-react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { clsx } from 'clsx'
 import { AgentDashboard } from '@/modules/agents/components/AgentDashboard'
 

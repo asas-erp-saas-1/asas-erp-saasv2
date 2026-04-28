@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Building2, Loader2, Briefcase, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 
 export default function OnboardingPage() {
   const router = useRouter()
