@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Building2, Eye, EyeOff, Loader2, Mail, KeyRound, ArrowRight } from 'lucide-react'
+import { Building2, Eye, EyeOff, Loader2, Mail, KeyRound, ArrowRight, ShieldCheck } from 'lucide-react'
 import { motion } from 'motion/react'
 
 export default function LoginPage() {
@@ -27,13 +27,13 @@ export default function LoginPage() {
     })
 
     if (authErr) {
-      setError('Identifiants invalides ou email non vérifié.')
+      setError('Identifiants invalides ou profil non accrédité.')
       setLoading(false)
       return
     }
 
     if (data?.user && !data.session) {
-      setError('Email non vérifié. Veuillez vérifier votre boîte de réception.')
+      setError('Profil non vérifié. Veuillez consulter votre centre de communication crypté (email).')
       setLoading(false)
       return
     }
@@ -51,72 +51,76 @@ export default function LoginPage() {
     })
     
     if (authErr) {
-      setError('Erreur lors de la connexion via Google.')
+      setError('Erreur lors de la connexion via Google Workspace.')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden text-gray-100">
       {/* Background pattern */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-gray-50 to-gray-50" />
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-900/10 blur-[120px]" />
+      </div>
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-[900px] flex flex-col md:flex-row bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100/50 overflow-hidden"
+        className="w-full max-w-[1000px] flex flex-col md:flex-row bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl border border-white/5 overflow-hidden relative z-10"
       >
         
         {/* Marketing Info */}
-        <div className="md:w-5/12 bg-gradient-to-br from-[#1A2A4A] to-[#0f192b] p-10 text-white flex flex-col justify-between hidden md:flex relative overflow-hidden">
-          <div className="absolute -bottom-24 -left-24 p-8 opacity-5 transform rotate-12">
-            <Building2 className="w-[400px] h-[400px]" />
+        <div className="md:w-5/12 bg-gradient-to-br from-gray-900 to-black p-12 text-white flex flex-col justify-between hidden md:flex relative overflow-hidden border-r border-white/5">
+          <div className="absolute top-0 right-0 p-8 opacity-5 transform -rotate-12 translate-x-1/4 -translate-y-1/4">
+             <Building2 className="w-96 h-96" />
           </div>
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2.5 mb-10">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner backdrop-blur-md border border-white/10">
-                <Building2 className="w-5 h-5 text-white" />
+            <Link href="/" className="inline-flex items-center gap-3 mb-10 group">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                <Building2 className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-extrabold tracking-tight font-display">ASAS</span>
-            </div>
-            <h2 className="text-4xl font-extrabold leading-tight mb-4 font-display">Content de vous<br/>revoir.</h2>
-            <p className="text-blue-100/80 text-sm font-medium leading-relaxed max-w-xs">
-              Accédez à votre espace de travail sécurisé et reprenez le contrôle de votre agence immobilière.
+              <span className="text-2xl font-extrabold tracking-tight font-display">ASAS</span>
+            </Link>
+            <h2 className="text-4xl font-extrabold leading-tight mb-4 font-display tracking-tight">Accès<br/>Autorisé.</h2>
+            <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-[280px]">
+              Protocole de connexion sécurisé au réseau ASAS OS.
             </p>
           </div>
           
-          <div className="relative z-10 mt-12 bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-md shadow-2xl">
-            <p className="text-sm font-medium italic text-blue-50 mb-5 leading-relaxed">
-              "ASAS a complètement transformé notre façon de gérer nos biens et nos commissions. L'interface est incroyablement rapide."
+          <div className="relative z-10 mt-12 bg-white/5 rounded-2xl p-8 border border-white/10 backdrop-blur-md">
+            <p className="text-sm font-medium italic text-gray-300 mb-6 leading-relaxed">
+              "ASAS effectue 3 millions de transactions quotidiennes sans la moindre faille. Une ingénierie de précision."
             </p>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold shadow-inner">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-sm font-bold shadow-inner">
                 JD
               </div>
               <div>
-                <p className="text-sm font-bold text-white">Jean Dubois</p>
-                <p className="text-xs font-medium text-blue-200/80">Directeur d'Agence</p>
+                <p className="text-sm font-bold text-white tracking-wide">Jean Dubois</p>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mt-1">Directeur d'Agence</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Form Login */}
-        <div className="md:w-7/12 p-8 sm:p-14 relative z-10 bg-white flex flex-col justify-center">
-          <div className="md:hidden flex items-center justify-center gap-2 mb-8">
-             <div className="w-10 h-10 rounded-xl bg-[#1A2A4A] flex items-center justify-center shadow-md">
+        <div className="md:w-7/12 p-8 sm:p-14 relative z-10 bg-transparent flex flex-col justify-center">
+          <div className="md:hidden flex items-center gap-3 mb-10">
+             <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
                 <Building2 className="w-6 h-6 text-white" />
              </div>
-             <span className="text-2xl font-extrabold tracking-tight text-gray-900 font-display">ASAS</span>
+             <span className="text-2xl font-extrabold tracking-tight text-white font-display">ASAS</span>
           </div>
 
           <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl font-extrabold text-gray-900 font-display tracking-tight">Connexion</h1>
-            <p className="text-sm font-medium text-gray-500 mt-2">Authentification Enterprise Zero-Trust</p>
+            <h1 className="text-3xl font-extrabold text-white font-display tracking-tight">Connexion</h1>
+            <p className="text-sm font-bold text-gray-400 mt-3 uppercase tracking-widest">Authentification Enterprise Zero-Trust</p>
           </div>
 
           {error && (
-             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-6 px-4 py-3 bg-red-50 border border-red-100 rounded-xl text-sm font-medium text-red-600 flex items-center gap-2">
+             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-8 px-5 py-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-sm font-bold text-red-400 flex items-center gap-3 backdrop-blur-md">
+               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                {error}
              </motion.div>
           )}
@@ -125,7 +129,7 @@ export default function LoginPage() {
           <button 
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full mb-8 flex items-center justify-center gap-3 px-4 py-3.5 border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all shadow-sm group"
+            className="w-full mb-8 flex items-center justify-center gap-3 px-4 py-4 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl text-sm font-bold text-white transition-all group"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-110 transition-transform">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -138,39 +142,39 @@ export default function LoginPage() {
 
           <div className="relative mb-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100"></div>
+              <div className="w-full border-t border-white/5"></div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase tracking-wider">
-              <span className="px-4 bg-white text-gray-400 font-bold">Ou utiliser un email</span>
+            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
+              <span className="px-4 bg-[#0A0A0A] text-gray-500 rounded-full">Protocol email standard</span>
             </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Email professionnel</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Identité réseau</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-white transition-colors" />
                 </div>
                 <input
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
-                  placeholder="vous@agence.com"
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400"
+                  placeholder="nom@agence.com"
+                  className="w-full pl-14 pr-5 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-bold text-gray-700">Mot de passe</label>
-                <Link href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors">Mot de passe oublié ?</Link>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest">Clé de Déchiffrement</label>
+                <Link href="#" className="text-xs font-bold text-blue-400 hover:text-white transition-colors">Perte d'accès ?</Link>
               </div>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <KeyRound className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <KeyRound className="h-5 w-5 text-gray-500 group-focus-within:text-white transition-colors" />
                 </div>
                 <input
                   type={showPw ? 'text' : 'password'}
@@ -178,10 +182,10 @@ export default function LoginPage() {
                   onChange={e => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-12 py-3.5 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400"
+                  className="w-full pl-14 pr-14 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600"
                 />
-                <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                  {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white focus:outline-none p-2 rounded-xl hover:bg-white/10 transition-colors">
+                  {showPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
@@ -189,25 +193,25 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 mt-6 bg-[#1A2A4A] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#243554] hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-md flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-4 focus:ring-[#1A2A4A]/20"
+              className="w-full py-4 mt-8 bg-white text-black rounded-full text-sm font-extrabold shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 transition-all"
             >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? 'Authentification...' : 'Se connecter sécurisement'}
-              {!loading && <ArrowRight className="h-4 w-4" />}
+              {loading && <Loader2 className="h-5 w-5 animate-spin" />}
+              {loading ? 'Vérification...' : 'Émuler Session Sécurisée'}
+              {!loading && <ArrowRight className="h-5 w-5" />}
             </button>
           </form>
 
           <p className="text-center text-sm font-medium text-gray-500 mt-8">
-            Pas encore de compte ?{' '}
-            <Link href="/register" className="text-[#1A2A4A] font-bold hover:text-blue-700 hover:underline transition-colors">
-              Créer un compte
+            Pas encore initié ?{' '}
+            <Link href="/register" className="text-white font-bold hover:underline transition-all">
+              Créer un espace privé
             </Link>
           </p>
         </div>
       </motion.div>
-      <p className="text-center text-xs font-medium text-gray-400 mt-8 flex items-center justify-center gap-1.5">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Vos données sont chiffrées de bout en bout
+      <p className="text-center text-[10px] font-bold uppercase tracking-widest text-gray-600 mt-8 flex items-center justify-center gap-2">
+        <ShieldCheck className="w-4 h-4" />
+        Architecture Zero-Trust & Chiffrement RLS
       </p>
     </div>
   )

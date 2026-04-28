@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Building2, Check, Loader2, KeyRound, Mail, User } from 'lucide-react'
+import { Building2, Check, Loader2, KeyRound, Mail, User, ShieldCheck } from 'lucide-react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { motion } from 'motion/react'
 
@@ -24,7 +24,6 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    // Regex check for strong password
     if (!/(?=.*[A-Z])(?=.*\d)/.test(form.password) || form.password.length < 8) {
       setError('Password must be at least 8 characters and include a number and an uppercase letter.')
       setLoading(false)
@@ -48,7 +47,6 @@ export default function RegisterPage() {
     }
 
     if (data.session) {
-      // Auto-login active (email confirmation disabled)
       window.location.href = '/onboarding'
       return
     }
@@ -71,24 +69,24 @@ export default function RegisterPage() {
     }
   }
 
-  const benefits = ['14 jours d\'essai gratuit', 'Aucune carte bancaire requise', 'Accès complet immédiat', 'Support client inclus']
+  const benefits = ['14 jours d\'essai premium', 'Architecture Zero-Trust', 'Calcul automatique commissions', 'Support VIP']
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12 relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-gray-50 to-gray-50" />
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4 py-12 relative overflow-hidden text-gray-100">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-[#050505] to-[#050505]" />
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-md bg-white rounded-3xl border border-gray-100 p-10 shadow-xl shadow-gray-200/50 text-center"
+          className="w-full max-w-md bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-3xl border border-white/5 p-10 shadow-2xl text-center relative z-10"
         >
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <Check className="h-10 w-10 text-green-500" strokeWidth={3} />
+          <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.15)]">
+            <Check className="h-10 w-10 text-green-400" strokeWidth={3} />
           </div>
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-3 font-display tracking-tight">Vérifiez votre email</h2>
-          <p className="text-sm font-medium text-gray-500 leading-relaxed mb-8">Un lien de confirmation sécurisé a été envoyé à votre adresse email. Veuillez cliquer pour activer votre compte.</p>
-          <Link href="/login" className="inline-flex items-center justify-center w-full px-6 py-3.5 bg-[#1A2A4A] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#243554] transition-all">
-            Aller à la page de connexion
+          <h2 className="text-2xl font-extrabold text-white mb-3 font-display tracking-tight">Vérifiez votre email</h2>
+          <p className="text-sm font-medium text-gray-400 leading-relaxed mb-8">Un lien de confirmation chiffré a été envoyé à votre adresse. Veuillez valider pour initialiser votre base de données isolée.</p>
+          <Link href="/login" className="inline-flex items-center justify-center w-full px-6 py-4 bg-white text-black rounded-full text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all">
+            Aller au Portail de Connexion
           </Link>
         </motion.div>
       </div>
@@ -96,40 +94,45 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden text-gray-100">
       {/* Background pattern */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-gray-50 to-gray-50" />
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-900/10 blur-[120px]" />
+      </div>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-[900px] flex flex-col md:flex-row bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100/50 overflow-hidden"
+        className="w-full max-w-[1000px] flex flex-col md:flex-row bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl border border-white/5 overflow-hidden relative z-10"
       >
         
         {/* Marketing Info */}
-        <div className="md:w-5/12 bg-gradient-to-br from-[#1A2A4A] to-[#0f192b] p-10 text-white flex flex-col justify-between hidden md:flex relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-5 transform -rotate-12">
-            <Building2 className="w-[300px] h-[300px]" />
+        <div className="md:w-5/12 bg-gradient-to-br from-gray-900 to-black p-12 text-white flex flex-col justify-between hidden md:flex relative overflow-hidden border-r border-white/5">
+          <div className="absolute top-0 right-0 p-8 opacity-5 transform -rotate-12 translate-x-1/4 -translate-y-1/4">
+            <ShieldCheck className="w-96 h-96" />
           </div>
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2.5 mb-10">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner backdrop-blur-md border border-white/10">
-                <Building2 className="w-5 h-5 text-white" />
+            <Link href="/" className="inline-flex items-center gap-3 mb-12 group">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                <Building2 className="w-6 h-6 text-white" strokeWidth={1.5} />
               </div>
-              <span className="text-xl font-extrabold tracking-tight font-display">ASAS</span>
-            </div>
-            <h2 className="text-3xl font-extrabold leading-tight mb-4 font-display">Le futur de la<br/>gestion d'agence.</h2>
-            <p className="text-blue-100/80 text-sm font-medium leading-relaxed max-w-xs">
-              Sécurité Zero-Trust, pipelines optimisés, et une rentabilité maximisée, accessibles instantanément.
+              <span className="text-2xl font-extrabold tracking-tight font-display">ASAS</span>
+            </Link>
+            <h2 className="text-4xl font-extrabold leading-tight mb-6 font-display tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400">
+              L'immobilier, <br/>sans compromis.
+            </h2>
+            <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-[280px]">
+              Déployez un environnement collaboratif de classe entreprise en moins de 2 minutes.
             </p>
           </div>
           
-          <div className="relative z-10 mt-12 space-y-5 bg-white/5 p-6 rounded-2xl backdrop-blur-md border border-white/10 shadow-2xl">
+          <div className="relative z-10 mt-12 space-y-4">
             {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm font-medium text-white">
-                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-inner">
-                  <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+              <div key={i} className="flex items-center gap-4 text-sm font-bold text-gray-300">
+                <div className="w-6 h-6 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                  <Check className="w-3.5 h-3.5 text-blue-400" strokeWidth={2.5} />
                 </div>
                 {benefit}
               </div>
@@ -138,21 +141,22 @@ export default function RegisterPage() {
         </div>
 
         {/* Form Registration */}
-        <div className="md:w-7/12 p-8 sm:p-14 relative z-10 bg-white">
-          <div className="md:hidden flex items-center justify-center gap-2 mb-8">
-             <div className="w-10 h-10 rounded-xl bg-[#1A2A4A] flex items-center justify-center shadow-md">
+        <div className="md:w-7/12 p-8 sm:p-14 relative z-10 bg-transparent flex flex-col justify-center">
+          <div className="md:hidden flex items-center gap-3 mb-10">
+             <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
                 <Building2 className="w-6 h-6 text-white" />
              </div>
-             <span className="text-2xl font-extrabold tracking-tight text-gray-900 font-display">ASAS</span>
+             <span className="text-2xl font-extrabold tracking-tight text-white font-display">ASAS</span>
           </div>
 
           <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl font-extrabold text-gray-900 font-display tracking-tight">Commencer l'aventure</h1>
-            <p className="text-sm font-medium text-gray-500 mt-2">Créez votre compte pour configurer votre agence</p>
+            <h1 className="text-3xl font-extrabold text-white font-display tracking-tight">Initialiser l'OS</h1>
+            <p className="text-sm font-bold text-gray-400 mt-3 uppercase tracking-widest">Création de profil administrateur</p>
           </div>
 
           {error && (
-             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-8 px-4 py-3 bg-red-50 border border-red-100 rounded-xl text-sm font-medium text-red-600 flex items-center gap-2">
+             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-8 px-5 py-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-sm font-bold text-red-400 flex items-center gap-3 backdrop-blur-md">
+               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                {error}
              </motion.div>
           )}
@@ -161,7 +165,7 @@ export default function RegisterPage() {
           <button 
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full mb-8 flex items-center justify-center gap-3 px-4 py-3.5 border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all shadow-sm group"
+            className="w-full mb-8 flex items-center justify-center gap-3 px-4 py-4 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl text-sm font-bold text-white transition-all group"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-110 transition-transform">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -169,58 +173,58 @@ export default function RegisterPage() {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            S'inscrire avec Google Workspace
+            Continuer avec Google Workspace
           </button>
 
           <div className="relative mb-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100"></div>
+              <div className="w-full border-t border-white/5"></div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase tracking-wider">
-              <span className="px-4 bg-white text-gray-400 font-bold">Ou avec un email classique</span>
+            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
+              <span className="px-4 bg-[#0A0A0A] text-gray-500 rounded-full">Protocol email standard</span>
             </div>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-5">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Nom complet</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Identité Administrateur</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-500 group-focus-within:text-white transition-colors" />
                 </div>
                 <input 
                   type="text" 
                   value={form.full_name} 
                   onChange={update('full_name')} 
                   required 
-                  placeholder="Jean Dupont"
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400" 
+                  placeholder="Ex: Jean Dupont"
+                  className="w-full pl-14 pr-5 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600" 
                 />
               </div>
             </div>
             
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Email professionnel</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Email Professionnel</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-white transition-colors" />
                 </div>
                 <input 
                   type="email" 
                   value={form.email} 
                   onChange={update('email')} 
                   required 
-                  placeholder="vous@agence.com"
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400" 
+                  placeholder="contact@agence.com"
+                  className="w-full pl-14 pr-5 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600" 
                 />
               </div>
             </div>
             
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Mot de passe robuste</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Clé de chiffrement (Mot de passe)</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <KeyRound className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <KeyRound className="h-5 w-5 text-gray-500 group-focus-within:text-white transition-colors" />
                 </div>
                 <input 
                   type="password" 
@@ -228,8 +232,8 @@ export default function RegisterPage() {
                   onChange={update('password')} 
                   required 
                   minLength={8} 
-                  placeholder="8+ caractères, au moins 1 majuscule, 1 chiffre" 
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-400" 
+                  placeholder="Minimum 8 char, MAJ et chiffre" 
+                  className="w-full pl-14 pr-5 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600 text-security-disc" 
                 />
               </div>
             </div>
@@ -237,24 +241,24 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 mt-6 bg-[#1A2A4A] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#243554] hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-md flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-4 focus:ring-[#1A2A4A]/20"
+              className="w-full py-4 mt-8 bg-white text-black rounded-full text-sm font-extrabold shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 transition-all"
             >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? 'Création de votre espace...' : 'Démarrer gratuitement'}
+              {loading && <Loader2 className="h-5 w-5 animate-spin" />}
+              {loading ? 'Génération de l\'environnement...' : 'Déployer l\'OS'}
             </button>
           </form>
 
           <p className="text-center text-sm font-medium text-gray-500 mt-8">
-            Vous avez déjà un compte ?{' '}
-            <Link href="/login" className="text-[#1A2A4A] font-bold hover:text-blue-700 hover:underline transition-colors">
-              Se connecter
+            Autorisation existante ?{' '}
+            <Link href="/login" className="text-white font-bold hover:underline transition-all">
+              Authentifiez-vous
             </Link>
           </p>
         </div>
       </motion.div>
-      <p className="text-center text-xs font-medium text-gray-400 mt-8 flex items-center justify-center gap-1.5">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Vos données sont chiffrées de bout en bout
+      <p className="text-center text-[10px] font-bold uppercase tracking-widest text-gray-600 mt-8 flex items-center justify-center gap-2">
+        <ShieldCheck className="w-4 h-4" />
+        Architecture Zero-Trust & Chiffrement RLS
       </p>
     </div>
   )
