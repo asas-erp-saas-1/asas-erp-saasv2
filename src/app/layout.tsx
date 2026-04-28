@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
 import { env } from '@/lib/env'
@@ -40,10 +41,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
-      <body className="bg-gray-50 text-gray-900 antialiased font-sans">
+      <body className="bg-gray-50 text-gray-900 antialiased font-sans flex flex-col min-h-screen">
         <AuthProvider>
           {children}
         </AuthProvider>
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
