@@ -27,8 +27,8 @@ export default async function MetricsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-gray-100">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="flex-1 text-gray-100 flex flex-col">
+      <div className="w-full space-y-6">
         <div className="px-6 md:px-8 py-8 border-b border-white/5 bg-[#050505]">
           <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">

@@ -96,7 +96,7 @@ export default function SettingsPage() {
   }
 
   if (loading || !config) return (
-    <div className="max-w-4xl mx-auto p-6 md:p-8 space-y-6 min-h-screen bg-[#000000]">
+    <div className="flex-1 w-full max-w-4xl mx-auto space-y-6 bg-[#000000]">
       <div className="h-16 w-1/3 bg-[#0A0A0A] border border-white/5 rounded-2xl animate-pulse mb-8" />
       {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-[#0A0A0A] border border-white/5 rounded-3xl animate-pulse" />)}
     </div>
@@ -113,8 +113,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-gray-100">
-        <div className="max-w-5xl mx-auto p-6 md:p-10 space-y-10">
+    <div className="flex-1 font-sans text-gray-100 flex flex-col">
+        <div className="w-full max-w-5xl mx-auto space-y-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-white/5">
             <div>
             <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">

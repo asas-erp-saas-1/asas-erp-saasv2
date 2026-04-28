@@ -114,8 +114,8 @@ export default function PropertiesPage() {
   }), {} as Record<string, number>)
 
   return (
-    <div className="min-h-screen bg-[#000000] p-6 md:p-8 text-gray-100">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="flex-1 text-gray-100 flex flex-col">
+      <div className="w-full space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div>

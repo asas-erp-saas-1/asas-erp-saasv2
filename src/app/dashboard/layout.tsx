@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2 } from 'lucide-react'
 import Link from 'next/link'
 
+import { NextMobileMenu } from '@/components/MobileMenu'
 const NAV = [
   { href: '/dashboard/overview',   label: 'Vue d\'ensemble',    Icon: LayoutGrid  },
   { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users       },
@@ -33,7 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const initial = (profile as any)?.full_name?.charAt(0) || 'U';
 
   return (
-    <div className="flex bg-[#0A0A0A] h-screen overflow-hidden selection:bg-blue-500/30 selection:text-white font-sans text-gray-100">
+    <div className="flex bg-[#0A0A0A] h-[100dvh] overflow-hidden selection:bg-blue-500/30 selection:text-white font-sans text-gray-100">
       {/* Sidebar - Desktop */}
       <aside className="w-[280px] bg-[#0A0A0A] border-r border-[#262626] flex-col shrink-0 hidden md:flex z-10 relative group">
         <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
@@ -87,9 +88,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* Top Header */}
         <header className="h-[72px] bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
           <div className="flex items-center gap-4 w-full max-w-xl">
-            <button className="md:hidden p-2 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-colors">
-              <Menu className="w-5 h-5" />
-            </button>
+            <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
             <div className="hidden sm:flex items-center px-4 py-2.5 bg-[#171717] hover:bg-[#262626] border border-[#262626] hover:border-[#404040] rounded-2xl w-full focus-within:bg-[#050505] focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all group">
               <Search className="w-4 h-4 text-gray-500 mr-3 group-focus-within:text-blue-500 transition-colors" strokeWidth={2} />
               <input 
@@ -123,9 +122,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </header>
 
         {/* Scrollable Main Area */}
-        <main className="flex-1 overflow-y-auto w-full bg-[#050505] text-white custom-scrollbar relative">
+        <main className="flex-1 overflow-y-auto flex flex-col w-full bg-[#050505] text-white custom-scrollbar relative">
           <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-[#0A0A0A] to-transparent pointer-events-none -z-10"></div>
-          <div className="p-6 max-w-7xl mx-auto">
+          <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col">
             {children}
           </div>
         </main>

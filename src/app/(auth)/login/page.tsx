@@ -27,7 +27,11 @@ export default function LoginPage() {
     })
 
     if (authErr) {
-      setError('Identifiants invalides ou profil non accrédité.')
+      let errorMessage = 'Identifiants invalides ou profil non accrédité.'
+      if (authErr.message.includes('Invalid API key') || authErr.message.includes('invalid api key')) {
+        errorMessage = "Erreur: Clé API Supabase manquante ou invalide. Vérifiez vos variables d'environnement dans les paramètres du projet."
+      }
+      setError(errorMessage)
       setLoading(false)
       return
     }
@@ -51,12 +55,18 @@ export default function LoginPage() {
     })
     
     if (authErr) {
-      setError('Erreur lors de la connexion via Google Workspace.')
+      let errorMessage = 'Erreur lors de la connexion via Google Workspace.'
+      if (authErr.message.includes('provider is not enabled')) {
+        errorMessage = "L'authentification Google n'est pas activée dans votre projet Supabase. Activez-la dans le tableau de bord Supabase (Authentication -> Providers)."
+      } else if (authErr.message.includes('Invalid API key') || authErr.message.includes('invalid api key')) {
+        errorMessage = "Erreur: Clé API Supabase manquante ou invalide. Vérifiez vos variables d'environnement."
+      }
+      setError(errorMessage)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden text-gray-100">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8 relative overflow-y-auto text-gray-100 bg-[#050505]">
       {/* Background pattern */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px]" />

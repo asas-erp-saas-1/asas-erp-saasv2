@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Building2, Check, Loader2, KeyRound, Mail, User, ShieldCheck } from 'lucide-react'
+import { Building2, Check, Loader2, KeyRound, Mail, User, ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { motion } from 'motion/react'
 
@@ -11,6 +11,7 @@ export default function RegisterPage() {
   const router  = useRouter()
   const [form,    setForm]    = useState({ email: '', password: '', full_name: '' })
   const [loading, setLoading] = useState(false)
+  const [showPw,   setShowPw]   = useState(false)
   const [error,   setError]   = useState<string | null>(null)
   const [success, setSuccess]  = useState(false)
   const supabase = createBrowserSupabaseClient()
@@ -41,7 +42,11 @@ export default function RegisterPage() {
     })
 
     if (authError) {
-      setError(authError.message)
+      let errorMessage = authError.message
+      if (errorMessage.includes('Invalid API key') || errorMessage.includes('invalid api key')) {
+        errorMessage = "Erreur: Clé API Supabase manquante ou invalide. Vérifiez vos variables d'environnement dans les paramètres du projet."
+      }
+      setError(errorMessage)
       setLoading(false)
       return
     }
@@ -65,7 +70,13 @@ export default function RegisterPage() {
     })
     
     if (authErr) {
-      setError('Erreur lors de la connexion via Google.')
+      let errorMessage = 'Erreur lors de la connexion via Google Workspace.'
+      if (authErr.message.includes('provider is not enabled')) {
+        errorMessage = "L'authentification Google n'est pas activée dans votre projet Supabase. Activez-la dans le tableau de bord Supabase (Authentication -> Providers)."
+      } else if (authErr.message.includes('Invalid API key') || authErr.message.includes('invalid api key')) {
+        errorMessage = "Erreur: Clé API Supabase manquante ou invalide. Vérifiez vos variables d'environnement."
+      }
+      setError(errorMessage)
     }
   }
 
@@ -73,7 +84,7 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4 py-12 relative overflow-hidden text-gray-100">
+      <div className="min-h-[100dvh] bg-[#050505] flex items-center justify-center px-4 py-8 relative overflow-y-auto text-gray-100">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-[#050505] to-[#050505]" />
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
@@ -94,7 +105,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden text-gray-100">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8 relative overflow-y-auto text-gray-100 bg-[#050505]">
       {/* Background pattern */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px]" />
@@ -227,14 +238,17 @@ export default function RegisterPage() {
                   <KeyRound className="h-5 w-5 text-gray-500 group-focus-within:text-white transition-colors" />
                 </div>
                 <input 
-                  type="password" 
+                  type={showPw ? 'text' : 'password'}
                   value={form.password} 
                   onChange={update('password')} 
                   required 
                   minLength={8} 
-                  placeholder="Minimum 8 char, MAJ et chiffre" 
-                  className="w-full pl-14 pr-5 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600 text-security-disc" 
+                  placeholder="8+ car., Majusc., Chiffre" 
+                  className={showPw ? "w-full pl-14 pr-14 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600" : "w-full pl-14 pr-14 py-4 bg-black/40 border border-white/10 rounded-2xl text-sm font-bold text-white focus:bg-white/5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-gray-600 text-security-disc"} 
                 />
+                <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white focus:outline-none p-2 rounded-xl hover:bg-white/10 transition-colors">
+                  {showPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
             </div>
 

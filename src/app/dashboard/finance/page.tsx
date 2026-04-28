@@ -47,7 +47,7 @@ export default function FinancePage() {
   }, [])
 
   if (loading) return (
-    <div className="p-6 md:p-8 space-y-6 max-w-6xl mx-auto min-h-screen bg-[#000000]">
+    <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full">
       <div className="h-24 w-1/3 bg-[#0A0A0A] border border-white/5 rounded-2xl animate-pulse" />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-[#0A0A0A] border border-white/5 rounded-2xl animate-pulse" />)}
@@ -76,8 +76,8 @@ export default function FinancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-gray-100 p-6 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="flex-1 text-gray-100 flex flex-col">
+      <div className="w-full space-y-8 max-w-6xl mx-auto">
         <div>
           <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">

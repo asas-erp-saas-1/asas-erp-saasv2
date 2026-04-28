@@ -94,8 +94,8 @@ export default function TasksPage() {
   const overdueCount = tasks.filter(t => isOverdue(t.due_date) && t.status !== 'done').length
 
   return (
-    <div className="min-h-screen bg-[#000000] p-6 md:p-8 font-sans text-gray-100">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="flex-1 font-sans text-gray-100 flex flex-col">
+      <div className="w-full space-y-8 max-w-4xl mx-auto">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-white/5">

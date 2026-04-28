@@ -147,19 +147,19 @@ export default function DealsPage() {
   useEffect(() => { load() }, [load])
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-[#0A0A0A] rounded-2xl shadow-2xl border border-white/5 text-gray-100">
+    <div className="flex flex-1 h-full overflow-hidden bg-[#0A0A0A] rounded-2xl shadow-2xl border border-white/5 text-gray-100">
       {/* Left: list */}
       <div className={clsx('flex flex-col bg-[#0A0A0A] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'hidden lg:flex lg:w-[45%] border-r border-white/5' : 'w-full')}>
         {/* Header */}
         <div className="px-6 py-5 border-b border-white/5 bg-[#0A0A0A] z-10 shrink-0">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex w-full items-center justify-between mb-5">
             <div>
               <h1 className="text-xl font-extrabold text-white flex items-center gap-2 tracking-tight">
                 Transactions
               </h1>
-              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1.5">{total} actives sur le réseau</p>
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1.5 hidden sm:block">{total} actives sur le réseau</p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-black rounded-full text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
+            <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-black rounded-full text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95 shrink-0">
               <Plus className="h-4 w-4" strokeWidth={2.5} /> Initier Deal
             </button>
           </div>

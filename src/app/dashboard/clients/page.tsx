@@ -36,8 +36,8 @@ export default function ClientsPage() {
   }, [search, type])
 
   return (
-    <div className="min-h-screen bg-[#000000] p-6 md:p-8 font-sans text-gray-100">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="flex-1 font-sans text-gray-100 flex flex-col">
+      <div className="w-full space-y-6">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/5">

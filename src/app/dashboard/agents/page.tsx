@@ -74,7 +74,7 @@ export default function AgentsPage() {
   const selected = agents.find(a => a.agentId === selectedId)
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-[#050505] overflow-hidden font-sans">
+    <div className="flex flex-1 h-full bg-[#050505] overflow-hidden font-sans rounded-2xl shadow-2xl border border-white/5">
       {/* Left: rankings */}
       <div className={clsx('flex flex-col bg-[#050505] border-r border-white/5 overflow-hidden transition-all duration-300 shadow-2xl z-10', selectedId ? 'hidden lg:flex lg:w-1/2 xl:w-[45%]' : 'w-full')}>
         {/* Header */}
