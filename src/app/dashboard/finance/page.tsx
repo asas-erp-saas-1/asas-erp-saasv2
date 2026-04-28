@@ -78,14 +78,19 @@ export default function FinancePage() {
   return (
     <div className="flex-1 text-gray-100 flex flex-col">
       <div className="w-full space-y-8 max-w-6xl mx-auto">
-        <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-             <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                 <DollarSign className="h-6 w-6 text-white" /> 
+        <div className="relative z-10 w-full mb-10 pt-4">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-blue-400 to-indigo-400 tracking-tight flex items-center gap-4 font-display">
+             <div className="w-14 h-14 rounded-2xl bg-[#0A0A0A] border border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)] relative overflow-hidden group">
+                 <div className="absolute inset-0 bg-blue-500/20 group-hover:bg-blue-500/40 transition-colors" />
+                 <DollarSign className="h-7 w-7 text-emerald-400 relative z-10" /> 
              </div>
-             Contrôle Financier
+             Oracle Financier
           </h1>
-          <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-3">Situation de trésorerie, ancienneté des créances et grand livre cryptographique.</p>
+          <p className="text-xs uppercase tracking-[0.2em] font-bold text-gray-500 mt-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-[ping_2s_ease-in-out_infinite]" />
+            Analytique Quantique et Prévisions
+          </p>
         </div>
 
         {/* Liquidity warning */}

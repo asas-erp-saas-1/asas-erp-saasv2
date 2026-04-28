@@ -117,19 +117,27 @@ export default function PropertiesPage() {
     <div className="flex-1 text-gray-100 flex flex-col">
       <div className="w-full space-y-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
           <div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                 <Building2 className="h-6 w-6 text-white" /> 
+            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 tracking-tight flex items-center gap-3 font-display">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 to-emerald-500/10 border border-white/10 flex items-center justify-center p-3 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                 <Building2 className="h-full w-full text-blue-400" /> 
               </div>
-              Inventaire & Projets
+              OS Nexus | Gestion des Actifs
             </h1>
-            <p className="text-xs uppercase tracking-widest font-bold text-gray-500 mt-2">Gérez la disponibilité et le statut du portefeuille immobilier.</p>
+            <p className="text-xs uppercase tracking-[0.2em] font-bold text-gray-500 mt-2 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Moteur 3D temps réel synchronisé
+            </p>
           </div>
-          <button className="flex items-center gap-2 px-5 py-3 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
-            <Plus className="h-4 w-4" strokeWidth={2.5} /> Nouvel Actif
-          </button>
+          <div className="flex items-center gap-4">
+            <button className="flex items-center gap-2 px-5 py-3 shrink-0 bg-white/5 border border-white/10 text-blue-400 rounded-xl text-xs font-bold hover:bg-white/10 transition-all">
+              Générer Rapport IA
+            </button>
+            <button className="flex items-center gap-2 px-5 py-3 object-cover shrink-0 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] active:scale-95">
+              <Plus className="h-4 w-4" strokeWidth={2.5} /> Nouvel Actif
+            </button>
+          </div>
         </div>
 
         {/* Stats */}

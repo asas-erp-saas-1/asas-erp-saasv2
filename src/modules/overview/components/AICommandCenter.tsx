@@ -1,35 +1,72 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { BrainCircuit, Sparkles, TrendingUp, AlertTriangle } from 'lucide-react'
 
 export function AICommandCenter() {
-  const insights = [
+  const [priorityQueue, setPriorityQueue] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch('/api/automation?view=priority_queue&limit=3')
+        if (res.ok) {
+           const data = await res.json()
+           setPriorityQueue(data)
+        }
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const defaultInsights = [
     {
       type: 'opportunity',
       icon: TrendingUp,
       color: 'text-emerald-400',
       bg: 'bg-emerald-500/10',
       title: 'Opportunité de clôture',
-      message: 'Le client "Groupe Atlas" montre 82% de probabilité de signature cette semaine basé sur les interactions récentes.'
+      message: 'Le Moteur IA analyse les données du terrain en temps réel.'
     },
     {
       type: 'risk',
       icon: AlertTriangle,
       color: 'text-amber-400',
       bg: 'bg-amber-500/10',
-      title: 'Risque de désistement détecté',
-      message: 'Aucun contact avec "Investissements Sud" depuis 14 jours. Recommandation : appel de courtoisie immédiat.'
+      title: 'Analyse Prédictive',
+      message: 'Surveillance des risques opérationnels en cours... En attente de signaux.'
     },
     {
       type: 'optimization',
       icon: Sparkles,
       color: 'text-blue-400',
       bg: 'bg-blue-500/10',
-      title: 'Optimisation de prix',
-      message: 'Les données du marché suggèrent une sous-évaluation de 8% pour les lots commerciaux de la zone Nord.'
+      title: 'Optimisation Stratégique',
+      message: 'Calibrage des prix du marché par rapport à l\'infrastructure courante.'
     }
   ]
+
+  const insights = priorityQueue.length > 0 
+    ? priorityQueue.slice(0, 3).map((item, idx) => {
+        let typeInfo = defaultInsights[idx] || defaultInsights[0];
+        if (item.priority === 'urgent' || item.priority === 'high') {
+           typeInfo = defaultInsights[1];
+        } else if (item.client_name?.includes('Invest')) {
+           typeInfo = defaultInsights[0];
+        }
+        return {
+           ...typeInfo,
+           title: item.title || typeInfo.title,
+           message: item.description || `Analyse du client ${item.client_name} - Priorité ${item.priority}`
+        };
+      })
+    : defaultInsights;
 
   return (
     <div className="bg-[#050505] rounded-[2rem] p-8 mt-6 text-white shadow-2xl relative overflow-hidden flex flex-col border border-white/5 group">
