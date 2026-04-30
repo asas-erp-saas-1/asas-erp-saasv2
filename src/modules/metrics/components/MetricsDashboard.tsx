@@ -1,21 +1,8 @@
 // src/modules/metrics/components/MetricsDashboard.tsx
-'use client'
+import { getMetricsData } from '@/actions/metricActions'
 
-import { useEffect, useState } from 'react'
-
-export function MetricsDashboard() {
-  const [metrics, setMetrics] = useState<any>(null)
-
-  useEffect(() => {
-    fetch('/api/metrics').then(r => r.json()).then(setMetrics)
-  }, [])
-
-  if (!metrics) return (
-    <div className="flex flex-col items-center justify-center py-20 bg-[#0A0A0A] rounded-2xl border border-white/5 shadow-2xl">
-      <div className="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin mb-4" />
-      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Calcul de l'analytique...</span>
-    </div>
-  )
+export async function MetricsDashboard() {
+  const metrics = await getMetricsData();
 
   return (
     <div className="bg-[#0A0A0A] rounded-[2rem] border border-white/5 p-8 shadow-2xl overflow-hidden relative">

@@ -27,12 +27,12 @@ export async function GET(req: NextRequest) {
 
     switch (view) {
       case 'cash_position': {
-        const pos = await ledger.getCashPosition()
+        const pos = await ledger.getCashPosition(ctx.agencyId)
         return NextResponse.json(pos)
       }
 
       case 'aging': {
-        const aging = await ledger.getReceivablesAging()
+        const aging = await ledger.getReceivablesAging(ctx.agencyId)
         return NextResponse.json(aging)
       }
 

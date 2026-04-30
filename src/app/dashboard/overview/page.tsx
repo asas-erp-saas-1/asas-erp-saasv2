@@ -2,13 +2,16 @@
 import { Metadata } from 'next'
 import { CEODashboard } from '@/modules/overview/components/CEODashboard'
 import { LayoutDashboard } from 'lucide-react'
+import { getMetricsData } from '@/actions/metricActions'
 
 export const metadata: Metadata = {
   title: 'Overview — ASAS RE-OS',
   description: 'Executive overview dashboard',
 }
 
-export default function OverviewPage() {
+export default async function OverviewPage() {
+  const metrics = await getMetricsData();
+
   return (
     <div className="w-full">
       <div className="flex flex-col gap-2 mb-8">
@@ -20,7 +23,7 @@ export default function OverviewPage() {
         </h1>
         <p className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1">Centre de commandement exécutif</p>
       </div>
-      <CEODashboard />
+      <CEODashboard initialMetrics={metrics} />
     </div>
   )
 }

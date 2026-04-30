@@ -4,14 +4,23 @@ import { useEffect, useState } from 'react'
 import { motion, Variants } from 'motion/react'
 import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 
-import { AICommandCenter } from './AICommandCenter'
+const AICommandCenter = dynamic(() => import('./AICommandCenter').then(mod => mod.AICommandCenter), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-[#050505] rounded-[2rem] p-8 mt-6 border border-white/5 h-64 flex items-center justify-center">
+      <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500/50" />
+    </div>
+  )
+})
 
-export function CEODashboard() {
-  const [kpis, setKpis] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+export function CEODashboard({ initialMetrics }: { initialMetrics?: any }) {
+  const [kpis, setKpis] = useState<any>(initialMetrics || null)
+  const [loading, setLoading] = useState(!initialMetrics)
 
   useEffect(() => {
+    if (initialMetrics) return;
     fetch('/api/metrics')
       .then(r => r.json())
       .then(data => {
@@ -22,7 +31,7 @@ export function CEODashboard() {
         console.error("Failed to load metrics", err)
         setLoading(false)
       })
-  }, [])
+  }, [initialMetrics])
 
   if (loading) {
     return (

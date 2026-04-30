@@ -164,15 +164,9 @@ export default function LeadsPage() {
     ))
 
     try {
-      // Background update
-      const res = await fetch(`/api/leads/${draggableId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      })
-      if (!res.ok) {
-        throw new Error('Failed to update status')
-      }
+      // Background update via Server Action
+      const { updateLeadStatusAction } = await import('@/actions/leadActions')
+      await updateLeadStatusAction(draggableId, newStatus)
     } catch (e) {
       console.error(e)
       // Revert on error

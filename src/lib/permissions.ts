@@ -89,6 +89,7 @@ export class PermissionDeniedError extends Error {
 export interface PermissionContext {
   actorId: string
   role:    UserRole
+  agencyId: string // Added
   permissions?: string[] // Added
 }
 
@@ -244,6 +245,7 @@ export async function resolvePermissionContext(
     .select(`
       id, 
       role,
+      agency_id,
       role_id,
       roles (
         id,
@@ -272,6 +274,7 @@ export async function resolvePermissionContext(
   return {
     actorId: user.id,
     role:    (profile.role as UserRole) ?? 'agent',
+    agencyId: profile.agency_id,
     permissions, // Added permissions list
   }
 }
