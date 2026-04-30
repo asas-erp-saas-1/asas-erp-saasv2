@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { requireAuth, requireRole } from '@/lib/auth'
 import { ok, fail } from '@/lib/apiResponse'
+import { env } from '@/lib/env'
 
 export const runtime = 'edge'
 
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
       const res = await fetch('https://api.stripe.com/v1/customers', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+          Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     const sessionRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
@@ -56,8 +57,8 @@ export async function POST(req: NextRequest) {
         mode:                   'subscription',
         'line_items[0][price]': priceId,
         'line_items[0][quantity]': '1',
-        success_url:            `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?upgraded=true`,
-        cancel_url:             `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+        success_url:            `${env.NEXT_PUBLIC_APP_URL}/dashboard/settings?upgraded=true`,
+        cancel_url:             `${env.NEXT_PUBLIC_APP_URL}/pricing`,
         'metadata[agency_id]':  actor.agencyId,
         allow_promotion_codes:  'true',
       }).toString(),

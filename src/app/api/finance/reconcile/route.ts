@@ -1,6 +1,6 @@
 // src/app/api/finance/reconcile/route.ts
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { resolvePermissionContext, createPermissionService, PermissionDeniedError } from '@/lib/permissions';
 
@@ -8,27 +8,7 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet: { name: string; value: string; options: any }[]) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch (error) {
-              // Ignore in context of server component/next.js middleware
-            }
-          },
-        },
-      }
-    );
+    const supabase = await createServerSupabaseClient();
 
     // 1. Resolve Context (Server-Side identity + Database Role lookup)
     const ctx = await resolvePermissionContext(supabase);

@@ -6,6 +6,8 @@ import { runAllAutomations } from '@/services/automationService'
 import { automationEngine } from '@/core/automationEngine'
 import { createEventBus } from '@/core/eventBus'
 
+import { env } from '@/lib/env'
+
 export const runtime = 'edge'
 
 // POST /api/automation — trigger automation sweep (cron or manual)
@@ -15,7 +17,7 @@ export async function POST(req: NextRequest) {
   try {
     // Allow both cron secret and authenticated admin calls
     const cronSecret = req.headers.get('x-cron-secret')
-    const isFromCron = cronSecret === process.env.CRON_SECRET && !!process.env.CRON_SECRET
+    const isFromCron = !!env.CRON_SECRET && cronSecret === env.CRON_SECRET
 
     if (!isFromCron) {
       const db    = await createServerSupabaseClient()
