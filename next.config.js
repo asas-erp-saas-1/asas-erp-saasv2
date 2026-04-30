@@ -1,10 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: [],
-  reactCompiler: true,
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'motion', '@mui/material'],
-  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },

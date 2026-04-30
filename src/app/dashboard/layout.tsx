@@ -1,5 +1,5 @@
 // src/app/dashboard/layout.tsx
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { getSystemContext } from '@/lib/system-context'
 import { redirect } from 'next/navigation'
 import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2 } from 'lucide-react'
 import Link from 'next/link'
@@ -19,19 +19,17 @@ const NAV = [
 ]
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const sysCtx = getSystemContext()
 
-  const { data: memberships } = await supabase.from('memberships').select('agency_id').eq('user_id', user.id).limit(1)
-  
-  if (!memberships || memberships.length === 0) {
-    redirect('/onboarding')
-  }
+  // Mocking profile for layout
+  const profile = {
+    full_name: 'System Admin',
+    role: sysCtx.role,
+    avatar_url: null,
+  };
 
-  const { data: profile } = await supabase.from('profiles').select('full_name, role, avatar_url').eq('id', user.id).single()
-  const roleDisplay = (profile as any)?.role === 'admin' ? 'CEO / Admin' : (profile as any)?.role;
-  const initial = (profile as any)?.full_name?.charAt(0) || 'U';
+  const roleDisplay = 'CEO / Admin';
+  const initial = 'S';
 
   return (
     <div className="flex bg-[#0A0A0A] h-[100dvh] overflow-hidden selection:bg-blue-500/30 selection:text-white font-sans text-gray-100">
@@ -75,11 +73,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           </div>
           
-          <form action="/auth/signout" method="post">
-            <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/20 rounded-xl transition-all">
+          <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#A3A3A3] bg-[#171717] border border-[#262626] rounded-xl transition-all cursor-not-allowed opacity-50" title="Disabled in system context mode">
               <LogOut className="h-4 w-4" strokeWidth={2} /> Déconnexion
-            </button>
-          </form>
+            </div>
         </div>
       </aside>
 
