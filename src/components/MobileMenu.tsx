@@ -35,7 +35,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
 
       <AnimatePresence>
         {isOpen && (
-          <>
+          <div key="mobile-menu-overlay">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -114,7 +114,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                 </form>
               </div>
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
     </>
