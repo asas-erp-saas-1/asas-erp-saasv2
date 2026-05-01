@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { Handshake, AlertTriangle, Clock, ChevronRight, Plus, Search, Filter } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
@@ -31,12 +32,14 @@ function fmt(n: number): string {
 
 // ─── Deal row ─────────────────────────────────────────────────────────────────
 function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boolean; onSelect: () => void }) {
-  const pct = deal.agreed_price > 0
-    ? Math.round((deal.total_payments_received / deal.agreed_price) * 100)
+  const agreedPrice = (deal as any).agreed_price || (deal as any).amount || 0;
+  const paymentsReceived = (deal as any).total_payments_received || 0;
+  const pct = agreedPrice > 0
+    ? Math.round((paymentsReceived / agreedPrice) * 100)
     : 0
 
   const isOverdue = deal.next_action_due && new Date(deal.next_action_due) < new Date()
-    && !['closed', 'cancelled'].includes(deal.status)
+    && !['closed', 'cancelled'].includes(deal.status || '')
 
   return (
     <motion.div
@@ -68,7 +71,7 @@ function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boole
           )}
         </div>
         <div className="flex items-center gap-4 mt-2">
-          <span className="text-sm font-bold text-gray-300">{fmt(deal.agreed_price)}</span>
+          <span className="text-sm font-bold text-gray-300">{fmt(agreedPrice)}</span>
           {deal.next_action && (
             <span className={clsx('text-[10px] uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md border', isOverdue ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-gray-800 text-gray-400 border-gray-700')}>
               {isOverdue && <AlertTriangle className="h-3 w-3" />}
@@ -96,8 +99,8 @@ function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boole
       </div>
 
       {/* Status badge */}
-      <span className={clsx('px-3 py-1 rounded-md border text-[10px] font-bold shrink-0 uppercase tracking-widest', STATUS_STYLE[deal.status])}>
-        {deal.status.replace('_', ' ')}
+      <span className={clsx('px-3 py-1 rounded-md border text-[10px] font-bold shrink-0 uppercase tracking-widest', STATUS_STYLE[deal.status || 'draft'])}>
+        {(deal.status || 'draft').replace('_', ' ')}
       </span>
 
       <ChevronRight className={clsx('h-5 w-5 shrink-0 transition-transform', isSelected ? 'text-white translate-x-1' : 'text-gray-600 group-hover:text-gray-400')} />
@@ -107,6 +110,7 @@ function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boole
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function DealsPage() {
+  const router = useRouter()
   const [deals,      setDeals]       = useState<Deal[]>([])
   const [total,      setTotal]       = useState(0)
   const [loading,    setLoading]     = useState(true)
@@ -159,7 +163,7 @@ export default function DealsPage() {
               </h1>
               <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1.5 hidden sm:block">{total} actives sur le réseau</p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-black rounded-full text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95 shrink-0">
+            <button onClick={() => router.push('/dashboard/deals/new')} className="flex items-center gap-2 px-4 py-2.5 bg-white text-black rounded-full text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95 shrink-0">
               <Plus className="h-4 w-4" strokeWidth={2.5} /> Initier Deal
             </button>
           </div>

@@ -1,19 +1,6 @@
 import { Client } from '@upstash/qstash';
 
-const isConfigured = !!process.env.QSTASH_TOKEN;
-
-// Local mock if missing config
-class MockQStash {
-  async publishJSON(args: { url: string, body: any, headers?: Record<string, string>, delay?: number | string }) {
-    console.log(`[Mock QStash] Publishing to ${args.url}`, args.body);
-    // In a real environment, we'd trigger a local fetch or just print
-    return { messageId: 'mock-id' };
-  }
-}
-
-export const qstash = isConfigured
-  ? new Client({ token: process.env.QSTASH_TOKEN! })
-  : (new MockQStash() as unknown as Client);
+export const qstash = new Client({ token: process.env.QSTASH_TOKEN || 'MISSING_TOKEN' });
 
 export class QueueService {
   /**

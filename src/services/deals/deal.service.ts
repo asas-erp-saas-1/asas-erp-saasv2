@@ -7,6 +7,16 @@ export class DealService {
     });
   }
 
+  static async createDeal(data: { title: string; dealValue: number; leadId?: string }) {
+    return await kernel.mutate('deals', 'INSERT', {
+      title: data.title,
+      amount: data.dealValue,
+      lead_id: data.leadId || null,
+      stage: 'prospect',
+      probability: 10,
+    });
+  }
+
   static async moveDealStage(dealId: string, newStage: string) {
     return await kernel.mutate('deals', 'UPDATE', {
       stage: newStage

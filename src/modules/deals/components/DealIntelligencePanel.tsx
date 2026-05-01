@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText } from 'lucide-react'
 import { clsx } from 'clsx'
+import { ErrorTracker } from '@/lib/observability/errors'
 
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [deal, setDeal] = useState<any>(null)
@@ -14,7 +15,11 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
     fetch(`/api/deals?id=${dealId}`)
       .then(r => r.json())
       .then(d => {
-        setDeal(d.data?.[0])
+        setDeal(d.data?.[0] || d.data || null)
+        setLoading(false)
+      })
+      .catch((err) => {
+        ErrorTracker.captureError(err, { context: 'DealIntelligencePanel fetch' })
         setLoading(false)
       })
   }, [dealId])
@@ -37,6 +42,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   }
 
   const isCritical = deal.risk_level === 'critical' || deal.risk_level === 'high'
+  const agreedPrice = deal.agreed_price || deal.amount || 0
+  const paymentsReceived = deal.total_payments_received || 0
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
@@ -68,16 +75,16 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
               <DollarSign className="w-4 h-4 text-gray-500" /> Montant total convenu
             </p>
             <p className="text-3xl font-bold text-white">
-              {(deal.agreed_price / 1_000_000).toFixed(1)} <span className="text-lg text-gray-600 font-medium">M DZD</span>
+              {(agreedPrice / 1_000_000).toFixed(1)} <span className="text-lg text-gray-600 font-medium">M DZD</span>
             </p>
             <div className="mt-3 w-full bg-[#171717] h-1.5 rounded-full overflow-hidden">
               <div 
-                className={clsx("h-full rounded-full transition-all duration-1000", deal.total_payments_received >= deal.agreed_price ? 'bg-emerald-500' : 'bg-blue-500')} 
-                style={{ width: `${Math.min((deal.total_payments_received / deal.agreed_price) * 100, 100)}%` }}
+                className={clsx("h-full rounded-full transition-all duration-1000", paymentsReceived >= agreedPrice ? 'bg-emerald-500' : 'bg-blue-500')} 
+                style={{ width: `${Math.min((paymentsReceived / (agreedPrice || 1)) * 100, 100)}%` }}
               />
             </div>
             <p className="text-xs text-gray-500 mt-2 font-medium">
-              {(deal.total_payments_received / 1_000_000).toFixed(1)}M payé • {((deal.agreed_price - deal.total_payments_received) / 1_000_000).toFixed(1)}M restant
+              {(paymentsReceived / 1_000_000).toFixed(1)}M payé • {((agreedPrice - paymentsReceived) / 1_000_000).toFixed(1)}M restant
             </p>
           </div>
           
@@ -173,7 +180,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
            <div className="mt-6 p-4 bg-[#0A0A0A] rounded-xl border border-white/5">
              <div className="flex justify-between items-center mb-2">
                <span className="text-sm text-gray-500 font-medium">Estimation Commission</span>
-               <span className="text-lg font-bold text-white">{((deal.agreed_price * 0.03) / 1000).toFixed(1)}k DZD</span>
+               <span className="text-lg font-bold text-white">{((agreedPrice * 0.03) / 1000).toFixed(1)}k DZD</span>
              </div>
              <div className="w-full h-1.5 bg-[#171717] rounded-full overflow-hidden">
                <div className="h-full bg-blue-500 rounded-full w-1/4 opacity-50 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
