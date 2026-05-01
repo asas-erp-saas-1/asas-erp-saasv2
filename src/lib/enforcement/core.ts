@@ -4,6 +4,7 @@ import { RuntimeGuard } from './runtime-guard';
 import { Logger } from '../observability/logger';
 import { Metrics } from '../observability/metrics';
 import { ErrorTracker } from '../observability/errors';
+import { RateLimiter } from '../scaling/rate-limiter';
 
 export function enforceExecution(kernelCore: IKernel): IKernel {
   return {
@@ -26,6 +27,13 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
       const start = Date.now();
       try {
         const identity = await kernelCore.identity();
+        
+        // Rate limiting logic
+        const isAllowed = await RateLimiter.checkLimit(identity.tenantId, `db_read_${tableName}`, 500, 60);
+        if (!isAllowed) {
+          throw new Error('RATE_LIMIT_EXCEEDED');
+        }
+
         const safeOptions = QueryInterceptor.interceptRead(tableName, options, identity);
         
         Logger.info(`Executing Kernel Query`, { tenantId: identity.tenantId, userId: identity.userId, table: tableName });
@@ -51,6 +59,13 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
       const start = Date.now();
       try {
         const identity = await kernelCore.identity();
+
+        // Rate limiting logic
+        const isAllowed = await RateLimiter.checkLimit(identity.tenantId, `db_mutate_${tableName}`, 200, 60);
+        if (!isAllowed) {
+          throw new Error('RATE_LIMIT_EXCEEDED');
+        }
+
         const safeData = QueryInterceptor.interceptMutation(tableName, action, data, identity);
         
         let safeMatch = match || {};
