@@ -1,9 +1,15 @@
 import { redis } from './redis';
+import { Metrics } from '../observability/metrics';
 
 export class CacheService {
   static async get<T>(tenantId: string, key: string): Promise<T | null> {
     const cacheKey = `tenant:${tenantId}:${key}`;
-    return await redis.get<T>(cacheKey);
+    const result = await redis.get<T>(cacheKey);
+    
+    // Log hit/miss explicitly
+    await Metrics.recordCacheHitRate(tenantId, result !== null);
+
+    return result;
   }
 
   static async set(tenantId: string, key: string, value: any, ttlSeconds: number = 3600): Promise<void> {

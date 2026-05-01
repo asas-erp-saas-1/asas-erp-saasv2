@@ -1,25 +1,43 @@
 import { IKernel, KernelIdentity } from '../kernel/core';
 import { QueryInterceptor } from './query-interceptor';
 import { RuntimeGuard } from './runtime-guard';
+import { Logger } from '../observability/logger';
+import { Metrics } from '../observability/metrics';
+import { ErrorTracker } from '../observability/errors';
 
 export function enforceExecution(kernelCore: IKernel): IKernel {
   return {
     identity: async (): Promise<KernelIdentity> => {
-      // Must resolve identity using the core
-      const id = await kernelCore.identity();
-      if (!id || !id.tenantId) {
-        RuntimeGuard.triggerViolation('Identity engine failed to provide secure tenant context.');
+      try {
+        const id = await kernelCore.identity();
+        if (!id || !id.tenantId) {
+          RuntimeGuard.triggerViolation('Identity engine failed to provide secure tenant context.');
+        }
+        return id;
+      } catch (error) {
+        ErrorTracker.captureError(error, { context: 'kernel.identity' });
+        throw error;
       }
-      return id;
     },
 
     query: async <T>(tableName: string, options?: any): Promise<T[]> => {
       RuntimeGuard.assertKernelExecution();
       
-      const identity = await kernelCore.identity();
-      const safeOptions = QueryInterceptor.interceptRead(tableName, options, identity);
-      
-      return await kernelCore.query<T>(tableName, safeOptions);
+      const start = Date.now();
+      try {
+        const identity = await kernelCore.identity();
+        const safeOptions = QueryInterceptor.interceptRead(tableName, options, identity);
+        
+        Logger.info(`Executing Kernel Query`, { tenantId: identity.tenantId, userId: identity.userId, table: tableName });
+        
+        const result = await kernelCore.query<T>(tableName, safeOptions);
+        
+        Metrics.recordQueryPerformance(identity.tenantId, tableName, Date.now() - start);
+        return result;
+      } catch (error) {
+        ErrorTracker.captureError(error, { context: 'kernel.query', table: tableName });
+        throw error;
+      }
     },
 
     mutate: async <T>(
@@ -30,46 +48,57 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
     ): Promise<T> => {
       RuntimeGuard.assertKernelExecution();
       
-      const identity = await kernelCore.identity();
-      const safeData = QueryInterceptor.interceptMutation(tableName, action, data, identity);
-      
-      // Enforce tenant scoping on the MATCH block for UPDATE/DELETE
-      let safeMatch = match || {};
-      if (action !== 'INSERT') {
-        safeMatch = { ...safeMatch, tenant_id: identity.tenantId };
+      const start = Date.now();
+      try {
+        const identity = await kernelCore.identity();
+        const safeData = QueryInterceptor.interceptMutation(tableName, action, data, identity);
+        
+        let safeMatch = match || {};
+        if (action !== 'INSERT') {
+          safeMatch = { ...safeMatch, tenant_id: identity.tenantId };
+        }
+
+        Logger.info(`Executing Kernel Mutate`, { tenantId: identity.tenantId, userId: identity.userId, action, table: tableName });
+
+        const result = await kernelCore.mutate<T>(tableName, action, safeData, safeMatch);
+        
+        Metrics.recordQueryPerformance(identity.tenantId, tableName, Date.now() - start);
+        
+        logExecutionAudit({
+          timestamp: new Date().toISOString(),
+          userId: identity.userId,
+          tenantId: identity.tenantId,
+          action: action,
+          route: tableName,
+          kernelUsed: true,
+          enforcementPassed: true
+        });
+
+        return result;
+      } catch (error) {
+        ErrorTracker.captureError(error, { context: 'kernel.mutate', table: tableName, action });
+        throw error;
       }
-
-      const result = await kernelCore.mutate<T>(tableName, action, safeData, safeMatch);
-      
-      // Asynchronous Audit Logging Hook
-      logExecutionAudit({
-        timestamp: new Date().toISOString(),
-        userId: identity.userId,
-        tenantId: identity.tenantId,
-        action: action,
-        route: tableName,
-        kernelUsed: true,
-        enforcementPassed: true
-      });
-
-      return result;
     },
 
     transaction: async <T>(
       callback: (txKernel: Omit<IKernel, 'transaction'>) => Promise<T>
     ): Promise<T> => {
       RuntimeGuard.assertKernelExecution();
-      // Wraps the entire transaction inside the enforced execution context
-      return await kernelCore.transaction(async (txCore) => {
-        // Enforce the execution of inner transaction actions
-        const enforcedTxBlock = enforceExecution(txCore as IKernel);
-        return await callback(enforcedTxBlock);
-      });
+      try {
+        Logger.info(`Starting Kernel Transaction`);
+        return await kernelCore.transaction(async (txCore) => {
+          const enforcedTxBlock = enforceExecution(txCore as IKernel);
+          return await callback(enforcedTxBlock);
+        });
+      } catch (error) {
+        ErrorTracker.captureError(error, { context: 'kernel.transaction' });
+        throw error;
+      }
     }
   };
 }
 
 function logExecutionAudit(event: any) {
-  // Simulates pushing to a secure internal audit queue or DB table
-  console.log('[EEL: AUDIT]', JSON.stringify(event));
+  Logger.info('Audit Event Logged', event);
 }

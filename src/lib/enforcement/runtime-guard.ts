@@ -1,3 +1,5 @@
+import { ErrorTracker } from '../observability/errors';
+
 export class RuntimeGuard {
   static assertKernelExecution() {
     const err = new Error();
@@ -16,6 +18,7 @@ export class RuntimeGuard {
   }
 
   static triggerViolation(reason: string) {
+    ErrorTracker.captureRejection(reason);
     console.error(`[EEL: FATAL] ${reason}`);
     throw new Error(`ENFORCEMENT_VIOLATION: ${reason}`);
   }
