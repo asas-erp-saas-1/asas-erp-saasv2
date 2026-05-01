@@ -1,23 +1,46 @@
 import { kernel } from '@/lib/kernel/core';
+import { Logger } from '@/lib/observability/logger';
 
 export type PlanType = 'basic' | 'pro' | 'elite';
+export type InvoiceStatus = 'draft' | 'open' | 'paid' | 'uncollectible' | 'void';
 
 export class BillingService {
   static async getSubscription(tenantId: string) {
     const subs = await kernel.query<any>('subscriptions', {
-      filters: { tenant_id: tenantId }
+      filters: { tenant_id: tenantId, status: 'active' },
+      orderBy: { column: 'created_at', ascending: false },
+      limit: 1
     });
     return subs.length > 0 ? subs[0] : null;
   }
 
-  static async createInvoice(tenantId: string, amount: number, description: string) {
-    await kernel.mutate('invoices', 'INSERT', {
-      tenant_id: tenantId,
+  static async generateDraftInvoice(tenantId: string, amount: number, description: string) {
+    Logger.info('Generating draft invoice', { tenantId, amount });
+    return await kernel.mutate<any>('invoices', 'INSERT', {
       amount,
       description,
-      status: 'pending',
+      status: 'draft',
+      currency: 'DZD',
       created_at: new Date().toISOString()
     });
+  }
+
+  static async finalizeInvoice(invoiceId: string, dueDate: Date) {
+    Logger.info('Finalizing invoice (draft -> open)', { invoiceId });
+    return await kernel.mutate<any>('invoices', 'UPDATE', {
+      status: 'open',
+      due_date: dueDate.toISOString(),
+      updated_at: new Date().toISOString()
+    }, { id: invoiceId, status: 'draft' });
+  }
+
+  static async markInvoicePaid(invoiceId: string) {
+    Logger.info('Marking invoice as paid', { invoiceId });
+    return await kernel.mutate<any>('invoices', 'UPDATE', {
+      status: 'paid',
+      paid_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }, { id: invoiceId });
   }
 
   static async chargeMonthly(tenantId: string) {
@@ -27,18 +50,22 @@ export class BillingService {
 
       let amount = 0;
       switch (sub.plan) {
-        case 'basic': amount = 49; break;
-        case 'pro': amount = 99; break;
-        case 'elite': amount = 299; break;
+        case 'basic': amount = 4900; break;
+        case 'pro': amount = 9900; break;
+        case 'elite': amount = 29900; break;
       }
 
-      await tx.mutate('invoices', 'INSERT', {
-        tenant_id: tenantId,
+      // Generate invoice
+      const invoice = await tx.mutate<any>('invoices', 'INSERT', {
         amount,
-        description: `${String(sub.plan).toUpperCase()} Plan - Monthly`,
-        status: 'pending',
-        created_at: new Date().toISOString()
+        description: `${String(sub.plan).toUpperCase()} Plan - Monthly Subscription`,
+        status: 'open',
+        currency: 'DZD',
+        created_at: new Date().toISOString(),
+        due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // due in 7 days
       });
+      
+      Logger.info(`Monthly subscription invoice created`, { tenantId, invoiceId: invoice.id });
     });
   }
 }

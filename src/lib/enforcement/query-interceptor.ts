@@ -1,5 +1,6 @@
 import { KernelIdentity } from '../kernel/core';
 import { RuntimeGuard } from './runtime-guard';
+import { QueryOptimizer } from '../scaling/query-optimizer';
 
 export class QueryInterceptor {
   static interceptRead(tableName: string, options: any, identity: KernelIdentity) {
@@ -19,10 +20,12 @@ export class QueryInterceptor {
       scopedFilters['assigned_to'] = identity.userId;
     }
 
-    return {
+    const safeOptions = {
       ...options,
       filters: scopedFilters
     };
+
+    return QueryOptimizer.optimize(safeOptions);
   }
 
   static interceptMutation(tableName: string, action: string, data: any, identity: KernelIdentity) {
