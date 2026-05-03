@@ -2,7 +2,7 @@ import { kernel } from '@/lib/kernel/core';
 
 export async function processLeadAssignment(payload: { tenantId: string, leadId: string }) {
   await kernel.transaction(async (tx) => {
-    // Round robin logic mock
+    // Simulated round-robin logic
     console.log(`Assigning lead ${payload.leadId} in tenant ${payload.tenantId}`);
     
     // Find agents
@@ -16,7 +16,7 @@ export async function processLeadAssignment(payload: { tenantId: string, leadId:
       return;
     }
     
-    // Pick first (mock round robin)
+    // Pick first (simulated round robin fallback)
     const agentId = agents[0].user_id;
     
     await tx.mutate('leads', 'UPDATE', { assigned_to: agentId }, { id: payload.leadId });

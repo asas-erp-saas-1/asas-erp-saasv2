@@ -70,8 +70,14 @@ export default function SettingsPage() {
 
   useEffect(() => {
     fetch('/api/config')
-      .then(r => r.json())
+      .then(async r => {
+        if (!r.ok) throw new Error(await r.text() || 'Failed to fetch config');
+        return r.json();
+      })
       .then(d => setConfig(d))
+      .catch(err => {
+        import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(err, { context: 'SettingsPage load' }))
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -89,7 +95,10 @@ export default function SettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(config),
       })
-      if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000) }
+      if (!res.ok) throw new Error(await res.text() || 'Failed to save config')
+      setSaved(true); setTimeout(() => setSaved(false), 3000)
+    } catch (err: any) {
+      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(err, { context: 'SettingsPage save' }))
     } finally {
       setSaving(false)
     }

@@ -16,8 +16,8 @@ export function AICommandCenter() {
            const data = await res.json()
            setPriorityQueue(data)
         }
-      } catch (e) {
-        console.error(e)
+      } catch (e: any) {
+        import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'AICommandCenter load' }))
       } finally {
         setLoading(false)
       }

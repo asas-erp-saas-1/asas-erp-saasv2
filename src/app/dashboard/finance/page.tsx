@@ -39,6 +39,8 @@ export default function FinancePage() {
         ])
         if (cashRes.ok) setCash(await cashRes.json())
         if (agingRes.ok) setAging(await agingRes.json())
+      } catch (err: any) {
+        import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(err, { context: 'FinancePage load' }))
       } finally {
         setLoading(false)
       }

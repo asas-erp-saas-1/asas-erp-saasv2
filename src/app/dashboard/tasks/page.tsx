@@ -60,9 +60,11 @@ export default function TasksPage() {
     async function load() {
       try {
         const res  = await fetch('/api/tasks?status=pending&status=in_progress&limit=100')
+        if (!res.ok) throw new Error('Failed to load tasks');
         const data = await res.json()
         setTasks(data.data ?? data ?? [])
-      } catch {
+      } catch (e: any) {
+        import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'Tasks load' }))
         setTasks([])
       } finally {
         setLoading(false)
@@ -72,8 +74,15 @@ export default function TasksPage() {
   }, [])
 
   async function markDone(id: string) {
+    const backup = [...tasks];
     setTasks(ts => ts.map(t => t.id === id ? { ...t, status: 'done' as const, done_at: new Date().toISOString() } : t))
-    await fetch(`/api/tasks/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'done' }) })
+    try {
+      const res = await fetch(`/api/tasks/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'done' }) })
+      if (!res.ok) throw new Error('Failed to mark task done');
+    } catch (e: any) {
+      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'Tasks markDone' }))
+      setTasks(backup); // Revert optimistic UI
+    }
   }
 
   const today   = new Date().toISOString().split('T')[0]!

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Users, Plus, Search, Phone, Mail, ChevronRight, Globe, FileUser } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
+import { ErrorTracker } from '@/lib/observability/errors'
 
 interface Client {
   id: string; full_name: string; phone: string | null; email: string | null
@@ -30,8 +31,16 @@ export default function ClientsPage() {
     if (type)   params.set('type', type)
     setLoading(true)
     fetch(`/api/clients?${params}`)
-      .then(r => r.json())
+      .then(async r => {
+        if (!r.ok) throw new Error(await r.text() || 'Failed to fetch clients');
+        return r.json();
+      })
       .then(d => { setClients(d.data ?? []); setTotal(d.count ?? 0) })
+      .catch(err => {
+        ErrorTracker.captureError(err, { context: 'ClientsPage fetch' });
+        setClients([]);
+        setTotal(0);
+      })
       .finally(() => setLoading(false))
   }, [search, type])
 

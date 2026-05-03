@@ -101,9 +101,12 @@ export default function PropertiesPage() {
       if (search)       params.set('q',      search)
 
       const res  = await fetch(`/api/properties?${params}`)
+      if (!res.ok) throw new Error(await res.text() || 'Failed to open properties')
       const data = await res.json()
       setProperties(data.data ?? [])
       setTotal(data.count ?? 0)
+    } catch (e: any) {
+      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'PropertiesPage load' }))
     } finally { setLoading(false) }
   }, [page, statusFilter, typeFilter, search])
 

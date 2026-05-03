@@ -28,7 +28,7 @@ export function CEODashboard({ initialMetrics }: { initialMetrics?: any }) {
         setLoading(false)
       })
       .catch((err) => {
-        console.error("Failed to load metrics", err)
+        import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(err, { context: 'CEODashboard load' }));
         setLoading(false)
       })
   }, [initialMetrics])

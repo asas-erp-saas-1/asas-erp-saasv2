@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { Users, Plus, Search, Phone, MessageCircle, Clock, ArrowRight } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { Lead } from '@/types/app'
@@ -119,6 +120,8 @@ export default function LeadsPage() {
   const [search,  setSearch]  = useState('')
   const [total,   setTotal]   = useState(0)
 
+  const router = useRouter()
+
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -135,7 +138,7 @@ export default function LeadsPage() {
 
   async function handleConvert(leadId: string) {
     // Navigate to new deal form pre-filled with lead
-    window.location.href = `/dashboard/deals/new?leadId=${leadId}`
+    router.push(`/dashboard/deals/new?leadId=${leadId}`)
   }
 
   // Filter by search

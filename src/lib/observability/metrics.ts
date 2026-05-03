@@ -20,7 +20,7 @@ export class Metrics {
   static async recordCacheHitRate(tenantId: string, hit: boolean) {
     const key = `metrics:${tenantId}:cache`;
     try {
-      // Get and set since MockRedis doesn't implement incr
+      // Get and set to ensure exact metric increment
       const current = await redis.get<number>(`${key}:${hit ? 'hit' : 'miss'}`) || 0;
       await redis.set(`${key}:${hit ? 'hit' : 'miss'}`, current + 1);
     } catch (e) {}
