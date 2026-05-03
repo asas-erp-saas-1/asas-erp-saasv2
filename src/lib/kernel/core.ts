@@ -1,5 +1,6 @@
 import { enforceExecution } from '../enforcement/core';
-import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export type KernelIdentity = {
   userId: string;
@@ -30,27 +31,60 @@ export interface IKernel {
   ): Promise<T>;
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: { persistSession: false }
-});
+async function getSupabaseClient() {
+  const cookieStore = await cookies();
+  
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet: any[]) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              (cookieStore as any).set(name, value, options);
+            });
+          } catch (_) { /* Middleware handles actual cookie setting */ }
+        },
+      },
+    }
+  );
+}
 
 const kernelCore: IKernel = {
   identity: async (): Promise<KernelIdentity> => {
+    const supabase = await getSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('Unauthorized');
+    }
+    
+    // We should fetch the tenant from the profiles table using `agency_id` mapping.
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('agency_id, role')
+      .eq('id', user.id)
+      .single();
+
     return {
-      userId: 'system',
-      tenantId: 'default-tenant',
-      role: 'owner',
-      sessionId: 'system',
+      userId: user.id,
+      tenantId: profile?.agency_id || 'default-tenant',
+      role: profile?.role || 'agent',
+      sessionId: 'session',
       deviceId: 'server'
     };
   },
   query: async <T>(tableName: string, options?: QueryOptions): Promise<T[]> => {
+    const supabase = await getSupabaseClient();
     let q = supabase.from(tableName).select(options?.select || '*');
     if (options?.filters) {
       for (const [k, v] of Object.entries(options.filters)) {
-        q = q.eq(k, v);
+        if (v === null) q = q.is(k, null);
+        else q = q.eq(k, v);
       }
     }
     if (options?.orderBy) {
@@ -69,6 +103,7 @@ const kernelCore: IKernel = {
     data: any, 
     match?: Record<string, any>
   ): Promise<T> => {
+    const supabase = await getSupabaseClient();
     let q = supabase.from(tableName);
     let result;
     

@@ -5,30 +5,34 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = Number(searchParams.get('limit')) || 50;
+    const view = searchParams.get('view');
 
-    // Fetch agents from tenant_members or users
-    const agents = await kernel.query<any>('tenant_members', {
-      select: 'user_id, role',
-      filters: { role: 'agent' },
-      limit
+    const performances = await kernel.query<any>('vw_agent_performance', {
+      limit,
+      orderBy: { column: 'closed_deals', ascending: false }
     });
 
-    // We can mock the rankings for now, but ideally we'd join with metrics
-    // As in standard ERP
-    const rankings = agents.map((agent, index) => ({
-      agentId: agent.user_id,
-      agentName: `Agent ${agent.user_id.substring(0, 4)}`, // Mock name
+    const rankings = performances.map((perf, index) => ({
+      agentId: perf.agent_id,
+      agentName: perf.agent_name,
       tier: index === 0 ? 'Elite' : index === 1 ? 'Gold' : index === 2 ? 'Silver' : index === 3 ? 'Bronze' : 'Starter',
       rank: index + 1,
       rankDelta: 0,
-      performanceScore: 100 - (index * 5),
-      closedDeals: 10 - index,
-      activeDeals: 5 + index,
-      totalRevenue: 5000000 - (index * 100000),
-      commissionEarned: 150000 - (index * 5000),
-      closingRatePct: 25 - index,
-      avgDealSize: 500000
+      performanceScore: perf.closed_deals * 10 + perf.active_deals * 5,
+      closedDeals: perf.closed_deals,
+      activeDeals: perf.active_deals,
+      totalRevenue: perf.total_revenue || 0,
+      commissionEarned: perf.total_commission || 0,
+      closingRatePct: perf.total_deals > 0 ? (perf.closed_deals / perf.total_deals) * 100 : 0,
+      avgDealSize: perf.closed_deals > 0 ? (perf.total_revenue / perf.closed_deals) : 0
     }));
+
+    if (view === 'snapshot') {
+      const agentId = searchParams.get('agentId');
+      if (agentId) {
+        return NextResponse.json(rankings.find(r => r.agentId === agentId) || null);
+      }
+    }
 
     return NextResponse.json({ rankings });
   } catch (error: any) {

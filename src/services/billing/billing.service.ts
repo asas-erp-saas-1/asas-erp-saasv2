@@ -6,8 +6,8 @@ export type InvoiceStatus = 'draft' | 'open' | 'paid' | 'uncollectible' | 'void'
 
 export class BillingService {
   static async getSubscription(tenantId: string) {
-    const subs = await kernel.query<any>('subscriptions', {
-      filters: { tenant_id: tenantId, status: 'active' },
+    const subs = await kernel.query<any>('agencies', {
+      filters: { id: tenantId },
       orderBy: { column: 'created_at', ascending: false },
       limit: 1
     });

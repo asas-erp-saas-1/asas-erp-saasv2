@@ -1,9 +1,8 @@
 // src/app/dashboard/layout.tsx
-import { getSystemContext } from '@/lib/system-context'
 import { redirect } from 'next/navigation'
 import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2 } from 'lucide-react'
 import Link from 'next/link'
-
+import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
 const NAV = [
   { href: '/dashboard/overview',   label: 'Vue d\'ensemble',    Icon: LayoutGrid  },
@@ -19,17 +18,32 @@ const NAV = [
 ]
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const sysCtx = getSystemContext()
-
-  // Mocking profile for layout
-  const profile = {
-    full_name: 'System Admin',
-    role: sysCtx.role,
+  let profile = {
+    full_name: 'Unknown User',
+    role: 'agent',
     avatar_url: null,
   };
+  let identity;
 
-  const roleDisplay = 'CEO / Admin';
-  const initial = 'S';
+  try {
+    identity = await kernel.identity();
+    const profiles = await kernel.query<any>('profiles', {
+      filters: { id: identity.userId, agency_id: identity.tenantId }
+    });
+    if (profiles && profiles.length > 0) {
+      profile = {
+        ...profiles[0],
+        role: identity.role
+      };
+    }
+  } catch (error) {
+    // If auth fails, we probably should redirect to login
+    // redirect('/login');
+    console.error('Failed to resolve identity in layout', error);
+  }
+
+  const roleDisplay = profile.role === 'owner' ? 'CEO / Admin' : profile.role;
+  const initial = profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U';
 
   return (
     <div className="flex bg-[#0A0A0A] h-[100dvh] overflow-hidden selection:bg-blue-500/30 selection:text-white font-sans text-gray-100">

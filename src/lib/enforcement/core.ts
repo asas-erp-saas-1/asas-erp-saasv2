@@ -70,7 +70,7 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
         
         let safeMatch = match || {};
         if (action !== 'INSERT') {
-          safeMatch = { ...safeMatch, tenant_id: identity.tenantId };
+          safeMatch = { ...safeMatch, agency_id: identity.tenantId };
         }
 
         Logger.info(`Executing Kernel Mutate`, { tenantId: identity.tenantId, userId: identity.userId, action, table: tableName });

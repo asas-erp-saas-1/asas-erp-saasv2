@@ -126,9 +126,12 @@ export default function LeadsPage() {
     setLoading(true)
     try {
       const res  = await fetch('/api/leads?limit=100')
+      if (!res.ok) throw new Error(await res.text() || 'Failed to fetch leads')
       const data = await res.json()
       setLeads(data.data ?? [])
       setTotal(data.count ?? 0)
+    } catch (err: any) {
+      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(err, { context: 'LeadsPage load' }))
     } finally {
       setLoading(false)
     }
@@ -170,8 +173,8 @@ export default function LeadsPage() {
       // Background update via Server Action
       const { updateLeadStatusAction } = await import('@/actions/leadActions')
       await updateLeadStatusAction(draggableId, newStatus)
-    } catch (e) {
-      console.error(e)
+    } catch (e: any) {
+      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'LeadsPage dragEnd' }))
       // Revert on error
       load()
     }

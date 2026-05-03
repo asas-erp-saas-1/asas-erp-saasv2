@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 
 // This middleware runs on the Vercel Edge Network / Cloudflare Workers
 // It intercepts requests to enforce tenant resolution based on subdomains or headers.
@@ -7,7 +8,7 @@ import type { NextRequest } from 'next/server';
 const ALLOWED_ENVIRONMENTS = ['development', 'staging', 'production'];
 const CURRENT_ENV = process.env.NEXT_PUBLIC_APP_ENV || 'development';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // 1. Edge-based multi-region/tenant routing extraction
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || '';
@@ -43,11 +44,36 @@ export function middleware(request: NextRequest) {
   const region = request.headers.get('x-vercel-ip-country') || 'global';
   requestHeaders.set('x-client-region', region);
 
-  const response = NextResponse.next({
+  let response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet: any[]) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+
+  // Authenticate user securely at edge
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (url.pathname.startsWith('/dashboard') && !user) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
 
   // 5. Global Security Headers Enforcements
   response.headers.set('X-Frame-Options', 'DENY');
