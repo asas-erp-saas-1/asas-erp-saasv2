@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { BillingService } from '@/services/billing/billing.service';
 import { kernel } from '@/lib/kernel/core';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const identity = await kernel.identity();

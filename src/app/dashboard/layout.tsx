@@ -17,6 +17,8 @@ const NAV = [
   { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings    },
 ]
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   let profile = {
     full_name: 'Unknown User',
