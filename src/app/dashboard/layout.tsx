@@ -136,9 +136,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </header>
 
         {/* Scrollable Main Area */}
-        <main className="flex-1 overflow-y-auto flex flex-col w-full bg-[#050505] text-white custom-scrollbar relative">
+        <main className="flex-1 overflow-y-auto flex flex-col w-full bg-[#050505] text-white custom-scrollbar relative bg-dot-grid">
           <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-[#0A0A0A] to-transparent pointer-events-none -z-10"></div>
-          <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col">
+          <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col pt-8">
             {children}
           </div>
         </main>

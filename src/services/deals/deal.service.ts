@@ -55,9 +55,10 @@ export class DealService {
     return this.toDTO(deal);
   }
 
-  static async changeDealStatus(dealId: string, status: Database['public']['Enums']['deal_status']) {
+  static async changeDealStatus(dealId: string, status: Database['public']['Enums']['deal_status'], currentVersion: number = 1) {
     const deal = await kernel.mutate<any>('deals', 'UPDATE', {
-      status
+      status,
+      version: currentVersion + 1
     }, { id: dealId });
     return this.toDTO(deal);
   }

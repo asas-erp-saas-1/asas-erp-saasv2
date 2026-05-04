@@ -1,7 +1,18 @@
 'use server';
 
-export async function updateLeadStatusAction(id: string, newStatus: string) {
-  // In reality, this would use the LeadService we just created
-  // e.g: await LeadService.updateStatus(id, newStatus);
-  return { success: true };
+import { LeadService } from '@/services/leads/lead.service';
+import { ErrorTracker } from '@/lib/observability/errors';
+import { revalidatePath } from 'next/cache';
+import { Database } from '@/types/supabase';
+
+export async function updateLeadStatusAction(id: string, newStatus: Database['public']['Enums']['lead_status']) {
+  try {
+    const lead = await LeadService.updateStatus(id, newStatus);
+    revalidatePath('/dashboard/leads');
+    return { success: true, data: lead };
+  } catch (error: any) {
+    ErrorTracker.captureError(error, { context: 'updateLeadStatusAction' });
+    return { success: false, error: error.message };
+  }
 }
+
