@@ -158,7 +158,7 @@ export default function DealsPage() {
         <div className="px-6 py-5 border-b border-white/5 bg-[#0A0A0A] z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
             <div>
-              <h1 className="text-xl font-extrabold text-white flex items-center gap-2 tracking-tight">
+              <h1 className="text-xl font-extrabold text-white flex items-center gap-2 tracking-tight font-display">
                 Transactions
               </h1>
               <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1.5 hidden sm:block">{total} actives sur le réseau</p>
@@ -274,7 +274,7 @@ export default function DealsPage() {
             <div className="absolute inset-0 bg-blue-500/10 blur-xl group-hover:bg-blue-500/20 transition-all"></div>
             <Handshake className="w-10 h-10 text-gray-400 relative z-10" />
           </div>
-          <h2 className="text-2xl font-extrabold text-white mb-2 tracking-tight">Poste de Contrôle</h2>
+          <h2 className="text-2xl font-extrabold text-white mb-2 tracking-tight font-display">Poste de Contrôle</h2>
           <p className="text-sm font-medium text-gray-500 max-w-sm">
             Sélectionnez une entité dans la liste pour accéder aux indicateurs financiers, calculs de risques et actions prédictives.
           </p>

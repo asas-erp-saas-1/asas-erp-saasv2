@@ -65,7 +65,7 @@ function DealForm() {
           <Handshake className="w-6 h-6" strokeWidth={1.5} />
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">Nouvelle Transaction</h1>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight font-display">Nouvelle Transaction</h1>
           <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mt-1">Création de deal</p>
         </div>
       </div>

@@ -186,7 +186,7 @@ export default function LeadsPage() {
       <div className="bg-[#0A0A0A] border-b border-white/5 px-6 py-5 shrink-0 z-10 w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
           <div>
-            <h1 className="text-xl font-extrabold text-white flex items-center gap-3 tracking-tight">
+            <h1 className="text-xl font-extrabold text-white flex items-center gap-3 tracking-tight font-display">
               <Users className="h-5 w-5 text-gray-400" /> Pipeline d'Acquisition
             </h1>
             <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{total} entités actives détectées</p>
