@@ -14,6 +14,7 @@ type QueryOptions = {
   select?: string;
   filters?: Record<string, any>;
   limit?: number;
+  offset?: number;
   orderBy?: { column: string; ascending?: boolean };
 };
 
@@ -70,10 +71,14 @@ const kernelCore: IKernel = {
       .eq('id', user.id)
       .single();
 
+    if (!profile || !profile.agency_id) {
+      throw new Error('Tenant isolation failure: User is not associated with any agency.');
+    }
+
     return {
       userId: user.id,
-      tenantId: profile?.agency_id || 'default-tenant',
-      role: profile?.role || 'agent',
+      tenantId: profile.agency_id,
+      role: profile.role || 'agent',
       sessionId: 'session',
       deviceId: 'server'
     };
@@ -91,7 +96,9 @@ const kernelCore: IKernel = {
       q = q.order(options.orderBy.column, { ascending: options.orderBy.ascending });
     }
     if (options?.limit) {
-      q = q.limit(options.limit);
+      const from = options?.offset || 0;
+      const to = from + options.limit - 1;
+      q = q.range(from, to);
     }
     const { data, error } = await q;
     if (error) throw new Error(`Query failed on ${tableName}: ${error.message}`);

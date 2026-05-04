@@ -59,8 +59,9 @@ export const dealSchema = z.object({
   client_id: z.string().uuid(),
   property_id: z.string().uuid(),
   agreed_price: z.number().positive('Price must be positive'),
+  deal_type: z.enum(['sale', 'rental', 'resale']),
   closing_date: z.string().optional().nullable(),
-  status: z.enum(['active', 'negotiation', 'closed', 'cancelled']).default('active'),
+  status: z.enum(['draft', 'active', 'negotiation', 'closed', 'cancelled']).default('draft'),
 });
 
 export const agencySchema = z.object({
@@ -72,6 +73,18 @@ export const profileSchema = z.object({
   full_name: z.string().min(2, 'Full name is required').max(100),
   role: z.enum(['admin', 'manager', 'agent']),
 });
+
+export const taskSchema = z.object({
+  title: z.string().min(2, 'Title is required').max(200).optional(),
+  description: z.string().max(2000).optional().nullable(),
+  status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']).optional(),
+  due_date: z.string().datetime().optional().nullable(),
+  assigned_to: z.string().uuid().optional().nullable(),
+  client_id: z.string().uuid().optional().nullable(),
+  lead_id: z.string().uuid().optional().nullable(),
+});
+
+export type TaskUpdateInput = z.infer<typeof taskSchema>;
 
 export type LeadCreateInput = z.infer<typeof LeadCreateSchema>;
 export type LeadUpdateInput = z.infer<typeof LeadUpdateSchema>;

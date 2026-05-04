@@ -5,7 +5,16 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
-    const clients = await kernel.query('clients');
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
+    const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
+    const offset = (page - 1) * limit;
+
+    const clients = await kernel.query('clients', {
+      limit,
+      offset,
+      orderBy: { column: 'created_at', ascending: false }
+    });
     return NextResponse.json({ data: clients, count: clients.length });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { DealService } from '@/services/deals/deal.service';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { parseAndValidate, dealSchema, ValidationError } from '@/lib/validators';
 
 export async function GET(request: Request) {
   try {
@@ -20,17 +21,21 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (!body.title || !body.value) {
-      return NextResponse.json({ error: 'Title and value are required' }, { status: 400 });
-    }
+    
+    const validatedData = parseAndValidate(dealSchema, body, 'Deal Create');
+
     const deal = await DealService.createDeal({
-      title: body.title,
-      dealValue: body.value,
-      leadId: body.leadId,
+      clientId: validatedData.client_id,
+      propertyId: validatedData.property_id,
+      agreedPrice: validatedData.agreed_price,
+      dealType: validatedData.deal_type,
     });
     return NextResponse.json({ data: deal });
   } catch (error: any) {
     ErrorTracker.captureError(error, { context: 'POST /api/deals' });
+    if (error instanceof ValidationError) {
+      return NextResponse.json({ error: error.message, details: error.field }, { status: 400 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
