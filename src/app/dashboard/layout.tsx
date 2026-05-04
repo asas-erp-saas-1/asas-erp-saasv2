@@ -89,9 +89,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           </div>
           
-          <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#A3A3A3] bg-[#171717] border border-[#262626] rounded-xl transition-all cursor-not-allowed opacity-50" title="Disabled in system context mode">
+          <form action="/auth/signout" method="post">
+            <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#A3A3A3] hover:text-[#EF4444] bg-[#171717] hover:bg-[#EF4444]/10 border border-[#262626] hover:border-[#EF4444]/20 rounded-xl transition-all">
               <LogOut className="h-4 w-4" strokeWidth={2} /> Déconnexion
-            </div>
+            </button>
+          </form>
         </div>
       </aside>
 
