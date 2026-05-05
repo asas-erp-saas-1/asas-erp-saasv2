@@ -6,9 +6,18 @@ export async function POST(request: Request) {
   const requestUrl = new URL(request.url)
   const cookieStore = await cookies()
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+
+  if (supabaseUrl === 'https://placeholder.supabase.co') {
+    return NextResponse.redirect(new URL('/login', requestUrl.origin), {
+      status: 303,
+    })
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {

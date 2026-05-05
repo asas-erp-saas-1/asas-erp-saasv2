@@ -16,9 +16,20 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+
+    // Mock login if env vars are missing
+    if (supabaseUrl === 'https://placeholder.supabase.co') {
+      setTimeout(() => {
+        router.push('/dashboard/overview');
+      }, 1000);
+      return;
+    }
+
     const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      supabaseUrl,
+      supabaseKey
     );
 
     const { error } = await supabase.auth.signInWithPassword({

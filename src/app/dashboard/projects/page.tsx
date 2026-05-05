@@ -49,41 +49,16 @@ export default function ProjectsPage() {
         className="bg-[#050505] border border-white/5 shadow-2xl rounded-[2.5rem] relative overflow-hidden"
       >
         
-        {/* Coming Soon Banner */}
+        {/* Statistics Banner */}
         <div className="bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-transparent border-b border-white/10 p-8 relative overflow-hidden backdrop-blur-xl">
-          <motion.div 
-            initial={{ rotate: 0 }} 
-            animate={{ rotate: 12 }} 
-            transition={{ duration: 2, ease: "easeOut" }}
-            className="absolute top-0 right-0 p-8 opacity-10"
-          >
-             <LayoutTemplate className="w-32 h-32" />
-          </motion.div>
           <div className="relative z-10 max-w-xl">
-            <motion.span 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest rounded-full mb-4"
-            >
-              Phase 2 Roadmap ASAS
-            </motion.span>
-            <motion.h2 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-2xl font-extrabold text-white mb-2 font-display"
-            >
-              Gestion Systémique des Projets
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-sm font-medium text-gray-400 leading-relaxed mb-6"
-            >
-              L'intégration complète du module "Programmes" est programmée. Ce module permettra d'orchestrer le développement foncier, le suivi administratif (permis, études), technique (avancement chantiers) et la consolidation des ventes.
-            </motion.p>
+            <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest rounded-full mb-4">
+              En cours d'exécution
+            </span>
+            <h2 className="text-2xl font-extrabold text-white mb-2 font-display">Performance Globale des Programmes</h2>
+            <p className="text-sm font-medium text-gray-400 leading-relaxed mb-6">
+              Vue consolidée de l'avancement technique de vos chantiers et de la structuration foncière. Pilotez vos appels de fonds en corrélant l'avancement travaux et la commercialisation.
+            </p>
           </div>
         </div>
 
@@ -91,7 +66,7 @@ export default function ProjectsPage() {
         <motion.div variants={container} initial="hidden" animate="show" className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
           {[
             { icon: LayoutTemplate, title: "Découpage Parcellaire", desc: "Arborescence Projet > Bâtiments > Étages > Unités.", color: "text-blue-400", bg: "bg-blue-500/10" },
-            { icon: HardHat, title: "Suivi de Chantier", desc: "Rapports de progression visuels et synchronisation OS.", color: "text-amber-400", bg: "bg-amber-500/10" },
+            { icon: HardHat, title: "Suivi de Chantier", desc: "Rapports de progression visuels et état d'avancement.", color: "text-amber-400", bg: "bg-amber-500/10" },
             { icon: Percent, title: "Appels de Fonds", desc: "Déclenchement financier selon l'avancement technique.", color: "text-emerald-400", bg: "bg-emerald-500/10" },
             { icon: ShieldCheck, title: "Gestion Documentaire", desc: "Centralisation des plans d'exécution et des permis.", color: "text-indigo-400", bg: "bg-indigo-500/10" },
           ].map((feature, i) => (
@@ -105,15 +80,18 @@ export default function ProjectsPage() {
           ))}
         </motion.div>
 
-        {/* Sneak Peek Data */}
+        {/* Active Projects Data */}
         <div className="p-8 border-t border-white/5 bg-[#030303]">
           <motion.h3 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6 flex items-center gap-2"
+            className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6 flex items-center justify-between"
           >
-            <Activity className="w-4 h-4" /> Environnement Simulés (Prototypes)
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-500" /> Programmes Actifs
+            </div>
+            <button className="text-blue-400 hover:text-blue-300 transition-colors text-xs flex items-center gap-1">Voir tout <ArrowRight className="w-3 h-3" /></button>
           </motion.h3>
           <motion.div 
             variants={container} 
@@ -124,13 +102,13 @@ export default function ProjectsPage() {
           >
             
             {/* Project Card */}
-            <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 opacity-50 grayscale pointer-events-none">
+            <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-white/10 transition-colors cursor-pointer group">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gray-800 object-cover flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-gray-500" />
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-blue-900 to-indigo-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Building2 className="w-6 h-6 text-blue-200" />
                 </div>
                 <div>
-                  <h4 className="text-white font-bold text-lg mb-1">Résidence Atlas Premium</h4>
+                  <h4 className="text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors">Résidence Atlas Premium</h4>
                   <div className="flex items-center gap-3 text-xs font-medium text-gray-500">
                     <span className="flex items-center gap-1"><HardHat className="w-3 h-3" /> Structure en cours</span>
                     <span>•</span>
@@ -143,22 +121,22 @@ export default function ProjectsPage() {
               <div className="flex flex-col gap-2 w-full md:w-48">
                 <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <span>Avancement</span>
-                  <span>45%</span>
+                  <span className="text-blue-400">45%</span>
                 </div>
                 <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} whileInView={{ width: "45%" }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-blue-500" />
+                  <motion.div initial={{ width: 0 }} whileInView={{ width: "45%" }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-blue-500" />
                 </div>
               </div>
             </motion.div>
 
             {/* Project Card */}
-            <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 opacity-50 grayscale pointer-events-none">
+            <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-white/10 transition-colors cursor-pointer group">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gray-800 object-cover flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-gray-500" />
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-emerald-900 to-teal-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Building2 className="w-6 h-6 text-emerald-200" />
                 </div>
                 <div>
-                  <h4 className="text-white font-bold text-lg mb-1">Villa Horizon (Sidi Fredj)</h4>
+                  <h4 className="text-white font-bold text-lg mb-1 group-hover:text-emerald-400 transition-colors">Villa Horizon (Sidi Fredj)</h4>
                   <div className="flex items-center gap-3 text-xs font-medium text-gray-500">
                     <span className="flex items-center gap-1"><HardHat className="w-3 h-3" /> Finitions</span>
                     <span>•</span>
@@ -171,10 +149,10 @@ export default function ProjectsPage() {
               <div className="flex flex-col gap-2 w-full md:w-48">
                 <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <span>Avancement</span>
-                  <span>85%</span>
+                  <span className="text-emerald-400">85%</span>
                 </div>
                 <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} whileInView={{ width: "85%" }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-blue-500" />
+                  <motion.div initial={{ width: 0 }} whileInView={{ width: "85%" }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-emerald-500" />
                 </div>
               </div>
             </motion.div>

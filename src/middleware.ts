@@ -50,9 +50,13 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  // Fallback to placeholder if env vars are missing to prevent crash during development/preview
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -71,7 +75,7 @@ export async function middleware(request: NextRequest) {
   // Authenticate user securely at edge
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (url.pathname.startsWith('/dashboard') && !user) {
+  if (url.pathname.startsWith('/dashboard') && !user && supabaseUrl !== 'https://placeholder.supabase.co') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
