@@ -80,14 +80,6 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              drag="y"
-              dragConstraints={{ top: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(e, info) => {
-                if (info.offset.y > 100 || info.velocity.y > 500) {
-                  setIsOpen(false)
-                }
-              }}
               className="fixed inset-x-0 bottom-0 top-[10%] bg-[#0A0A0A] rounded-t-3xl border-t border-white/10 z-[101] md:hidden flex flex-col shadow-2xl overflow-hidden"
             >
               {/* iOS Sheet Drag Handle */}

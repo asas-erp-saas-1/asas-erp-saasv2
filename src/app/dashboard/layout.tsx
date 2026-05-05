@@ -49,6 +49,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex bg-[#0A0A0A] h-[100dvh] overflow-hidden selection:bg-blue-500/30 selection:text-white font-sans text-gray-100">
+      <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
       {/* Sidebar - Desktop */}
       <aside className="w-[280px] bg-[#0A0A0A] border-r border-[#262626] flex-col shrink-0 hidden md:flex z-10 relative group">
         <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
@@ -102,7 +103,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* Top Header */}
         <header className="h-[72px] bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
           <div className="flex items-center gap-4 w-full max-w-xl">
-            <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
             <div className="md:hidden flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-bl from-blue-600 to-indigo-900 flex items-center justify-center">
                 <Building2 className="w-4 h-4 text-white" strokeWidth={1.5} />

@@ -153,7 +153,7 @@ export default function DealsPage() {
   return (
     <div className="flex flex-1 h-full overflow-hidden bg-[#0A0A0A] rounded-2xl shadow-2xl border border-white/5 text-gray-100">
       {/* Left: list */}
-      <div className={clsx('flex flex-col bg-[#0A0A0A] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'hidden lg:flex lg:w-[45%] border-r border-white/5' : 'w-full')}>
+      <div className={clsx('flex flex-col bg-[#0A0A0A] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'lg:w-[45%] border-r border-white/5 w-full' : 'w-full')}>
         {/* Header */}
         <div className="px-6 py-5 border-b border-white/5 bg-[#0A0A0A] z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
@@ -253,22 +253,48 @@ export default function DealsPage() {
       </div>
 
       {/* Right: deal detail panel */}
-      {selectedId ? (
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex-1 flex flex-col h-full overflow-hidden bg-[#050505]"
-        >
-          <div className="sticky top-0 bg-[#0A0A0A] border-b border-white/5 py-2 px-4 flex items-center lg:hidden z-10">
-            <button onClick={() => setSelectedId(null)} className="p-2 text-xs font-bold text-blue-400 flex items-center gap-1 uppercase tracking-widest hover:text-blue-300 transition-colors">
-              <ChevronRight className="w-5 h-5 rotate-180 -ml-1" /> Retour
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <DealIntelligencePanel dealId={selectedId} />
-          </div>
-        </motion.div>
-      ) : (
+      <AnimatePresence>
+        {selectedId && (
+          <>
+            {/* Mobile Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedId(null)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            />
+            
+            {/* Panel */}
+            <motion.div 
+              initial={{ opacity: 0, y: '100%' }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: '100%' }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+              className="fixed inset-x-0 bottom-0 top-[10%] z-50 bg-[#0A0A0A] rounded-t-3xl shadow-2xl border-t border-white/10 overflow-hidden flex flex-col lg:static lg:inset-auto lg:top-auto lg:z-auto lg:flex-1 lg:rounded-none lg:border-t-0 lg:shadow-none lg:bg-[#050505] lg:translate-y-0"
+              style={{ transform: 'none' }}
+            >
+              {/* Mobile Drag Handle */}
+              <div className="w-full flex justify-center pt-3 pb-1 shrink-0 lg:hidden">
+                <div className="w-12 h-1.5 bg-[#262626] rounded-full"></div>
+              </div>
+              
+              <div className="hidden lg:flex sticky top-0 bg-[#0A0A0A] border-b border-white/5 py-2 px-4 items-center z-10 w-full justify-between">
+                <span className="text-sm font-bold text-gray-300">Détails de la Transaction</span>
+                <button onClick={() => setSelectedId(null)} className="p-2 text-xs font-bold text-gray-400 flex items-center gap-1 hover:text-white transition-colors">
+                  Fermer
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto">
+                <DealIntelligencePanel dealId={selectedId} />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {!selectedId && (
         <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-[#050505] border-l border-white/5 text-center p-12">
           <div className="w-24 h-24 bg-[#0A0A0A] border border-white/10 rounded-3xl flex items-center justify-center mb-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-blue-500/10 blur-xl group-hover:bg-blue-500/20 transition-all"></div>
