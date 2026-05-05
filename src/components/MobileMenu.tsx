@@ -24,14 +24,46 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
+  const BOTTOM_NAV = [
+    { href: '/dashboard/overview', label: 'Vue', Icon: LayoutGrid },
+    { href: '/dashboard/leads', label: 'Leads', Icon: Users },
+    { href: '/dashboard/deals', label: 'Deals', Icon: Handshake },
+    { href: '/dashboard/properties', label: 'Biens', Icon: Building2 },
+  ]
+
   return (
     <>
-      <button 
-        onClick={() => setIsOpen(true)}
-        className="md:hidden p-2 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-colors"
-      >
-        <Menu className="w-6 h-6 text-white" />
-      </button>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A0A]/85 backdrop-blur-2xl border-t border-white/10 pb-[env(safe-area-inset-bottom)] shadow-2xl">
+        <nav className="flex items-center justify-around px-2 h-16">
+          {BOTTOM_NAV.map(({ href, label, Icon }) => {
+            const isActive = pathname.startsWith(href)
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={clsx(
+                  "flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-200 active:scale-95",
+                  isActive ? "text-blue-400" : "text-[#737373] hover:text-gray-300"
+                )}
+              >
+                <Icon 
+                  className={clsx("w-6 h-6 mb-0.5 transition-transform duration-200", isActive ? "scale-105" : "scale-100")} 
+                  strokeWidth={isActive ? 2 : 1.5} 
+                />
+                <span className={clsx("text-[10px] font-medium tracking-wide", isActive ? "font-bold" : "")}>{label}</span>
+              </Link>
+            )
+          })}
+          
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex flex-col items-center justify-center w-full h-full space-y-1 text-[#737373] hover:text-gray-300 transition-all duration-200 active:scale-95"
+          >
+            <Menu className="w-6 h-6 mb-0.5" strokeWidth={1.5} />
+            <span className="text-[10px] font-medium tracking-wide">Menu</span>
+          </button>
+        </nav>
+      </div>
 
       <AnimatePresence>
         {isOpen && (
@@ -44,13 +76,18 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] md:hidden"
             />
             <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="fixed inset-y-0 left-0 w-[280px] sm:w-[320px] bg-[#0A0A0A] border-r border-white/10 z-[101] md:hidden flex flex-col shadow-2xl"
+              className="fixed inset-x-0 bottom-0 top-[10%] bg-[#0A0A0A] rounded-t-3xl border-t border-white/10 z-[101] md:hidden flex flex-col shadow-2xl overflow-hidden"
             >
-              <div className="px-6 py-6 flex items-center justify-between border-b border-white/5">
+              {/* iOS Sheet Drag Handle */}
+              <div className="w-full flex justify-center pt-3 pb-1 shrink-0">
+                <div className="w-12 h-1.5 bg-[#262626] rounded-full"></div>
+              </div>
+
+              <div className="px-6 pb-6 pt-2 flex items-center justify-between border-b border-white/5">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-bl from-blue-600 to-indigo-900 border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.2)]">
                     <Building2 className="w-5 h-5 text-white" strokeWidth={1.5} />

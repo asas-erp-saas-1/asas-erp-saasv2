@@ -126,7 +126,7 @@ export default function SettingsPage() {
         <div className="w-full max-w-5xl mx-auto space-y-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-white/5">
             <div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+            <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3 font-display">
                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
                     <Settings className="h-6 w-6 text-white" />
                 </div>

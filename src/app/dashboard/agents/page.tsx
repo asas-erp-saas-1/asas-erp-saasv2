@@ -79,7 +79,7 @@ export default function AgentsPage() {
       <div className={clsx('flex flex-col bg-[#050505] border-r border-white/5 overflow-hidden transition-all duration-300 shadow-2xl z-10', selectedId ? 'hidden lg:flex lg:w-1/2 xl:w-[45%]' : 'w-full')}>
         {/* Header */}
         <div className="px-8 py-6 border-b border-white/5 shrink-0 bg-[#0A0A0A]">
-          <h1 className="text-2xl font-extrabold text-white flex items-center gap-3 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white flex items-center gap-3 tracking-tight font-display">
              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.15)]">
                 <Users className="h-5 w-5 text-blue-400" /> 
              </div>

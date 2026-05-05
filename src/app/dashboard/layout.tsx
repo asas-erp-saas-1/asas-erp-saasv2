@@ -98,11 +98,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-[#050505] rounded-tl-2xl md:rounded-tl-[2.5rem] border-t border-l border-[#262626] md:m-2 md:mr-0 md:mb-0 shadow-2xl">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-[#050505] md:rounded-tl-[2.5rem] md:border-t md:border-l md:border-[#262626] md:m-2 md:mr-0 md:mb-0 shadow-2xl">
         {/* Top Header */}
         <header className="h-[72px] bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
           <div className="flex items-center gap-4 w-full max-w-xl">
             <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
+            <div className="md:hidden flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-bl from-blue-600 to-indigo-900 flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-white" strokeWidth={1.5} />
+              </div>
+              <p className="font-extrabold text-white tracking-tight leading-tight text-lg font-display">ASAS</p>
+            </div>
+            
             <div className="hidden sm:flex items-center px-4 py-2.5 bg-[#171717] hover:bg-[#262626] border border-[#262626] hover:border-[#404040] rounded-2xl w-full focus-within:bg-[#050505] focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all group">
               <Search className="w-4 h-4 text-gray-500 mr-3 group-focus-within:text-blue-500 transition-colors" strokeWidth={2} />
               <input 
@@ -136,7 +143,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </header>
 
         {/* Scrollable Main Area */}
-        <main className="flex-1 overflow-y-auto flex flex-col w-full bg-[#050505] text-white custom-scrollbar relative bg-dot-grid">
+        <main className="flex-1 overflow-y-auto flex flex-col w-full bg-[#050505] text-white custom-scrollbar relative bg-dot-grid pb-24 md:pb-0">
           <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-[#0A0A0A] to-transparent pointer-events-none -z-10"></div>
           <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col pt-8">
             {children}
