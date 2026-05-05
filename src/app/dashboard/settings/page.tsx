@@ -41,9 +41,9 @@ function Field({ label, type, value, onChange, min, max, step, hint }: {
           {type === 'boolean' ? (
             <button
               onClick={() => onChange(!value)}
-              className={clsx('relative h-6 w-11 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2 focus:ring-offset-[#0A0A0A]', value ? 'bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)]' : 'bg-gray-800 border border-white/10')}
+              className={clsx('relative h-8 w-14 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2 focus:ring-offset-[#050505]', value ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'bg-[#171717] border border-white/5 hover:border-white/10')}
             >
-              <span className={clsx('absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform', value ? 'translate-x-[22px]' : 'translate-x-0.5')} />
+              <span className={clsx('absolute top-0.5 h-7 w-7 rounded-full bg-white shadow-sm transition-transform', value ? 'translate-x-[26px]' : 'translate-x-0.5')} />
             </button>
           ) : (
             <input

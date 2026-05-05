@@ -92,16 +92,16 @@ function LeadCard({ lead, onConvert, index }: { lead: Lead; onConvert: (id: stri
 
           {/* Actions */}
           <div className="flex items-center gap-2 pt-3 border-t border-white/5">
-            <button className="flex items-center justify-center p-2 border border-white/5 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
+            <button className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-white/5 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
               <Phone className="h-4 w-4" />
             </button>
-            <button className="flex items-center justify-center p-2 border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message Chiffré">
+            <button className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message Chiffré">
               <MessageCircle className="h-4 w-4" />
             </button>
             {lead.status !== 'converted' && (
               <button
                 onClick={(e) => { e.stopPropagation(); onConvert(lead.id) }}
-                className="ml-auto flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold bg-white text-black px-3 py-2 rounded-lg hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                className="ml-auto flex items-center gap-1.5 min-h-[44px] text-[10px] uppercase tracking-widest font-bold bg-white text-black px-4 py-2.5 rounded-lg hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]"
               >
                 Promouvoir <ArrowRight className="h-3 w-3" />
               </button>

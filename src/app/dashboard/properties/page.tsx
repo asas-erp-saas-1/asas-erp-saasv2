@@ -122,7 +122,7 @@ export default function PropertiesPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
           <div>
-            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 tracking-tight flex items-center gap-3 font-display">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 tracking-tight flex items-center gap-3 font-display">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 to-emerald-500/10 border border-white/10 flex items-center justify-center p-3 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
                  <Building2 className="h-full w-full text-blue-400" /> 
               </div>
@@ -154,7 +154,7 @@ export default function PropertiesPage() {
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <Building2 className="w-16 h-16" />
               </div>
-              <p className="text-4xl font-extrabold tracking-tighter mb-2 relative z-10">{statsByStatus[s.key] ?? 0}</p>
+              <p className="text-3xl sm:text-4xl font-extrabold tracking-tighter mb-2 relative z-10">{statsByStatus[s.key] ?? 0}</p>
               <p className="text-[10px] uppercase font-bold tracking-widest opacity-80 relative z-10">{s.label}</p>
             </motion.div>
           ))}

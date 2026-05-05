@@ -208,9 +208,9 @@ export default function AgentsPage() {
       {/* Right: agent detail */}
       {selectedId && (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex-1 overflow-y-auto bg-[#050505]">
-          <div className="lg:hidden bg-[#0A0A0A] border-b border-white/5 px-6 py-4 sticky top-0 z-20 shadow-md">
-            <button onClick={() => setSelected(null)} className="text-sm font-bold text-blue-500 flex items-center gap-1 hover:text-blue-400 transition-colors">
-               <ChevronRight className="h-4 w-4 rotate-180" /> Retour au Classement
+          <div className="lg:hidden bg-[#0A0A0A] border-b border-white/5 px-4 py-2 sticky top-0 z-20 shadow-md">
+            <button onClick={() => setSelected(null)} className="p-2 text-sm font-bold text-blue-500 flex items-center gap-1 hover:text-blue-400 transition-colors">
+               <ChevronRight className="h-5 w-5 rotate-180 -ml-1" /> Retour au Classement
             </button>
           </div>
           <div className="p-4 md:p-6 lg:scroll-mt-0">

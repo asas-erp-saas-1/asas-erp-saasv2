@@ -59,7 +59,7 @@ function DealForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 bg-[#0A0A0A] border border-white/5 p-8 rounded-3xl shadow-2xl">
+    <div className="max-w-2xl mx-auto mt-4 sm:mt-8 bg-[#0A0A0A] border border-white/5 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/20">
           <Handshake className="w-6 h-6" strokeWidth={1.5} />

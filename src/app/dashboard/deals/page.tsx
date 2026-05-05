@@ -259,9 +259,9 @@ export default function DealsPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex-1 flex flex-col h-full overflow-hidden bg-[#050505]"
         >
-          <div className="sticky top-0 bg-[#0A0A0A] border-b border-white/5 px-6 py-4 flex items-center justify-between lg:hidden z-10">
-            <button onClick={() => setSelectedId(null)} className="text-xs font-bold text-blue-400 flex items-center gap-1 uppercase tracking-widest hover:text-blue-300">
-              <ChevronRight className="w-4 h-4 rotate-180" /> Retour
+          <div className="sticky top-0 bg-[#0A0A0A] border-b border-white/5 py-2 px-4 flex items-center lg:hidden z-10">
+            <button onClick={() => setSelectedId(null)} className="p-2 text-xs font-bold text-blue-400 flex items-center gap-1 uppercase tracking-widest hover:text-blue-300 transition-colors">
+              <ChevronRight className="w-5 h-5 rotate-180 -ml-1" /> Retour
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
