@@ -63,9 +63,9 @@ export default function ProjectsPage() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 relative z-10">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 font-display">
             <div className="w-12 h-12 rounded-[1.25rem] bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.2)]">
-              <Building2 className="h-6 w-6 text-white" strokeWidth={1.5} />
+              <Building2 className="h-6 w-6 text-gray-900 dark:text-white" strokeWidth={1.5} />
             </div>
             Programmes
           </h1>
@@ -86,16 +86,16 @@ export default function ProjectsPage() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", bounce: 0, duration: 0.8 }}
-        className="bg-[#050505] border border-white/5 shadow-2xl rounded-[2.5rem] relative overflow-hidden"
+        className="bg-gray-50 dark:bg-[#050505] border border-black/5 dark:border-white/5 shadow-2xl rounded-[2.5rem] relative overflow-hidden"
       >
         {/* Statistics Banner */}
-        <div className="bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-transparent border-b border-white/10 p-8 relative overflow-hidden backdrop-blur-xl">
+        <div className="bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-transparent border-b border-black/10 dark:border-white/10 p-8 relative overflow-hidden backdrop-blur-xl">
           <div className="relative z-10 max-w-xl">
             <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest rounded-full mb-4">
               Opérations de Promotion
             </span>
-            <h2 className="text-2xl font-extrabold text-white mb-2 font-display">Performance Globale des Programmes</h2>
-            <p className="text-sm font-medium text-gray-400 leading-relaxed mb-6">
+            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 font-display">Performance Globale des Programmes</h2>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
               Vue consolidée de l'avancement technique de vos chantiers et de la structuration foncière. Pilotez vos appels de fonds en corrélant l'avancement travaux et la commercialisation.
             </p>
           </div>
@@ -109,11 +109,11 @@ export default function ProjectsPage() {
             { icon: Percent, title: "Appels de Fonds", desc: "Déclenchement financier selon l'avancement technique.", color: "text-emerald-400", bg: "bg-emerald-500/10" },
             { icon: ShieldCheck, title: "Gestion Documentaire", desc: "Centralisation des plans d'exécution et des permis.", color: "text-indigo-400", bg: "bg-indigo-500/10" },
           ].map((feature, i) => (
-            <motion.div key={i} variants={item} className="p-6 bg-[#0A0A0A] border border-white/5 rounded-3xl hover:border-white/10 transition-colors group">
+            <motion.div key={i} variants={item} className="p-6 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-3xl hover:border-black/10 dark:border-white/10 transition-colors group">
               <div className={`w-12 h-12 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                 <feature.icon className="w-5 h-5" strokeWidth={1.5} />
               </div>
-              <h3 className="text-base font-bold text-white mb-2">{feature.title}</h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
               <p className="text-xs text-gray-500 font-medium leading-relaxed">{feature.desc}</p>
             </motion.div>
           ))}
@@ -125,13 +125,13 @@ export default function ProjectsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
               <input type="text" placeholder="Rechercher un programme..." value={search} onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 text-sm bg-[#0A0A0A] border border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-white transition-all font-medium placeholder:text-gray-600" />
+                  className="w-full pl-11 pr-4 py-3 text-sm bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white transition-all font-medium placeholder:text-gray-600" />
             </div>
           </div>
         </div>
 
         {/* Active Projects Data */}
-        <div className="p-8 border-t border-white/5 bg-[#030303]">
+        <div className="p-8 border-t border-black/5 dark:border-white/5 bg-[#030303]">
           <motion.h3 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -145,12 +145,12 @@ export default function ProjectsPage() {
 
           {loading ? (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               {[1, 2].map(i => <div key={i} className="h-32 bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse" />)}
+               {[1, 2].map(i => <div key={i} className="h-32 bg-white dark:bg-[#0A0A0A] rounded-2xl border border-black/5 dark:border-white/5 animate-pulse" />)}
              </div>
           ) : projects.length === 0 ? (
-             <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-[#0A0A0A] rounded-3xl border border-white/5 border-dashed">
+             <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-white dark:bg-[#0A0A0A] rounded-3xl border border-black/5 dark:border-white/5 border-dashed">
                 <Building2 className="h-10 w-10 text-white/20 mb-4" />
-                <p className="text-lg font-bold text-white mb-1">Aucun programme</p>
+                <p className="text-lg font-bold text-gray-900 dark:text-white mb-1">Aucun programme</p>
                 <p className="text-xs uppercase tracking-widest">Ajoutez des projets immobiliers pour commencer</p>
              </div>
           ) : (
@@ -167,13 +167,13 @@ export default function ProjectsPage() {
                 const progressPct = totalProps > 0 ? Math.round((soldProps / totalProps) * 100) : 0;
                 
                 return (
-                  <motion.div key={project.id} variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-white/10 transition-colors cursor-pointer group">
+                  <motion.div key={project.id} variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-black/10 dark:border-white/10 transition-colors cursor-pointer group">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <Building2 className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors" />
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-gray-800 to-gray-900 border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <Building2 className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-400 transition-colors" />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">{project.name}</h4>
+                        <h4 className="text-gray-900 dark:text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">{project.name}</h4>
                         <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-gray-500">
                           <span className={clsx("flex items-center gap-1", project.status === 'active' ? 'text-emerald-400' : '')}>
                             <HardHat className="w-3 h-3" /> {project.status === 'active' ? 'En cours' : project.status}
@@ -192,7 +192,7 @@ export default function ProjectsPage() {
                     
                     {/* Progress (Commercialization) */}
                     <div className="flex flex-col gap-2 w-full xl:w-48 shrink-0">
-                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
                         <span>Commercialisation</span>
                         <span className="text-blue-400">{progressPct}%</span>
                       </div>

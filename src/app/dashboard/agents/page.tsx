@@ -25,7 +25,7 @@ interface AgentRow {
 const TIER_CONFIG: Record<string, { color: string; icon: string }> = {
   Elite:   { color: 'text-purple-400 bg-purple-500/10 border-purple-500/20', icon: '👑' },
   Gold:    { color: 'text-amber-400 bg-amber-500/10 border-amber-500/20', icon: '🥇' },
-  Silver:  { color: 'text-gray-300 bg-gray-500/10 border-gray-500/20',   icon: '🥈' },
+  Silver:  { color: 'text-gray-800 dark:text-gray-300 bg-gray-500/10 border-gray-500/20',   icon: '🥈' },
   Bronze:  { color: 'text-orange-400 bg-orange-500/10 border-orange-500/20',icon: '🥉' },
   Starter: { color: 'text-blue-400 bg-blue-500/10 border-blue-500/20',    icon: '⭐' },
 }
@@ -38,7 +38,7 @@ function fmt(n: number): string {
 function ScoreBar({ score }: { score: number }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-20 h-2 bg-white/5 rounded-full overflow-hidden shadow-inner border border-white/5">
+      <div className="w-20 h-2 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden shadow-inner border border-black/5 dark:border-white/5">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(score, 100)}%` }}
@@ -74,12 +74,12 @@ export default function AgentsPage() {
   const selected = agents.find(a => a.agentId === selectedId)
 
   return (
-    <div className="flex flex-1 h-full bg-[#050505] overflow-hidden font-sans rounded-2xl shadow-2xl border border-white/5">
+    <div className="flex flex-1 h-full bg-gray-50 dark:bg-[#050505] overflow-hidden font-sans rounded-2xl shadow-2xl border border-black/5 dark:border-white/5">
       {/* Left: rankings */}
-      <div className={clsx('flex flex-col bg-[#050505] border-r border-white/5 overflow-hidden transition-all duration-300 shadow-2xl z-10', selectedId ? 'hidden lg:flex lg:w-1/2 xl:w-[45%]' : 'w-full')}>
+      <div className={clsx('flex flex-col bg-gray-50 dark:bg-[#050505] border-r border-black/5 dark:border-white/5 overflow-hidden transition-all duration-300 shadow-2xl z-10', selectedId ? 'hidden lg:flex lg:w-1/2 xl:w-[45%]' : 'w-full')}>
         {/* Header */}
-        <div className="px-8 py-6 border-b border-white/5 shrink-0 bg-[#0A0A0A]">
-          <h1 className="text-2xl font-extrabold text-white flex items-center gap-3 tracking-tight font-display">
+        <div className="px-8 py-6 border-b border-black/5 dark:border-white/5 shrink-0 bg-white dark:bg-[#0A0A0A]">
+          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3 tracking-tight font-display">
              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.15)]">
                 <Users className="h-5 w-5 text-blue-400" /> 
              </div>
@@ -93,20 +93,20 @@ export default function AgentsPage() {
           {loading ? (
             <div className="space-y-3 p-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-20 bg-[#171717] rounded-2xl animate-pulse" />
+                <div key={i} className="h-20 bg-gray-200 dark:bg-[#171717] rounded-2xl animate-pulse" />
               ))}
             </div>
           ) : agents.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500 py-20">
-              <div className="w-20 h-20 bg-[#171717] rounded-full flex items-center justify-center mb-4">
-                 <Users className="h-10 w-10 text-gray-400" />
+              <div className="w-20 h-20 bg-gray-200 dark:bg-[#171717] rounded-full flex items-center justify-center mb-4">
+                 <Users className="h-10 w-10 text-gray-600 dark:text-gray-400" />
               </div>
-              <p className="font-extrabold text-white">Aucun agent trouvé</p>
+              <p className="font-extrabold text-gray-900 dark:text-white">Aucun agent trouvé</p>
               <p className="text-sm mt-1">Les données de classement n'ont pas pu être chargées.</p>
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
-              <thead className="bg-[#0A0A0A]/80 backdrop-blur-md sticky top-0 z-10">
+              <thead className="bg-white dark:bg-[#0A0A0A]/80 backdrop-blur-md sticky top-0 z-10">
                 <tr>
                   <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-wider text-gray-500 w-16 text-center">#</th>
                   <th className="px-4 py-4 text-[10px] uppercase font-bold tracking-wider text-gray-500">Agent</th>
@@ -117,7 +117,7 @@ export default function AgentsPage() {
                   <th className="w-10" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 bg-[#050505]">
+              <tbody className="divide-y divide-white/5 bg-gray-50 dark:bg-[#050505]">
                 <AnimatePresence>
                 {agents.map((agent, i) => {
                   const tierCfg = TIER_CONFIG[agent.tier] ?? TIER_CONFIG['Starter']!
@@ -129,7 +129,7 @@ export default function AgentsPage() {
                       transition={{ delay: i * 0.05 }}
                       key={agent.agentId}
                       onClick={() => setSelected(isSelected ? null : agent.agentId)}
-                      className={clsx('cursor-pointer transition-colors group relative', isSelected ? 'bg-[#171717]' : 'hover:bg-[#0A0A0A]')}
+                      className={clsx('cursor-pointer transition-colors group relative', isSelected ? 'bg-gray-200 dark:bg-[#171717]' : 'hover:bg-white dark:bg-[#0A0A0A]')}
                     >
                       {/* Active indicator */}
                       {isSelected && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />}
@@ -138,10 +138,10 @@ export default function AgentsPage() {
                       <td className="px-6 py-5 text-center">
                         <div className={clsx(
                           'h-9 w-9 mx-auto rounded-full flex items-center justify-center text-sm font-bold shadow-sm',
-                          agent.rank === 1 ? 'bg-gradient-to-br from-yellow-500 to-amber-700 text-white border-yellow-500/50 border shadow-[0_0_15px_rgba(234,179,8,0.3)]' :
-                          agent.rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white border-gray-400/50 border' :
-                          agent.rank === 3 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white border-orange-500/50 border' :
-                          'bg-[#171717] text-gray-500 border-white/10 border'
+                          agent.rank === 1 ? 'bg-gradient-to-br from-yellow-500 to-amber-700 text-gray-900 dark:text-white border-yellow-500/50 border shadow-[0_0_15px_rgba(234,179,8,0.3)]' :
+                          agent.rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-gray-900 dark:text-white border-gray-400/50 border' :
+                          agent.rank === 3 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-gray-900 dark:text-white border-orange-500/50 border' :
+                          'bg-gray-200 dark:bg-[#171717] text-gray-500 border-black/10 dark:border-white/10 border'
                         )}>
                           {agent.rank}
                         </div>
@@ -150,7 +150,7 @@ export default function AgentsPage() {
                       {/* Name + tier + delta */}
                       <td className="px-4 py-5">
                         <div className="flex flex-col gap-1.5">
-                          <p className={clsx("text-sm font-bold", isSelected ? 'text-blue-400' : 'text-white')}>{agent.agentName}</p>
+                          <p className={clsx("text-sm font-bold", isSelected ? 'text-blue-400' : 'text-gray-900 dark:text-white')}>{agent.agentName}</p>
                           <div className="flex items-center gap-2">
                             <span className={clsx('text-[10px] px-2 py-0.5 rounded-md font-bold tracking-wide border', tierCfg.color)}>
                               {tierCfg.icon} {agent.tier}
@@ -173,7 +173,7 @@ export default function AgentsPage() {
                       {/* Closed deals */}
                       <td className="px-4 py-5 text-right hidden lg:table-cell align-middle">
                          <div className="flex flex-col items-end">
-                            <span className="text-sm font-bold text-white">{agent.closedDeals} conclues</span>
+                            <span className="text-sm font-bold text-gray-900 dark:text-white">{agent.closedDeals} conclues</span>
                             <span className="text-xs font-medium text-gray-500">{agent.activeDeals} en cours</span>
                          </div>
                       </td>
@@ -193,7 +193,7 @@ export default function AgentsPage() {
                       </td>
 
                       <td className="pr-6 align-middle text-right">
-                        <ChevronRight className={clsx("h-5 w-5 transition-transform", isSelected ? 'text-blue-500 translate-x-1' : 'text-gray-600 group-hover:text-gray-400')} />
+                        <ChevronRight className={clsx("h-5 w-5 transition-transform", isSelected ? 'text-blue-500 translate-x-1' : 'text-gray-600 group-hover:text-gray-600 dark:text-gray-400')} />
                       </td>
                     </motion.tr>
                   )
@@ -207,8 +207,8 @@ export default function AgentsPage() {
 
       {/* Right: agent detail */}
       {selectedId && (
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex-1 overflow-y-auto bg-[#050505]">
-          <div className="lg:hidden bg-[#0A0A0A] border-b border-white/5 px-4 py-2 sticky top-0 z-20 shadow-md">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#050505]">
+          <div className="lg:hidden bg-white dark:bg-[#0A0A0A] border-b border-black/5 dark:border-white/5 px-4 py-2 sticky top-0 z-20 shadow-md">
             <button onClick={() => setSelected(null)} className="p-2 text-sm font-bold text-blue-500 flex items-center gap-1 hover:text-blue-400 transition-colors">
                <ChevronRight className="h-5 w-5 rotate-180 -ml-1" /> Retour au Classement
             </button>

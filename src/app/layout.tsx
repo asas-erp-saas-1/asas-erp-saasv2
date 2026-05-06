@@ -5,6 +5,7 @@ import './globals.css'
 import { env } from '@/lib/env'
 import { GlobalErrorTracker } from '@/components/GlobalErrorTracker'
 import { clsx } from 'clsx'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,9 +43,11 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
-      <body className="bg-[#050505] text-gray-100 antialiased font-sans flex flex-col min-h-screen selection:bg-blue-500/30">
-        <GlobalErrorTracker />
-        {children}
+      <body className="bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-gray-100 antialiased font-sans flex flex-col min-h-screen selection:bg-blue-500/30">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <GlobalErrorTracker />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

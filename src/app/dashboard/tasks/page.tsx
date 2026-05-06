@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CheckSquare, Clock, AlertTriangle, Check, Zap, ListTodo } from 'lucide-react'
+import { CheckSquare, Clock, AlertTriangle, Check, Zap, ListTodo, AlertOctagon, ArrowUp, ArrowRight, ArrowDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 
@@ -27,11 +27,11 @@ const PRIORITY_STYLE: Record<string, string> = {
   low:    'border-l-[6px] border-gray-600',
 }
 
-const PRIORITY_BADGE: Record<string, string> = {
-  urgent: 'bg-red-500/10 text-red-400 border-red-500/20',
-  high:   'bg-orange-500/10 text-orange-400 border-orange-500/20',
-  medium: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  low:    'bg-white/5 text-gray-400 border-white/10',
+const PRIORITY_CONFIG: Record<string, { icon: any, color: string, bg: string, border: string, label: string }> = {
+  urgent: { icon: AlertOctagon, color: 'text-red-400',       bg: 'bg-red-500/10',    border: 'border-red-500/20',    label: 'Urgente' },
+  high:   { icon: ArrowUp,      color: 'text-orange-400',    bg: 'bg-orange-500/10', border: 'border-orange-500/20', label: 'Haute' },
+  medium: { icon: ArrowRight,   color: 'text-blue-400',      bg: 'bg-blue-500/10',   border: 'border-blue-500/20',   label: 'Moyenne' },
+  low:    { icon: ArrowDown,    color: 'text-gray-600 dark:text-gray-400',      bg: 'bg-black/5 dark:bg-white/5',       border: 'border-black/10 dark:border-white/10',      label: 'Basse' },
 }
 
 function isOverdue(dueDate: string | null): boolean {
@@ -103,15 +103,15 @@ export default function TasksPage() {
   const overdueCount = tasks.filter(t => isOverdue(t.due_date) && t.status !== 'done').length
 
   return (
-    <div className="flex-1 font-sans text-gray-100 flex flex-col">
+    <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col">
       <div className="w-full space-y-8 max-w-4xl mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-black/5 dark:border-white/5">
            <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3 font-display">
-                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <CheckSquare className="h-6 w-6 text-white" /> 
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 font-display">
+                 <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center">
+                    <CheckSquare className="h-6 w-6 text-gray-900 dark:text-white" /> 
                  </div>
                  Opérations
               </h1>
@@ -137,7 +137,7 @@ export default function TasksPage() {
               onClick={() => setFilter(f.key as typeof filter)}
               className={clsx(
                 'px-5 py-2.5 rounded-full text-[10px] uppercase font-bold tracking-widest transition-all focus:outline-none focus:ring-1',
-                filter === f.key ? 'bg-white text-black focus:ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'bg-[#050505] text-gray-400 hover:bg-[#0A0A0A] hover:text-white border border-white/5 focus:ring-white/20'
+                filter === f.key ? 'bg-white text-black focus:ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'bg-gray-50 dark:bg-[#050505] text-gray-600 dark:text-gray-400 hover:bg-white dark:bg-[#0A0A0A] hover:text-gray-900 dark:text-white border border-black/5 dark:border-white/5 focus:ring-white/20'
               )}
             >
               {f.label}
@@ -149,14 +149,14 @@ export default function TasksPage() {
         <div className="space-y-4">
           {loading ? (
             [...Array(5)].map((_, i) => (
-              <div key={i} className="h-24 bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse" />
+              <div key={i} className="h-24 bg-white dark:bg-[#0A0A0A] rounded-2xl border border-black/5 dark:border-white/5 animate-pulse" />
             ))
           ) : sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-gray-500 bg-[#0A0A0A] rounded-3xl border border-white/5 border-dashed shadow-sm">
-               <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
-                  <ListTodo className="h-8 w-8 text-gray-400" />
+            <div className="flex flex-col items-center justify-center py-24 text-gray-500 bg-white dark:bg-[#0A0A0A] rounded-3xl border border-black/5 dark:border-white/5 border-dashed shadow-sm">
+               <div className="w-20 h-20 bg-black/5 dark:bg-white/5 rounded-2xl flex items-center justify-center mb-6">
+                  <ListTodo className="h-8 w-8 text-gray-600 dark:text-gray-400" />
                </div>
-              <p className="text-lg font-bold text-white mb-2">Protocoles achevés</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">Protocoles achevés</p>
               <p className="text-xs uppercase tracking-widest mt-1 font-bold">Aucune opération en attente {filter !== 'all' ? `pour le filtre '${filter}'` : ''}.</p>
             </div>
           ) : (
@@ -169,12 +169,12 @@ export default function TasksPage() {
                 exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 key={task.id} 
-                className={clsx('bg-[#050505] rounded-2xl p-5 flex items-start gap-5 shadow-lg border-y border-r border-white/5 group hover:border-white/10 transition-all', PRIORITY_STYLE[task.priority])}
+                className={clsx('bg-gray-50 dark:bg-[#050505] rounded-2xl p-5 flex items-start gap-5 shadow-lg border-y border-r border-black/5 dark:border-white/5 group hover:border-black/10 dark:border-white/10 transition-all', PRIORITY_STYLE[task.priority])}
               >
                 {/* Checkbox */}
                 <button
                   onClick={() => markDone(task.id)}
-                  className="mt-0.5 h-6 w-6 rounded border-2 border-white/10 bg-[#0A0A0A] flex items-center justify-center shrink-0 hover:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all cursor-pointer"
+                  className="mt-0.5 h-6 w-6 rounded border-2 border-black/10 dark:border-white/10 bg-white dark:bg-[#0A0A0A] flex items-center justify-center shrink-0 hover:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all cursor-pointer"
                 >
                   {task.status === 'done' && <Check className="h-4 w-4 text-emerald-500 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]" />}
                 </button>
@@ -184,10 +184,17 @@ export default function TasksPage() {
                   <div className="flex items-start justify-between gap-4">
                      <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-3 flex-wrap">
-                           <p className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors tracking-wide">{task.title}</p>
-                           <span className={clsx('text-[8px] uppercase tracking-widest px-2 py-0.5 rounded font-bold shrink-0 border border-transparent', PRIORITY_BADGE[task.priority])}>
-                              {task.priority}
-                           </span>
+                           <p className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-400 transition-colors tracking-wide">{task.title}</p>
+                           {(() => {
+                             const pConf = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium
+                             const Icon = pConf.icon
+                             return (
+                               <span className={clsx('text-[10px] uppercase tracking-widest px-2.5 py-1 rounded font-bold shrink-0 border flex items-center gap-1.5', pConf.bg, pConf.border, pConf.color)}>
+                                 <Icon className="w-3.5 h-3.5" />
+                                 {pConf.label}
+                               </span>
+                             )
+                           })()}
                            {task.is_automated && (
                               <span className="text-[8px] uppercase tracking-widest px-2 py-0.5 rounded border border-purple-500/20 bg-purple-500/10 text-purple-400 font-bold flex items-center gap-1 shrink-0">
                                  <Zap className="h-3 w-3" /> Auto
@@ -201,7 +208,7 @@ export default function TasksPage() {
 
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+                  <div className="mt-4 flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-4">
                      <p className={clsx('text-[10px] uppercase tracking-widest font-bold flex items-center gap-1.5', isOverdue(task.due_date) ? 'text-red-500' : 'text-gray-500')}>
                         <Clock className="h-3.5 w-3.5" />
                         {formatDue(task.due_date)}

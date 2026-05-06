@@ -11,7 +11,7 @@ import { LeadDetailModal } from './LeadDetailModal'
 
 // ─── Kanban column definitions ────────────────────────────────────────────────
 const COLUMNS = [
-  { key: 'new',             label: 'Nouveau',           color: 'bg-[#1A1A1A] border-white/5 text-gray-300',       dot: 'bg-gray-500' },
+  { key: 'new',             label: 'Nouveau',           color: 'bg-[#1A1A1A] border-black/5 dark:border-white/5 text-gray-800 dark:text-gray-300',       dot: 'bg-gray-500' },
   { key: 'contacted',       label: 'Contacté',          color: 'bg-blue-500/10 border-blue-500/20 text-blue-400',        dot: 'bg-blue-500' },
   { key: 'interested',      label: 'Intéressé',         color: 'bg-amber-500/10 border-amber-500/20 text-amber-400',      dot: 'bg-amber-500' },
   { key: 'visit_scheduled', label: 'Visite Prévue',     color: 'bg-purple-500/10 border-purple-500/20 text-purple-400',    dot: 'bg-purple-500' },
@@ -45,12 +45,12 @@ function MultiSelect({ options, selected, onChange, label }: { options: { id: st
     <div className="relative">
       <button 
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 bg-[#050505] border border-white/10 rounded-xl text-xs font-medium text-gray-300 hover:text-white transition-colors"
+        className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-300 hover:text-gray-900 dark:text-white transition-colors"
       >
         <Filter className="w-3.5 h-3.5" />
         {label}
         {selected.length > 0 && (
-          <span className="ml-1 bg-white/10 text-white px-1.5 py-0.5 rounded-md text-[10px]">
+          <span className="ml-1 bg-black/10 dark:bg-white/10 text-gray-900 dark:text-white px-1.5 py-0.5 rounded-md text-[10px]">
             {selected.length}
           </span>
         )}
@@ -59,29 +59,29 @@ function MultiSelect({ options, selected, onChange, label }: { options: { id: st
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full mt-2 right-0 w-48 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+          <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
             <div className="max-h-60 overflow-y-auto p-1 scrollbar-thin">
               {options.length === 0 ? (
                 <div className="p-2 text-xs text-gray-500 italic text-center">Aucune option</div>
               ) : (
                 options.map(opt => (
-                  <label key={opt.id} className="flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 rounded-lg cursor-pointer">
+                  <label key={opt.id} className="flex items-center gap-2 px-2 py-1.5 hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 rounded-lg cursor-pointer">
                     <input 
                       type="checkbox"
                       checked={selected.includes(opt.id)}
                       onChange={() => toggle(opt.id)}
-                      className="w-3.5 h-3.5 rounded border-white/20 bg-black/50 text-emerald-500 focus:ring-emerald-500/20"
+                      className="w-3.5 h-3.5 rounded border-black/20 dark:border-white/20 bg-black/50 text-emerald-500 focus:ring-emerald-500/20"
                     />
-                    <span className="text-xs text-gray-300 truncate">{opt.name}</span>
+                    <span className="text-xs text-gray-800 dark:text-gray-300 truncate">{opt.name}</span>
                   </label>
                 ))
               )}
             </div>
             {selected.length > 0 && (
-              <div className="p-1 border-t border-white/5">
+              <div className="p-1 border-t border-black/5 dark:border-white/5">
                 <button 
                   onClick={() => onChange([])}
-                  className="w-full py-1.5 text-xs text-gray-400 hover:text-white rounded flex items-center justify-center gap-1"
+                  className="w-full py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white rounded flex items-center justify-center gap-1"
                 >
                   <X className="w-3 h-3" /> Effacer
                 </button>
@@ -109,18 +109,18 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
           {...provided.dragHandleProps}
           onClick={() => onSelect(lead.id)}
           className={clsx(
-            'bg-[#121212] rounded-xl border p-4 shadow-lg transition-all cursor-pointer select-none hover:bg-[#181818]',
-            isStale ? 'border-orange-500/30' : 'border-white/10',
+            'bg-gray-100 dark:bg-[#121212] rounded-xl border p-4 shadow-lg transition-all cursor-pointer select-none hover:bg-[#181818]',
+            isStale ? 'border-orange-500/30' : 'border-black/10 dark:border-white/10',
             snapshot.isDragging && 'shadow-2xl shadow-blue-500/10 ring-1 ring-blue-500/50 rotate-2 scale-105 z-50 cursor-grabbing'
           )}
         >
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-white truncate text-sm">
+              <p className="font-bold text-gray-900 dark:text-white truncate text-sm">
                 {(lead as any).clients?.full_name ?? 'Client Inconnu'}
               </p>
               {(lead as any).clients?.phone && (
-                <p className="text-xs text-gray-400 mt-1 font-mono tracking-wide">{(lead as any).clients.phone}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-mono tracking-wide">{(lead as any).clients.phone}</p>
               )}
             </div>
             <div className="flex flex-col gap-1 items-end">
@@ -132,7 +132,7 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
           {/* Source + project */}
           <div className="flex items-center gap-2 mb-4">
             {lead.source && (
-              <span className="text-[10px] uppercase font-bold tracking-wider bg-[#050505] border border-white/5 text-gray-500 px-2 py-0.5 rounded-md">{lead.source}</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider bg-gray-50 dark:bg-[#050505] border border-black/5 dark:border-white/5 text-gray-500 px-2 py-0.5 rounded-md">{lead.source}</span>
             )}
             {(lead as any).projects?.name && (
               <span className="text-[10px] uppercase font-bold tracking-wider bg-blue-500/5 border border-blue-500/10 text-blue-400 truncate px-2 py-0.5 rounded-md">{(lead as any).projects.name}</span>
@@ -141,9 +141,9 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
 
           {/* Budget */}
           {(lead.budget_min || lead.budget_max) && (
-            <div className="mb-4 bg-black/40 p-2.5 rounded-lg border border-white/5">
+            <div className="mb-4 bg-black/40 p-2.5 rounded-lg border border-black/5 dark:border-white/5">
               <span className="text-gray-500 font-bold mb-1 block text-[10px] uppercase tracking-widest">Projection Finance</span>
-              <span className="font-bold text-gray-300 text-xs">
+              <span className="font-bold text-gray-800 dark:text-gray-300 text-xs">
                 {lead.budget_min ? fmt(lead.budget_min) : '?'} {' → '} {lead.budget_max ? fmt(lead.budget_max) : '?'}
               </span>
             </div>
@@ -158,10 +158,10 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-3 border-t border-white/5">
+          <div className="flex items-center gap-2 pt-3 border-t border-black/5 dark:border-white/5">
             <button 
               onClick={(e) => { e.stopPropagation(); }}
-              className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-white/5 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
+              className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 rounded-lg transition-all" title="Initier Appel">
               <Phone className="h-4 w-4" />
             </button>
             <button 
@@ -285,13 +285,13 @@ async function onDragEnd(result: DropResult) {
 }
 
 return (
-  <div className="flex flex-col flex-1 h-full bg-[#050505] rounded-2xl shadow-2xl border border-white/5 overflow-hidden text-gray-100">
+  <div className="flex flex-col flex-1 h-full bg-gray-50 dark:bg-[#050505] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 overflow-hidden text-gray-900 dark:text-gray-100">
     {/* Header */}
-    <div className="bg-[#0A0A0A] border-b border-white/5 px-6 py-5 shrink-0 z-10 w-full">
+    <div className="bg-white dark:bg-[#0A0A0A] border-b border-black/5 dark:border-white/5 px-6 py-5 shrink-0 z-10 w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
         <div>
-          <h1 className="text-xl font-extrabold text-white flex items-center gap-3 tracking-tight font-display">
-            <Users className="h-5 w-5 text-gray-400" /> Pipeline d'Acquisition
+          <h1 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3 tracking-tight font-display">
+            <Users className="h-5 w-5 text-gray-600 dark:text-gray-400" /> Pipeline d'Acquisition
           </h1>
           <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{total} entités actives détectées</p>
         </div>
@@ -320,7 +320,7 @@ return (
               placeholder="Scanner matricule ou identifiant..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-[#050505] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all placeholder:text-gray-600"
+              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-[#050505] text-sm font-medium border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white transition-all placeholder:text-gray-600"
             />
           </div>
           <button className="flex items-center justify-center gap-2 px-5 py-2.5 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
@@ -336,15 +336,15 @@ return (
         <div className="flex h-full gap-4 p-6 min-w-max items-start">
           {loading ? (
             [...Array(4)].map((_, i) => (
-              <div key={i} className="w-[340px] bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse h-[80vh]" />
+              <div key={i} className="w-[340px] bg-white dark:bg-[#0A0A0A] rounded-2xl border border-black/5 dark:border-white/5 animate-pulse h-[80vh]" />
             ))
           ) : (
             activeColumns.map(col => {
               const colLeads = byStatus(col.key)
               return (
-                <div key={col.key} className="w-[340px] flex flex-col bg-[#0A0A0A] rounded-2xl border border-white/5 overflow-hidden max-h-full">
+                <div key={col.key} className="w-[340px] flex flex-col bg-white dark:bg-[#0A0A0A] rounded-2xl border border-black/5 dark:border-white/5 overflow-hidden max-h-full">
                   {/* Column header */}
-                  <div className="px-5 py-4 border-b border-white/5 bg-[#0A0A0A] flex items-center justify-between shrink-0">
+                  <div className="px-5 py-4 border-b border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A] flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-2">
                       <div className={clsx('h-2.5 w-2.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]', col.dot)} />
                       <span className="text-sm font-bold text-gray-200 tracking-wide">{col.label}</span>
@@ -362,11 +362,11 @@ return (
                         {...provided.droppableProps}
                         className={clsx(
                           "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10",
-                          snapshot.isDraggingOver ? "bg-[#121212]" : ""
+                          snapshot.isDraggingOver ? "bg-gray-100 dark:bg-[#121212]" : ""
                         )}
                       >
                         {colLeads.length === 0 && !snapshot.isDraggingOver ? (
-                          <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-white/10 rounded-xl text-gray-600 bg-white/5">
+                          <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-black/10 dark:border-white/10 rounded-xl text-gray-600 bg-black/5 dark:bg-white/5">
                             <Users className="h-6 w-6 mb-3 opacity-50" />
                             <span className="text-xs uppercase tracking-widest font-bold">Zone Vide</span>
                           </div>
@@ -410,9 +410,9 @@ return (
                           {...dragProvided.draggableProps}
                           {...dragProvided.dragHandleProps}
                           onClick={() => setSelectedLeadId(lead.id)}
-                          className="bg-[#0A0A0A] rounded-xl border border-emerald-500/10 p-3 shadow-sm flex items-center justify-between cursor-pointer hover:bg-[#121212] transition-colors"
+                          className="bg-white dark:bg-[#0A0A0A] rounded-xl border border-emerald-500/10 p-3 shadow-sm flex items-center justify-between cursor-pointer hover:bg-gray-100 dark:bg-[#121212] transition-colors"
                         >
-                          <p className="text-[10px] font-bold text-gray-300 truncate tracking-wide">
+                          <p className="text-[10px] font-bold text-gray-800 dark:text-gray-300 truncate tracking-wide">
                             {(lead as any).clients?.full_name ?? 'Inconnu'}
                           </p>
                           <span className="text-[8px] uppercase font-bold text-emerald-500/50 tracking-widest bg-emerald-500/10 px-1.5 py-0.5 rounded">

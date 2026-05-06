@@ -11,7 +11,7 @@ import type { Deal } from '@/types/app'
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_STYLE: Record<string, string> = {
-  draft:       'bg-gray-800 text-gray-300 border-gray-700',
+  draft:       'bg-gray-800 text-gray-800 dark:text-gray-300 border-gray-700',
   active:      'bg-blue-500/10 text-blue-400 border-blue-500/20',
   negotiation: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   closed:      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
@@ -50,30 +50,30 @@ function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boole
       className={clsx(
         'group flex items-center gap-4 px-5 py-4 border-b cursor-pointer transition-all',
         isSelected 
-          ? 'bg-blue-500/5 border-white/10' 
-          : 'bg-[#0A0A0A] border-white/5 hover:bg-white/5 hover:border-white/10'
+          ? 'bg-blue-500/5 border-black/10 dark:border-white/10' 
+          : 'bg-white dark:bg-[#0A0A0A] border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 hover:border-black/10 dark:border-white/10'
       )}
       onClick={onSelect}
     >
       {/* Risk indicator */}
-      <div className={clsx('h-2.5 w-2.5 rounded-full shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.5)] border border-white/10', RISK_STYLE[deal.risk_level || 'low'])} />
+      <div className={clsx('h-2.5 w-2.5 rounded-full shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10', RISK_STYLE[deal.risk_level || 'low'])} />
 
       {/* Client + property */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className={clsx("font-bold truncate transition-colors text-sm", isSelected ? 'text-white' : 'text-gray-200')}>
+          <p className={clsx("font-bold truncate transition-colors text-sm", isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-200')}>
             {(deal as any).clients?.full_name ?? 'Client Inconnu'}
           </p>
           {(deal as any).properties?.projects?.name && (
-            <span className="text-[10px] uppercase tracking-widest text-gray-400 truncate hidden sm:block bg-[#050505] border border-white/10 px-2 py-0.5 rounded-md">
+            <span className="text-[10px] uppercase tracking-widest text-gray-600 dark:text-gray-400 truncate hidden sm:block bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 px-2 py-0.5 rounded-md">
               {(deal as any).properties.projects.name}
             </span>
           )}
         </div>
         <div className="flex items-center gap-4 mt-2">
-          <span className="text-sm font-bold text-gray-300">{fmt(agreedPrice)}</span>
+          <span className="text-sm font-bold text-gray-800 dark:text-gray-300">{fmt(agreedPrice)}</span>
           {deal.next_action && (
-            <span className={clsx('text-[10px] uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md border', isOverdue ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-gray-800 text-gray-400 border-gray-700')}>
+            <span className={clsx('text-[10px] uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md border', isOverdue ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-700')}>
               {isOverdue && <AlertTriangle className="h-3 w-3" />}
               <Clock className="h-3 w-3" />
               {deal.next_action}
@@ -86,7 +86,7 @@ function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boole
       <div className="hidden md:flex flex-col items-end w-28">
         <div className="w-full flex justify-between text-[10px] uppercase font-bold tracking-wider mb-1.5">
           <span className={pct === 100 ? 'text-emerald-400' : 'text-gray-500'}>Payé</span>
-          <span className="text-gray-300">{pct}%</span>
+          <span className="text-gray-800 dark:text-gray-300">{pct}%</span>
         </div>
         <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
@@ -103,7 +103,7 @@ function DealRow({ deal, isSelected, onSelect }: { deal: Deal; isSelected: boole
         {(deal.status || 'draft').replace('_', ' ')}
       </span>
 
-      <ChevronRight className={clsx('h-5 w-5 shrink-0 transition-transform', isSelected ? 'text-white translate-x-1' : 'text-gray-600 group-hover:text-gray-400')} />
+      <ChevronRight className={clsx('h-5 w-5 shrink-0 transition-transform', isSelected ? 'text-gray-900 dark:text-white translate-x-1' : 'text-gray-600 group-hover:text-gray-600 dark:text-gray-400')} />
     </motion.div>
   )
 }
@@ -151,14 +151,14 @@ export default function DealsPage() {
   useEffect(() => { load() }, [load])
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden bg-[#0A0A0A] rounded-2xl shadow-2xl border border-white/5 text-gray-100">
+    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#0A0A0A] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 text-gray-900 dark:text-gray-100">
       {/* Left: list */}
-      <div className={clsx('flex flex-col bg-[#0A0A0A] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'lg:w-[45%] border-r border-white/5 w-full' : 'w-full')}>
+      <div className={clsx('flex flex-col bg-white dark:bg-[#0A0A0A] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'lg:w-[45%] border-r border-black/5 dark:border-white/5 w-full' : 'w-full')}>
         {/* Header */}
-        <div className="px-6 py-5 border-b border-white/5 bg-[#0A0A0A] z-10 shrink-0">
+        <div className="px-6 py-5 border-b border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A] z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
             <div>
-              <h1 className="text-xl font-extrabold text-white flex items-center gap-2 tracking-tight font-display">
+              <h1 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2 tracking-tight font-display">
                 Transactions
               </h1>
               <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1.5 hidden sm:block">{total} actives sur le réseau</p>
@@ -176,7 +176,7 @@ export default function DealsPage() {
               placeholder="Rechercher entité, projet..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-[#050505] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all placeholder:text-gray-600"
+              className="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-[#050505] text-sm font-medium border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white transition-all placeholder:text-gray-600"
             />
           </div>
 
@@ -194,8 +194,8 @@ export default function DealsPage() {
                 className={clsx(
                   'px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all border',
                   statusFilter === f.value
-                    ? 'bg-blue-500/10 text-white border-blue-500/20'
-                    : 'bg-transparent text-gray-500 hover:text-gray-300 border-white/5 hover:border-white/10'
+                    ? 'bg-blue-500/10 text-gray-900 dark:text-white border-blue-500/20'
+                    : 'bg-transparent text-gray-500 hover:text-gray-800 dark:text-gray-300 border-black/5 dark:border-white/5 hover:border-black/10 dark:border-white/10'
                 )}
               >
                 {f.label}
@@ -205,19 +205,19 @@ export default function DealsPage() {
         </div>
 
         {/* Deal list */}
-        <div className="flex-1 overflow-y-auto bg-[#050505]">
+        <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#050505]">
           {loading ? (
             <div className="p-4 space-y-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-24 bg-[#0A0A0A] animate-pulse rounded-xl border border-white/5" />
+                <div key={i} className="h-24 bg-white dark:bg-[#0A0A0A] animate-pulse rounded-xl border border-black/5 dark:border-white/5" />
               ))}
             </div>
           ) : deals.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500 p-8 text-center">
-              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-4">
-                <Handshake className="h-8 w-8 text-gray-400" />
+              <div className="w-16 h-16 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl flex items-center justify-center mb-4">
+                <Handshake className="h-8 w-8 text-gray-600 dark:text-gray-400" />
               </div>
-              <p className="text-gray-300 font-bold mb-1">Pipeline vide</p>
+              <p className="text-gray-800 dark:text-gray-300 font-bold mb-1">Pipeline vide</p>
               <p className="text-xs uppercase tracking-widest text-gray-600">Ajustez vos filtres de recherche.</p>
             </div>
           ) : (
@@ -236,17 +236,17 @@ export default function DealsPage() {
 
         {/* Pagination - only show if needed */}
         {total > LIMIT && (
-          <div className="px-6 py-4 border-t border-white/5 bg-[#0A0A0A] flex items-center justify-between shrink-0">
+          <div className="px-6 py-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A] flex items-center justify-between shrink-0">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-400 bg-[#050505] border border-white/5 disabled:opacity-40 hover:text-white"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#050505] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
             >Précédent</button>
             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Page {page} / {Math.ceil(total / LIMIT)}</span>
             <button
               disabled={page >= Math.ceil(total / LIMIT)}
               onClick={() => setPage(p => p + 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-400 bg-[#050505] border border-white/5 disabled:opacity-40 hover:text-white"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#050505] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
             >Suivant</button>
           </div>
         )}
@@ -271,7 +271,7 @@ export default function DealsPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: '100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="fixed inset-x-0 bottom-0 top-[10%] z-50 bg-[#0A0A0A] rounded-t-3xl shadow-2xl border-t border-white/10 overflow-hidden flex flex-col lg:static lg:inset-auto lg:top-auto lg:z-auto lg:flex-1 lg:rounded-none lg:border-t-0 lg:shadow-none lg:bg-[#050505] lg:translate-y-0"
+              className="fixed inset-x-0 bottom-0 top-[10%] z-50 bg-white dark:bg-[#0A0A0A] rounded-t-3xl shadow-2xl border-t border-black/10 dark:border-white/10 overflow-hidden flex flex-col lg:static lg:inset-auto lg:top-auto lg:z-auto lg:flex-1 lg:rounded-none lg:border-t-0 lg:shadow-none lg:bg-gray-50 dark:bg-[#050505] lg:translate-y-0"
               style={{ transform: 'none' }}
             >
               {/* Mobile Drag Handle */}
@@ -279,9 +279,9 @@ export default function DealsPage() {
                 <div className="w-12 h-1.5 bg-[#262626] rounded-full"></div>
               </div>
               
-              <div className="hidden lg:flex sticky top-0 bg-[#0A0A0A] border-b border-white/5 py-2 px-4 items-center z-10 w-full justify-between">
-                <span className="text-sm font-bold text-gray-300">Détails de la Transaction</span>
-                <button onClick={() => setSelectedId(null)} className="p-2 text-xs font-bold text-gray-400 flex items-center gap-1 hover:text-white transition-colors">
+              <div className="hidden lg:flex sticky top-0 bg-white dark:bg-[#0A0A0A] border-b border-black/5 dark:border-white/5 py-2 px-4 items-center z-10 w-full justify-between">
+                <span className="text-sm font-bold text-gray-800 dark:text-gray-300">Détails de la Transaction</span>
+                <button onClick={() => setSelectedId(null)} className="p-2 text-xs font-bold text-gray-600 dark:text-gray-400 flex items-center gap-1 hover:text-gray-900 dark:text-white transition-colors">
                   Fermer
                 </button>
               </div>
@@ -295,12 +295,12 @@ export default function DealsPage() {
       </AnimatePresence>
 
       {!selectedId && (
-        <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-[#050505] border-l border-white/5 text-center p-12">
-          <div className="w-24 h-24 bg-[#0A0A0A] border border-white/10 rounded-3xl flex items-center justify-center mb-6 relative overflow-hidden group">
+        <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-gray-50 dark:bg-[#050505] border-l border-black/5 dark:border-white/5 text-center p-12">
+          <div className="w-24 h-24 bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-3xl flex items-center justify-center mb-6 relative overflow-hidden group">
             <div className="absolute inset-0 bg-blue-500/10 blur-xl group-hover:bg-blue-500/20 transition-all"></div>
-            <Handshake className="w-10 h-10 text-gray-400 relative z-10" />
+            <Handshake className="w-10 h-10 text-gray-600 dark:text-gray-400 relative z-10" />
           </div>
-          <h2 className="text-2xl font-extrabold text-white mb-2 tracking-tight font-display">Poste de Contrôle</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 tracking-tight font-display">Poste de Contrôle</h2>
           <p className="text-sm font-medium text-gray-500 max-w-sm">
             Sélectionnez une entité dans la liste pour accéder aux indicateurs financiers, calculs de risques et actions prédictives.
           </p>

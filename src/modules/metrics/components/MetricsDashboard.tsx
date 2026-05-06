@@ -23,7 +23,7 @@ export function MetricsDashboard() {
 
   if (loading || !metrics) {
       return (
-        <div className="flex flex-col items-center justify-center py-32 text-gray-400">
+        <div className="flex flex-col items-center justify-center py-32 text-gray-600 dark:text-gray-400">
           <RefreshCcw className="w-10 h-10 animate-spin mb-6 text-blue-500" strokeWidth={1.5} />
           <p className="text-sm font-bold uppercase tracking-widest animate-pulse">Chargement des analytiques...</p>
         </div>
@@ -46,8 +46,8 @@ export function MetricsDashboard() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#050505] border border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-md">
-          <p className="text-white font-bold mb-1">{label}</p>
+        <div className="bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-md">
+          <p className="text-gray-900 dark:text-white font-bold mb-1">{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm font-medium" style={{ color: entry.color }}>
               {entry.name === 'rev' ? (entry.value / 1000000).toFixed(1) + 'M DZD' : entry.value}
@@ -64,7 +64,7 @@ export function MetricsDashboard() {
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Metric 1 */}
-        <motion.div variants={item} className="bg-[#050505] p-6 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-white/10 transition-all">
+        <motion.div variants={item} className="bg-gray-50 dark:bg-[#050505] p-6 rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl relative overflow-hidden group hover:border-black/10 dark:border-white/10 transition-all">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
             <Users className="w-24 h-24 text-blue-500" />
           </div>
@@ -72,14 +72,14 @@ export function MetricsDashboard() {
             <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center">
               <Users className="h-5 w-5" />
             </div>
-            <h2 className="text-sm font-extrabold text-white uppercase tracking-widest">Leads Actifs</h2>
+            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-widest">Leads Actifs</h2>
           </div>
-          <h3 className="text-4xl font-extrabold tracking-tighter text-white mb-2 relative z-10">{metrics.activeLeads}</h3>
+          <h3 className="text-4xl font-extrabold tracking-tighter text-gray-900 dark:text-white mb-2 relative z-10">{metrics.activeLeads}</h3>
           <p className="text-xs uppercase tracking-widest font-bold text-gray-500 relative z-10">En cours de traitement</p>
         </motion.div>
 
         {/* Metric 2 */}
-        <motion.div variants={item} className="bg-[#050505] p-6 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-white/10 transition-all">
+        <motion.div variants={item} className="bg-gray-50 dark:bg-[#050505] p-6 rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl relative overflow-hidden group hover:border-black/10 dark:border-white/10 transition-all">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
             <Briefcase className="w-24 h-24 text-emerald-500" />
           </div>
@@ -87,17 +87,17 @@ export function MetricsDashboard() {
             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
               <Briefcase className="h-5 w-5" />
             </div>
-            <h2 className="text-sm font-extrabold text-white uppercase tracking-widest">Transactions Clôturées</h2>
+            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-widest">Transactions Clôturées</h2>
           </div>
           <div className="flex items-end gap-3 relative z-10">
-            <h3 className="text-4xl font-extrabold tracking-tighter text-white mb-2">{metrics.dealsClosed}</h3>
+            <h3 className="text-4xl font-extrabold tracking-tighter text-gray-900 dark:text-white mb-2">{metrics.dealsClosed}</h3>
             <span className="text-sm font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg mb-3">+{metrics.dealsWonPercentage}% réussite</span>
           </div>
           <p className="text-xs uppercase tracking-widest font-bold text-gray-500 relative z-10">Valeur Moy. {((metrics.avgDealSize || 0) / 1000000).toFixed(1)}M DZD</p>
         </motion.div>
 
         {/* Metric 3 */}
-        <motion.div variants={item} className="bg-[#050505] p-6 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-white/10 transition-all">
+        <motion.div variants={item} className="bg-gray-50 dark:bg-[#050505] p-6 rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl relative overflow-hidden group hover:border-black/10 dark:border-white/10 transition-all">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
             <Target className="w-24 h-24 text-purple-500" />
           </div>
@@ -105,9 +105,9 @@ export function MetricsDashboard() {
             <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-500 flex items-center justify-center">
               <Target className="h-5 w-5" />
             </div>
-            <h2 className="text-sm font-extrabold text-white uppercase tracking-widest">Taux de Conversion</h2>
+            <h2 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-widest">Taux de Conversion</h2>
           </div>
-          <h3 className="text-4xl font-extrabold tracking-tighter text-white mb-2 relative z-10">{metrics.conversionRate}%</h3>
+          <h3 className="text-4xl font-extrabold tracking-tighter text-gray-900 dark:text-white mb-2 relative z-10">{metrics.conversionRate}%</h3>
           <p className="text-xs uppercase tracking-widest font-bold text-gray-500 relative z-10">Sur l'ensemble des leads qualifiés</p>
         </motion.div>
       </motion.div>
@@ -116,9 +116,9 @@ export function MetricsDashboard() {
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
         
         {/* Chart 1 */}
-        <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
              <div className="flex items-center justify-between mb-8">
-                 <h3 className="text-lg font-extrabold text-white tracking-tight">Évolution du CA (MTD)</h3>
+                 <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">Évolution du CA (MTD)</h3>
                  <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[10px] uppercase tracking-widest font-bold">Croissance Stable</span>
              </div>
              <div className="h-72 w-full">
@@ -141,9 +141,9 @@ export function MetricsDashboard() {
         </motion.div>
 
         {/* Chart 2 */}
-        <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
              <div className="flex items-center justify-between mb-8">
-                 <h3 className="text-lg font-extrabold text-white tracking-tight">Volume des Ventes</h3>
+                 <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">Volume des Ventes</h3>
                  <span className="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-[10px] uppercase tracking-widest font-bold">Volume Actif</span>
              </div>
              <div className="h-72 w-full">

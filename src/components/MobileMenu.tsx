@@ -40,7 +40,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9000] bg-[#0A0A0A]/95 backdrop-blur-3xl border-t border-white/5 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9000] bg-white dark:bg-[#0A0A0A]/95 backdrop-blur-3xl border-t border-black/5 dark:border-white/5 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300">
         <nav className="flex items-center justify-around px-2 h-[68px]">
           {BOTTOM_NAV.map(({ href, label, Icon }) => {
             const isActive = pathname.startsWith(href)
@@ -50,7 +50,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                 href={href}
                 className={clsx(
                   "flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-200 active:scale-95 relative",
-                  isActive ? "text-blue-400" : "text-[#737373] hover:text-gray-300"
+                  isActive ? "text-blue-400" : "text-[#737373] hover:text-gray-800 dark:text-gray-300"
                 )}
               >
                 {isActive && (
@@ -68,7 +68,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="flex flex-col items-center justify-center w-full h-full space-y-1 text-[#737373] hover:text-gray-300 transition-all duration-200 active:scale-95 relative"
+            className="flex flex-col items-center justify-center w-full h-full space-y-1 text-[#737373] hover:text-gray-800 dark:text-gray-300 transition-all duration-200 active:scale-95 relative"
           >
             {isOpen && (
               <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500 rounded-b-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
@@ -93,7 +93,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
       {/* Sheet */}
       <div
         className={clsx(
-          "md:hidden fixed inset-x-0 bottom-0 z-[9999] bg-[#0A0A0A] rounded-t-[2rem] border-t border-white/10 flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.7)] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "md:hidden fixed inset-x-0 bottom-0 z-[9999] bg-white dark:bg-[#0A0A0A] rounded-t-[2rem] border-t border-black/10 dark:border-white/10 flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.7)] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen ? "translate-y-0" : "translate-y-full"
         )}
         style={{ 
@@ -106,20 +106,20 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
           <div className="w-12 h-1.5 bg-white/20 rounded-full"></div>
         </div>
 
-        <div className="px-6 pb-5 pt-1 flex items-center justify-between border-b border-white/5 shrink-0">
+        <div className="px-6 pb-5 pt-1 flex items-center justify-between border-b border-black/5 dark:border-white/5 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-[14px] bg-gradient-to-bl from-blue-600 to-indigo-900 border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.3)]">
-              <Building2 className="w-5 h-5 text-white" strokeWidth={1.5} />
+              <Building2 className="w-5 h-5 text-gray-900 dark:text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="font-extrabold text-white tracking-tight leading-none text-xl font-display">ASAS</p>
+              <p className="font-extrabold text-gray-900 dark:text-white tracking-tight leading-none text-xl font-display">ASAS</p>
               <p className="text-[9px] uppercase font-bold tracking-[0.25em] text-blue-400/90 leading-tight mt-0.5">OS Mobile</p>
             </div>
           </div>
           <button 
             type="button"
             onClick={() => setIsOpen(false)}
-            className="p-2 text-gray-400 hover:text-white rounded-full bg-white/5 hover:bg-white/10 transition-colors active:scale-95"
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors active:scale-95"
           >
             <X className="w-6 h-6" />
           </button>
@@ -138,12 +138,12 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                   className={clsx(
                     "flex items-center justify-between px-4 py-4 text-sm font-bold rounded-2xl transition-all relative overflow-hidden group active:scale-[0.98]",
                     isActive 
-                      ? "text-white bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" 
-                      : "text-[#A3A3A3] bg-[#050505] hover:bg-[#171717] hover:text-white border border-white/5"
+                      ? "text-gray-900 dark:text-white bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" 
+                      : "text-[#A3A3A3] bg-gray-50 dark:bg-[#050505] hover:bg-gray-200 dark:bg-[#171717] hover:text-gray-900 dark:text-white border border-black/5 dark:border-white/5"
                   )}
                 >
                   <div className="flex items-center gap-4 relative z-10">
-                    <Icon className={clsx("h-5 w-5 transition-colors", isActive ? "text-blue-400" : "text-[#525252] group-hover:text-gray-400")} strokeWidth={isActive ? 2 : 1.5} />
+                    <Icon className={clsx("h-5 w-5 transition-colors", isActive ? "text-blue-400" : "text-[#525252] group-hover:text-gray-600 dark:text-gray-400")} strokeWidth={isActive ? 2 : 1.5} />
                     <span className="tracking-wide text-[15px]">{label}</span>
                   </div>
                   {isActive && <ChevronRight className="w-5 h-5 text-blue-500/50" />}
@@ -154,15 +154,15 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
           <div className="h-6"></div> {/* Extra space at bottom of scroll list */}
         </div>
 
-        <div className="border-t border-white/5 px-6 py-5 bg-[#050505] shrink-0">
+        <div className="border-t border-black/5 dark:border-white/5 px-6 py-5 bg-gray-50 dark:bg-[#050505] shrink-0">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-800 to-gray-700 border border-gray-600 flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-800 to-gray-700 border border-gray-600 flex items-center justify-center text-gray-900 dark:text-white font-bold shrink-0 shadow-lg relative">
                 {initial}
                 <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#050505]"></div>
               </div>
               <div className="overflow-hidden">
-                <p className="text-[15px] font-bold text-white truncate leading-tight">{profile?.full_name}</p>
+                <p className="text-[15px] font-bold text-gray-900 dark:text-white truncate leading-tight">{profile?.full_name}</p>
                 <p className="text-[11px] text-[#A3A3A3] capitalize truncate font-medium">{roleDisplay}</p>
               </div>
             </div>

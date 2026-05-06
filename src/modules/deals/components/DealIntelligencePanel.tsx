@@ -76,7 +76,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
   if (loading) {
     return (
-      <div className="p-8 h-full flex flex-col justify-center items-center text-gray-400">
+      <div className="p-8 h-full flex flex-col justify-center items-center text-gray-600 dark:text-gray-400">
         <div className="w-8 h-8 border-4 border-gray-200 border-t-[#1A2A4A] rounded-full animate-spin mb-4" />
         <p className="text-sm font-medium animate-pulse">Chargement de la transaction...</p>
       </div>
@@ -98,17 +98,17 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   return (
           <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 pb-[env(safe-area-inset-bottom)]">
       {/* Header section */}
-      <div className="bg-[#050505] rounded-2xl shadow-2xl border border-white/5 overflow-hidden">
-        <div className="border-b border-white/5 flex items-center justify-between px-6 py-4 bg-[#0A0A0A]/50 flex-wrap gap-4">
+      <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 overflow-hidden">
+        <div className="border-b border-black/5 dark:border-white/5 flex items-center justify-between px-6 py-4 bg-white dark:bg-[#0A0A0A]/50 flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight leading-none mb-1">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none mb-1">
                 Transaction #{dealId.substring(0,8).toUpperCase()}
               </h2>
-              <div className="text-xs text-gray-400 flex flex-wrap items-center gap-2">
+              <div className="text-xs text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-2">
                 <span className="flex items-center gap-1">
                   <User className="w-3 h-3" /> Logged by: {deal.profiles?.full_name || 'Système'}
                 </span>
@@ -120,10 +120,10 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-black/5 dark:border-white/5 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
               <CheckSquare className="w-4 h-4" /> Créer Tâche
             </button>
-            <button onClick={handleGenerateContract} className="px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+            <button onClick={handleGenerateContract} className="px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-black/5 dark:border-white/5 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
               Générer Contrat (PDF)
             </button>
           </div>
@@ -134,10 +134,10 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
             <p className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-gray-500" /> Montant total convenu
             </p>
-            <p className="text-3xl font-bold text-white">
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">
               {(agreedPrice / 1_000_000).toFixed(1)} <span className="text-lg text-gray-600 font-medium">M DZD</span>
             </p>
-            <div className="mt-3 w-full bg-[#171717] h-1.5 rounded-full overflow-hidden">
+            <div className="mt-3 w-full bg-gray-200 dark:bg-[#171717] h-1.5 rounded-full overflow-hidden">
               <div 
                 className={clsx("h-full rounded-full transition-all duration-1000", paymentsReceived >= agreedPrice ? 'bg-emerald-500' : 'bg-blue-500')} 
                 style={{ width: `${Math.min((paymentsReceived / (agreedPrice || 1)) * 100, 100)}%` }}
@@ -152,8 +152,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
              <p className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
               <User className="w-4 h-4 text-gray-500" /> Informations Client
             </p>
-            <p className="text-base font-semibold text-white mb-1">{deal.clients?.full_name}</p>
-            <p className="text-sm text-gray-400 mb-1">{deal.clients?.phone}</p>
+            <p className="text-base font-semibold text-gray-900 dark:text-white mb-1">{deal.clients?.full_name}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{deal.clients?.phone}</p>
             <a href="#" className="text-sm text-blue-400 hover:underline inline-flex items-center gap-1 font-medium mt-1">
               Voir profil client <ArrowUpRight className="w-3 h-3" />
             </a>
@@ -163,11 +163,11 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
              <p className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
               <Building className="w-4 h-4 text-gray-500" /> Propriété & Projet
             </p>
-            <p className="text-base font-semibold text-white mb-1">{deal.properties?.projects?.name || 'Projet inconnu'}</p>
-            <p className="text-sm text-gray-400 flex items-center gap-1 mb-2">
+            <p className="text-base font-semibold text-gray-900 dark:text-white mb-1">{deal.properties?.projects?.name || 'Projet inconnu'}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 mb-2">
               <MapPin className="w-3 h-3 text-gray-500" /> {deal.properties?.reference_code ? `Réf: ${deal.properties.reference_code}` : 'Réf: ---'}
             </p>
-            <span className="inline-flex px-2 py-1 bg-[#171717] text-gray-400 border border-white/5 text-xs rounded-md font-medium">
+            <span className="inline-flex px-2 py-1 bg-gray-200 dark:bg-[#171717] text-gray-600 dark:text-gray-400 border border-black/5 dark:border-white/5 text-xs rounded-md font-medium">
               Type: {deal.properties?.property_type || 'N/A'}
             </span>
           </div>
@@ -204,45 +204,45 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
       {/* Process & Checklists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#050505] rounded-2xl p-6 border border-white/5 shadow-2xl">
-           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl">
+           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-gray-500" /> Calendrier de la Transaction
           </h3>
           <div className="relative pl-6 border-l-2 border-[#171717] space-y-6">
             <div className="relative">
               <div className="absolute w-3 h-3 bg-gray-600 rounded-full -left-[29px] top-1.5" />
-              <p className="text-sm font-semibold text-white mb-0.5">Création de la transaction</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Création de la transaction</p>
               <p className="text-xs text-gray-500">{new Date(deal.created_at).toLocaleDateString()}</p>
             </div>
              <div className="relative">
               <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[29px] top-1.5 ring-4 ring-[#0A0A0A]" />
-              <p className="text-sm font-semibold text-white mb-0.5">Négociation en cours</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Négociation en cours</p>
               <p className="text-xs text-blue-400 font-medium">Actuel</p>
             </div>
              <div className="relative opacity-40">
               <div className="absolute w-3 h-3 bg-[#262626] rounded-full -left-[29px] top-1.5" />
-              <p className="text-sm font-semibold text-white mb-0.5">Signature finale (Prévue)</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Signature finale (Prévue)</p>
               <p className="text-xs text-gray-500">Dans 14 jours</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#050505] rounded-2xl p-6 border border-white/5 shadow-2xl flex flex-col justify-between">
+        <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl flex flex-col justify-between">
            <div>
-             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Calculator className="w-5 h-5 text-gray-500" /> Commission Agent
             </h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Basé sur le plan de commissionement <strong className="text-white">Standard (3%)</strong>, l'agent assigné percevra la commission lors de la réception totale des fonds.
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              Basé sur le plan de commissionement <strong className="text-gray-900 dark:text-white">Standard (3%)</strong>, l'agent assigné percevra la commission lors de la réception totale des fonds.
             </p>
            </div>
            
-           <div className="mt-6 p-4 bg-[#0A0A0A] rounded-xl border border-white/5">
+           <div className="mt-6 p-4 bg-white dark:bg-[#0A0A0A] rounded-xl border border-black/5 dark:border-white/5">
              <div className="flex justify-between items-center mb-2">
                <span className="text-sm text-gray-500 font-medium">Estimation Commission</span>
-               <span className="text-lg font-bold text-white">{((agreedPrice * 0.03) / 1000).toFixed(1)}k DZD</span>
+               <span className="text-lg font-bold text-gray-900 dark:text-white">{((agreedPrice * 0.03) / 1000).toFixed(1)}k DZD</span>
              </div>
-             <div className="w-full h-1.5 bg-[#171717] rounded-full overflow-hidden">
+             <div className="w-full h-1.5 bg-gray-200 dark:bg-[#171717] rounded-full overflow-hidden">
                <div className="h-full bg-blue-500 rounded-full w-1/4 opacity-50 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
              </div>
              <p className="text-xs text-center text-gray-500 mt-2">Dépends du paiement final du client</p>

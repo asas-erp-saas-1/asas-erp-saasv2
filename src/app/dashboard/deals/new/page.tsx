@@ -59,13 +59,13 @@ function DealForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-4 sm:mt-8 bg-[#0A0A0A] border border-white/5 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl">
+    <div className="max-w-2xl mx-auto mt-4 sm:mt-8 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/20">
           <Handshake className="w-6 h-6" strokeWidth={1.5} />
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight font-display">Nouvelle Transaction</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight font-display">Nouvelle Transaction</h1>
           <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mt-1">Création de deal</p>
         </div>
       </div>
@@ -79,10 +79,10 @@ function DealForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-bold text-gray-400 mb-2 uppercase tracking-wide">Titre de la transaction</label>
+          <label className="block text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Titre de la transaction</label>
           <input
             type="text"
-            className="w-full bg-[#111] border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+            className="w-full bg-[#111] border border-black/10 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
             placeholder="ex: Appartement T4 Atlas"
             value={formData.title}
             onChange={e => setFormData({ ...formData, title: e.target.value })}
@@ -91,10 +91,10 @@ function DealForm() {
           />
         </div>
         <div>
-          <label className="block text-sm font-bold text-gray-400 mb-2 uppercase tracking-wide">Valeur Estimée (DZD)</label>
+          <label className="block text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Valeur Estimée (DZD)</label>
           <input
             type="number"
-            className="w-full bg-[#111] border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+            className="w-full bg-[#111] border border-black/10 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
             placeholder="ex: 15000000"
             value={formData.value}
             onChange={e => setFormData({ ...formData, value: e.target.value })}
@@ -103,21 +103,21 @@ function DealForm() {
         </div>
         {leadId && (
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-2 uppercase tracking-wide">Lien Entité (Lead ID)</label>
+            <label className="block text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Lien Entité (Lead ID)</label>
             <input
               type="text"
               readOnly
-              className="w-full bg-[#050505] text-gray-600 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm cursor-not-allowed"
+              className="w-full bg-gray-50 dark:bg-[#050505] text-gray-600 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 font-mono text-sm cursor-not-allowed"
               value={leadId}
             />
           </div>
         )}
 
-        <div className="flex gap-4 pt-6 border-t border-white/5">
+        <div className="flex gap-4 pt-6 border-t border-black/5 dark:border-white/5">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 px-6 py-3 bg-transparent border border-white/10 hover:border-white/20 text-white rounded-xl font-bold transition-all text-sm"
+            className="flex-1 px-6 py-3 bg-transparent border border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20 text-gray-900 dark:text-white rounded-xl font-bold transition-all text-sm"
           >
             Annuler
           </button>

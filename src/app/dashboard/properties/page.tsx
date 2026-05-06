@@ -38,10 +38,10 @@ function PropertyCard({ property }: { property: Property }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="bg-[#050505] rounded-2xl border border-white/5 overflow-hidden shadow-2xl hover:border-white/10 transition-all group"
+      className="bg-gray-50 dark:bg-[#050505] rounded-2xl border border-black/5 dark:border-white/5 overflow-hidden shadow-2xl hover:border-black/10 dark:border-white/10 transition-all group"
     >
       {/* Image placeholder */}
-      <div className="h-48 bg-[#0A0A0A] flex items-center justify-center relative overflow-hidden">
+      <div className="h-48 bg-white dark:bg-[#0A0A0A] flex items-center justify-center relative overflow-hidden">
         {property.images?.[0] ? (
           <Image src={property.images[0]} alt="Property image" fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         ) : (
@@ -58,22 +58,22 @@ function PropertyCard({ property }: { property: Property }) {
         <div className="flex items-start justify-between gap-2 mb-3">
           <div>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{TYPE_LABELS[property.type] ?? property.type}</span>
-            {property.reference_code && <span className="ml-2 text-[10px] font-mono text-gray-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-md">#{property.reference_code}</span>}
+            {property.reference_code && <span className="ml-2 text-[10px] font-mono text-gray-600 dark:text-gray-400 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-2 py-0.5 rounded-md">#{property.reference_code}</span>}
           </div>
-          {property.rooms && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-md font-bold">{property.rooms}</span>}
+          {property.rooms && <span className="text-[10px] bg-black/10 dark:bg-white/10 text-gray-900 dark:text-white px-2 py-0.5 rounded-md font-bold">{property.rooms}</span>}
         </div>
 
-        <p className="font-extrabold text-2xl tracking-tight text-white mb-4">{fmt(property.list_price)}</p>
+        <p className="font-extrabold text-2xl tracking-tight text-gray-900 dark:text-white mb-4">{fmt(property.list_price)}</p>
 
         {property.projects && (
-          <p className="text-xs font-bold text-gray-400 truncate flex items-center gap-2 mb-4 bg-[#0A0A0A] p-2 border border-white/5 rounded-lg">
+          <p className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate flex items-center gap-2 mb-4 bg-white dark:bg-[#0A0A0A] p-2 border border-black/5 dark:border-white/5 rounded-lg">
             <Building2 className="w-4 h-4 text-gray-500 shrink-0" />
             <span className="truncate">{property.projects.name}</span>
             {property.projects.city ? <span className="text-gray-600 shrink-0">· {property.projects.city}</span> : ''}
           </p>
         )}
 
-        <div className="flex items-center gap-4 pt-4 border-t border-white/5 text-[10px] uppercase tracking-widest font-bold text-gray-500">
+        <div className="flex items-center gap-4 pt-4 border-t border-black/5 dark:border-white/5 text-[10px] uppercase tracking-widest font-bold text-gray-500">
           {property.area_sqm && <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />{property.area_sqm} m²</span>}
           {property.projects?.developers && <span className="flex items-center gap-1.5 truncate"><span className="w-1.5 h-1.5 rounded-full bg-gray-500" />{property.projects.developers.name}</span>}
         </div>
@@ -117,13 +117,13 @@ export default function PropertiesPage() {
   }), {} as Record<string, number>)
 
   return (
-    <div className="flex-1 text-gray-100 flex flex-col">
+    <div className="flex-1 text-gray-900 dark:text-gray-100 flex flex-col">
       <div className="w-full space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 tracking-tight flex items-center gap-3 font-display">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 to-emerald-500/10 border border-white/10 flex items-center justify-center p-3 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 to-emerald-500/10 border border-black/10 dark:border-white/10 flex items-center justify-center p-3 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
                  <Building2 className="h-full w-full text-blue-400" /> 
               </div>
               OS Nexus | Gestion des Actifs
@@ -134,10 +134,10 @@ export default function PropertiesPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-5 py-3 shrink-0 bg-white/5 border border-white/10 text-blue-400 rounded-xl text-xs font-bold hover:bg-white/10 transition-all">
+            <button className="flex items-center gap-2 px-5 py-3 shrink-0 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-blue-400 rounded-xl text-xs font-bold hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-all">
               Générer Rapport IA
             </button>
-            <button className="flex items-center gap-2 px-5 py-3 object-cover shrink-0 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] active:scale-95">
+            <button className="flex items-center gap-2 px-5 py-3 object-cover shrink-0 bg-blue-600 text-gray-900 dark:text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] active:scale-95">
               <Plus className="h-4 w-4" strokeWidth={2.5} /> Nouvel Actif
             </button>
           </div>
@@ -161,12 +161,12 @@ export default function PropertiesPage() {
         </div>
 
         {/* Control Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#0A0A0A] p-4 rounded-2xl border border-white/5 shadow-2xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-[#0A0A0A] p-4 rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl">
            <div className="flex items-center gap-2 w-full md:w-auto">
              <div className="relative flex-1 md:w-72">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                 <input type="text" placeholder="Scanner matricule X-001..." value={search} onChange={e => setSearch(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 text-sm bg-[#050505] border border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-white transition-all font-medium placeholder:text-gray-600" />
+                    className="w-full pl-11 pr-4 py-3 text-sm bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white transition-all font-medium placeholder:text-gray-600" />
              </div>
            </div>
 
@@ -174,7 +174,7 @@ export default function PropertiesPage() {
                <div className="relative flex-1 md:w-48">
                  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 z-10 pointer-events-none" />
                  <select value={statusFilter} onChange={e => setStatus(e.target.value)}
-                    className="w-full pl-11 pr-8 py-3 text-sm bg-[#050505] border border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 text-white transition-all font-medium appearance-none cursor-pointer">
+                    className="w-full pl-11 pr-8 py-3 text-sm bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white transition-all font-medium appearance-none cursor-pointer">
                     <option value="">Tous les statuts</option>
                     <option value="available">Disponible</option>
                     <option value="reserved">Réservé</option>
@@ -185,7 +185,7 @@ export default function PropertiesPage() {
                <div className="relative flex-1 md:w-48">
                  <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 z-10 pointer-events-none" />
                  <select value={typeFilter} onChange={e => setType(e.target.value)}
-                    className="w-full pl-11 pr-8 py-3 text-sm bg-[#050505] border border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 text-white transition-all font-medium appearance-none cursor-pointer">
+                    className="w-full pl-11 pr-8 py-3 text-sm bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white transition-all font-medium appearance-none cursor-pointer">
                     <option value="">Tous les gabarits</option>
                     {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </select>
@@ -196,14 +196,14 @@ export default function PropertiesPage() {
         {/* Grid */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => <div key={i} className="h-80 bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse" />)}
+            {[...Array(8)].map((_, i) => <div key={i} className="h-80 bg-white dark:bg-[#0A0A0A] rounded-2xl border border-black/5 dark:border-white/5 animate-pulse" />)}
           </div>
         ) : properties.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-gray-500 bg-[#0A0A0A] rounded-3xl border border-white/5 border-dashed">
-            <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
+          <div className="flex flex-col items-center justify-center py-32 text-gray-500 bg-white dark:bg-[#0A0A0A] rounded-3xl border border-black/5 dark:border-white/5 border-dashed">
+            <div className="w-20 h-20 bg-black/5 dark:bg-white/5 rounded-2xl flex items-center justify-center mb-6">
                <Building2 className="h-8 w-8 text-white/50" />
             </div>
-             <p className="text-lg font-bold text-white mb-2">Base de données vide</p>
+             <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">Base de données vide</p>
              <p className="text-xs uppercase tracking-widest">Ajustez vos paramètres régionaux ou d'état.</p>
           </div>
         ) : (
@@ -215,9 +215,9 @@ export default function PropertiesPage() {
         {/* Pagination */}
         {total > LIMIT && (
           <div className="flex items-center justify-center gap-4 pt-8">
-            <button disabled={page === 1} onClick={() => setPage(p => p-1)} className="px-5 py-3 text-xs font-bold text-gray-400 bg-[#0A0A0A] border border-white/5 rounded-xl disabled:opacity-40 hover:text-white transition-colors">← Précédent</button>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-[#0A0A0A] px-4 py-3 rounded-xl border border-white/5">Page {page} / {Math.ceil(total/LIMIT)}</span>
-            <button disabled={page >= Math.ceil(total/LIMIT)} onClick={() => setPage(p => p+1)} className="px-5 py-3 text-xs font-bold text-gray-400 bg-[#0A0A0A] border border-white/5 rounded-xl disabled:opacity-40 hover:text-white transition-colors">Suivant →</button>
+            <button disabled={page === 1} onClick={() => setPage(p => p-1)} className="px-5 py-3 text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-xl disabled:opacity-40 hover:text-gray-900 dark:text-white transition-colors">← Précédent</button>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-white dark:bg-[#0A0A0A] px-4 py-3 rounded-xl border border-black/5 dark:border-white/5">Page {page} / {Math.ceil(total/LIMIT)}</span>
+            <button disabled={page >= Math.ceil(total/LIMIT)} onClick={() => setPage(p => p+1)} className="px-5 py-3 text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-xl disabled:opacity-40 hover:text-gray-900 dark:text-white transition-colors">Suivant →</button>
           </div>
         )}
       </div>

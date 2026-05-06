@@ -15,9 +15,9 @@ export default async function OverviewPage() {
   return (
     <div className="w-full">
       <div className="flex flex-col gap-2 mb-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3 font-display">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 font-display">
            <div className="w-12 h-12 rounded-[1.25rem] bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.2)]">
-               <LayoutDashboard className="h-6 w-6 text-white" strokeWidth={1.5} /> 
+               <LayoutDashboard className="h-6 w-6 text-gray-900 dark:text-white" strokeWidth={1.5} /> 
            </div>
            Vue d'ensemble
         </h1>

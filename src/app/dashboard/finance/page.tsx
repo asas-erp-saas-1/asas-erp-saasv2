@@ -50,11 +50,11 @@ export default function FinancePage() {
 
   if (loading) return (
     <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full">
-      <div className="h-24 w-1/3 bg-[#0A0A0A] border border-white/5 rounded-2xl animate-pulse" />
+      <div className="h-24 w-1/3 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl animate-pulse" />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-[#0A0A0A] border border-white/5 rounded-2xl animate-pulse" />)}
+        {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl animate-pulse" />)}
       </div>
-      <div className="h-64 bg-[#0A0A0A] border border-white/5 rounded-2xl animate-pulse" />
+      <div className="h-64 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl animate-pulse" />
     </div>
   )
 
@@ -78,12 +78,12 @@ export default function FinancePage() {
   }
 
   return (
-    <div className="flex-1 text-gray-100 flex flex-col">
+    <div className="flex-1 text-gray-900 dark:text-gray-100 flex flex-col">
       <div className="w-full space-y-8 max-w-6xl mx-auto">
         <div className="relative z-10 w-full mb-10 pt-4">
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
           <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-blue-400 to-indigo-400 tracking-tight flex items-center gap-4 font-display">
-             <div className="w-14 h-14 rounded-2xl bg-[#0A0A0A] border border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)] relative overflow-hidden group">
+             <div className="w-14 h-14 rounded-2xl bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)] relative overflow-hidden group">
                  <div className="absolute inset-0 bg-blue-500/20 group-hover:bg-blue-500/40 transition-colors" />
                  <DollarSign className="h-7 w-7 text-emerald-400 relative z-10" /> 
              </div>
@@ -123,12 +123,12 @@ export default function FinancePage() {
               { label: 'Dettes & Commissions',    value: cash.payablesTotal,    icon: TrendingDown, color: 'text-amber-400', bg: 'bg-[#0A0500]', iconBg: 'bg-amber-500/10', iconColor: 'text-amber-500' },
               { label: 'Position Nette',      value: cash.netPosition,      icon: CheckCircle, color: cash.netPosition >= 0 ? 'text-emerald-400' : 'text-red-400', bg: cash.netPosition >= 0 ? 'bg-[#050A05]' : 'bg-[#0A0000]', iconBg: cash.netPosition >= 0 ? 'bg-emerald-500/10' : 'bg-red-500/10', iconColor: cash.netPosition >= 0 ? 'text-emerald-500' : 'text-red-500' },
             ].map(({ label, value, icon: Icon, color, bg, iconBg, iconColor }, i) => (
-              <motion.div key={label} variants={item} className={clsx("rounded-3xl border border-white/5 p-6 shadow-2xl transition-all relative overflow-hidden group", bg)}>
+              <motion.div key={label} variants={item} className={clsx("rounded-3xl border border-black/5 dark:border-white/5 p-6 shadow-2xl transition-all relative overflow-hidden group", bg)}>
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                    <Icon className="w-16 h-16" />
                 </div>
                 <div className="flex items-center gap-4 mb-4 relative z-10">
-                  <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center border border-white/5", iconBg, iconColor)}>
+                  <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center border border-black/5 dark:border-white/5", iconBg, iconColor)}>
                       <Icon className="h-5 w-5" />
                   </div>
                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 leading-tight">{label}</p>
@@ -141,18 +141,18 @@ export default function FinancePage() {
 
         {/* Receivables aging */}
         {aging && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#050505] rounded-[2rem] border border-white/5 p-8 shadow-2xl">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-white/5 gap-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-gray-50 dark:bg-[#050505] rounded-[2rem] border border-black/5 dark:border-white/5 p-8 shadow-2xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-black/5 dark:border-white/5 gap-6">
               <div>
-                  <h2 className="text-xl font-extrabold text-white tracking-tight">Analyse d'Ancienneté (Receivables Aging)</h2>
+                  <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">Analyse d'Ancienneté (Receivables Aging)</h2>
                   <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">Détail de l'échéancier des flux entrants en attente de vérification.</p>
               </div>
-              <div className="flex items-center gap-6 bg-[#0A0A0A] rounded-2xl p-4 shrink-0 border border-white/5">
+              <div className="flex items-center gap-6 bg-white dark:bg-[#0A0A0A] rounded-2xl p-4 shrink-0 border border-black/5 dark:border-white/5">
                  <div>
                      <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Défauts critiques</p>
-                     <p className="text-xl font-extrabold text-white leading-none">{aging.overdueCount}</p>
+                     <p className="text-xl font-extrabold text-gray-900 dark:text-white leading-none">{aging.overdueCount}</p>
                  </div>
-                 <div className="w-px h-10 bg-white/10" />
+                 <div className="w-px h-10 bg-black/10 dark:bg-white/10" />
                  <div>
                      <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Efficience Encaissement</p>
                      <p className="text-xl font-extrabold text-emerald-500 leading-none drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">{Math.round(aging.collectionEfficiency * 100)}%</p>
@@ -162,15 +162,15 @@ export default function FinancePage() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
               {aging.buckets.map(bucket => (
-                <div key={bucket.label} className={clsx('rounded-2xl p-5 border relative overflow-hidden', bucket.label === '90+' ? 'border-red-500/20 bg-red-500/5' : bucket.label === '61-90' ? 'border-orange-500/20 bg-orange-500/5' : 'border-white/5 bg-[#0A0A0A]')}>
+                <div key={bucket.label} className={clsx('rounded-2xl p-5 border relative overflow-hidden', bucket.label === '90+' ? 'border-red-500/20 bg-red-500/5' : bucket.label === '61-90' ? 'border-orange-500/20 bg-orange-500/5' : 'border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A]')}>
                   {bucket.label === '90+' && <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-full blur-2xl" />}
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2 relative z-10">{bucket.label} jours</p>
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-gray-600 dark:text-gray-400 mb-2 relative z-10">{bucket.label} jours</p>
                   <p className={clsx('text-xl font-bold tracking-tight relative z-10', bucket.label === '90+' ? 'text-red-400' : bucket.label === '61-90' ? 'text-orange-400' : 'text-gray-200')}>
                     {fmt(bucket.amount.amount)}
                   </p>
                   <div className="flex items-center justify-between mt-3 font-bold relative z-10">
                     <span className="text-[10px] text-gray-500">{bucket.count} flux</span>
-                    <span className="text-[10px] text-gray-400 bg-white/5 px-2 py-0.5 rounded">{bucket.pct}%</span>
+                    <span className="text-[10px] text-gray-600 dark:text-gray-400 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded">{bucket.pct}%</span>
                   </div>
                 </div>
               ))}
@@ -178,7 +178,7 @@ export default function FinancePage() {
 
             {/* Progress bar */}
             <div>
-              <div className="h-3 bg-[#0A0A0A] border border-white/5 rounded-full overflow-hidden flex shadow-inner">
+              <div className="h-3 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-full overflow-hidden flex shadow-inner">
                   {aging.buckets.map(bucket => (
                   <motion.div
                       initial={{ width: 0 }}

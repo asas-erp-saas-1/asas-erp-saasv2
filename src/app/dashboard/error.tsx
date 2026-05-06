@@ -21,8 +21,8 @@ export default function DashboardError({
       <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6">
         <AlertTriangle className="h-8 w-8 text-red-500" strokeWidth={1.5} />
       </div>
-      <h2 className="text-xl font-bold text-white mb-2">Something went wrong!</h2>
-      <p className="text-gray-400 mb-8 max-w-md">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Something went wrong!</h2>
+      <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md">
         We encountered an error while loading this section of the dashboard. Our team has been notified.
       </p>
       <button

@@ -58,14 +58,14 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-lg bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-lg bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-[#111111]">
-          <h2 className="text-xl font-bold text-white">Nouvelle Tâche</h2>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-black/5 dark:border-white/5 bg-gray-100 dark:bg-[#111111]">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Nouvelle Tâche</h2>
           <button 
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -79,23 +79,23 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
           )}
           
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Titre *</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2">Titre *</label>
             <input 
               type="text" 
               required
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value})}
-              className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all font-mono text-sm"
+              className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all font-mono text-sm"
               placeholder="Ex: Appeler pour relance..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2">Description</label>
             <textarea 
               value={formData.description}
               onChange={e => setFormData({...formData, description: e.target.value})}
-              className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all font-mono text-sm resize-none"
+              className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all font-mono text-sm resize-none"
               placeholder="Détails de la tâche..."
               rows={3}
             />
@@ -103,13 +103,13 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2 flex items-center gap-2">
                 <Flag className="w-4 h-4" /> Priorité
               </label>
               <select 
                 value={formData.priority}
                 onChange={e => setFormData({...formData, priority: e.target.value})}
-                className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm appearance-none"
+                className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm appearance-none"
               >
                 <option value="low">Basse</option>
                 <option value="medium">Moyenne</option>
@@ -119,24 +119,24 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2 flex items-center gap-2">
                 <Calendar className="w-4 h-4" /> Échéance
               </label>
               <input 
                 type="date"
                 value={formData.due_date}
                 onChange={e => setFormData({...formData, due_date: e.target.value})}
-                className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm [color-scheme:dark]"
+                className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm [color-scheme:dark]"
               />
             </div>
           </div>
 
-          <div className="pt-4 border-t border-white/5 flex gap-3 justify-end">
+          <div className="pt-4 border-t border-black/5 dark:border-white/5 flex gap-3 justify-end">
             <button 
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl border border-white/10 text-white text-sm font-bold hover:bg-white/5 transition-colors disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-gray-900 dark:text-white text-sm font-bold hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors disabled:opacity-50"
             >
               Annuler
             </button>
