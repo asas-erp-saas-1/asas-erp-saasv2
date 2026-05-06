@@ -1,9 +1,9 @@
 // src/app/dashboard/leads/page.tsx
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users, Plus, Search, Phone, MessageCircle, Clock, ArrowRight } from 'lucide-react'
+import { Users, Plus, Search, Phone, MessageCircle, Clock, ArrowRight, Filter, X } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { Lead } from '@/types/app'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
@@ -27,6 +27,71 @@ function inactiveHours(lastActivity: string): number {
 function fmt(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M DZD'
   return new Intl.NumberFormat('fr-DZ').format(n) + ' DZD'
+}
+
+// ─── MultiSelect Component ───────────────────────────────────────────────────
+function MultiSelect({ options, selected, onChange, label }: { options: { id: string, name: string }[], selected: string[], onChange: (val: string[]) => void, label: string }) {
+  const [open, setOpen] = useState(false)
+
+  const toggle = (id: string) => {
+    if (selected.includes(id)) {
+      onChange(selected.filter(x => x !== id))
+    } else {
+      onChange([...selected, id])
+    }
+  }
+
+  return (
+    <div className="relative">
+      <button 
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-2 bg-[#050505] border border-white/10 rounded-xl text-xs font-medium text-gray-300 hover:text-white transition-colors"
+      >
+        <Filter className="w-3.5 h-3.5" />
+        {label}
+        {selected.length > 0 && (
+          <span className="ml-1 bg-white/10 text-white px-1.5 py-0.5 rounded-md text-[10px]">
+            {selected.length}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute top-full mt-2 right-0 w-48 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div className="max-h-60 overflow-y-auto p-1 scrollbar-thin">
+              {options.length === 0 ? (
+                <div className="p-2 text-xs text-gray-500 italic text-center">Aucune option</div>
+              ) : (
+                options.map(opt => (
+                  <label key={opt.id} className="flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 rounded-lg cursor-pointer">
+                    <input 
+                      type="checkbox"
+                      checked={selected.includes(opt.id)}
+                      onChange={() => toggle(opt.id)}
+                      className="w-3.5 h-3.5 rounded border-white/20 bg-black/50 text-emerald-500 focus:ring-emerald-500/20"
+                    />
+                    <span className="text-xs text-gray-300 truncate">{opt.name}</span>
+                  </label>
+                ))
+              )}
+            </div>
+            {selected.length > 0 && (
+              <div className="p-1 border-t border-white/5">
+                <button 
+                  onClick={() => onChange([])}
+                  className="w-full py-1.5 text-xs text-gray-400 hover:text-white rounded flex items-center justify-center gap-1"
+                >
+                  <X className="w-3 h-3" /> Effacer
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
 }
 
 // ─── Lead card ────────────────────────────────────────────────────────────────
@@ -127,6 +192,9 @@ export default function LeadsPage() {
   const [total,   setTotal]   = useState(0)
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
 
+  const [selectedSources, setSelectedSources] = useState<string[]>([])
+  const [selectedAgents, setSelectedAgents] = useState<string[]>([])
+
   const router = useRouter()
 
   const load = useCallback(async () => {
@@ -151,14 +219,43 @@ export default function LeadsPage() {
     router.push(`/dashboard/deals/new?leadId=${leadId}`)
   }
 
-  // Filter by search
-  const filtered = search.trim()
-  ? leads.filter(l =>
-      (l as any).clients?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      (l as any).clients?.phone?.includes(search) ||
-      (l as any).projects?.name?.toLowerCase().includes(search.toLowerCase())
-    )
-  : leads
+  // Derive filter options
+  const sourceOptions = useMemo(() => {
+    const sources = new Set(leads.map(l => l.source).filter(Boolean) as string[])
+    return Array.from(sources).map(s => ({ id: s, name: s }))
+  }, [leads])
+
+  const agentOptions = useMemo(() => {
+    const agents = new Map<string, string>()
+    leads.forEach(l => {
+      if (l.assigned_agent && (l as any).profiles?.full_name) {
+        agents.set(l.assigned_agent, (l as any).profiles.full_name)
+      }
+    })
+    return Array.from(agents.entries()).map(([id, name]) => ({ id, name }))
+  }, [leads])
+
+  // Filter by search and multi-select
+  const filtered = leads.filter(l => {
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      const matchesSearch = 
+        (l as any).clients?.full_name?.toLowerCase().includes(q) ||
+        (l as any).clients?.phone?.includes(q) ||
+        (l as any).projects?.name?.toLowerCase().includes(q)
+      if (!matchesSearch) return false
+    }
+
+    if (selectedSources.length > 0) {
+      if (!l.source || !selectedSources.includes(l.source)) return false
+    }
+
+    if (selectedAgents.length > 0) {
+      if (!l.assigned_agent || !selectedAgents.includes(l.assigned_agent)) return false
+    }
+
+    return true
+  })
 
 // Group by status
 const byStatus = (status: string) => filtered.filter(l => l.status === status)
@@ -199,18 +296,34 @@ return (
           <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{total} entités actives détectées</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+          {/* Filters */}
+          <div className="flex items-center gap-2">
+            <MultiSelect 
+              label="Source" 
+              options={sourceOptions} 
+              selected={selectedSources} 
+              onChange={setSelectedSources} 
+            />
+            <MultiSelect 
+              label="Agent" 
+              options={agentOptions} 
+              selected={selectedAgents} 
+              onChange={setSelectedAgents} 
+            />
+          </div>
+
           {/* Search */}
-          <div className="relative w-full md:w-80">
+          <div className="relative w-full md:w-64">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Scanner matricule ou identifiant..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-[#050505] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all placeholder:text-gray-600"
+              className="w-full pl-11 pr-4 py-2.5 bg-[#050505] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all placeholder:text-gray-600"
             />
           </div>
-          <button className="flex items-center justify-center gap-2 px-5 py-3 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
+          <button className="flex items-center justify-center gap-2 px-5 py-2.5 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
             <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter Entité
           </button>
         </div>
