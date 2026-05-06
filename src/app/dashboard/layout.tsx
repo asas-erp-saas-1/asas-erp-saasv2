@@ -73,7 +73,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <nav className="flex flex-col gap-1">
             {NAV.map(({ href, label, Icon }) => (
               <Link key={href} href={href}
-                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#A3A3A3] rounded-xl hover:bg-gray-200 dark:bg-[#171717] hover:text-gray-900 dark:text-white transition-all group relative">
+                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#A3A3A3] rounded-xl hover:bg-gray-200 dark:hover:bg-[#171717] hover:text-gray-900 dark:hover:text-white transition-all group relative">
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-blue-500 rounded-r-full transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>
                 <Icon className="h-4 w-4 text-[#525252] group-hover:text-blue-400 transition-colors" strokeWidth={1.5} />
                 <span className="group-hover:translate-x-0.5 transition-transform">{label}</span>
@@ -113,7 +113,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <p className="font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight text-lg font-display">ASAS</p>
             </div>
             
-            <div className="hidden sm:flex items-center px-4 py-2.5 bg-gray-200 dark:bg-[#171717] hover:bg-[#262626] border border-gray-200 dark:border-[#262626] hover:border-[#404040] rounded-2xl w-full focus-within:bg-gray-50 dark:bg-[#050505] focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all group">
+            <div className="hidden sm:flex items-center px-4 py-2.5 bg-gray-200 dark:bg-[#171717] hover:bg-gray-300 dark:hover:bg-[#262626] border border-gray-200 dark:border-[#262626] hover:border-gray-400 dark:hover:border-[#404040] rounded-2xl w-full focus-within:bg-gray-50 dark:focus-within:bg-[#050505] focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all group">
               <Search className="w-4 h-4 text-gray-500 mr-3 group-focus-within:text-blue-500 transition-colors" strokeWidth={2} />
               <input 
                 type="text" 
@@ -131,9 +131,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <ThemeToggle />
             <button className="relative p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all">
               <Bell className="w-5 h-5" strokeWidth={2} />
-              <span className="absolute top-2.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0A0A0A] shadow-sm"></span>
+              <span className="absolute top-2.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-[#0A0A0A] shadow-sm"></span>
             </button>
-            <div className="w-px h-6 bg-[#262626] hidden sm:block"></div>
+            <div className="w-px h-6 bg-gray-200 dark:bg-[#262626] hidden sm:block"></div>
             <div className="hidden sm:flex items-center gap-3 pl-2">
               <div className="flex flex-col items-end">
                 <span className="text-sm font-bold text-gray-900 dark:text-white leading-none">{(profile as any)?.full_name}</span>

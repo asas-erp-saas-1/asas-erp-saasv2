@@ -6,6 +6,8 @@ import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarCh
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 
+import { ThemeToggle } from './ThemeToggle'
+
 const NAV = [
   { href: '/dashboard/overview',   label: 'Vue d\'ensemble',    Icon: LayoutGrid  },
   { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users       },
@@ -93,7 +95,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
       {/* Sheet */}
       <div
         className={clsx(
-          "md:hidden fixed inset-x-0 bottom-0 z-[9999] bg-white dark:bg-[#0A0A0A] rounded-t-[2rem] border-t border-black/10 dark:border-white/10 flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.7)] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "md:hidden fixed inset-x-0 bottom-0 z-[9999] bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-3xl rounded-t-[2rem] border-t border-black/10 dark:border-white/10 flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.7)] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen ? "translate-y-0" : "translate-y-full"
         )}
         style={{ 
@@ -116,13 +118,16 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
               <p className="text-[9px] uppercase font-bold tracking-[0.25em] text-blue-400/90 leading-tight mt-0.5">OS Mobile</p>
             </div>
           </div>
-          <button 
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors active:scale-95"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button 
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors active:scale-95"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-6 custom-scrollbar overscroll-contain">
@@ -139,7 +144,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                     "flex items-center justify-between px-4 py-4 text-sm font-bold rounded-2xl transition-all relative overflow-hidden group active:scale-[0.98]",
                     isActive 
                       ? "text-gray-900 dark:text-white bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" 
-                      : "text-[#A3A3A3] bg-gray-50 dark:bg-[#050505] hover:bg-gray-200 dark:bg-[#171717] hover:text-gray-900 dark:text-white border border-black/5 dark:border-white/5"
+                      : "text-[#A3A3A3] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 hover:text-gray-900 dark:text-white border border-transparent"
                   )}
                 >
                   <div className="flex items-center gap-4 relative z-10">
@@ -154,7 +159,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
           <div className="h-6"></div> {/* Extra space at bottom of scroll list */}
         </div>
 
-        <div className="border-t border-black/5 dark:border-white/5 px-6 py-5 bg-gray-50 dark:bg-[#050505] shrink-0">
+        <div className="border-t border-black/5 dark:border-white/5 px-6 py-5 bg-transparent shrink-0">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-800 to-gray-700 border border-gray-600 flex items-center justify-center text-gray-900 dark:text-white font-bold shrink-0 shadow-lg relative">
