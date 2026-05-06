@@ -49,7 +49,10 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
   if (!leadId) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <div 
         className="w-full max-w-2xl max-h-[85vh] bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
@@ -122,6 +125,24 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                          </strong>
                        </div>
                     )}
+
+                    {lead.source && (
+                       <div className="flex items-center gap-3 text-sm text-gray-300">
+                         <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                            <span className="font-bold text-indigo-400">#</span>
+                         </div>
+                         <span>Source: <strong>{lead.source}</strong></span>
+                       </div>
+                    )}
+
+                    {(lead as any).profiles && (
+                       <div className="flex items-center gap-3 text-sm text-gray-300">
+                         <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center shrink-0">
+                            <User className="w-4 h-4 text-pink-400" />
+                         </div>
+                         <span>Assigné à: <strong>{(lead as any).profiles.full_name || 'Agent'}</strong></span>
+                       </div>
+                    )}
                  </div>
               </div>
 
@@ -164,7 +185,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                             </span>
                           </div>
                           <p className="text-sm text-gray-300">
-                            {act.notes}
+                            {act.description}
                           </p>
                           {(act as any).profiles?.full_name && (
                             <p className="text-[10px] text-gray-500 mt-2 uppercase tracking-widest font-bold">

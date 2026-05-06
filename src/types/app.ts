@@ -138,7 +138,7 @@ export interface Activity {
   lead_id:    string | null
   deal_id:    string | null
   type:       ActivityType
-  notes:      string
+  description: string
   created_by: string
   deleted_at: string | null
   created_at: string
