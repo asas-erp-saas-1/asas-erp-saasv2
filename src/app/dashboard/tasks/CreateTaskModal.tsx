@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { X, Calendar, Flag, User, Loader2 } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { X, Calendar, Flag, User, Loader2, Link as LinkIcon } from 'lucide-react'
 import { createTaskAction } from '@/actions/taskActions'
 
 interface CreateTaskModalProps {
@@ -15,13 +15,43 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
+  const [leads, setLeads] = useState<any[]>([])
+  const [deals, setDeals] = useState<any[]>([])
+  const [loadingOptions, setLoadingOptions] = useState(true)
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     priority: 'medium',
     due_date: '',
+    lead_id: leadId || '',
+    deal_id: dealId || '',
     assigned_to: '' // Optionally allow assigning to specific agent if we had the list
   })
+
+  useEffect(() => {
+    async function loadOptions() {
+      try {
+        const [leadsRes, dealsRes] = await Promise.all([
+          fetch('/api/leads'),
+          fetch('/api/deals')
+        ])
+        if (leadsRes.ok) {
+          const leadsData = await leadsRes.json()
+          setLeads(leadsData.data || leadsData)
+        }
+        if (dealsRes.ok) {
+          const dealsData = await dealsRes.json()
+          setDeals(dealsData.data || dealsData)
+        }
+      } catch (err) {
+        console.error('Failed to load associations:', err)
+      } finally {
+        setLoadingOptions(false)
+      }
+    }
+    loadOptions()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,8 +64,8 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
         description: formData.description,
         priority: formData.priority as any,
         due_date: formData.due_date || null,
-        lead_id: leadId || null,
-        deal_id: dealId || null,
+        lead_id: formData.lead_id || null,
+        deal_id: formData.deal_id || null,
         // Since we don't have assigned_to from a dropdown here easily, we rely on createTaskAction to assign it to the current user or handle it.
       })
       
@@ -128,6 +158,42 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
                 onChange={e => setFormData({...formData, due_date: e.target.value})}
                 className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm [color-scheme:dark]"
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2 flex items-center gap-2">
+                <LinkIcon className="w-4 h-4" /> Relier au Lead
+              </label>
+              <select 
+                value={formData.lead_id}
+                onChange={e => setFormData({...formData, lead_id: e.target.value})}
+                disabled={loadingOptions || leads.length === 0}
+                className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm appearance-none disabled:opacity-50"
+              >
+                <option value="">Aucun lead</option>
+                {leads.map(l => (
+                  <option key={l.id} value={l.id}>{l.full_name || l.name || 'Lead Inconnu'}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2 flex items-center gap-2">
+                <LinkIcon className="w-4 h-4" /> Relier au Deal
+              </label>
+              <select 
+                value={formData.deal_id}
+                onChange={e => setFormData({...formData, deal_id: e.target.value})}
+                disabled={loadingOptions || deals.length === 0}
+                className="w-full px-4 py-3 bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-white/30 transition-all font-mono text-sm appearance-none disabled:opacity-50"
+              >
+                <option value="">Aucun deal</option>
+                {deals.map(d => (
+                  <option key={d.id} value={d.id}>Deal: {d.clients?.full_name || d.id.slice(0, 8)}</option>
+                ))}
+              </select>
             </div>
           </div>
 

@@ -1,10 +1,11 @@
 // src/app/dashboard/tasks/page.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
-import { CheckSquare, Clock, AlertTriangle, Check, Zap, ListTodo, AlertOctagon, ArrowUp, ArrowRight, ArrowDown } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react'
+import { CheckSquare, Clock, AlertTriangle, Check, Zap, ListTodo, AlertOctagon, ArrowUp, ArrowRight, ArrowDown, Plus } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
+import { CreateTaskModal } from './CreateTaskModal'
 
 interface Task {
   id:          string
@@ -55,23 +56,26 @@ export default function TasksPage() {
   const [tasks,   setTasks]  = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [filter,  setFilter] = useState<'all' | 'urgent' | 'today' | 'automated'>('all')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res  = await fetch('/api/tasks?status=pending&status=in_progress&limit=100')
+      if (!res.ok) throw new Error('Failed to load tasks')
+      const data = await res.json()
+      setTasks(data.data ?? data ?? [])
+    } catch (e: any) {
+      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'Tasks load' }))
+      setTasks([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res  = await fetch('/api/tasks?status=pending&status=in_progress&limit=100')
-        if (!res.ok) throw new Error('Failed to load tasks');
-        const data = await res.json()
-        setTasks(data.data ?? data ?? [])
-      } catch (e: any) {
-        import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'Tasks load' }))
-        setTasks([])
-      } finally {
-        setLoading(false)
-      }
-    }
     load()
-  }, [])
+  }, [load])
 
   async function markDone(id: string) {
     const backup = [...tasks];
@@ -106,6 +110,13 @@ export default function TasksPage() {
     <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col">
       <div className="w-full space-y-8 max-w-4xl mx-auto">
         
+        {isModalOpen && (
+          <CreateTaskModal 
+            onClose={() => setIsModalOpen(false)} 
+            onSuccess={load} 
+          />
+        )}
+        
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-black/5 dark:border-white/5">
            <div>
@@ -117,11 +128,19 @@ export default function TasksPage() {
               </h1>
               <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{tasks.filter(t => t.status === 'pending').length} en file d'attente · <span className="text-red-500">{overdueCount} critiques</span></p>
            </div>
-           {urgentCount > 0 && (
-              <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-xs uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                 <AlertTriangle className="h-4 w-4" /> {urgentCount} Urgentes
-              </div>
-           )}
+           <div className="flex items-center gap-3">
+             {urgentCount > 0 && (
+                <div className="hidden sm:flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-xs uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                   <AlertTriangle className="h-4 w-4" /> {urgentCount} Urgentes
+                </div>
+             )}
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-2 px-5 py-3 bg-gray-900 dark:bg-white text-white dark:text-black font-bold text-sm rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 transition-all"
+              >
+                <Plus className="w-4 h-4" /> Nouvelle Tâche
+              </button>
+           </div>
         </div>
 
         {/* Filter pills */}
