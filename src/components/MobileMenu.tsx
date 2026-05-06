@@ -49,15 +49,18 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                 key={href}
                 href={href}
                 className={clsx(
-                  "flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-200 active:scale-95",
+                  "flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-200 active:scale-95 relative",
                   isActive ? "text-blue-400" : "text-[#737373] hover:text-gray-300"
                 )}
               >
+                {isActive && (
+                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500 rounded-b-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                )}
                 <Icon 
-                  className={clsx("w-[22px] h-[22px] mb-0.5 transition-transform duration-200", isActive ? "scale-110" : "scale-100")} 
-                  strokeWidth={isActive ? 2.5 : 1.5} 
+                  className="w-[22px] h-[22px] mb-0.5 transition-all duration-200" 
+                  strokeWidth={isActive ? 2 : 1.5} 
                 />
-                <span className={clsx("text-[10px] font-medium tracking-wide", isActive ? "font-bold text-blue-400" : "font-medium")}>{label}</span>
+                <span className="text-[10px] font-medium tracking-wide">{label}</span>
               </Link>
             )
           })}
@@ -67,9 +70,12 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
             onClick={() => setIsOpen(true)}
             className="flex flex-col items-center justify-center w-full h-full space-y-1 text-[#737373] hover:text-gray-300 transition-all duration-200 active:scale-95 relative"
           >
+            {isOpen && (
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500 rounded-b-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+            )}
             <div className={clsx("flex flex-col items-center space-y-1", isOpen ? "text-blue-400" : "")}>
-              <Menu className={clsx("w-[22px] h-[22px] mb-0.5 transition-transform duration-200", isOpen ? "scale-110" : "scale-100")} strokeWidth={isOpen ? 2.5 : 1.5} />
-              <span className={clsx("text-[10px] tracking-wide", isOpen ? "font-bold text-blue-400" : "font-medium")}>Menu</span>
+              <Menu className="w-[22px] h-[22px] mb-0.5 transition-all duration-200" strokeWidth={isOpen ? 2 : 1.5} />
+              <span className="text-[10px] tracking-wide font-medium">Menu</span>
             </div>
           </button>
         </nav>

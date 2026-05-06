@@ -1,5 +1,9 @@
-import { Building2, LayoutTemplate, ShieldCheck, HardHat, CalendarRange, ArrowRight, Activity, Percent } from "lucide-react"
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { Building2, LayoutTemplate, ShieldCheck, HardHat, CalendarRange, ArrowRight, Activity, Percent, Plus, Search } from "lucide-react"
 import { motion, Variants } from "motion/react"
+import { clsx } from 'clsx'
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -14,7 +18,43 @@ const item: Variants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 }
 
+interface Project {
+  id: string
+  name: string
+  city: string | null
+  status: string
+  completion_date: string | null
+  developers: { name: string } | null
+  properties: { id: string, status: string }[]
+}
+
 export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+
+  const load = useCallback(async () => {
+    try {
+      setLoading(true)
+      const params = new URLSearchParams()
+      if (search) params.set('q', search)
+      
+      const res = await fetch(`/api/projects?${params}`)
+      if (res.ok) {
+        const data = await res.json()
+        setProjects(data.data || [])
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }, [search])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
   return (
     <div className="w-full relative pb-12">
       {/* Decorative Blur */}
@@ -35,8 +75,8 @@ export default function ProjectsPage() {
         </div>
         
         <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 disabled:opacity-50" disabled>
-             Nouveau Programme
+           <button className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 disabled:opacity-50">
+             <Plus className="w-4 h-4" /> Nouveau Programme
            </button>
         </div>
       </motion.div>
@@ -48,12 +88,11 @@ export default function ProjectsPage() {
         transition={{ type: "spring", bounce: 0, duration: 0.8 }}
         className="bg-[#050505] border border-white/5 shadow-2xl rounded-[2.5rem] relative overflow-hidden"
       >
-        
         {/* Statistics Banner */}
         <div className="bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-transparent border-b border-white/10 p-8 relative overflow-hidden backdrop-blur-xl">
           <div className="relative z-10 max-w-xl">
             <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest rounded-full mb-4">
-              En cours d'exécution
+              Opérations de Promotion
             </span>
             <h2 className="text-2xl font-extrabold text-white mb-2 font-display">Performance Globale des Programmes</h2>
             <p className="text-sm font-medium text-gray-400 leading-relaxed mb-6">
@@ -80,6 +119,17 @@ export default function ProjectsPage() {
           ))}
         </motion.div>
 
+        {/* Toolbar */}
+        <div className="px-8 pb-4">
+          <div className="flex items-center gap-2 max-w-md">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <input type="text" placeholder="Rechercher un programme..." value={search} onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 text-sm bg-[#0A0A0A] border border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-white transition-all font-medium placeholder:text-gray-600" />
+            </div>
+          </div>
+        </div>
+
         {/* Active Projects Data */}
         <div className="p-8 border-t border-white/5 bg-[#030303]">
           <motion.h3 
@@ -89,77 +139,73 @@ export default function ProjectsPage() {
             className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-500" /> Programmes Actifs
+              <Activity className="w-4 h-4 text-blue-500" /> Programmes ({projects.length})
             </div>
-            <button className="text-blue-400 hover:text-blue-300 transition-colors text-xs flex items-center gap-1">Voir tout <ArrowRight className="w-3 h-3" /></button>
           </motion.h3>
-          <motion.div 
-            variants={container} 
-            initial="hidden" 
-            whileInView="show" 
-            viewport={{ once: true }} 
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
-            
-            {/* Project Card */}
-            <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-white/10 transition-colors cursor-pointer group">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-blue-900 to-indigo-900 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Building2 className="w-6 h-6 text-blue-200" />
-                </div>
-                <div>
-                  <h4 className="text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors">Résidence Atlas Premium</h4>
-                  <div className="flex items-center gap-3 text-xs font-medium text-gray-500">
-                    <span className="flex items-center gap-1"><HardHat className="w-3 h-3" /> Structure en cours</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1"><CalendarRange className="w-3 h-3" /> Liv. Q4 2026</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Progress */}
-              <div className="flex flex-col gap-2 w-full md:w-48">
-                <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  <span>Avancement</span>
-                  <span className="text-blue-400">45%</span>
-                </div>
-                <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} whileInView={{ width: "45%" }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-blue-500" />
-                </div>
-              </div>
-            </motion.div>
 
-            {/* Project Card */}
-            <motion.div variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-white/10 transition-colors cursor-pointer group">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-emerald-900 to-teal-900 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Building2 className="w-6 h-6 text-emerald-200" />
-                </div>
-                <div>
-                  <h4 className="text-white font-bold text-lg mb-1 group-hover:text-emerald-400 transition-colors">Villa Horizon (Sidi Fredj)</h4>
-                  <div className="flex items-center gap-3 text-xs font-medium text-gray-500">
-                    <span className="flex items-center gap-1"><HardHat className="w-3 h-3" /> Finitions</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1"><CalendarRange className="w-3 h-3" /> Liv. Q1 2025</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Progress */}
-              <div className="flex flex-col gap-2 w-full md:w-48">
-                <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  <span>Avancement</span>
-                  <span className="text-emerald-400">85%</span>
-                </div>
-                <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} whileInView={{ width: "85%" }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-emerald-500" />
-                </div>
-              </div>
+          {loading ? (
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               {[1, 2].map(i => <div key={i} className="h-32 bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse" />)}
+             </div>
+          ) : projects.length === 0 ? (
+             <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-[#0A0A0A] rounded-3xl border border-white/5 border-dashed">
+                <Building2 className="h-10 w-10 text-white/20 mb-4" />
+                <p className="text-lg font-bold text-white mb-1">Aucun programme</p>
+                <p className="text-xs uppercase tracking-widest">Ajoutez des projets immobiliers pour commencer</p>
+             </div>
+          ) : (
+            <motion.div 
+              variants={container} 
+              initial="hidden" 
+              whileInView="show" 
+              viewport={{ once: true }} 
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              {projects.map((project) => {
+                const totalProps = project.properties?.length || 0;
+                const soldProps = project.properties?.filter(p => p.status === 'sold').length || 0;
+                const progressPct = totalProps > 0 ? Math.round((soldProps / totalProps) * 100) : 0;
+                
+                return (
+                  <motion.div key={project.id} variants={item} className="bg-[#0A0A0A] border border-white/5 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-white/10 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <Building2 className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">{project.name}</h4>
+                        <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-gray-500">
+                          <span className={clsx("flex items-center gap-1", project.status === 'active' ? 'text-emerald-400' : '')}>
+                            <HardHat className="w-3 h-3" /> {project.status === 'active' ? 'En cours' : project.status}
+                          </span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1 truncate"><LayoutTemplate className="w-3 h-3" /> {totalProps} lots</span>
+                          {project.completion_date && (
+                            <>
+                              <span>•</span>
+                              <span className="flex items-center gap-1"><CalendarRange className="w-3 h-3" /> Liv. {new Date(project.completion_date).getFullYear()}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Progress (Commercialization) */}
+                    <div className="flex flex-col gap-2 w-full xl:w-48 shrink-0">
+                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                        <span>Commercialisation</span>
+                        <span className="text-blue-400">{progressPct}%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} whileInView={{ width: `${progressPct}%` }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-blue-500" />
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </motion.div>
-
-          </motion.div>
+          )}
         </div>
-
       </motion.div>
     </div>
   )

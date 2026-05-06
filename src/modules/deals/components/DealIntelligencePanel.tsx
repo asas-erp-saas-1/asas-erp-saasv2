@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
+import { jsPDF } from 'jspdf'
 
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [deal, setDeal] = useState<any>(null)
@@ -23,6 +24,53 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
         setLoading(false)
       })
   }, [dealId])
+
+  const handleGenerateContract = () => {
+    if (!deal) return
+    const doc = new jsPDF()
+    const clientName = deal.clients?.full_name || 'Client Inconnu'
+    const propertyRef = deal.properties?.reference_code || 'N/A'
+    const projectName = deal.properties?.projects?.name || 'Projet Inconnu'
+    const agreedPrice = deal.agreed_price || deal.amount || 0
+
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(22)
+    doc.text("CONTRAT DE RESERVATION (VEFA)", 105, 20, { align: "center" })
+
+    doc.setFontSize(12)
+    doc.setFont("helvetica", "normal")
+    doc.text(`Identifiant Transaction : ${dealId.substring(0,8).toUpperCase()}`, 20, 40)
+    doc.text(`Date : ${new Date().toLocaleDateString()}`, 20, 50)
+
+    doc.setFont("helvetica", "bold")
+    doc.text("ENTRE LES SOUSSIGNES :", 20, 70)
+    
+    doc.setFont("helvetica", "normal")
+    doc.text(`ASAS OS Immobilier (Le Promoteur)`, 20, 80)
+    doc.text(`Et`, 20, 90)
+    doc.text(`Monsieur/Madame ${clientName}`, 20, 100)
+    if (deal.clients?.phone) {
+       doc.text(`Contact : ${deal.clients.phone}`, 20, 110)
+    }
+
+    doc.setFont("helvetica", "bold")
+    doc.text("OBJET DU CONTRAT :", 20, 130)
+    
+    doc.setFont("helvetica", "normal")
+    doc.text(`Réservation du lot (Réf: ${propertyRef}) au sein du programme immobilier`, 20, 140)
+    doc.text(`"${projectName}".`, 20, 150)
+
+    doc.setFont("helvetica", "bold")
+    doc.text("CONDITIONS FINANCIERES :", 20, 170)
+    
+    doc.setFont("helvetica", "normal")
+    doc.text(`Le prix de vente convenu est de : ${(agreedPrice / 1_000_000).toFixed(2)} Millions DZD.`, 20, 180)
+    
+    doc.text("Signature du Promoteur", 40, 220)
+    doc.text("Signature de l'Acquéreur", 130, 220)
+
+    doc.save(`Contrat_Reservation_${propertyRef}.pdf`)
+  }
 
   if (loading) {
     return (
@@ -69,8 +117,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
               </div>
             </div>
           </div>
-          <button className="px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap">
-            Générer Contrat
+          <button onClick={handleGenerateContract} className="px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+            Générer Contrat (PDF)
           </button>
         </div>
 
