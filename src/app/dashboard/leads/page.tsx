@@ -7,6 +7,7 @@ import { Users, Plus, Search, Phone, MessageCircle, Clock, ArrowRight } from 'lu
 import { clsx } from 'clsx'
 import type { Lead } from '@/types/app'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
+import { LeadDetailModal } from './LeadDetailModal'
 
 // ─── Kanban column definitions ────────────────────────────────────────────────
 const COLUMNS = [
@@ -29,7 +30,7 @@ function fmt(n: number): string {
 }
 
 // ─── Lead card ────────────────────────────────────────────────────────────────
-function LeadCard({ lead, onConvert, index }: { lead: Lead; onConvert: (id: string) => void; index: number }) {
+function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert: (id: string) => void; onSelect: (id: string) => void; index: number }) {
   const hours  = inactiveHours(lead.last_activity)
   const isHot  = hours < 24
   const isStale = hours > 48
@@ -41,10 +42,11 @@ function LeadCard({ lead, onConvert, index }: { lead: Lead; onConvert: (id: stri
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          onClick={() => onSelect(lead.id)}
           className={clsx(
-            'bg-[#121212] rounded-xl border p-4 shadow-lg transition-all cursor-grab active:cursor-grabbing select-none hover:bg-[#181818]',
+            'bg-[#121212] rounded-xl border p-4 shadow-lg transition-all cursor-pointer select-none hover:bg-[#181818]',
             isStale ? 'border-orange-500/30' : 'border-white/10',
-            snapshot.isDragging && 'shadow-2xl shadow-blue-500/10 ring-1 ring-blue-500/50 rotate-2 scale-105 z-50'
+            snapshot.isDragging && 'shadow-2xl shadow-blue-500/10 ring-1 ring-blue-500/50 rotate-2 scale-105 z-50 cursor-grabbing'
           )}
         >
           <div className="flex items-start justify-between gap-2 mb-3">
@@ -92,10 +94,14 @@ function LeadCard({ lead, onConvert, index }: { lead: Lead; onConvert: (id: stri
 
           {/* Actions */}
           <div className="flex items-center gap-2 pt-3 border-t border-white/5">
-            <button className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-white/5 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
+            <button 
+              onClick={(e) => { e.stopPropagation(); }}
+              className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-white/5 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
               <Phone className="h-4 w-4" />
             </button>
-            <button className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message Chiffré">
+            <button 
+              onClick={(e) => { e.stopPropagation(); }}
+              className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message Chiffré">
               <MessageCircle className="h-4 w-4" />
             </button>
             {lead.status !== 'converted' && (
@@ -119,6 +125,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true)
   const [search,  setSearch]  = useState('')
   const [total,   setTotal]   = useState(0)
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
 
   const router = useRouter()
 
@@ -146,169 +153,172 @@ export default function LeadsPage() {
 
   // Filter by search
   const filtered = search.trim()
-    ? leads.filter(l =>
-        (l as any).clients?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-        (l as any).clients?.phone?.includes(search) ||
-        (l as any).projects?.name?.toLowerCase().includes(search.toLowerCase())
-      )
-    : leads
+  ? leads.filter(l =>
+      (l as any).clients?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+      (l as any).clients?.phone?.includes(search) ||
+      (l as any).projects?.name?.toLowerCase().includes(search.toLowerCase())
+    )
+  : leads
 
-  // Group by status
-  const byStatus = (status: string) => filtered.filter(l => l.status === status)
-  const activeColumns = COLUMNS.filter(c => c.key !== 'converted')
+// Group by status
+const byStatus = (status: string) => filtered.filter(l => l.status === status)
+const activeColumns = COLUMNS.filter(c => c.key !== 'converted')
 
-  async function onDragEnd(result: DropResult) {
-    const { destination, source, draggableId } = result
-    if (!destination) return
-    if (destination.droppableId === source.droppableId && destination.index === source.index) return
+async function onDragEnd(result: DropResult) {
+  const { destination, source, draggableId } = result
+  if (!destination) return
+  if (destination.droppableId === source.droppableId && destination.index === source.index) return
 
-    const newStatus = destination.droppableId as LeadStatus
-    
-    // Optimistic update
-    setLeads(current => current.map(lead => 
-      lead.id === draggableId ? { ...lead, status: newStatus as any } : lead
-    ))
+  const newStatus = destination.droppableId as LeadStatus
+  
+  // Optimistic update
+  setLeads(current => current.map(lead => 
+    lead.id === draggableId ? { ...lead, status: newStatus as any } : lead
+  ))
 
-    try {
-      // Background update via Server Action
-      const { updateLeadStatusAction } = await import('@/actions/leadActions')
-      await updateLeadStatusAction(draggableId, newStatus)
-    } catch (e: any) {
-      import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'LeadsPage dragEnd' }))
-      // Revert on error
-      load()
-    }
+  try {
+    // Background update via Server Action
+    const { updateLeadStatusAction } = await import('@/actions/leadActions')
+    await updateLeadStatusAction(draggableId, newStatus)
+  } catch (e: any) {
+    import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'LeadsPage dragEnd' }))
+    // Revert on error
+    load()
   }
+}
 
-  return (
-    <div className="flex flex-col flex-1 h-full bg-[#050505] rounded-2xl shadow-2xl border border-white/5 overflow-hidden text-gray-100">
-      {/* Header */}
-      <div className="bg-[#0A0A0A] border-b border-white/5 px-6 py-5 shrink-0 z-10 w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
-          <div>
-            <h1 className="text-xl font-extrabold text-white flex items-center gap-3 tracking-tight font-display">
-              <Users className="h-5 w-5 text-gray-400" /> Pipeline d'Acquisition
-            </h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{total} entités actives détectées</p>
+return (
+  <div className="flex flex-col flex-1 h-full bg-[#050505] rounded-2xl shadow-2xl border border-white/5 overflow-hidden text-gray-100">
+    {/* Header */}
+    <div className="bg-[#0A0A0A] border-b border-white/5 px-6 py-5 shrink-0 z-10 w-full">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
+        <div>
+          <h1 className="text-xl font-extrabold text-white flex items-center gap-3 tracking-tight font-display">
+            <Users className="h-5 w-5 text-gray-400" /> Pipeline d'Acquisition
+          </h1>
+          <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">{total} entités actives détectées</p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+          {/* Search */}
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Scanner matricule ou identifiant..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 bg-[#050505] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all placeholder:text-gray-600"
+            />
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
-            {/* Search */}
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Scanner matricule ou identifiant..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-[#050505] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all placeholder:text-gray-600"
-              />
-            </div>
-            <button className="flex items-center justify-center gap-2 px-5 py-3 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
-              <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter Entité
-            </button>
-          </div>
+          <button className="flex items-center justify-center gap-2 px-5 py-3 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
+            <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter Entité
+          </button>
         </div>
       </div>
+    </div>
 
-      {/* Kanban board */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-[#000000]">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex h-full gap-4 p-6 min-w-max items-start">
-            {loading ? (
-              [...Array(4)].map((_, i) => (
-                <div key={i} className="w-[340px] bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse h-[80vh]" />
-              ))
-            ) : (
-              activeColumns.map(col => {
-                const colLeads = byStatus(col.key)
-                return (
-                  <div key={col.key} className="w-[340px] flex flex-col bg-[#0A0A0A] rounded-2xl border border-white/5 overflow-hidden max-h-full">
-                    {/* Column header */}
-                    <div className="px-5 py-4 border-b border-white/5 bg-[#0A0A0A] flex items-center justify-between shrink-0">
-                      <div className="flex items-center gap-2">
-                        <div className={clsx('h-2.5 w-2.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]', col.dot)} />
-                        <span className="text-sm font-bold text-gray-200 tracking-wide">{col.label}</span>
-                      </div>
-                      <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-md border tracking-widest', col.color)}>
-                        {colLeads.length}
-                      </span>
+    {/* Kanban board */}
+    <div className="flex-1 overflow-x-auto overflow-y-hidden bg-[#000000]">
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex h-full gap-4 p-6 min-w-max items-start">
+          {loading ? (
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="w-[340px] bg-[#0A0A0A] rounded-2xl border border-white/5 animate-pulse h-[80vh]" />
+            ))
+          ) : (
+            activeColumns.map(col => {
+              const colLeads = byStatus(col.key)
+              return (
+                <div key={col.key} className="w-[340px] flex flex-col bg-[#0A0A0A] rounded-2xl border border-white/5 overflow-hidden max-h-full">
+                  {/* Column header */}
+                  <div className="px-5 py-4 border-b border-white/5 bg-[#0A0A0A] flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2">
+                      <div className={clsx('h-2.5 w-2.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]', col.dot)} />
+                      <span className="text-sm font-bold text-gray-200 tracking-wide">{col.label}</span>
                     </div>
+                    <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-md border tracking-widest', col.color)}>
+                      {colLeads.length}
+                    </span>
+                  </div>
 
-                    {/* Droppable Area */}
-                    <Droppable droppableId={col.key}>
-                      {(provided, snapshot) => (
+                  {/* Droppable Area */}
+                  <Droppable droppableId={col.key}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={clsx(
+                          "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10",
+                          snapshot.isDraggingOver ? "bg-[#121212]" : ""
+                        )}
+                      >
+                        {colLeads.length === 0 && !snapshot.isDraggingOver ? (
+                          <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-white/10 rounded-xl text-gray-600 bg-white/5">
+                            <Users className="h-6 w-6 mb-3 opacity-50" />
+                            <span className="text-xs uppercase tracking-widest font-bold">Zone Vide</span>
+                          </div>
+                        ) : (
+                          colLeads.map((lead, index) => (
+                            <LeadCard key={lead.id} lead={lead} index={index} onConvert={handleConvert} onSelect={setSelectedLeadId} />
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              )
+            })
+          )}
+
+          {/* Converted column — compact */}
+          <div className="w-[280px] flex flex-col bg-[#050A05] rounded-2xl border border-emerald-500/20 overflow-hidden max-h-[80vh] opacity-80 hover:opacity-100 transition-opacity">
+            <div className="px-5 py-4 border-b border-emerald-500/10 bg-emerald-500/5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Transfert</span>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md border bg-emerald-500/10 border-emerald-500/20 text-emerald-400">
+                {byStatus('converted').length}
+              </span>
+            </div>
+            <Droppable droppableId="converted" isDropDisabled={true}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin"
+                >
+                  {byStatus('converted').map((lead, index) => (
+                    <Draggable key={lead.id} draggableId={lead.id} index={index} isDragDisabled>
+                      {(dragProvided) => (
                         <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          className={clsx(
-                            "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10",
-                            snapshot.isDraggingOver ? "bg-[#121212]" : ""
-                          )}
+                          ref={dragProvided.innerRef}
+                          {...dragProvided.draggableProps}
+                          {...dragProvided.dragHandleProps}
+                          onClick={() => setSelectedLeadId(lead.id)}
+                          className="bg-[#0A0A0A] rounded-xl border border-emerald-500/10 p-3 shadow-sm flex items-center justify-between cursor-pointer hover:bg-[#121212] transition-colors"
                         >
-                          {colLeads.length === 0 && !snapshot.isDraggingOver ? (
-                            <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-white/10 rounded-xl text-gray-600 bg-white/5">
-                              <Users className="h-6 w-6 mb-3 opacity-50" />
-                              <span className="text-xs uppercase tracking-widest font-bold">Zone Vide</span>
-                            </div>
-                          ) : (
-                            colLeads.map((lead, index) => (
-                              <LeadCard key={lead.id} lead={lead} index={index} onConvert={handleConvert} />
-                            ))
-                          )}
-                          {provided.placeholder}
+                          <p className="text-[10px] font-bold text-gray-300 truncate tracking-wide">
+                            {(lead as any).clients?.full_name ?? 'Inconnu'}
+                          </p>
+                          <span className="text-[8px] uppercase font-bold text-emerald-500/50 tracking-widest bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                            Deal
+                          </span>
                         </div>
                       )}
-                    </Droppable>
-                  </div>
-                )
-              })
-            )}
-
-            {/* Converted column — compact */}
-            <div className="w-[280px] flex flex-col bg-[#050A05] rounded-2xl border border-emerald-500/20 overflow-hidden max-h-[80vh] opacity-80 hover:opacity-100 transition-opacity">
-              <div className="px-5 py-4 border-b border-emerald-500/10 bg-emerald-500/5 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Transfert</span>
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md border bg-emerald-500/10 border-emerald-500/20 text-emerald-400">
-                  {byStatus('converted').length}
-                </span>
-              </div>
-              <Droppable droppableId="converted" isDropDisabled={true}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin"
-                  >
-                    {byStatus('converted').map((lead, index) => (
-                      <Draggable key={lead.id} draggableId={lead.id} index={index} isDragDisabled>
-                        {(dragProvided) => (
-                          <div
-                            ref={dragProvided.innerRef}
-                            {...dragProvided.draggableProps}
-                            {...dragProvided.dragHandleProps}
-                            className="bg-[#0A0A0A] rounded-xl border border-emerald-500/10 p-3 shadow-sm flex items-center justify-between"
-                          >
-                            <p className="text-[10px] font-bold text-gray-300 truncate tracking-wide">
-                              {(lead as any).clients?.full_name ?? 'Inconnu'}
-                            </p>
-                            <span className="text-[8px] uppercase font-bold text-emerald-500/50 tracking-widest bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                              Deal
-                            </span>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </div>
+              )}
+            </Droppable>
           </div>
-        </DragDropContext>
-      </div>
+        </div>
+      </DragDropContext>
     </div>
-  )
+    
+    <LeadDetailModal leadId={selectedLeadId} onClose={() => setSelectedLeadId(null)} />
+  </div>
+)
 }
