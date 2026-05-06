@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { X, Phone, MessageCircle, Clock, Calendar, Mail, FileText, User } from 'lucide-react'
+import { X, Phone, MessageCircle, Clock, Calendar, Mail, FileText, User, Navigation } from 'lucide-react'
 import type { Lead, Activity } from '@/types/app'
+import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 
 interface LeadDetailModalProps {
   leadId: string | null
@@ -13,6 +14,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
   const [lead, setLead] = useState<Lead | null>(null)
   const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(false)
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
 
   useEffect(() => {
     if (!leadId) return
@@ -215,11 +217,29 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
            >
              Fermer
            </button>
+           <button 
+             onClick={() => setIsTaskModalOpen(true)}
+             className="px-5 py-2.5 rounded-xl border border-white/10 text-white text-sm font-bold hover:bg-white/5 transition-colors flex items-center gap-2"
+           >
+             <Calendar className="w-4 h-4" /> Créer Tâche
+           </button>
            <button className="px-5 py-2.5 rounded-xl bg-white text-black text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 flex items-center gap-2">
              <MessageCircle className="w-4 h-4" /> Message Rapide
            </button>
         </div>
       </div>
+
+      {isTaskModalOpen && (
+        <CreateTaskModal
+          leadId={leadId}
+          onClose={() => setIsTaskModalOpen(false)}
+          onSuccess={() => {
+            // Ideally we could refetch tasks or activities here if needed,
+            // or just let a toast notify the user.
+            setIsTaskModalOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }

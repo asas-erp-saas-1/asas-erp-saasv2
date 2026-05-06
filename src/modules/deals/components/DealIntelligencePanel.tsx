@@ -2,14 +2,16 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText, CheckSquare } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
+import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [deal, setDeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -117,9 +119,14 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
               </div>
             </div>
           </div>
-          <button onClick={handleGenerateContract} className="px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
-            Générer Contrat (PDF)
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+              <CheckSquare className="w-4 h-4" /> Créer Tâche
+            </button>
+            <button onClick={handleGenerateContract} className="px-4 py-2 bg-[#171717] border border-white/5 rounded-lg text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+              Générer Contrat (PDF)
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5">
@@ -242,6 +249,14 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
            </div>
         </div>
       </div>
+
+      {isTaskModalOpen && (
+        <CreateTaskModal
+          dealId={dealId}
+          onClose={() => setIsTaskModalOpen(false)}
+          onSuccess={() => setIsTaskModalOpen(false)}
+        />
+      )}
     </div>
   )
 }
