@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldCheck, Zap } from 'lucide-react'
 import { motion, Variants } from 'motion/react'
 import { clsx } from 'clsx'
+import { SecurityPanel } from './SecurityPanel'
 
 type Config = {
   inactivityYellowHours:    number
@@ -237,6 +238,11 @@ export default function SettingsPage() {
             </motion.div>
 
         </motion.div>
+        
+        <motion.div variants={item}>
+            <SecurityPanel />
+        </motion.div>
+
         </div>
     </div>
   )
