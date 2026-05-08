@@ -1,4 +1,4 @@
-import { DomainEventEnvelope } from '../../../domain/contracts';
+import { DomainEventEnvelope } from '../../contracts';
 
 export class EventOrderingCoordinator {
   /**

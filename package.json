@@ -14,8 +14,7 @@
     "lint": "next lint",
     "enforce:ast": "node ./tooling/ast-enforcer/enforce.js",
     "enforce:boundaries": "npx dependency-cruiser --config .dependency-cruiser.js packages apps",
-    "enforce:types": "tsc --noEmit",
-    "prepare": "husky install"
+    "enforce:types": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
