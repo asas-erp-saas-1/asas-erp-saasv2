@@ -27,9 +27,9 @@ export class EnvelopeEncryption {
     const parts = cipherBundle.split(':');
     if (parts.length !== 3) throw new Error("Invalid cipher bundle");
 
-    const iv = Buffer.from(parts[0], 'hex');
-    const authTag = Buffer.from(parts[1], 'hex');
-    const encryptedText = Buffer.from(parts[2], 'hex');
+    const iv = Buffer.from(parts[0] as string, 'hex');
+    const authTag = Buffer.from(parts[1] as string, 'hex');
+    const encryptedText = Buffer.from(parts[2] as string, 'hex');
 
     const key = crypto.scryptSync(tenantId + "master_salt", 'salt', 32); 
 

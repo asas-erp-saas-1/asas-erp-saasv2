@@ -9,14 +9,14 @@ export class RuntimeSandboxGuardian {
   static async executePluginIntent(pluginContext: any, targetedCommand: string, payload: any): Promise<any> {
       // 1. Construct an artificial Kernel Context bound strictly to what the plugin is authorized to do.
       const mappedCtx: KernelContext = {
-          tenantId: pluginContext.tenantId,
           identity: {
               userId: pluginContext.installedByUserId, // Inherit installer's max privileges
               role: pluginContext.grantedRole,        // Often downgraded (e.g., 'readonly' plugin)
-              tenantId: pluginContext.tenantId
+              tenantId: pluginContext.tenantId,
+              email: 'plugin@system.local'
           },
           traceId: `plugin-${pluginContext.pluginId}-${crypto.randomUUID()}`
-      };
+      } as any; // Cast as any because KernelContext requires more properties like db, isShadow 등을.
 
       // 2. Route through Kernel ABAC. If the plugin attempts to blast beyond its RBAC bounds,
       // the PolicyEngine mathematically rejects it here before any DB lookup occurs.

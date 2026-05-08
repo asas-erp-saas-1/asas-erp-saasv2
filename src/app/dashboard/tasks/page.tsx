@@ -206,6 +206,7 @@ export default function TasksPage() {
                            <p className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-400 transition-colors tracking-wide">{task.title}</p>
                            {(() => {
                              const pConf = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium
+                             if (!pConf) return null;
                              const Icon = pConf.icon
                              return (
                                <span className={clsx('text-[10px] uppercase tracking-widest px-2.5 py-1 rounded font-bold shrink-0 border flex items-center gap-1.5', pConf.bg, pConf.border, pConf.color)}>

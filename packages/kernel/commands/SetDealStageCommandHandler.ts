@@ -28,7 +28,7 @@ export class SetDealStageCommandHandler {
       type: 'SET_DEAL_STAGE',
       aggregateId,
       expectedVersion: metadata.expectedVersion,
-      payload
+      payload: { ...payload, stage: payload.stage as any }
     };
 
     // 3. Reconstruct pipeline bindings

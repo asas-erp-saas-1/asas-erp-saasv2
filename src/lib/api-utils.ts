@@ -9,7 +9,7 @@ export type ApiResponse<T = any> = {
 };
 
 export class ApiError extends Error {
-  constructor(public message: string, public status: number = 400, public details?: any) {
+  constructor(public override message: string, public status: number = 400, public details?: any) {
     super(message);
   }
 }

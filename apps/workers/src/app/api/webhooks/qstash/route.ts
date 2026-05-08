@@ -9,7 +9,11 @@ export async function POST(req: Request) {
   // Initialize DB Service Role strictly to manage idempotency locks
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  const db = createServerClient(supabaseUrl, supabaseKey, { cookies: {} });
+  const db = createServerClient(supabaseUrl, supabaseKey, { 
+    cookies: {
+      getAll() { return []; },
+    }
+  });
 
   // 2. Obtain Idempotency Lock
   const { error: lockError } = await db

@@ -1,4 +1,5 @@
-import { KernelContext, Command } from '@asas/kernel/src/ExecutionPipeline';
+import { Command } from '@asas/kernel/src/ExecutionPipeline';
+import { KernelContext } from '@asas/kernel/src/ContextHydrator';
 
 export class DealRepository {
   async get(id: string, ctx: KernelContext): Promise<any> {

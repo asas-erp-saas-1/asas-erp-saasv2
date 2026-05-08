@@ -55,10 +55,11 @@ export function AICommandCenter() {
   const insights = priorityQueue.length > 0 
     ? priorityQueue.slice(0, 3).map((item, idx) => {
         let typeInfo = defaultInsights[idx] || defaultInsights[0];
+        if (!typeInfo) typeInfo = defaultInsights[0]!;
         if (item.priority === 'urgent' || item.priority === 'high') {
-           typeInfo = defaultInsights[1];
+           typeInfo = defaultInsights[1]!;
         } else if (item.client_name?.includes('Invest')) {
-           typeInfo = defaultInsights[0];
+           typeInfo = defaultInsights[0]!;
         }
         return {
            ...typeInfo,
@@ -84,7 +85,9 @@ export function AICommandCenter() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {insights.map((insight, index) => (
+          {insights.map((insight, index) => {
+            const Icon = insight.icon;
+            return (
             <motion.div 
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -95,14 +98,15 @@ export function AICommandCenter() {
                <div className="flex flex-col h-full">
                  <div className="flex items-center gap-3 mb-4">
                    <div className={`w-10 h-10 rounded-xl ${insight.bg} flex items-center justify-center`}>
-                     <insight.icon className={`w-5 h-5 ${insight.color}`} strokeWidth={2} />
+                     <Icon className={`w-5 h-5 ${insight.color}`} strokeWidth={2} />
                    </div>
                    <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{insight.title}</h4>
                  </div>
                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-auto leading-relaxed">{insight.message}</p>
                </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

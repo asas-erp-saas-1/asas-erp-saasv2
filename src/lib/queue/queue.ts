@@ -10,10 +10,13 @@ export class QueueService {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const endpoint = `${baseUrl}/api/queue/${topic}`;
     
-    await qstash.publishJSON({
+    const req: any = {
       url: endpoint,
       body: payload,
-      delay: options?.delaySeconds,
-    });
+    };
+    if (options?.delaySeconds) {
+       req.delay = options.delaySeconds;
+    }
+    await qstash.publishJSON(req);
   }
 }

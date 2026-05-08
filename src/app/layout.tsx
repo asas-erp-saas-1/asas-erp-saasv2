@@ -33,16 +33,13 @@ export const metadata: Metadata = {
   description: 'Real Estate Operating System',
 };
 
-export const viewport = {
-  themeColor: '#1A2A4A',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="theme-color" content="#1A2A4A" />
+      </head>
       <body className="bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-gray-100 antialiased font-sans flex flex-col min-h-screen selection:bg-blue-500/30">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GlobalErrorTracker />

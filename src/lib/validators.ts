@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 export class ValidationError extends Error {
-  constructor(public message: string, public field?: string) {
+  constructor(public override message: string, public field?: string) {
     super(message);
     this.name = 'ValidationError';
   }
 }
 
 export class BusinessRuleError extends Error {
-  constructor(public message: string, public code: string, public details?: any) {
+  constructor(public override message: string, public code: string, public details?: any) {
     super(message);
     this.name = 'BusinessRuleError';
   }
@@ -20,6 +20,7 @@ export function parseAndValidate<T>(schema: z.ZodSchema<T>, data: unknown, conte
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
+      if (!firstError) throw error;
       throw new ValidationError(
         `${contextName ? contextName + ': ' : ''}${firstError.message}`,
         firstError.path.join('.')

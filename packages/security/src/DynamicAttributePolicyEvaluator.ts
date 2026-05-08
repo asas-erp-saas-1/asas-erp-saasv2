@@ -11,7 +11,8 @@ export class DynamicAttributePolicyEvaluator {
      }
 
      // 2. Risk Evaluation Context Check
-     if (ctx.identity.riskScore && ctx.identity.riskScore > 75) {
+     const riskScore = (ctx.identity as any).riskScore;
+     if (riskScore && riskScore > 75) {
         throw new Error("[POLICY DENIED] High Risk Session cannot mutate financial bounds.");
      }
 

@@ -93,7 +93,7 @@ const kernelCore: IKernel = {
       }
     }
     if (options?.orderBy) {
-      q = q.order(options.orderBy.column, { ascending: options.orderBy.ascending });
+      q = q.order(options.orderBy.column, { ascending: options.orderBy.ascending ?? true });
     }
     if (options?.limit) {
       const from = options?.offset || 0;

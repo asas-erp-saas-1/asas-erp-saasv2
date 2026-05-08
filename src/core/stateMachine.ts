@@ -363,10 +363,10 @@ export function generateNextAction(ctx: {
   commissionGenerated?: boolean
   hasPaymentSchedule?: boolean
 }): NextActionOutput {
-  const today   = new Date().toISOString().split('T')[0]
-  const tmrw    = new Date(Date.now() + 86_400_000).toISOString().split('T')[0]
-  const in3d    = new Date(Date.now() + 3 * 86_400_000).toISOString().split('T')[0]
-  const in7d    = new Date(Date.now() + 7 * 86_400_000).toISOString().split('T')[0]
+  const today   = new Date().toISOString().split('T')[0]!
+  const tmrw    = new Date(Date.now() + 86_400_000).toISOString().split('T')[0]!
+  const in3d    = new Date(Date.now() + 3 * 86_400_000).toISOString().split('T')[0]!
+  const in7d    = new Date(Date.now() + 7 * 86_400_000).toISOString().split('T')[0]!
 
   if (ctx.overduePayments > 0) {
     return {
