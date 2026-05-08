@@ -9,6 +9,8 @@ import type { Lead } from '@/types/app'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { LeadDetailModal } from './LeadDetailModal'
 
+import { LeadCreateModal } from './LeadCreateModal'
+
 // ─── Kanban column definitions ────────────────────────────────────────────────
 const COLUMNS = [
   { key: 'new',             label: 'Nouveau',           color: 'bg-[#1A1A1A] border-black/5 dark:border-white/5 text-gray-800 dark:text-gray-300',       dot: 'bg-gray-500' },
@@ -165,8 +167,8 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
               <Phone className="h-4 w-4" />
             </button>
             <button 
-              onClick={(e) => { e.stopPropagation(); }}
-              className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message Chiffré">
+              onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${(lead as any).clients?.phone?.replace(/\+/g, '')}`, '_blank'); }}
+              className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message WhatsApp">
               <MessageCircle className="h-4 w-4" />
             </button>
             {lead.status !== 'converted' && (
@@ -194,6 +196,7 @@ export default function LeadsPage() {
 
   const [selectedSources, setSelectedSources] = useState<string[]>([])
   const [selectedAgents, setSelectedAgents] = useState<string[]>([])
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const router = useRouter()
 
@@ -323,7 +326,7 @@ return (
               className="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-[#050505] text-sm font-medium border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white transition-all placeholder:text-gray-600"
             />
           </div>
-          <button className="flex items-center justify-center gap-2 px-5 py-2.5 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
+          <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center justify-center gap-2 px-5 py-2.5 shrink-0 bg-white text-black rounded-xl text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
             <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter Entité
           </button>
         </div>
@@ -432,6 +435,7 @@ return (
     </div>
     
     <LeadDetailModal leadId={selectedLeadId} onClose={() => setSelectedLeadId(null)} />
+    {isCreateModalOpen && <LeadCreateModal onClose={() => setIsCreateModalOpen(false)} onSuccess={() => { setIsCreateModalOpen(false); load(); }} />}
   </div>
 )
 }

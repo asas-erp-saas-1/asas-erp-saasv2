@@ -1,43 +1,20 @@
 import { kernel } from '@/lib/kernel/core';
 import { Database } from '@/types/supabase';
-
-export interface LeadDTO {
-  id: string;
-  clientId: string;
-  assignedAgent: string | null;
-  status: Database['public']['Enums']['lead_status'];
-  budgetMin: number | null;
-  budgetMax: number | null;
-  source: Database['public']['Enums']['lead_source'] | null;
-  createdAt: string;
-}
+import type { Lead } from '@/types/app';
 
 export class LeadService {
-  private static toDTO(lead: any): LeadDTO {
-    return {
-      id: lead.id,
-      clientId: lead.client_id,
-      assignedAgent: lead.assigned_agent,
-      status: lead.status,
-      budgetMin: lead.budget_min,
-      budgetMax: lead.budget_max,
-      source: lead.source,
-      createdAt: lead.created_at,
-    };
-  }
-
-  static async getLeads(limit = 50, offset = 0): Promise<LeadDTO[]> {
+  static async getLeads(limit = 50, offset = 0): Promise<Lead[]> {
     const leads = await kernel.query<any>('leads', {
-      select: '*',
+      select: '*, clients(full_name, phone), profiles(full_name), projects(name)',
       filters: { deleted_at: null },
       orderBy: { column: 'created_at', ascending: false },
       limit,
       offset
     });
-    return leads.map(this.toDTO);
+    return leads as Lead[];
   }
 
-  static async createLead(data: { clientId: string; source?: string; budgetMin?: number; budgetMax?: number; assignedAgent?: string }): Promise<LeadDTO> {
+  static async createLead(data: { clientId: string; source?: string; budgetMin?: number; budgetMax?: number; assignedAgent?: string }): Promise<Lead> {
     const identity = await kernel.identity();
     const lead = await kernel.mutate<any>('leads', 'INSERT', {
       agency_id: identity.tenantId,
@@ -51,21 +28,22 @@ export class LeadService {
       cached_score: 0,
       score_tier: 'starter',
     });
-    return this.toDTO(lead);
+    return lead as Lead;
   }
 
-  static async assignLead(leadId: string, agentId: string): Promise<LeadDTO> {
+  static async assignLead(leadId: string, agentId: string): Promise<Lead> {
     const lead = await kernel.mutate<any>('leads', 'UPDATE', {
       assigned_agent: agentId
     }, { id: leadId, deleted_at: null });
-    return this.toDTO(lead);
+    return lead as Lead;
   }
   
-  static async updateStatus(leadId: string, status: Database['public']['Enums']['lead_status']): Promise<LeadDTO> {
+  static async updateStatus(leadId: string, status: Database['public']['Enums']['lead_status']): Promise<Lead> {
     const lead = await kernel.mutate<any>('leads', 'UPDATE', {
-      status
+      status,
+      last_activity: new Date().toISOString()
     }, { id: leadId, deleted_at: null });
-    return this.toDTO(lead);
+    return lead as Lead;
   }
 
   static async deleteLead(leadId: string): Promise<void> {

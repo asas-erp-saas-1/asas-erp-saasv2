@@ -14,3 +14,24 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    if (!body.client_id) {
+      return NextResponse.json({ error: 'client_id is required' }, { status: 400 });
+    }
+
+    const lead = await LeadService.createLead({
+      clientId: body.client_id,
+      source: body.source,
+      budgetMin: body.budget_min,
+      budgetMax: body.budget_max,
+      assignedAgent: body.assigned_agent,
+    });
+
+    return NextResponse.json({ data: lead });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

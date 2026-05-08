@@ -20,3 +20,28 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const identity = await kernel.identity();
+    
+    // Minimal validation
+    if (!body.full_name) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    }
+
+    const client = await kernel.mutate('clients', 'INSERT', {
+      agency_id: identity.tenantId,
+      full_name: body.full_name,
+      phone: body.phone || null,
+      email: body.email || null,
+      type: body.type || 'buyer',
+      source: body.source || null,
+    });
+
+    return NextResponse.json({ data: client });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
