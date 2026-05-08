@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
   // 1. Verify QStash Signature (Implementation omitted for brevity)
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   // Initialize DB Service Role strictly to manage idempotency locks
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  const db = createServerClient(supabaseUrl, supabaseKey, { cookies: {} });
+  const db = createClient(supabaseUrl, supabaseKey);
 
   // 2. Obtain Idempotency Lock
   const { error: lockError } = await db
