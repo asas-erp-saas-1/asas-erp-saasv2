@@ -6,6 +6,7 @@ import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldChe
 import { motion, Variants } from 'motion/react'
 import { clsx } from 'clsx'
 import { SecurityPanel } from './SecurityPanel'
+import { AppInviteWidget } from './AppInviteWidget'
 
 type Config = {
   inactivityYellowHours:    number
@@ -146,6 +147,10 @@ export default function SettingsPage() {
             {saved ? <><Check className="h-4 w-4 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]" /> Profil Sauvegardé</> : saving ? 'Cryptage...' : <><Save className="h-4 w-4" /> Appliquer Modification</>}
             </button>
         </div>
+
+        <motion.div variants={item}>
+            <AppInviteWidget />
+        </motion.div>
 
         <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 gap-8">
             

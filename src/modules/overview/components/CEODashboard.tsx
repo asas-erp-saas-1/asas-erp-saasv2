@@ -5,6 +5,7 @@ import { motion, Variants } from 'motion/react'
 import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { ManagerExceptions } from './ManagerExceptions'
 
 const AICommandCenter = dynamic(() => import('./AICommandCenter').then(mod => mod.AICommandCenter), {
   ssr: false,
@@ -140,6 +141,10 @@ export function CEODashboard({ initialMetrics }: { initialMetrics?: any }) {
             <p className="text-xs text-gray-500 font-medium font-mono">MODE: {kpis.liquidityMode || 'Standard'}</p>
           </div>
         </motion.div>
+      </motion.div>
+
+      <motion.div variants={item}>
+        <ManagerExceptions />
       </motion.div>
 
       {/* Secondary Bento Area */}
