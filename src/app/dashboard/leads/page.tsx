@@ -8,6 +8,7 @@ import { clsx } from 'clsx'
 import type { Lead } from '@/types/app'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { LeadDetailModal } from './LeadDetailModal'
+import { AlertTriangle } from 'lucide-react'
 
 import { LeadCreateModal } from './LeadCreateModal'
 
@@ -151,12 +152,19 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
             </div>
           )}
 
-          {/* Inactivity warning */}
-          {isStale && (
+          {/* Inactivity warning / Momentum */}
+          {isStale && lead.status !== 'visit_scheduled' && (
             <p className="text-[10px] uppercase tracking-widest text-orange-400 flex items-center gap-1.5 mb-4 font-bold bg-orange-500/10 border border-orange-500/20 px-2 py-1 rounded-md">
               <Clock className="h-3 w-3" />
               Latence: {Math.floor(hours)}h
             </p>
+          )}
+
+          {lead.status === 'visit_scheduled' && isStale && (
+            <div className="text-[10px] uppercase tracking-widest text-red-500 flex items-center gap-1.5 mb-4 font-bold bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md">
+              <AlertTriangle className="h-3 w-3" />
+              Momentum Faible (+3j)
+            </div>
           )}
 
           {/* Actions */}

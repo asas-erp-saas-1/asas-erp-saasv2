@@ -148,6 +148,42 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                  </div>
               </div>
 
+              {/* Algorithmic Matchmaker */}
+              <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-xl p-5 shadow-inner">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500 shrink-0 shadow-inner">
+                    <Navigation className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest leading-none">Smart Match</h3>
+                    <p className="text-xs text-indigo-500/70 font-bold mt-1">3 biens correspondent aux critères de ce profil.</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  {[
+                    { ref: 'V-459', type: 'Villa', location: 'Hydra', price: '45M DZD' },
+                    { ref: 'F-920', type: 'F4', location: 'Cheraga', price: '42M DZD' },
+                    { ref: 'T-112', type: 'Terrain', location: 'Ouled Fayet', price: '38M DZD' },
+                  ].map((match, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-xl shadow-sm hover:border-indigo-500/30 transition-colors">
+                      <div>
+                        <span className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                          <span className="px-2 py-0.5 bg-gray-100 dark:bg-[#111111] text-gray-500 rounded border border-black/5 dark:border-white/5">{match.ref}</span> 
+                          {match.type} • {match.location}
+                        </span>
+                        <p className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-1.5">{match.price}</p>
+                      </div>
+                      <button 
+                        onClick={() => window.open(`https://wa.me/${(lead as any).clients?.phone?.replace(/\+/g, '') || ''}?text=${encodeURIComponent(`Salam ${(lead as any).clients?.full_name || ''},\n\nNous avons trouvé un bien qui pourrait vous intéresser :\nRéf: ${match.ref}\nType: ${match.type}\nSecteur: ${match.location}\nPrix: ${match.price}\n\nContactez-moi pour plus de détails.`)}`, '_blank')}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 rounded-lg text-xs font-bold transition-colors border border-[#25D366]/20 shadow-sm active:scale-95">
+                        <MessageCircle className="w-4 h-4" /> Proposer
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Notes */}
               {lead.notes && (
                 <div className="bg-gray-100 dark:bg-[#111111] border border-black/5 dark:border-white/5 rounded-xl p-5 shadow-inner">

@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Phone, MessageCircle, Mail, MapPin, CheckCircle2, AlertTriangle, Clock } from 'lucide-react'
+import { Phone, MessageCircle, Mail, MapPin, CheckCircle2, AlertTriangle, Clock, Building } from 'lucide-react'
 import { clsx } from 'clsx'
 
 export function AgentActionFeed({ actions = [] }: { actions?: any[] }) {
   const [items, setItems] = useState(actions.length > 0 ? actions : [
     { id: '1', type: 'urgent', task: 'Rappeler Lead VIP', leadName: 'Atlas Invest Group', time: 'En retard (3h)', phone: '+213555000111' },
+    { id: '4', type: 'match', task: '3 biens compatibles', leadName: 'Nouveau prospect Cheraga', time: 'À l\'instant', phone: '+213555998877' },
     { id: '2', type: 'whatsapp', task: 'Envoyer Photos Projet Y', leadName: 'Sarah B.', time: 'Aujourd\'hui 14:00', phone: '+213770123456' },
     { id: '3', type: 'viewing', task: 'Confirmer Visite F4', leadName: 'Karim M.', time: 'Demain 10:00', phone: '+213661987654' }
   ])
@@ -50,11 +51,13 @@ export function AgentActionFeed({ actions = [] }: { actions?: any[] }) {
                 <div className={clsx("w-10 h-10 rounded-2xl flex items-center justify-center shrink-0", 
                   item.type === 'urgent' ? 'bg-red-500/10 text-red-500' :
                   item.type === 'whatsapp' ? 'bg-emerald-500/10 text-emerald-500' :
+                  item.type === 'match' ? 'bg-indigo-500/10 text-indigo-500' :
                   'bg-blue-500/10 text-blue-500'
                 )}>
                   {item.type === 'urgent' && <AlertTriangle className="w-5 h-5" />}
                   {item.type === 'whatsapp' && <MessageCircle className="w-5 h-5" />}
                   {item.type === 'viewing' && <MapPin className="w-5 h-5" />}
+                  {item.type === 'match' && <Building className="w-5 h-5" />}
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{item.task}</h3>

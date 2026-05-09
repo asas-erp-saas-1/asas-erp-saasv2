@@ -3,9 +3,10 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import { Building2, Plus, Search, Filter, CheckCircle, XCircle, Clock, Tag } from 'lucide-react'
 import { clsx } from 'clsx'
+import { PropertyCreateModal } from './PropertyCreateModal'
 
 interface Property {
   id: string; reference_code: string | null; type: string; rooms: string | null
@@ -90,6 +91,7 @@ export default function PropertiesPage() {
   const [statusFilter, setStatus]    = useState('')
   const [typeFilter,   setType]      = useState('')
   const [page,       setPage]        = useState(1)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const LIMIT = 24
 
   const load = useCallback(async () => {
@@ -137,7 +139,7 @@ export default function PropertiesPage() {
             <button className="flex items-center gap-2 px-5 py-3 shrink-0 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-blue-400 rounded-xl text-xs font-bold hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-all">
               Générer Rapport IA
             </button>
-            <button className="flex items-center gap-2 px-5 py-3 object-cover shrink-0 bg-blue-600 text-gray-900 dark:text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] active:scale-95">
+            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-5 py-3 object-cover shrink-0 bg-blue-600 text-gray-900 dark:text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] active:scale-95">
               <Plus className="h-4 w-4" strokeWidth={2.5} /> Nouvel Actif
             </button>
           </div>
@@ -221,6 +223,15 @@ export default function PropertiesPage() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {isCreateModalOpen && (
+          <PropertyCreateModal 
+             onClose={() => setIsCreateModalOpen(false)} 
+             onSuccess={() => { setIsCreateModalOpen(false); load() }} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
