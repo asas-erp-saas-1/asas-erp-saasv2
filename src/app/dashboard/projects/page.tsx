@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { Building2, LayoutTemplate, ShieldCheck, HardHat, CalendarRange, ArrowRight, Activity, Percent, Plus, Search } from "lucide-react"
 import { motion, Variants } from "motion/react"
 import { clsx } from 'clsx'
+import Link from 'next/link'
+import { ProjectCreateModal } from './ProjectCreateModal'
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -32,6 +34,7 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -75,11 +78,18 @@ export default function ProjectsPage() {
         </div>
         
         <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 disabled:opacity-50">
+           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 disabled:opacity-50">
              <Plus className="w-4 h-4" /> Nouveau Programme
            </button>
         </div>
       </motion.div>
+
+      {isModalOpen && (
+        <ProjectCreateModal 
+          onClose={() => setIsModalOpen(false)} 
+          onSuccess={() => { setIsModalOpen(false); load() }} 
+        />
+      )}
 
       {/* Main Container */}
       <motion.div 
@@ -167,40 +177,42 @@ export default function ProjectsPage() {
                 const progressPct = totalProps > 0 ? Math.round((soldProps / totalProps) * 100) : 0;
                 
                 return (
-                  <motion.div key={project.id} variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-black/10 dark:border-white/10 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-gray-800 to-gray-900 border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                        <Building2 className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-400 transition-colors" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-gray-900 dark:text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">{project.name}</h4>
-                        <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-gray-500">
-                          <span className={clsx("flex items-center gap-1", project.status === 'active' ? 'text-emerald-400' : '')}>
-                            <HardHat className="w-3 h-3" /> {project.status === 'active' ? 'En cours' : project.status}
-                          </span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1 truncate"><LayoutTemplate className="w-3 h-3" /> {totalProps} lots</span>
-                          {project.completion_date && (
-                            <>
-                              <span>•</span>
-                              <span className="flex items-center gap-1"><CalendarRange className="w-3 h-3" /> Liv. {new Date(project.completion_date).getFullYear()}</span>
-                            </>
-                          )}
+                  <Link href={`/dashboard/projects/${project.id}`} key={project.id}>
+                    <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-black/10 dark:border-white/10 transition-colors cursor-pointer group h-full">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-gray-800 to-gray-900 border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                          <Building2 className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-400 transition-colors" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-gray-900 dark:text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">{project.name}</h4>
+                          <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-gray-500">
+                            <span className={clsx("flex items-center gap-1", project.status === 'active' ? 'text-emerald-400' : '')}>
+                              <HardHat className="w-3 h-3" /> {project.status === 'active' ? 'En cours' : project.status}
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1 truncate"><LayoutTemplate className="w-3 h-3" /> {totalProps} lots</span>
+                            {project.completion_date && (
+                              <>
+                                <span>•</span>
+                                <span className="flex items-center gap-1"><CalendarRange className="w-3 h-3" /> Liv. {new Date(project.completion_date).getFullYear()}</span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    {/* Progress (Commercialization) */}
-                    <div className="flex flex-col gap-2 w-full xl:w-48 shrink-0">
-                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
-                        <span>Commercialisation</span>
-                        <span className="text-blue-400">{progressPct}%</span>
+                      
+                      {/* Progress (Commercialization) */}
+                      <div className="flex flex-col gap-2 w-full xl:w-48 shrink-0">
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
+                          <span>Commercialisation</span>
+                          <span className="text-blue-400">{progressPct}%</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                          <motion.div initial={{ width: 0 }} whileInView={{ width: `${progressPct}%` }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-blue-500" />
+                        </div>
                       </div>
-                      <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} whileInView={{ width: `${progressPct}%` }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-blue-500" />
-                      </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  </Link>
                 )
               })}
             </motion.div>
