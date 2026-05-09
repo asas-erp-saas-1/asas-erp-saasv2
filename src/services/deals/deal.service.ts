@@ -33,11 +33,16 @@ export class DealService {
     return deal as Deal;
   }
 
-  static async changeDealStatus(dealId: string, status: Database['public']['Enums']['deal_status'], currentVersion: number = 1): Promise<Deal> {
-    const deal = await kernel.mutate<any>('deals', 'UPDATE', {
+  static async changeDealStatus(dealId: string, status: Database['public']['Enums']['deal_status'], currentVersion: number = 1, metadata?: { lostReason?: string }): Promise<Deal> {
+    const payload: any = {
       status,
       version: currentVersion + 1
-    }, { id: dealId });
+    }
+    if (metadata?.lostReason) {
+      payload.lost_reason = metadata.lostReason
+    }
+
+    const deal = await kernel.mutate<any>('deals', 'UPDATE', payload, { id: dealId });
     return deal as Deal;
   }
 

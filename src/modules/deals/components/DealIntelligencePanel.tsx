@@ -7,13 +7,15 @@ import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
 import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
+import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
 
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [deal, setDeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
 
-  useEffect(() => {
+  const reloadData = () => {
     setLoading(true)
     fetch(`/api/deals?id=${dealId}`)
       .then(r => r.json())
@@ -25,6 +27,10 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
         ErrorTracker.captureError(err, { context: 'DealIntelligencePanel fetch' })
         setLoading(false)
       })
+  }
+
+  useEffect(() => {
+    reloadData()
   }, [dealId])
 
   const handleGenerateContract = () => {
@@ -150,9 +156,17 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                 style={{ width: `${Math.min((paymentsReceived / (agreedPrice || 1)) * 100, 100)}%` }}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-2 font-medium">
-              {(paymentsReceived / 1_000_000).toFixed(1)}M payé • {((agreedPrice - paymentsReceived) / 1_000_000).toFixed(1)}M restant
-            </p>
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-xs text-gray-500 font-medium">
+                {(paymentsReceived / 1_000_000).toFixed(1)}M payé • {((agreedPrice - paymentsReceived) / 1_000_000).toFixed(1)}M restant
+              </p>
+              <button 
+                onClick={() => setIsDepositModalOpen(true)}
+                className="text-[10px] uppercase tracking-widest font-bold text-emerald-600 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1 flex items-center gap-1 rounded transition-colors border border-emerald-500/20"
+              >
+                + Avance
+              </button>
+            </div>
           </div>
           
           <div className="p-6">
@@ -211,6 +225,31 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
       {/* Process & Checklists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {deal.status === 'notary' && (
+          <div className="bg-indigo-500/5 dark:bg-[#050510] border border-indigo-500/20 rounded-2xl p-6 shadow-2xl col-span-1 lg:col-span-2">
+            <h3 className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5" /> Documents Notaire (Checklist)
+            </h3>
+            <p className="text-sm font-medium text-indigo-500/80 mb-6">Le dossier notaire doit être complet pour planifier la signature officielle.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+               {['Livret Foncier', 'Acte de Propriété', 'Pièces d\'identité'].map((doc, idx) => (
+                 <div key={idx} className="bg-white dark:bg-[#111111] border border-indigo-500/20 rounded-xl p-4 flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                     <input type="checkbox" className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                     <span className="text-sm font-bold text-gray-900 dark:text-white">{doc}</span>
+                   </div>
+                   <button 
+                     onClick={() => window.open(`https://wa.me/${deal.clients?.phone?.replace(/\+/g, '')}?text=${encodeURIComponent(`Salam ${deal.clients?.full_name},\n\nPour préparer la signature chez le notaire, merci de m'envoyer une photo claire de : ${doc}.\n\nMerci !`)}`, '_blank')}
+                     className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 rounded-lg transition-colors">
+                     <MessageCircle className="w-4 h-4" />
+                   </button>
+                 </div>
+               ))}
+            </div>
+          </div>
+        )}
+
         <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl">
            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-gray-500" /> Calendrier de la Transaction
@@ -245,14 +284,18 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
            </div>
            
            <div className="mt-6 p-4 bg-white dark:bg-[#0A0A0A] rounded-xl border border-black/5 dark:border-white/5">
-             <div className="flex justify-between items-center mb-2">
-               <span className="text-sm text-gray-500 font-medium">Estimation Commission</span>
-               <span className="text-lg font-bold text-gray-900 dark:text-white">{((agreedPrice * 0.03) / 1000).toFixed(1)}k DZD</span>
+             <div className="flex justify-between items-center mb-4">
+               <span className="text-sm text-gray-500 font-bold uppercase tracking-widest">Part Agence (60%)</span>
+               <span className="text-sm font-bold text-gray-900 dark:text-white">{((agreedPrice * 0.03 * 0.6) / 1000).toFixed(1)}k DZD</span>
              </div>
-             <div className="w-full h-1.5 bg-gray-200 dark:bg-[#171717] rounded-full overflow-hidden">
-               <div className="h-full bg-blue-500 rounded-full w-1/4 opacity-50 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+             <div className="flex justify-between items-center mb-2 pb-4 border-b border-black/5 dark:border-white/5">
+               <span className="text-sm text-blue-500 font-bold uppercase tracking-widest">Part Agent (40%)</span>
+               <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{((agreedPrice * 0.03 * 0.4) / 1000).toFixed(1)}k DZD</span>
              </div>
-             <p className="text-xs text-center text-gray-500 mt-2">Dépends du paiement final du client</p>
+             <div className="flex justify-between items-center mt-3">
+               <span className="text-sm text-gray-500 font-bold uppercase tracking-widest">Total Commission (3%)</span>
+               <span className="text-lg font-black text-gray-900 dark:text-white">{((agreedPrice * 0.03) / 1000).toFixed(1)}k DZD</span>
+             </div>
            </div>
         </div>
       </div>
@@ -262,6 +305,14 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           dealId={dealId}
           onClose={() => setIsTaskModalOpen(false)}
           onSuccess={() => setIsTaskModalOpen(false)}
+        />
+      )}
+      
+      {isDepositModalOpen && (
+        <LogDepositModal 
+          dealId={dealId}
+          onClose={() => setIsDepositModalOpen(false)}
+          onSuccess={() => { setIsDepositModalOpen(false); reloadData() }}
         />
       )}
     </div>

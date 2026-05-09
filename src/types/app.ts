@@ -2,7 +2,8 @@
 // Central domain type definitions — all services import from here
 
 export type UserRole    = 'admin' | 'manager' | 'agent'
-export type DealStatus  = 'draft' | 'active' | 'negotiation' | 'closed' | 'cancelled'
+export type DealStatus  = 'draft' | 'active' | 'negotiation' | 'notary' | 'closed' | 'cancelled'
+export type DealLostReason = 'price_too_high' | 'lost_to_competitor' | 'financing_failed' | 'seller_backed_out' | 'other'
 export type LeadStatus  = 'new' | 'contacted' | 'interested' | 'visit_scheduled' | 'converted' | 'lost'
 export type RiskLevel   = 'low' | 'medium' | 'high' | 'critical'
 export type PaymentStatus = 'pending' | 'paid' | 'overdue' | 'cancelled'
@@ -109,6 +110,8 @@ export interface Deal {
   penalty_applied:          boolean
   total_refunded:           number
   version:                  number
+  lost_reason?:             DealLostReason | null
+  notary_documents?:        { id: string, name: string, status: 'missing' | 'uploaded' }[] | null
   deleted_at:               string | null
   created_at:               string
   updated_at:               string

@@ -10,7 +10,7 @@ export interface Database {
   public: {
     Enums: {
       user_role:        'admin' | 'manager' | 'agent';
-      deal_status:      'draft' | 'active' | 'negotiation' | 'closed' | 'cancelled';
+      deal_status:      'draft' | 'active' | 'negotiation' | 'notary' | 'closed' | 'cancelled';
       lead_status:      'new' | 'contacted' | 'interested' | 'visit_scheduled' | 'converted' | 'lost';
       property_status:  'available' | 'reserved' | 'sold' | 'off_market';
       payment_status:   'pending' | 'paid' | 'overdue' | 'cancelled';

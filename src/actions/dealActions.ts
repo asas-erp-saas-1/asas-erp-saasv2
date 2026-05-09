@@ -16,9 +16,9 @@ export async function createDealAction(data: any) {
   }
 }
 
-export async function updateDealStageAction(id: string, stage: Database['public']['Enums']['deal_status'], currentVersion: number = 1) {
+export async function updateDealStageAction(id: string, stage: Database['public']['Enums']['deal_status'], currentVersion: number = 1, metadata?: { lostReason?: string }) {
   try {
-    const deal = await DealService.changeDealStatus(id, stage, currentVersion);
+    const deal = await DealService.changeDealStatus(id, stage, currentVersion, metadata);
     revalidatePath('/dashboard/deals');
     return { success: true, data: deal };
   } catch (error: any) {
