@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { Building2, ArrowLeft, Home, BadgePercent, CheckCircle2, ShieldCheck, FileCheck, Layers } from 'lucide-react'
+import { Building2, ArrowLeft, Home, BadgePercent, CheckCircle2, ShieldCheck, FileCheck, Layers, Map } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'motion/react'
 import { clsx } from 'clsx'
@@ -68,16 +68,21 @@ export default function ProjectDetail() {
              {project.city || 'Localisation non définie'} • {project.status === 'active' ? 'En Commercialisation' : project.status}
           </p>
         </div>
-        <div className="flex bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-4 gap-6">
-           <div>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Chiffre d'Affaires Projeté</p>
-              <p className="text-xl font-black text-gray-900 dark:text-white">{(totalValue / 1_000_000).toFixed(1)}M DZD</p>
-           </div>
-           <div className="w-px bg-black/5 dark:bg-white/5" />
-           <div>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-emerald-500 mb-1">CA Sécurisé</p>
-              <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">{(securedValue / 1_000_000).toFixed(1)}M DZD</p>
-           </div>
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
+          <Link href={`/dashboard/projects/${id}/canvas`} className="flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 active:translate-y-0 text-center">
+             <Map className="w-4 h-4" /> Plan Interactif
+          </Link>
+          <div className="flex bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-4 gap-6">
+             <div>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Chiffre d'Affaires Projeté</p>
+                <p className="text-xl font-black text-gray-900 dark:text-white">{(totalValue / 1_000_000).toFixed(1)}M DZD</p>
+             </div>
+             <div className="w-px bg-black/5 dark:bg-white/5" />
+             <div>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-emerald-500 mb-1">CA Sécurisé</p>
+                <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">{(securedValue / 1_000_000).toFixed(1)}M DZD</p>
+             </div>
+          </div>
         </div>
       </div>
 

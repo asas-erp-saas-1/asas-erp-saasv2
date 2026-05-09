@@ -14,6 +14,7 @@ const NAV = [
   { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2   },
   { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2   },
   { href: '/dashboard/finance',    label: 'Finance',            Icon: DollarSign  },
+  { href: '/dashboard/sav',        label: 'SAV & Livraisons',   Icon: CheckSquare },
   { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
   { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users       },
   { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2   },
