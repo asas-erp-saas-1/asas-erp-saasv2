@@ -27,3 +27,29 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const { lead_id, deal_id, type, description } = await request.json();
+    const identity = await kernel.identity();
+    
+    if (!description || !type) {
+      return NextResponse.json({ error: 'Description and type are required' }, { status: 400 });
+    }
+
+    const payload: any = {
+      agency_id: identity.tenantId,
+      user_id: identity.userId,
+      type,
+      description
+    };
+    
+    if (lead_id) payload.lead_id = lead_id;
+    if (deal_id) payload.deal_id = deal_id;
+
+    const activity = await kernel.mutate('activities', 'INSERT', payload);
+    return NextResponse.json({ data: activity });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

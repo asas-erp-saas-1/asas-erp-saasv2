@@ -36,3 +36,26 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const payload = await request.json();
+    const identity = await kernel.identity();
+    
+    // Defaulting required fields if absent
+    const data = {
+      agency_id: identity.tenantId,
+      project_id: payload.project_id || null,
+      type: payload.type || 'other',
+      list_price: payload.list_price || 0,
+      status: payload.status || 'available',
+      area_sqm: payload.area_sqm || null,
+      notes: payload.notes || null,
+    };
+
+    const property = await kernel.mutate('properties', 'INSERT', data);
+    return NextResponse.json({ data: property });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { motion, Variants } from 'motion/react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area, CartesianGrid } from 'recharts'
-import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
+import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck, PieChart as PieChartIcon } from 'lucide-react'
+
+const COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#64748b'];
 
 export function MetricsDashboard() {
   const [metrics, setMetrics] = useState<any>(null)
@@ -116,7 +118,7 @@ export function MetricsDashboard() {
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
         
         {/* Chart 1 */}
-        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden xl:col-span-1">
              <div className="flex items-center justify-between mb-8">
                  <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">Évolution du CA (MTD)</h3>
                  <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[10px] uppercase tracking-widest font-bold">Croissance Stable</span>
@@ -140,8 +142,45 @@ export function MetricsDashboard() {
              </div>
         </motion.div>
 
+        {/* Chart 3 - Lead Sources */}
+        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden xl:col-span-1">
+             <div className="flex items-center justify-between mb-8">
+                 <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">Sources des Leads</h3>
+                 <span className="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-[10px] uppercase tracking-widest font-bold">Pipeline Actuel</span>
+             </div>
+             <div className="h-72 w-full flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie
+                            data={metrics.leadSourceData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={100}
+                            paddingAngle={5}
+                            dataKey="value"
+                            stroke="rgba(0,0,0,0)"
+                        >
+                            {metrics.leadSourceData?.map((entry: any, index: number) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                        <Tooltip />
+                    </PieChart>
+                </ResponsiveContainer>
+             </div>
+             <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
+                 {metrics.leadSourceData?.map((entry: any, index: number) => (
+                     <div key={`legend-${index}`} className="flex items-center gap-2">
+                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                         <span className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest">{entry.name}</span>
+                     </div>
+                 ))}
+             </div>
+        </motion.div>
+        
         {/* Chart 2 */}
-        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+        <motion.div variants={item} className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden lg:col-span-2">
              <div className="flex items-center justify-between mb-8">
                  <h3 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">Volume des Ventes</h3>
                  <span className="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-[10px] uppercase tracking-widest font-bold">Volume Actif</span>

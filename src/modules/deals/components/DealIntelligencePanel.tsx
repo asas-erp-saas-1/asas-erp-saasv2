@@ -6,8 +6,129 @@ import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calend
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
+import { Clock } from 'lucide-react';
+import type { Activity } from '@/types/app';
 import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
+
+function DealActivitiesSection({ dealId }: { dealId: string }) {
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    fetch(`/api/activities?deal_id=${dealId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (mounted) {
+          setActivities(data.data || []);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        if (mounted) setLoading(false);
+      });
+    return () => { mounted = false; };
+  }, [dealId]);
+
+  return (
+    <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl mt-6">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="text-sm uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
+          <Clock className="w-4 h-4" /> Activités & Notes
+        </h4>
+      </div>
+
+      <div className="mb-6 flex gap-2">
+        <input 
+          type="text" 
+          id="new-deal-note-input"
+          className="flex-1 bg-white dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+          placeholder="Ajouter une note..."
+          onKeyDown={async (e) => {
+            if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
+              const val = e.currentTarget.value.trim();
+              e.currentTarget.value = '';
+              try {
+                const res = await fetch('/api/activities', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ deal_id: dealId, type: 'note', description: val })
+                });
+                if (res.ok) {
+                  const newAct = await res.json();
+                  setActivities(prev => [newAct.data, ...prev]);
+                }
+              } catch (err) {
+                console.error(err);
+              }
+            }
+          }}
+        />
+        <button 
+          onClick={async () => {
+            const input = document.getElementById('new-deal-note-input') as HTMLInputElement;
+            if (!input || !input.value.trim() || loading) return;
+            const val = input.value.trim();
+            input.value = '';
+            try {
+              const res = await fetch('/api/activities', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deal_id: dealId, type: 'note', description: val })
+              });
+              if (res.ok) {
+                const newAct = await res.json();
+                setActivities(prev => [newAct.data, ...prev]);
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-colors">
+          Ajouter
+        </button>
+      </div>
+      
+      {loading ? (
+        <p className="text-sm text-gray-500">Chargement...</p>
+      ) : activities.length > 0 ? (
+        <div className="space-y-4">
+          {activities.map((act) => (
+            <div key={act.id} className="relative pl-6 pb-2">
+              <div className="absolute top-2 left-[11px] bottom-[-16px] w-[2px] bg-black/5 dark:bg-white/5" />
+              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-gray-50 dark:ring-[#050505]" />
+              
+              <div className="bg-white dark:bg-[#111111] border border-black/5 dark:border-white/5 rounded-lg p-4 transition-colors hover:bg-gray-50 dark:hover:bg-[#141414]">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">{act.type}</span>
+                  <span className="text-[10px] text-gray-500 font-mono">
+                    {new Date(act.created_at).toLocaleString('fr-FR', {
+                      day: '2-digit', month: '2-digit', year: 'numeric',
+                      hour: '2-digit', minute: '2-digit'
+                    })}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-800 dark:text-gray-300">
+                  {act.description}
+                </p>
+                {(act as any).profiles?.full_name && (
+                  <p className="text-[10px] text-gray-500 mt-2 uppercase tracking-widest font-bold">
+                    Par {(act as any).profiles.full_name}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500">Aucune activité enregistrée.</p>
+      )}
+    </div>
+  );
+}
 
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [deal, setDeal] = useState<any>(null)
@@ -235,7 +356,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
       {/* Process & Checklists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {deal.status === 'notary' && (
+        {deal.status === 'negotiation' && (
           <div className="bg-indigo-500/5 dark:bg-[#050510] border border-indigo-500/20 rounded-2xl p-6 shadow-2xl col-span-1 lg:col-span-2">
             <h3 className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
               <FileText className="w-5 h-5" /> Documents Notaire (Checklist)
@@ -308,6 +429,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
            </div>
         </div>
       </div>
+
+      <DealActivitiesSection dealId={dealId} />
 
       {isTaskModalOpen && (
         <CreateTaskModal

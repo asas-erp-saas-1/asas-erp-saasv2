@@ -198,9 +198,62 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
 
               {/* Tracking / Activities */}
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4 flex items-center gap-2">
-                  <Clock className="w-4 h-4" /> Activités & Historique
-                </h4>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-xs uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
+                    <Clock className="w-4 h-4" /> Activités & Historique
+                  </h4>
+                </div>
+
+                <div className="mb-6 flex gap-2">
+                  <input 
+                    type="text" 
+                    id="new-note-input"
+                    className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    placeholder="Ajouter une note rapide..."
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
+                        const val = e.currentTarget.value.trim();
+                        e.currentTarget.value = '';
+                        try {
+                          const res = await fetch('/api/activities', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ lead_id: leadId, type: 'note', description: val })
+                          });
+                          if (res.ok) {
+                            const newAct = await res.json();
+                            setActivities(prev => [newAct.data, ...prev]);
+                          }
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }
+                    }}
+                  />
+                  <button 
+                    onClick={async () => {
+                      const input = document.getElementById('new-note-input') as HTMLInputElement;
+                      if (!input || !input.value.trim() || loading) return;
+                      const val = input.value.trim();
+                      input.value = '';
+                      try {
+                        const res = await fetch('/api/activities', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ lead_id: leadId, type: 'note', description: val })
+                        });
+                        if (res.ok) {
+                          const newAct = await res.json();
+                          setActivities(prev => [newAct.data, ...prev]);
+                        }
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-colors">
+                    Ajouter
+                  </button>
+                </div>
                 
                 {activities.length > 0 ? (
                   <div className="space-y-4">

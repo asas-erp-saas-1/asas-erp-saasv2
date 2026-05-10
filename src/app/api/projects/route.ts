@@ -5,8 +5,10 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    const identity = await kernel.identity();
     const data = await request.json();
     const project = await kernel.mutate('projects', 'INSERT', {
+      agency_id: identity.tenantId,
       name: data.name,
       city: data.city || null,
       status: data.status || 'active',

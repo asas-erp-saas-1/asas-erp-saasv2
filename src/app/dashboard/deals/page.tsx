@@ -32,7 +32,6 @@ const COLUMNS = [
   { key: 'draft',       label: 'Brouillon',      color: 'bg-gray-800 border-gray-700 text-gray-800 dark:text-gray-300',       dot: 'bg-gray-500' },
   { key: 'active',      label: 'En cours',       color: 'bg-blue-500/10 border-blue-500/20 text-blue-400',     dot: 'bg-blue-500' },
   { key: 'negotiation', label: 'Négociation',    color: 'bg-amber-500/10 border-amber-500/20 text-amber-400',   dot: 'bg-amber-500' },
-  { key: 'notary',      label: 'Notaire',        color: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400', dot: 'bg-indigo-500' },
   { key: 'closed',      label: 'Conclu',         color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', dot: 'bg-emerald-500' },
   { key: 'cancelled',   label: 'Annulé',         color: 'bg-red-500/10 border-red-500/20 text-red-400',     dot: 'bg-red-500' },
 ] as const
