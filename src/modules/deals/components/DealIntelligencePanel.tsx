@@ -126,18 +126,27 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button 
+              onClick={() => {
+                const url = `${window.location.origin}/portal/${dealId}`;
+                navigator.clipboard.writeText(url);
+                alert('Lien du Portail Acquéreur copié dans le presse-papier !');
+              }}
+              className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:text-blue-300 hover:bg-blue-500/20 rounded-lg transition-all" title="Copier le lien du portail client">
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
             {deal.clients?.phone && (
               <button 
-                onClick={() => window.open(`https://wa.me/${deal.clients.phone.replace(/\+/g, '')}`, '_blank')}
-                className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message WhatsApp">
+                onClick={() => window.open(`https://wa.me/${deal.clients.phone.replace(/\+/g, '')}?text=${encodeURIComponent(`Bonjour ${deal.clients.full_name},\nVoici l'accès à votre Espace Acquéreur ASAS : ${window.location.origin}/portal/${dealId}`)}`, '_blank')}
+                className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Partager le portail par WhatsApp">
                 <MessageCircle className="h-4 w-4" />
               </button>
             )}
-            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-black/5 dark:border-white/5 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-black/5 dark:border-white/5 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
               <CheckSquare className="w-4 h-4" /> Créer Tâche
             </button>
-            <button onClick={handleGenerateContract} className="px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-black/5 dark:border-white/5 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
-              Générer Contrat (PDF)
+            <button onClick={handleGenerateContract} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 border border-transparent rounded-lg text-sm font-medium text-white transition-colors shadow-sm whitespace-nowrap active:scale-95">
+              <FileText className="w-4 h-4 inline-block mr-1" /> Contrat (PDF)
             </button>
           </div>
         </div>

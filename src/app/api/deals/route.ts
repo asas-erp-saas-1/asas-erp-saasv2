@@ -7,9 +7,14 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = Number(searchParams.get('limit')) || 25;
+    const id = searchParams.get('id');
     
-    // Simplification for the sake of completion: retrieving deals via service
     const deals = await DealService.getDeals();
+    
+    if (id) {
+       const deal = deals.find(d => d.id === id);
+       return NextResponse.json({ data: deal ? [deal] : [], count: deal ? 1 : 0 });
+    }
     
     return NextResponse.json({ data: deals, count: deals.length });
   } catch (error: any) {
