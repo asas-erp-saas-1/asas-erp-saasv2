@@ -42,10 +42,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
         role: identity.role
       };
     }
-  } catch (error) {
-    // If auth fails, we probably should redirect to login
-    // redirect('/login');
-    console.error('Failed to resolve identity in layout', error);
+  } catch (error: any) {
+    console.error('Failed to resolve identity in layout:', error.message);
+    if (error.message.includes('Tenant isolation failure')) {
+      redirect('/onboarding');
+    } else {
+      redirect('/login');
+    }
   }
 
   const roleDisplay = profile.role === 'owner' ? 'CEO / Admin' : profile.role;
