@@ -2,11 +2,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldCheck, Zap } from 'lucide-react'
+import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldCheck, Zap, Users } from 'lucide-react'
 import { motion, Variants } from 'motion/react'
 import { clsx } from 'clsx'
 import { SecurityPanel } from './SecurityPanel'
 import { AppInviteWidget } from './AppInviteWidget'
+import Link from 'next/link'
 
 type Config = {
   inactivityYellowHours:    number
@@ -136,16 +137,21 @@ export default function SettingsPage() {
             </h1>
             <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-3">Règles métier, seuils d'inactivité et alertes financières.</p>
             </div>
-            <button
-            onClick={save}
-            disabled={saving}
-            className={clsx(
-                'flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs uppercase font-bold tracking-widest shadow-lg transition-all focus:outline-none focus:ring-1 hover:scale-[1.02] active:scale-95',
-                saved ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 focus:ring-emerald-500/50' : 'bg-white text-black border border-transparent hover:bg-gray-200 focus:ring-white/50 shadow-[0_0_20px_rgba(255,255,255,0.1)]'
-            )}
-            >
-            {saved ? <><Check className="h-4 w-4 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]" /> Profil Sauvegardé</> : saving ? 'Cryptage...' : <><Save className="h-4 w-4" /> Appliquer Modification</>}
-            </button>
+            <div className="flex gap-4 items-center">
+              <Link href="/dashboard/settings/team" className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs uppercase font-bold tracking-widest bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all">
+                  <Users className="w-4 h-4" /> Gérer l'Équipe (RBAC)
+              </Link>
+              <button
+              onClick={save}
+              disabled={saving}
+              className={clsx(
+                  'flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs uppercase font-bold tracking-widest shadow-lg transition-all focus:outline-none focus:ring-1 hover:scale-[1.02] active:scale-95',
+                  saved ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 focus:ring-emerald-500/50' : 'bg-white text-black border border-transparent hover:bg-gray-200 focus:ring-white/50 shadow-[0_0_20px_rgba(255,255,255,0.1)]'
+              )}
+              >
+              {saved ? <><Check className="h-4 w-4 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]" /> Profil Sauvegardé</> : saving ? 'Cryptage...' : <><Save className="h-4 w-4" /> Appliquer Modification</>}
+              </button>
+            </div>
         </div>
 
         <motion.div variants={item}>
