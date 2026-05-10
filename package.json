@@ -71,6 +71,12 @@
     "eslint-config-next": "~16.2.4",
     "typescript": "~5.6.0"
   },
+  "overrides": {
+    "react-konva": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "engines": {
     "node": "24.x"
   }
