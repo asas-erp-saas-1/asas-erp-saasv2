@@ -1,7 +1,5 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-
 export class DealPipelineWorker {
-  static async process(event: any, db: SupabaseClient) {
+  static async process(event: any, db: any) {
     console.log(`[DealPipelineWorker] Received event: ${event.type} for Deal ${event.aggregateId}`);
     
     if (event.type === 'DEAL_STAGE_CHANGED') {

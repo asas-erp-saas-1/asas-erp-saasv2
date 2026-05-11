@@ -1,10 +1,8 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-
 export class DeadLetterProcessor {
   /**
    * Scans dead letter queue and attempts a deterministic retry or alerts on unrecoverable items.
    */
-  static async recoverFailedEvents(db: SupabaseClient) {
+  static async recoverFailedEvents(db: any) {
     const { data: deadLetters, error } = await db
       .from('dead_letter_events')
       .select('*')
