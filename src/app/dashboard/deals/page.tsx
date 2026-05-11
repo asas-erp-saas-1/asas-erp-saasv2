@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Handshake, AlertTriangle, Clock, ChevronRight, Plus, Search, Filter } from 'lucide-react'
+import { Handshake, AlertTriangle, Clock, ChevronRight, Plus, Search, Filter, Phone, MessageCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
@@ -32,6 +32,7 @@ const COLUMNS = [
   { key: 'draft',       label: 'Brouillon',      color: 'bg-gray-800 border-gray-700 text-gray-800 dark:text-gray-300',       dot: 'bg-gray-500' },
   { key: 'active',      label: 'En cours',       color: 'bg-blue-500/10 border-blue-500/20 text-blue-400',     dot: 'bg-blue-500' },
   { key: 'negotiation', label: 'Négociation',    color: 'bg-amber-500/10 border-amber-500/20 text-amber-400',   dot: 'bg-amber-500' },
+  { key: 'notary',      label: 'Attente Notaire',color: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400', dot: 'bg-indigo-500' },
   { key: 'closed',      label: 'Conclu',         color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', dot: 'bg-emerald-500' },
   { key: 'cancelled',   label: 'Annulé',         color: 'bg-red-500/10 border-red-500/20 text-red-400',     dot: 'bg-red-500' },
 ] as const
@@ -96,11 +97,31 @@ function DealCard({ deal, isSelected, onSelect, index }: { deal: Deal; isSelecte
               <span className={pct === 100 ? 'text-emerald-500 dark:text-emerald-400' : 'text-gray-500'}>Payé</span>
               <span className="text-gray-800 dark:text-gray-300">{pct}%</span>
             </div>
-            <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden mb-4">
               <div
                 style={{ width: `${pct}%` }}
                 className={clsx('h-full rounded-full transition-all duration-500', pct === 100 ? 'bg-emerald-500' : pct > 0 ? 'bg-blue-500' : 'bg-gray-400 dark:bg-gray-600')}
               />
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 pt-3 border-t border-black/5 dark:border-white/5">
+              <button 
+                onClick={(e) => { e.stopPropagation(); }}
+                className="flex items-center justify-center p-2.5 min-w-[36px] min-h-[36px] border border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
+                <Phone className="h-3.5 w-3.5" />
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${(deal as any).clients?.phone?.replace(/\+/g, '')}`, '_blank'); }}
+                className="flex items-center justify-center p-2.5 min-w-[36px] min-h-[36px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message WhatsApp">
+                <MessageCircle className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSelect(); }}
+                className="ml-auto flex items-center gap-1.5 min-h-[36px] text-[9px] uppercase tracking-widest font-bold bg-white text-black px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-all shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+              >
+                Ouvrir
+              </button>
             </div>
           </div>
         </div>
@@ -172,10 +193,23 @@ export default function DealsPage() {
     ))
 
     try {
-      // Background update via Server Action
-      const { updateDealStageAction } = await import('@/actions/dealActions')
-      const res = await updateDealStageAction(draggableId, newStatus, dealVersion)
-      if (!res.success) throw new Error(res.error)
+      // 1. You could execute an optimistic transition right here if you passed state up.
+      const { v4: uuidv4 } = await import('uuid');
+      
+      const res = await fetch('/api/command-gateway', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commandId: uuidv4(),
+          aggregateId: draggableId,
+          type: 'SET_DEAL_STAGE',
+          expectedVersion: dealVersion,
+          payload: { stage: newStatus }
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Conflict');
     } catch (e: any) {
       import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'DealsPage dragEnd' }))
       // Revert on error

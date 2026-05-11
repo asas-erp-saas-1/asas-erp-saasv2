@@ -21,10 +21,17 @@ export function LogDepositModal({ dealId, onClose, onSuccess }: { dealId: string
       const numAmount = Number(amount)
       if (isNaN(numAmount) || numAmount <= 0) throw new Error('Montant invalide')
 
-      const res = await fetch('/api/deals/payments', {
+      const { v4: uuidv4 } = await import('uuid');
+      const res = await fetch('/api/command-gateway', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dealId, amount: numAmount, method: 'cash_avance', notes: 'Avance consignée via mobile, attente de vérification Manager' })
+        body: JSON.stringify({
+          commandId: uuidv4(),
+          aggregateId: dealId,
+          type: 'LOG_DEPOSIT',
+          expectedVersion: 1, // Payment appends don't typically break version, 
+          payload: { amount: numAmount, method: 'cash_avance', notes: 'Avance consignée via mobile, attente de vérification Manager' }
+        })
       })
       
       if (!res.ok) {

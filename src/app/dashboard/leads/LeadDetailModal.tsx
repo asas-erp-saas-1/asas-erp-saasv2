@@ -312,8 +312,11 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
            >
              <Calendar className="w-4 h-4" /> Créer Tâche
            </button>
-           <button className="px-5 py-2.5 rounded-xl bg-white text-black text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 flex items-center gap-2">
-             <MessageCircle className="w-4 h-4" /> Message Rapide
+           <button 
+             onClick={() => window.open(`https://wa.me/${(lead as any).clients?.phone?.replace(/\+/g, '') || ''}`, '_blank')}
+             className="px-5 py-2.5 rounded-xl bg-white text-black text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 flex items-center gap-2"
+           >
+             <MessageCircle className="w-4 h-4" /> Message WhatsApp
            </button>
         </div>
       </div>

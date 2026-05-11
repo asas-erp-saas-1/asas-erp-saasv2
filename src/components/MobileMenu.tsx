@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Menu, X, ChevronRight } from 'lucide-react'
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Menu, X, ChevronRight, Calendar } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 
@@ -17,6 +17,7 @@ const NAV = [
   { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2   },
   { href: '/dashboard/finance',    label: 'Finance',            Icon: DollarSign  },
   { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
+  { href: '/dashboard/calendar',   label: 'Agenda Opérationnel',Icon: Calendar    },
   { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users       },
   { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2   },
   { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings    },

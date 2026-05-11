@@ -22,10 +22,25 @@ export function CancelDealModal({ dealId, dealVersion, onClose, onSuccess }: { d
     setLoading(true)
     setError(null)
     try {
-      const { updateDealStageAction } = await import('@/actions/dealActions')
-      const res = await updateDealStageAction(dealId, 'cancelled', dealVersion, { lostReason: reason })
+      const { v4: uuidv4 } = await import('uuid');
       
-      if (!res.success) throw new Error(res.error)
+      const res = await fetch('/api/command-gateway', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commandId: uuidv4(),
+          aggregateId: dealId,
+          type: 'SET_DEAL_STAGE',
+          expectedVersion: dealVersion,
+          payload: {
+            stage: 'cancelled',
+            lostReason: reason
+          }
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Conflict error');
       
       onSuccess()
     } catch (err: any) {
