@@ -4,7 +4,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
-import { Building2, Plus, Search, Filter, CheckCircle, XCircle, Clock, Tag } from 'lucide-react'
+import { Building2, Plus, Search, Filter, CheckCircle, XCircle, Clock, Tag, MessageCircle } from 'lucide-react'
 import { clsx } from 'clsx'
 import { PropertyCreateModal } from './PropertyCreateModal'
 
@@ -74,9 +74,22 @@ function PropertyCard({ property }: { property: Property }) {
           </p>
         )}
 
-        <div className="flex items-center gap-4 pt-4 border-t border-black/5 dark:border-white/5 text-[10px] uppercase tracking-widest font-bold text-gray-500">
-          {property.area_sqm && <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />{property.area_sqm} m²</span>}
-          {property.projects?.developers && <span className="flex items-center gap-1.5 truncate"><span className="w-1.5 h-1.5 rounded-full bg-gray-500" />{property.projects.developers.name}</span>}
+        <div className="flex items-center justify-between pt-4 border-t border-black/5 dark:border-white/5">
+          <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest font-bold text-gray-500">
+            {property.area_sqm && <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />{property.area_sqm} m²</span>}
+            {property.projects?.developers && <span className="flex items-center gap-1.5 truncate"><span className="w-1.5 h-1.5 rounded-full bg-gray-500" />{property.projects.developers.name}</span>}
+          </div>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              const text = `Découvrez ce bien exceptionnel :\nType: ${TYPE_LABELS[property.type] ?? property.type}\nPièces: ${property.rooms || '-'}\nSuperficie: ${property.area_sqm ? property.area_sqm + 'm²' : '-'}\nPrix: ${fmt(property.list_price)}\nProjet: ${property.projects?.name || 'Indépendant'}\n\nEn savoir plus: ${window.location.origin}/p/${property.id}`;
+              window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            }}
+            className="flex items-center justify-center p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-colors"
+            title="Partager via WhatsApp"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </motion.div>

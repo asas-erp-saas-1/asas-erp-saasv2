@@ -32,12 +32,18 @@ export async function POST(request: Request) {
       if (lostReason) payload.lost_reason = lostReason;
       if (notes) payload.notes = notes;
 
-      // We enforce optimistic concurrency check physically right here if we had full db logic,
-      // but for now, we just pass the mutation.
       const deal = await kernel.mutate('deals', 'UPDATE', payload, { id: command.aggregateId });
-      
-      // We could also insert into a true "events" table if needed.
       return NextResponse.json({ success: true, data: deal });
+    }
+
+    if (command.type === 'SET_LEAD_STATUS') {
+      const { status } = command.payload;
+      const payload: any = {
+        status,
+        last_activity: new Date().toISOString()
+      };
+      const lead = await kernel.mutate('leads', 'UPDATE', payload, { id: command.aggregateId });
+      return NextResponse.json({ success: true, data: lead });
     }
 
     if (command.type === 'LOG_DEPOSIT') {
@@ -49,6 +55,33 @@ export async function POST(request: Request) {
         due_date: new Date().toISOString(), // Avance is logged today
       });
       return NextResponse.json({ success: true, data: payment });
+    }
+
+    if (command.type === 'TRIGGER_PROJECT_TRANCHE') {
+      const { projectId, trancheLabel, tranchePct } = command.payload;
+      const { DealService } = await import('@/services/deals/deal.service');
+      const allDeals = await DealService.getDeals();
+      const projectDeals = allDeals.filter((d: any) => 
+        d.properties?.projects?.id === projectId && 
+        ['active', 'negotiation', 'notary', 'closed'].includes(d.status)
+      );
+
+      for (const deal of projectDeals) {
+        const agreedPrice = (deal as any).agreed_price || (deal as any).amount || 0;
+        const amountToCall = agreedPrice * (tranchePct / 100);
+        
+        await DealService.registerPayment(deal.id, amountToCall, new Date().toISOString());
+
+        await kernel.mutate('activities', 'INSERT', {
+          agency_id: identity.tenantId,
+          deal_id: deal.id,
+          type: 'appel_fonds',
+          user_id: identity.userId,
+          description: `Appel de fonds émis : ${trancheLabel} (${tranchePct}% = ${amountToCall.toLocaleString()} DZD)`
+        });
+      }
+
+      return NextResponse.json({ success: true, dispatched: projectDeals.length });
     }
 
     return NextResponse.json({ error: 'Unknown command type' }, { status: 400 });

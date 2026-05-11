@@ -204,16 +204,39 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                   </h4>
                 </div>
 
-                <div className="mb-6 flex gap-2">
-                  <input 
-                    type="text" 
-                    id="new-note-input"
-                    className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    placeholder="Ajouter une note rapide..."
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
-                        const val = e.currentTarget.value.trim();
-                        e.currentTarget.value = '';
+                <div className="mb-6 flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      id="new-note-input"
+                      className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="Ajouter une note rapide..."
+                      onKeyDown={async (e) => {
+                        if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
+                          const val = e.currentTarget.value.trim();
+                          e.currentTarget.value = '';
+                          try {
+                            const res = await fetch('/api/activities', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ lead_id: leadId, type: 'note', description: val })
+                            });
+                            if (res.ok) {
+                              const newAct = await res.json();
+                              setActivities(prev => [newAct.data, ...prev]);
+                            }
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        }
+                      }}
+                    />
+                    <button 
+                      onClick={async () => {
+                        const input = document.getElementById('new-note-input') as HTMLInputElement;
+                        if (!input || !input.value.trim() || loading) return;
+                        const val = input.value.trim();
+                        input.value = '';
                         try {
                           const res = await fetch('/api/activities', {
                             method: 'POST',
@@ -227,32 +250,45 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                         } catch (err) {
                           console.error(err);
                         }
-                      }
-                    }}
-                  />
-                  <button 
-                    onClick={async () => {
-                      const input = document.getElementById('new-note-input') as HTMLInputElement;
-                      if (!input || !input.value.trim() || loading) return;
-                      const val = input.value.trim();
-                      input.value = '';
-                      try {
-                        const res = await fetch('/api/activities', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ lead_id: leadId, type: 'note', description: val })
-                        });
-                        if (res.ok) {
-                          const newAct = await res.json();
-                          setActivities(prev => [newAct.data, ...prev]);
-                        }
-                      } catch (err) {
-                        console.error(err);
-                      }
-                    }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-colors">
-                    Ajouter
-                  </button>
+                      }}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-colors">
+                      Ajouter
+                    </button>
+                  </div>
+                  
+                  {/* Smart Chips for Instant Logging */}
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mr-2">Action Rapide:</span>
+                    {[
+                      { label: "Appel sans réponse", val: "Pas de réponse suite à l'appel", icon: "📞" },
+                      { label: "Localisation partagée", val: "Localisation du projet partagée sur WhatsApp", icon: "📍" },
+                      { label: "Pas intéressé", val: "A déclaré ne plus être intéressé", icon: "❌" },
+                      { label: "Visite confirmée", val: "A confirmé sa présence pour une visite sur site", icon: "🤝" }
+                    ].map(chip => (
+                      <button
+                        key={chip.label}
+                        onClick={async () => {
+                          if (loading) return;
+                          try {
+                            const res = await fetch('/api/activities', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ lead_id: leadId, type: 'note', description: `${chip.icon} ${chip.val}` })
+                            });
+                            if (res.ok) {
+                              const newAct = await res.json();
+                              setActivities(prev => [newAct.data, ...prev]);
+                            }
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        }}
+                        className="px-3 py-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-lg text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-black/10 dark:hover:bg-white/10 hover:border-black/20 dark:hover:border-white/20 transition-all flex items-center gap-1 active:scale-95"
+                      >
+                        <span className="opacity-70">{chip.icon}</span> {chip.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 
                 {activities.length > 0 ? (

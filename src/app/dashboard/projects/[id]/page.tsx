@@ -135,7 +135,56 @@ export default function ProjectDetail() {
               <p className="text-sm font-medium text-gray-500 mb-6">Lorsque vous validez une phase de construction, les appels de fonds sont automatiquement générés pour toutes les transactions en cours sur ce projet.</p>
               
               <div className="space-y-4">
-                 {[
+                 {project.tranches?.length ? project.tranches.map((tranche: any, i: number) => (
+                   <div key={i} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", tranche.done ? "bg-emerald-500/5 border-emerald-500/20" : "bg-gray-50 dark:bg-[#0A0A0A] border-black/5 dark:border-white/5")}>
+                      <div className="flex items-center gap-4">
+                         <div className={clsx("w-8 h-8 rounded-lg flex items-center justify-center", tranche.done ? "bg-emerald-500/20 text-emerald-500" : "bg-gray-200 dark:bg-[#111111] text-gray-400")}>
+                           {tranche.done ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-xs font-bold">{i+1}</span>}
+                         </div>
+                         <div>
+                           <p className={clsx("text-sm font-bold", tranche.done ? "text-emerald-700 dark:text-emerald-400" : "text-gray-900 dark:text-white")}>{tranche.label}</p>
+                           <p className="text-xs font-bold text-gray-500 mt-0.5">{tranche.pct}% du montant total</p>
+                         </div>
+                      </div>
+                      {!tranche.done && (
+                        <button 
+                          onClick={async (e) => {
+                            e.currentTarget.disabled = true;
+                            const originalText = e.currentTarget.innerText;
+                            e.currentTarget.innerText = "Déclenchement...";
+                            try {
+                              const res = await fetch('/api/command-gateway', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  commandId: crypto.randomUUID(),
+                                  aggregateId: project.id,
+                                  type: 'TRIGGER_PROJECT_TRANCHE',
+                                  expectedVersion: 1,
+                                  payload: { projectId: project.id, trancheLabel: tranche.label, tranchePct: tranche.pct }
+                                })
+                              });
+                              if (!res.ok) throw new Error('Failed');
+                              
+                              // Optimistic visual update (since we don't save tranches to DB yet)
+                              const newTranches = [...project.tranches];
+                              newTranches[i].done = true;
+                              setProject({ ...project, tranches: newTranches });
+                              
+                              alert('Appels de fonds générés avec succès pour les transactions actives.');
+                            } catch (err) {
+                              console.error(err);
+                              e.currentTarget.disabled = false;
+                              e.currentTarget.innerText = originalText;
+                              alert('Erreur lors du déclenchement de l\'appel de fonds');
+                            }
+                          }}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-sm transition-all">
+                          Déclencher Appel
+                        </button>
+                      )}
+                   </div>
+                 )) : [
                    { label: "Réservation (Signature)", pct: 20, done: true },
                    { label: "Achèvement Fondations", pct: 15, done: true },
                    { label: "Dalle RDC", pct: 10, done: false },
@@ -154,7 +203,49 @@ export default function ProjectDetail() {
                          </div>
                       </div>
                       {!tranche.done && (
-                        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg shadow-sm">
+                        <button 
+                          onClick={async (e) => {
+                            e.currentTarget.disabled = true;
+                            const originalText = e.currentTarget.innerText;
+                            e.currentTarget.innerText = "Déclenchement...";
+                            try {
+                              const res = await fetch('/api/command-gateway', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  commandId: crypto.randomUUID(),
+                                  aggregateId: project.id,
+                                  type: 'TRIGGER_PROJECT_TRANCHE',
+                                  expectedVersion: 1,
+                                  payload: { projectId: project.id, trancheLabel: tranche.label, tranchePct: tranche.pct }
+                                })
+                              });
+                              if (!res.ok) throw new Error('Failed');
+                              
+                              // Optimistically update our "fake" tranches by mutating state mock
+                              const newProject = { ...project };
+                              if (!newProject.tranches) {
+                                newProject.tranches = [
+                                  { label: "Réservation (Signature)", pct: 20, done: true },
+                                  { label: "Achèvement Fondations", pct: 15, done: true },
+                                  { label: "Dalle RDC", pct: 10, done: false },
+                                  { label: "Hors d'eau (Toiture)", pct: 20, done: false },
+                                  { label: "Menuiseries & Cloisons", pct: 15, done: false },
+                                  { label: "Remise des Clés", pct: 20, done: false },
+                                ];
+                              }
+                              newProject.tranches[i].done = true;
+                              setProject(newProject);
+                              
+                              alert('Appels de fonds générés avec succès pour les transactions actives.');
+                            } catch (err) {
+                              console.error(err);
+                              e.currentTarget.disabled = false;
+                              e.currentTarget.innerText = originalText;
+                              alert('Erreur lors du déclenchement de l\'appel de fonds');
+                            }
+                          }}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-sm transition-all">
                           Déclencher Appel
                         </button>
                       )}
