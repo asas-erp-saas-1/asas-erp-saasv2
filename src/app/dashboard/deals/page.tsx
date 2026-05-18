@@ -10,6 +10,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { DealIntelligencePanel } from '@/modules/deals/components/DealIntelligencePanel'
 import type { Deal } from '@/types/app'
 import { CancelDealModal } from './CancelDealModal'
+import { WhatsAppDrawer } from '@/components/WhatsAppDrawer'
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_STYLE: Record<string, string> = {
@@ -45,7 +46,7 @@ function fmt(n: number): string {
 }
 
 // ─── Deal Card ─────────────────────────────────────────────────────────────────
-function DealCard({ deal, isSelected, onSelect, index }: { deal: Deal; isSelected: boolean; onSelect: () => void; index: number }) {
+function DealCard({ deal, isSelected, onSelect, onWhatsApp, index }: { deal: Deal; isSelected: boolean; onSelect: () => void; onWhatsApp: (deal: Deal) => void; index: number }) {
   const agreedPrice = (deal as any).agreed_price || (deal as any).amount || 0;
   const paymentsReceived = (deal as any).total_payments_received || 0;
   const pct = agreedPrice > 0
@@ -112,7 +113,7 @@ function DealCard({ deal, isSelected, onSelect, index }: { deal: Deal; isSelecte
                 <Phone className="h-3.5 w-3.5" />
               </button>
               <button 
-                onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${(deal as any).clients?.phone?.replace(/\+/g, '')}`, '_blank'); }}
+                onClick={(e) => { e.stopPropagation(); onWhatsApp(deal); }}
                 className="flex items-center justify-center p-2.5 min-w-[36px] min-h-[36px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message WhatsApp">
                 <MessageCircle className="h-3.5 w-3.5" />
               </button>
@@ -141,6 +142,7 @@ export default function DealsPage() {
   const [statusFilter, setStatus]    = useState<string>('')
   const [page,       setPage]        = useState(1)
   const [cancelDealInfo, setCancelDealInfo] = useState<{ id: string, version: number } | null>(null)
+  const [whatsAppDeal, setWhatsAppDeal] = useState<Deal | null>(null)
   
   const LIMIT = 100
 
@@ -322,6 +324,7 @@ export default function DealsPage() {
                                   index={index}
                                   isSelected={deal.id === selectedId}
                                   onSelect={() => setSelectedId(deal.id === selectedId ? null : deal.id)}
+                                  onWhatsApp={setWhatsAppDeal}
                                 />
                               ))
                             )}
@@ -417,6 +420,15 @@ export default function DealsPage() {
           </p>
         </div>
       )}
+
+      <WhatsAppDrawer 
+        isOpen={!!whatsAppDeal} 
+        onClose={() => setWhatsAppDeal(null)}
+        clientName={(whatsAppDeal as any)?.clients?.full_name || 'Client Inconnu'}
+        clientPhone={(whatsAppDeal as any)?.clients?.phone || ''}
+        contextType="deal"
+        propertyName={(whatsAppDeal as any)?.properties?.projects?.name}
+      />
     </div>
   )
 }

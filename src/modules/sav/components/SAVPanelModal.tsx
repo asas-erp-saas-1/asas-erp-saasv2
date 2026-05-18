@@ -6,12 +6,14 @@ import { X, Wrench, CheckCircle2, MessageCircle, FileText, Plus, Loader2 } from 
 import type { Deal, Task } from '@/types/app'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
+import { WhatsAppDrawer } from '@/components/WhatsAppDrawer'
 
 export function SAVPanelModal({ deal, onClose, onUpdate }: { deal: Deal, onClose: () => void, onUpdate: () => void }) {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [isAdding, setIsAdding] = useState(false)
+  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false)
 
   const loadTasks = async () => {
     try {
@@ -149,7 +151,7 @@ export function SAVPanelModal({ deal, onClose, onUpdate }: { deal: Deal, onClose
              <button onClick={generatePV} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-xl font-bold text-sm transition-colors active:scale-95">
                 <FileText className="w-4 h-4" /> Générer PV de Livraison (PDF)
              </button>
-             <button onClick={() => window.open(`https://wa.me/${deal.clients?.phone?.replace(/\+/g, '')}`, '_blank')} className="flex items-center justify-center px-4 py-3 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-xl font-bold text-sm transition-colors active:scale-95" title="Contacter sur WhatsApp">
+             <button onClick={() => setIsWhatsAppOpen(true)} className="flex items-center justify-center px-4 py-3 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-xl font-bold text-sm transition-colors active:scale-95" title="Contacter sur WhatsApp">
                 <MessageCircle className="w-4 h-4" /> WhatsApp
              </button>
            </div>
@@ -206,6 +208,15 @@ export function SAVPanelModal({ deal, onClose, onUpdate }: { deal: Deal, onClose
 
         </div>
       </motion.div>
+
+      <WhatsAppDrawer 
+        isOpen={isWhatsAppOpen} 
+        onClose={() => setIsWhatsAppOpen(false)}
+        clientName={deal.clients?.full_name || 'Client Inconnu'}
+        clientPhone={deal.clients?.phone || ''}
+        contextType="sav"
+        propertyName={(deal.properties?.projects?.name || deal.properties?.reference_code) || ''}
+      />
     </div>
   )
 }

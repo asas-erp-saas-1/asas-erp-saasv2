@@ -12,6 +12,8 @@ import { AlertTriangle } from 'lucide-react'
 
 import { LeadCreateModal } from './LeadCreateModal'
 
+import { WhatsAppDrawer } from '@/components/WhatsAppDrawer'
+
 // ─── Kanban column definitions ────────────────────────────────────────────────
 const COLUMNS = [
   { key: 'new',             label: 'Nouveau',           color: 'bg-[#1A1A1A] border-black/5 dark:border-white/5 text-gray-800 dark:text-gray-300',       dot: 'bg-gray-500' },
@@ -98,7 +100,7 @@ function MultiSelect({ options, selected, onChange, label }: { options: { id: st
 }
 
 // ─── Lead card ────────────────────────────────────────────────────────────────
-function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert: (id: string) => void; onSelect: (id: string) => void; index: number }) {
+function LeadCard({ lead, onConvert, onSelect, onWhatsApp, index }: { lead: Lead; onConvert: (id: string) => void; onSelect: (id: string) => void; onWhatsApp: (lead: Lead) => void; index: number }) {
   const hours  = inactiveHours(lead.last_activity)
   const isHot  = hours < 24
   const isStale = hours > 48
@@ -175,7 +177,7 @@ function LeadCard({ lead, onConvert, onSelect, index }: { lead: Lead; onConvert:
               <Phone className="h-4 w-4" />
             </button>
             <button 
-              onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${(lead as any).clients?.phone?.replace(/\+/g, '')}`, '_blank'); }}
+              onClick={(e) => { e.stopPropagation(); onWhatsApp(lead); }}
               className="flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message WhatsApp">
               <MessageCircle className="h-4 w-4" />
             </button>
@@ -201,6 +203,8 @@ export default function LeadsPage() {
   const [search,  setSearch]  = useState('')
   const [total,   setTotal]   = useState(0)
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
+  
+  const [whatsAppLead, setWhatsAppLead] = useState<Lead | null>(null)
 
   const [selectedSources, setSelectedSources] = useState<string[]>([])
   const [selectedAgents, setSelectedAgents] = useState<string[]>([])
@@ -395,7 +399,7 @@ return (
                           </div>
                         ) : (
                           colLeads.map((lead, index) => (
-                            <LeadCard key={lead.id} lead={lead} index={index} onConvert={handleConvert} onSelect={setSelectedLeadId} />
+                            <LeadCard key={lead.id} lead={lead} index={index} onConvert={handleConvert} onSelect={setSelectedLeadId} onWhatsApp={setWhatsAppLead} />
                           ))
                         )}
                         {provided.placeholder}
@@ -456,6 +460,14 @@ return (
     
     <LeadDetailModal leadId={selectedLeadId} onClose={() => setSelectedLeadId(null)} />
     {isCreateModalOpen && <LeadCreateModal onClose={() => setIsCreateModalOpen(false)} onSuccess={() => { setIsCreateModalOpen(false); load(); }} />}
+    <WhatsAppDrawer 
+      isOpen={!!whatsAppLead} 
+      onClose={() => setWhatsAppLead(null)}
+      clientName={(whatsAppLead as any)?.clients?.full_name || 'Client Inconnu'}
+      clientPhone={(whatsAppLead as any)?.clients?.phone || ''}
+      contextType="lead"
+      propertyName={(whatsAppLead as any)?.projects?.name}
+    />
   </div>
 )
 }
