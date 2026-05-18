@@ -24,7 +24,8 @@ export async function GET(request: Request) {
       closedDeals: perf.closed_deals,
       activeDeals: perf.active_deals,
       totalRevenue: perf.total_revenue || 0,
-      commissionEarned: perf.total_commission || 0,
+      commissionEarned: perf.commission_earned || 0,
+      commissionOutstanding: perf.commission_outstanding || 0,
       closingRatePct: perf.total_deals > 0 ? (perf.closed_deals / perf.total_deals) * 100 : 0,
       avgDealSize: perf.closed_deals > 0 ? (perf.total_revenue / perf.closed_deals) : 0
     }));

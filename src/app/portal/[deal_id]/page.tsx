@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { Loader2, FileText, CheckCircle2, MapPin, Download, MessageCircle, Building2, Wallet } from 'lucide-react'
+import { clsx } from 'clsx'
 import type { Deal } from '@/types/app'
 import Link from 'next/link'
 
@@ -166,26 +167,24 @@ export default function CustomerPortal({ params }: { params: { deal_id: string }
              </div>
 
              <div className="space-y-3">
-               <div className="flex items-center justify-between p-4 bg-[#111111] rounded-xl border border-white/5">
-                  <div className="flex items-center gap-3">
-                     <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                     <div>
-                       <p className="text-sm font-bold">Apport Initial (20%)</p>
-                       <p className="text-[10px] uppercase text-gray-500 tracking-wider">Réglé le 12/03/2026</p>
+               {(!deal.deal_payments || deal.deal_payments.length === 0) ? (
+                  <p className="text-sm text-gray-400">Aucun paiement ou appel de fonds enregistré.</p>
+               ) : (
+                  (deal.deal_payments as any[]).sort((a,b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()).map(payment => (
+                     <div key={payment.id} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", payment.status === 'paid' ? "bg-[#111111] border-white/5" : "bg-[#0A0A0A] border-white/5 opacity-50")}>
+                        <div className="flex items-center gap-3">
+                           {payment.status === 'paid' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-600" />}
+                           <div>
+                             <p className="text-sm font-bold">Appel de Fonds</p>
+                             <p className="text-[10px] uppercase text-gray-500 tracking-wider">
+                                {payment.status === 'paid' ? `Réglé le ${new Date(payment.updated_at || payment.due_date).toLocaleDateString()}` : `Prévu pour le ${new Date(payment.due_date).toLocaleDateString()}`}
+                             </p>
+                           </div>
+                        </div>
+                        <span className={clsx("text-sm font-bold", payment.status === 'paid' ? "text-white" : "text-gray-400")}>{((payment.amount) / 1000000).toFixed(2)} M</span>
                      </div>
-                  </div>
-                  <span className="text-sm font-bold">{((price * 0.2) / 1000000).toFixed(1)} M</span>
-               </div>
-               <div className="flex items-center justify-between p-4 bg-[#111111] rounded-xl border border-white/5 opacity-50">
-                  <div className="flex items-center gap-3">
-                     <div className="w-5 h-5 rounded-full border-2 border-gray-600" />
-                     <div>
-                       <p className="text-sm font-bold">Achèvement des Fondations (15%)</p>
-                       <p className="text-[10px] uppercase text-gray-500 tracking-wider">Prévu pour Juin 2026</p>
-                     </div>
-                  </div>
-                  <span className="text-sm font-bold text-gray-400">{((price * 0.15) / 1000000).toFixed(1)} M</span>
-               </div>
+                  ))
+               )}
              </div>
           </motion.section>
 

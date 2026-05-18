@@ -119,6 +119,7 @@ export interface Deal {
   clients?:     { id: string; full_name: string; phone: string | null } | null
   profiles?:    { id: string; full_name: string } | null
   properties?:  Property & { projects?: Project | null } | null
+  deal_payments?: DealPayment[] | null
 }
 
 export interface DealPayment {

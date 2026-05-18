@@ -5,7 +5,7 @@ import type { Deal } from '@/types/app';
 export class DealService {
   static async getDeals(): Promise<Deal[]> {
     const deals = await kernel.query<any>('deals', {
-      select: '*, clients(full_name, phone), profiles(full_name), properties(*, projects(id, name))',
+      select: '*, clients(full_name, phone), profiles(full_name), properties(*, projects(id, name)), deal_payments(*)',
       filters: { deleted_at: null },
       orderBy: { column: 'created_at', ascending: false }
     });

@@ -75,13 +75,56 @@ export async function POST(request: Request) {
         await kernel.mutate('activities', 'INSERT', {
           agency_id: identity.tenantId,
           deal_id: deal.id,
-          type: 'appel_fonds',
+          type: 'note',
           user_id: identity.userId,
           description: `Appel de fonds émis : ${trancheLabel} (${tranchePct}% = ${amountToCall.toLocaleString()} DZD)`
         });
       }
 
       return NextResponse.json({ success: true, dispatched: projectDeals.length });
+    }
+
+    if (command.type === 'MARK_PAYMENT_PAID') {
+      const { dealId, amount } = command.payload;
+      return await kernel.transaction(async (tx) => {
+         const payment = await tx.mutate('deal_payments', 'UPDATE', {
+            status: 'paid',
+            paid_date: new Date().toISOString()
+         }, { id: command.aggregateId });
+
+         // Fetch deal to update its total payments
+         const deal = await tx.query<any>('deals', { select: 'id, total_payments_received', filters: { id: dealId }});
+         if (deal && deal.length > 0) {
+            const currentTotal = deal[0].total_payments_received || 0;
+            await tx.mutate('deals', 'UPDATE', {
+              total_payments_received: currentTotal + amount
+            }, { id: dealId });
+         }
+
+         await tx.mutate('activities', 'INSERT', {
+            agency_id: identity.tenantId,
+            deal_id: dealId,
+            type: 'status_change',
+            user_id: identity.userId,
+            description: `Paiement / Appel de fonds validé: ${(amount / 1000000).toFixed(2)}M DZD`,
+            notes: 'Validé via espace Intelligence'
+         });
+
+         return NextResponse.json({ success: true, data: payment });
+      });
+    }
+
+    if (command.type === 'SETTLE_COMMISSION') {
+      const { agreementId, amount, agentId } = command.payload;
+      const payment = await kernel.mutate('commission_payments', 'INSERT', {
+        agency_id: identity.tenantId,
+        commission_agreement_id: agreementId,
+        agent_id: agentId,
+        amount_paid: amount,
+        payment_date: new Date().toISOString(),
+        payment_method: 'bank_transfer'
+      });
+      return NextResponse.json({ success: true, data: payment });
     }
 
     return NextResponse.json({ error: 'Unknown command type' }, { status: 400 });

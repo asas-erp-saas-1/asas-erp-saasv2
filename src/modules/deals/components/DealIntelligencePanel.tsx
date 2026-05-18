@@ -430,6 +430,74 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
         </div>
       </div>
 
+      <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-xl mt-6">
+        <div className="flex items-center justify-between mb-6">
+           <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <DollarSign className="w-5 h-5 text-emerald-500" /> Registre des Paiements & Appels de Fonds
+          </h3>
+          <button 
+             onClick={() => setIsDepositModalOpen(true)}
+             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors">
+            Encaisser
+          </button>
+        </div>
+        
+        {(!deal.deal_payments || deal.deal_payments.length === 0) ? (
+           <p className="text-sm text-gray-500 italic">Aucun paiement ou appel de fonds enregistré pour cette transaction.</p>
+        ) : (
+           <div className="divide-y divide-black/5 dark:divide-white/5">
+              {(deal.deal_payments as any[]).sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map(payment => (
+                 <div key={payment.id} className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-4">
+                    <div className="flex items-center gap-4">
+                       <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", payment.status === 'paid' ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border border-amber-500/20")}>
+                          {payment.status === 'paid' ? <CheckCircle2 className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+                       </div>
+                       <div>
+                         <p className="text-sm font-bold text-gray-900 dark:text-white">{payment.notes || 'Appel de fonds / Avance'}</p>
+                         <p className="text-xs text-gray-500 mt-0.5">Échéance: {new Date(payment.due_date).toLocaleDateString()}</p>
+                       </div>
+                    </div>
+                    <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-1/3">
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{((payment.amount) / 1000000).toFixed(2)}M DZD</p>
+                      {payment.status === 'pending' && (
+                        <button 
+                           onClick={async (e) => {
+                              e.currentTarget.disabled = true;
+                              e.currentTarget.innerText = "...";
+                              try {
+                                 const res = await fetch('/api/command-gateway', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                       commandId: crypto.randomUUID(),
+                                       aggregateId: payment.id,
+                                       type: 'MARK_PAYMENT_PAID',
+                                       expectedVersion: 1,
+                                       payload: { dealId: deal.id, amount: payment.amount }
+                                    })
+                                 });
+                                 if (!res.ok) throw new Error('Echec');
+                                 // Optimistic update
+                                 payment.status = 'paid';
+                                 deal.total_payments_received += payment.amount;
+                                 setDeal({ ...deal });
+                              } catch(err) {
+                                 alert('Erreur technique');
+                                 e.currentTarget.disabled = false;
+                                 e.currentTarget.innerText = "Valider";
+                              }
+                           }}
+                           className="px-3 py-1.5 bg-gray-100 hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 dark:bg-white/5 dark:hover:bg-emerald-500/10 dark:text-gray-300 dark:hover:text-emerald-400 text-xs font-bold rounded-lg border border-transparent hover:border-emerald-500/20 transition-all">
+                           Valider
+                        </button>
+                      )}
+                    </div>
+                 </div>
+              ))}
+           </div>
+        )}
+      </div>
+
       <DealActivitiesSection dealId={dealId} />
 
       {isTaskModalOpen && (
