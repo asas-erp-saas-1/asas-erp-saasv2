@@ -2,7 +2,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText, CheckSquare, MessageCircle } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText, CheckSquare, MessageCircle, Download } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
@@ -22,7 +22,8 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
       .then(res => res.json())
       .then(data => {
         if (mounted) {
-          setActivities(data.data || []);
+          const filtered = (data.data || []).filter((a: any) => !a.description?.startsWith('[VAULT]'));
+          setActivities(filtered);
           setLoading(false);
         }
       })
@@ -130,6 +131,119 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
   );
 }
 
+function DealVaultSection({ dealId }: { dealId: string }) {
+  const [links, setLinks] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    fetch(`/api/activities?deal_id=${dealId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (mounted) {
+          // Identify vault links by checking if description starts with [VAULT]
+          const vaultLinks = (data.data || []).filter((a: any) => a.type === 'note' && a.description.startsWith('[VAULT]'));
+          setLinks(vaultLinks);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        if (mounted) setLoading(false);
+      });
+    return () => { mounted = false; };
+  }, [dealId]);
+
+  return (
+    <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-xl mt-6">
+      <div className="flex items-center justify-between mb-6">
+        <h4 className="text-sm uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
+          <FileText className="w-4 h-4" /> Le Coffre-Fort (Documents)
+        </h4>
+      </div>
+
+      <div className="mb-6 flex gap-2">
+        <input 
+          type="url" 
+          id="new-vault-link-input"
+          className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+          placeholder="https://drive.google.com/... (Lien du document)"
+          onKeyDown={async (e) => {
+            if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
+              const val = e.currentTarget.value.trim();
+              e.currentTarget.value = '';
+              try {
+                const res = await fetch('/api/activities', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ deal_id: dealId, type: 'note', description: `[VAULT] ${val}` })
+                });
+                if (res.ok) {
+                  const newAct = await res.json();
+                  setLinks(prev => [newAct.data, ...prev]);
+                }
+              } catch (err) {
+                console.error(err);
+              }
+            }
+          }}
+        />
+        <button 
+          onClick={async () => {
+             const input = document.getElementById('new-vault-link-input') as HTMLInputElement;
+             if (!input || !input.value.trim() || loading) return;
+             const val = input.value.trim();
+             input.value = '';
+             try {
+                const res = await fetch('/api/activities', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ deal_id: dealId, type: 'note', description: `[VAULT] ${val}` })
+                });
+                if (res.ok) {
+                  const newAct = await res.json();
+                  setLinks(prev => [newAct.data, ...prev]);
+                }
+             } catch (err) {}
+          }}
+          className="px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl text-sm font-bold hover:opacity-80 transition-colors">
+          Joindre
+        </button>
+      </div>
+
+      {loading ? (
+        <p className="text-sm text-gray-500">Chargement du coffre-fort...</p>
+      ) : links.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {links.map((link) => {
+             const url = link.description.replace('[VAULT] ', '').trim();
+             return (
+               <a 
+                 key={link.id} 
+                 href={url} 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1A1A1A] transition-colors"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+                   <Download className="w-5 h-5" />
+                 </div>
+                 <div className="overflow-hidden">
+                   <p className="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">Document {new Date(link.created_at).toLocaleDateString()}</p>
+                   <p className="text-[10px] text-gray-500 truncate mt-0.5">{url}</p>
+                 </div>
+               </a>
+             )
+          })}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500">Aucun document joint. (CNI, Livret Foncier, etc.)</p>
+      )}
+    </div>
+  )
+}
+
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [deal, setDeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -199,6 +313,42 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
     doc.text("Signature de l'Acquéreur", 130, 220)
 
     doc.save(`Contrat_Reservation_${propertyRef}.pdf`)
+  }
+
+  const handleGenerateReceipt = (payment: any) => {
+    if (!deal) return
+    const doc = new jsPDF()
+    const clientName = deal.clients?.full_name || 'Client Inconnu'
+    const propertyRef = deal.properties?.reference_code || 'N/A'
+    
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(22)
+    doc.text("REÇU DE PAIEMENT", 105, 20, { align: "center" })
+
+    doc.setFontSize(12)
+    doc.setFont("helvetica", "normal")
+    doc.text(`Identifiant Transaction : ${dealId.substring(0,8).toUpperCase()}`, 20, 40)
+    doc.text(`Reçu N° : ${payment.id.substring(0,8).toUpperCase()}`, 20, 50)
+    doc.text(`Date de Paiement : ${new Date(payment.paid_date || new Date()).toLocaleDateString()}`, 20, 60)
+
+    doc.setFont("helvetica", "bold")
+    doc.text("CLIENT :", 20, 80)
+    doc.setFont("helvetica", "normal")
+    doc.text(`Monsieur/Madame ${clientName}`, 20, 90)
+
+    doc.setFont("helvetica", "bold")
+    doc.text("MONTANT REGLE :", 20, 110)
+    doc.setFont("helvetica", "normal")
+    doc.text(`${payment.amount.toLocaleString()} DZD`, 20, 120)
+
+    doc.setFont("helvetica", "bold")
+    doc.text("NATURE DU PAIEMENT :", 20, 140)
+    doc.setFont("helvetica", "normal")
+    doc.text(`${payment.notes || 'Avance / Appel de fonds'} - Réf: ${propertyRef}`, 20, 150)
+
+    doc.text("Cachet et Signature de l'Agence", 130, 200)
+
+    doc.save(`Recu_Paiement_${payment.id.substring(0,8)}.pdf`)
   }
 
   if (loading) {
@@ -479,6 +629,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                                  if (!res.ok) throw new Error('Echec');
                                  // Optimistic update
                                  payment.status = 'paid';
+                                 payment.paid_date = new Date().toISOString();
                                  deal.total_payments_received += payment.amount;
                                  setDeal({ ...deal });
                               } catch(err) {
@@ -491,6 +642,13 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                            Valider
                         </button>
                       )}
+                      {payment.status === 'paid' && (
+                        <button 
+                           onClick={() => handleGenerateReceipt(payment)}
+                           className="px-3 py-1.5 flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:text-blue-400 text-xs font-bold rounded-lg transition-colors">
+                           <Download className="w-3.5 h-3.5" /> Reçu
+                        </button>
+                      )}
                     </div>
                  </div>
               ))}
@@ -498,6 +656,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
         )}
       </div>
 
+      <DealVaultSection dealId={dealId} />
       <DealActivitiesSection dealId={dealId} />
 
       {isTaskModalOpen && (

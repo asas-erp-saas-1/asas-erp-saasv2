@@ -86,6 +86,43 @@ export async function GET(request: Request) {
       }
     }
 
+    if (view === 'expenses') {
+      const expenses = await kernel.query<any>('expenses', {
+        orderBy: { column: 'expense_date', ascending: false },
+        limit: 50
+      });
+      return NextResponse.json({ expenses: expenses || [] });
+    }
+
+    if (view === 'pnl') {
+      // Basic P&L: 
+      // Revenue = SUM(deal_payments WHERE status = 'paid')
+      // COGS = SUM(commission_payments)
+      // Expenses = SUM(expenses)
+      
+      const dealsResult = await kernel.query<any>('deal_payments', { filters: { status: 'paid' }});
+      const commsResult = await kernel.query<any>('commission_payments');
+      const expsResult = await kernel.query<any>('expenses');
+
+      const revenue = (dealsResult || []).reduce((acc: number, p: any) => acc + Number(p.amount), 0);
+      const cogs = (commsResult || []).reduce((acc: number, p: any) => acc + Number(p.amount_paid), 0);
+      const expenses = (expsResult || []).reduce((acc: number, p: any) => acc + Number(p.amount), 0);
+
+      const netIncome = revenue - cogs - expenses;
+      const grossMargin = revenue > 0 ? ((revenue - cogs) / revenue) * 100 : 0;
+      const netMargin = revenue > 0 ? (netIncome / revenue) * 100 : 0;
+
+      return NextResponse.json({
+        revenue,
+        cogs,
+        grossProfit: revenue - cogs,
+        grossMargin,
+        expenses,
+        netIncome,
+        netMargin
+      });
+    }
+
     return NextResponse.json({ error: 'Unsupported view' }, { status: 400 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

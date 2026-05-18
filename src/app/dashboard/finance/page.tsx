@@ -25,6 +25,8 @@ function fmt(n: number): string {
   return new Intl.NumberFormat('fr-DZ').format(Math.round(n))+' DZD'
 }
 
+import { ExpensesSection } from './ExpensesSection'
+
 export default function FinancePage() {
   const [cash,    setCash]    = useState<CashPosition | null>(null)
   const [aging,   setAging]   = useState<AgingData | null>(null)
@@ -199,6 +201,8 @@ export default function FinancePage() {
             </div>
           </motion.div>
         )}
+
+        <ExpensesSection />
       </div>
     </div>
   )

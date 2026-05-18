@@ -127,6 +127,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, data: payment });
     }
 
+    if (command.type === 'LOG_EXPENSE') {
+      const { category, amount, description, expense_date } = command.payload;
+      const expense = await kernel.mutate('expenses', 'INSERT', {
+        agency_id: identity.tenantId,
+        category,
+        amount,
+        description,
+        expense_date: expense_date || new Date().toISOString(),
+        paid_by: identity.userId
+      });
+      return NextResponse.json({ success: true, data: expense });
+    }
+
     return NextResponse.json({ error: 'Unknown command type' }, { status: 400 });
   } catch (error: any) {
     ErrorTracker.captureError(error, { context: 'CommandGateway' });
