@@ -6,15 +6,20 @@ import { Phone, MessageCircle, Mail, MapPin, CheckCircle2, AlertTriangle, Clock,
 import { clsx } from 'clsx'
 
 export function AgentActionFeed({ actions = [] }: { actions?: any[] }) {
-  const [items, setItems] = useState(actions.length > 0 ? actions : [
-    { id: '1', type: 'urgent', task: 'Rappeler Lead VIP', leadName: 'Atlas Invest Group', time: 'En retard (3h)', phone: '+213555000111' },
-    { id: '4', type: 'match', task: '3 biens compatibles', leadName: 'Nouveau prospect Cheraga', time: 'À l\'instant', phone: '+213555998877' },
-    { id: '2', type: 'whatsapp', task: 'Envoyer Photos Projet Y', leadName: 'Sarah B.', time: 'Aujourd\'hui 14:00', phone: '+213770123456' },
-    { id: '3', type: 'viewing', task: 'Confirmer Visite F4', leadName: 'Karim M.', time: 'Demain 10:00', phone: '+213661987654' }
-  ])
+  const [items, setItems] = useState(actions.length > 0 ? actions : [])
 
-  const handleComplete = (id: string) => {
+  const handleComplete = async (id: string) => {
+    // Optimistic update
     setItems(items.filter(item => item.id !== id))
+    try {
+      await fetch('/api/tasks', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'done', done_at: new Date().toISOString() })
+      })
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const handleWhatsApp = (phone: string) => {

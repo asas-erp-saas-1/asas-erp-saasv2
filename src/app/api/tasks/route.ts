@@ -11,10 +11,12 @@ export async function GET(request: Request) {
     const offset = (page - 1) * limit;
     const deal_id = searchParams.get('deal_id');
     const lead_id = searchParams.get('lead_id');
+    const assigned_to = searchParams.get('assigned_to');
 
     const filters: Record<string, any> = {};
     if (deal_id) filters['deal_id'] = deal_id;
     if (lead_id) filters['lead_id'] = lead_id;
+    if (assigned_to) filters['assigned_to'] = assigned_to;
 
     const qOpts: any = { limit, offset, orderBy: { column: 'created_at', ascending: false } };
     if (Object.keys(filters).length > 0) qOpts.filters = filters;

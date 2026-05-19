@@ -27,11 +27,24 @@ export async function GET(req: NextRequest) {
 
     // Map Leads
     for (const item of (leads || [])) {
+      // Need to fetch client to get full_name and phone
+      let fullName = 'Unknown';
+      let phone = '';
+      if (item.client_id) {
+         try {
+           const client = await kernel.query<any>('clients', { filters: { id: item.client_id }, limit: 1 });
+           if (client && client[0]) {
+             fullName = client[0].full_name || 'Unknown';
+             phone = client[0].phone || '';
+           }
+         } catch(e) {}
+      }
+
       results.push({
         id: item.id,
         type: 'lead',
-        title: item.full_name,
-        subtitle: `Phone: ${item.phone} | Status: ${item.status}`,
+        title: fullName,
+        subtitle: `Phone: ${phone} | Status: ${item.status}`,
         url: `/dashboard/leads?id=${item.id}`,
       });
     }
