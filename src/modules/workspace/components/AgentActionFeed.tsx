@@ -30,15 +30,18 @@ export function AgentActionFeed({ actions = [] }: { actions?: any[] }) {
     <div className="w-full max-w-lg mx-auto space-y-4">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-widest">Flux d'Exécution (<span className="text-blue-500">{items.length}</span>)</h2>
+          <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">
+            Flux d'Exécution <span className="opacity-40 text-asas-silver mx-1 font-sans">|</span> <span className="opacity-50">مهام التنفيذ</span>
+            <span className="ml-2 text-asas-gold">({items.length})</span>
+          </h2>
         </div>
       </div>
       
       <AnimatePresence>
         {items.length === 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 text-center bg-gray-50 dark:bg-[#111111] rounded-3xl border border-black/5 dark:border-white/5">
-            <CheckCircle2 className="w-12 h-12 mx-auto text-emerald-500 mb-4 opacity-50" />
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Toutes les actions sont terminées. Excellent travail.</p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 text-center bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20">
+            <CheckCircle2 className="w-12 h-12 mx-auto text-asas-emerald mb-4 opacity-50" />
+            <p className="text-sm font-medium text-asas-silver">Toutes les actions sont terminées. Excellent travail.</p>
           </motion.div>
         )}
         
@@ -49,15 +52,15 @@ export function AgentActionFeed({ actions = [] }: { actions?: any[] }) {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             exit={{ opacity: 0, x: -100 }}
-            className="group relative bg-white dark:bg-[#111111] border border-black/10 dark:border-white/10 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col gap-4"
+            className="group relative bg-white dark:bg-[#141618] border border-asas-silver/20 p-5 rounded-sm shadow-sm hover:border-asas-gold/30 transition-all flex flex-col gap-4"
           >
             <div className="flex justify-between items-start">
               <div className="flex items-start gap-3">
-                <div className={clsx("w-10 h-10 rounded-2xl flex items-center justify-center shrink-0", 
+                <div className={clsx("w-10 h-10 rounded-sm flex items-center justify-center shrink-0", 
                   item.type === 'urgent' ? 'bg-red-500/10 text-red-500' :
-                  item.type === 'whatsapp' ? 'bg-emerald-500/10 text-emerald-500' :
-                  item.type === 'match' ? 'bg-indigo-500/10 text-indigo-500' :
-                  'bg-blue-500/10 text-blue-500'
+                  item.type === 'whatsapp' ? 'bg-asas-emerald/10 text-asas-emerald' :
+                  item.type === 'match' ? 'bg-asas-navy/10 text-asas-navy dark:text-asas-sand' :
+                  'bg-asas-gold/10 text-asas-gold'
                 )}>
                   {item.type === 'urgent' && <AlertTriangle className="w-5 h-5" />}
                   {item.type === 'whatsapp' && <MessageCircle className="w-5 h-5" />}
@@ -65,34 +68,34 @@ export function AgentActionFeed({ actions = [] }: { actions?: any[] }) {
                   {item.type === 'match' && <Building className="w-5 h-5" />}
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{item.task}</h3>
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">{item.leadName}</p>
+                  <h3 className="text-base font-bold text-asas-charcoal dark:text-asas-sand leading-tight">{item.task}</h3>
+                  <p className="text-sm font-medium text-asas-silver mt-1">{item.leadName}</p>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <span className={clsx("text-xs font-bold px-2.5 py-1 rounded-lg", 
-                  item.type === 'urgent' ? 'bg-red-500/10 text-red-500' : 'bg-black/5 dark:bg-white/5 text-gray-600 dark:text-gray-400'
+                <span className={clsx("text-[11px] font-bold px-2 py-1.5 rounded-sm tracking-wide uppercase", 
+                  item.type === 'urgent' ? 'bg-red-500/10 text-red-500' : 'bg-black/5 dark:bg-white/5 text-asas-silver'
                 )}>
                   {item.time}
                 </span>
               </div>
             </div>
             
-            <div className="flex items-center gap-2 pt-2 border-t border-black/5 dark:border-white/5">
+            <div className="flex items-center gap-2 pt-2 border-t border-asas-silver/10 mt-2">
               <button 
                 onClick={() => handleWhatsApp(item.phone)}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] rounded-xl text-sm font-bold transition-colors active:scale-95"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] rounded-sm text-sm font-bold transition-colors active:scale-95"
               >
                 <MessageCircle className="w-4 h-4" /> Message
               </button>
               <button 
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-bold transition-colors active:scale-95"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-asas-charcoal dark:text-asas-sand rounded-sm text-sm font-bold transition-colors active:scale-95"
               >
                 <Phone className="w-4 h-4" /> Appel
               </button>
               <button 
                 onClick={() => handleComplete(item.id)}
-                className="px-4 py-3 bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-xl text-sm font-bold shadow-lg transition-all active:scale-95 whitespace-nowrap"
+                className="px-4 py-2.5 bg-asas-charcoal hover:bg-black dark:bg-asas-sand dark:hover:bg-white text-asas-sand dark:text-asas-charcoal rounded-sm text-sm font-bold shadow-sm transition-all active:scale-95 whitespace-nowrap border border-transparent"
               >
                 Terminer
               </button>

@@ -13,10 +13,10 @@ interface Client {
 }
 
 const TYPE_CONFIG: Record<string, { color: string; label: string }> = {
-  buyer:    { color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', label: 'Acheteur' },
-  seller:   { color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20', label: 'Vendeur' },
-  investor: { color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', label: 'Investisseur' },
-  tenant:   { color: 'bg-orange-500/10 text-orange-400 border-orange-500/20', label: 'Locataire' },
+  buyer:    { color: 'bg-asas-silver/10 text-asas-charcoal dark:text-asas-silver border-asas-silver/20', label: 'Acheteur' },
+  seller:   { color: 'bg-asas-navy/10 text-asas-navy dark:text-asas-sand border-asas-navy/20', label: 'Vendeur' },
+  investor: { color: 'bg-asas-gold/10 text-asas-gold border-asas-gold/20', label: 'Investisseur' },
+  tenant:   { color: 'bg-asas-copper/10 text-asas-copper border-asas-copper/20', label: 'Locataire' },
 }
 
 export default function ClientsPage() {
@@ -55,31 +55,31 @@ export default function ClientsPage() {
       <div className="w-full space-y-6">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-black/5 dark:border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-asas-silver/20">
           <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 font-display">
-               <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center">
-                   <Users className="h-6 w-6 text-gray-900 dark:text-white" /> 
+            <h1 className="text-3xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
+               <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center shadow-sm">
+                   <Users className="h-6 w-6 text-asas-gold" /> 
                </div>
                Base Clients
             </h1>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-2">{total} identités enregistrées</p>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-asas-silver mt-2">{total} identités enregistrées</p>
           </div>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-5 py-3 bg-white text-black rounded-xl text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
-            <Plus className="h-4 w-4" strokeWidth={2.5} /> Nouveau Profil
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-5 py-3 bg-asas-charcoal text-asas-sand dark:bg-asas-sand dark:text-asas-charcoal hover:bg-black dark:hover:bg-white rounded-sm text-xs font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-sm border border-transparent">
+            <Plus className="h-4 w-4" strokeWidth={2} /> Nouveau Profil
           </button>
         </div>
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
             <input type="text" placeholder="Rechercher entité..." value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-black/10 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600" />
+              className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-asas-silver/40 rounded-sm bg-transparent text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-asas-silver shadow-sm" />
           </div>
           <select value={type} onChange={e => setType(e.target.value)}
-            className="px-5 py-3 text-sm font-medium border border-black/10 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all appearance-none pr-10 relative cursor-pointer min-w-[160px]">
+            className="px-5 py-3 text-sm font-medium border border-asas-silver/40 rounded-sm bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all appearance-none pr-10 relative cursor-pointer min-w-[160px] shadow-sm">
             <option value="">Tous les gabarits</option>
             <option value="buyer">Acheteur</option>
             <option value="seller">Vendeur</option>
@@ -89,69 +89,69 @@ export default function ClientsPage() {
         </div>
 
         {/* Data */}
-        <div className="bg-gray-50 dark:bg-[#050505] rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl overflow-hidden">
+        <div className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-6 space-y-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-16 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl animate-pulse" />
+              <div key={i} className="h-16 bg-asas-sand/50 dark:bg-[#0f1113] border border-asas-silver/10 rounded-sm animate-pulse" />
             ))}
           </div>
         ) : clients.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-               <div className="w-20 h-20 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-3xl flex items-center justify-center mb-6">
-                  <FileUser className="h-10 w-10 text-gray-600" />
+            <div className="flex flex-col items-center justify-center py-24 text-asas-silver">
+               <div className="w-20 h-20 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm flex items-center justify-center mb-6 shadow-sm">
+                  <FileUser className="h-10 w-10 text-asas-gold" />
                </div>
-              <p className="font-extrabold text-gray-900 dark:text-white text-lg">Base de données vide</p>
+              <p className="font-bold text-asas-charcoal dark:text-asas-sand text-lg uppercase tracking-widest font-display">Base de données vide</p>
               <p className="text-[10px] uppercase font-bold tracking-widest mt-2">Ajustez vos filtres d'investigation.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-white dark:bg-[#0A0A0A] border-b border-black/5 dark:border-white/5">
+                <thead className="bg-asas-sand/30 dark:bg-black/10 border-b border-asas-silver/20">
                   <tr>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-gray-500">Profil</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-gray-500">Canal</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-gray-500">Type</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-gray-500">Source</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-gray-500">Localité</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Profil</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Canal</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Type</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Source</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Localité</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-asas-silver/10">
                   <AnimatePresence>
                   {clients.map((c, i) => {
-                     const cfg = TYPE_CONFIG[c.type] ?? { color: 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-gray-800 dark:text-gray-300', label: c.type };
+                     const cfg = TYPE_CONFIG[c.type] ?? { color: 'bg-black/5 dark:bg-white/5 border-asas-silver/20 text-asas-charcoal dark:text-asas-sand/80', label: c.type };
                      return (
                         <motion.tr 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
                         key={c.id} 
-                        className="hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 group cursor-pointer transition-colors"
+                        className="hover:bg-asas-sand/50 dark:hover:bg-black/10 group cursor-pointer transition-colors"
                         >
                         {/* Name */}
                         <td className="px-6 py-5">
-                           <p className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-400 transition-colors">{c.full_name}</p>
-                           <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5 font-mono">ID: {c.id.slice(0, 8)}</p>
+                           <p className="text-sm font-bold text-asas-charcoal dark:text-asas-sand group-hover:text-asas-gold transition-colors">{c.full_name}</p>
+                           <p className="text-[9px] text-asas-silver font-bold uppercase tracking-widest mt-1.5 font-mono">ID: {c.id.slice(0, 8)}</p>
                         </td>
 
                         {/* Contact */}
                         <td className="px-6 py-5 space-y-2">
-                           {c.phone && <div className="flex items-center gap-3 text-xs font-bold text-gray-800 dark:text-gray-300"><Phone className="h-3.5 w-3.5 text-gray-500" />{c.phone}</div>}
-                           {c.email && <div className="flex items-center gap-3 text-xs font-bold text-gray-800 dark:text-gray-300"><Mail className="h-3.5 w-3.5 text-gray-500" />{c.email}</div>}
-                           {!c.phone && !c.email && <span className="text-xs text-gray-600">—</span>}
+                           {c.phone && <div className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand"><Phone className="h-3.5 w-3.5 text-asas-silver" />{c.phone}</div>}
+                           {c.email && <div className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand"><Mail className="h-3.5 w-3.5 text-asas-silver" />{c.email}</div>}
+                           {!c.phone && !c.email && <span className="text-xs text-asas-silver">—</span>}
                         </td>
 
                         {/* Type */}
                         <td className="px-6 py-5 align-middle">
-                           <span className={clsx('px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold rounded-lg border', cfg.color)}>
+                           <span className={clsx('px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold rounded-sm border', cfg.color)}>
                               {cfg.label}
                            </span>
                         </td>
 
                         {/* Source */}
-                        <td className="px-6 py-5 text-[10px] uppercase tracking-widest font-bold text-gray-600 dark:text-gray-400 align-middle">
-                           {c.source || <span className="text-gray-600">—</span>}
+                        <td className="px-6 py-5 text-[9px] uppercase tracking-widest font-bold text-asas-silver align-middle">
+                           {c.source || <span className="text-asas-silver/50">—</span>}
                         </td>
 
                         {/* Nationality */}
@@ -159,15 +159,15 @@ export default function ClientsPage() {
                            <div className="flex items-center gap-3">
                               {c.nationality ? (
                                  <>
-                                    <Globe className="h-4 w-4 text-gray-500" />
-                                    <span className="text-xs font-bold text-gray-800 dark:text-gray-300 uppercase tracking-widest">{c.nationality}</span>
+                                    <Globe className="h-4 w-4 text-asas-silver" />
+                                    <span className="text-xs font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest">{c.nationality}</span>
                                  </>
-                              ) : <span className="text-gray-600">—</span>}
+                              ) : <span className="text-asas-silver/50">—</span>}
                            </div>
                         </td>
 
                         <td className="pr-6 align-middle text-right">
-                           <ChevronRight className="h-5 w-5 text-gray-600 transition-transform group-hover:text-gray-900 dark:text-white group-hover:translate-x-1" />
+                           <ChevronRight className="h-5 w-5 text-asas-silver transition-transform group-hover:text-asas-gold group-hover:translate-x-1" />
                         </td>
                         </motion.tr>
                      )

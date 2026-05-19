@@ -58,42 +58,42 @@ export function ExpensesSection() {
 
   return (
     <div className="mt-12">
-      <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-6">Compte de Résultat (P&L)</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight mb-6 font-display uppercase">Compte de Résultat (P&L)</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gray-50 dark:bg-[#050505] p-6 rounded-3xl border border-black/5 dark:border-white/5 shadow-xl">
-          <p className="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Chiffre d'Affaires</p>
-          <p className="text-3xl font-black text-emerald-500">{fmt(pnl.revenue)}</p>
-          <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-2">Marge Brute: {Math.round(pnl.grossMargin)}%</p>
+        <div className="bg-white dark:bg-[#141618] p-6 rounded-sm border border-asas-silver/20 shadow-sm">
+          <p className="text-[9px] uppercase font-bold text-asas-silver tracking-widest mb-1">Chiffre d'Affaires</p>
+          <p className="text-2xl md:text-3xl font-bold text-asas-emerald font-mono">{fmt(pnl.revenue)}</p>
+          <p className="text-[10px] font-bold text-asas-emerald/80 mt-2">Marge Brute: {Math.round(pnl.grossMargin)}%</p>
         </div>
-        <div className="bg-gray-50 dark:bg-[#050505] p-6 rounded-3xl border border-black/5 dark:border-white/5 shadow-xl">
-          <p className="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Dépenses (COGS + Charges)</p>
-          <p className="text-3xl font-black text-red-500">{fmt(pnl.cogs + pnl.expenses)}</p>
-          <p className="text-xs font-bold text-gray-500 mt-2">Commissions: {fmt(pnl.cogs)}</p>
+        <div className="bg-white dark:bg-[#141618] p-6 rounded-sm border border-asas-silver/20 shadow-sm">
+          <p className="text-[9px] uppercase font-bold text-asas-silver tracking-widest mb-1">Dépenses (COGS + Charges)</p>
+          <p className="text-2xl md:text-3xl font-bold text-red-500 font-mono">{fmt(pnl.cogs + pnl.expenses)}</p>
+          <p className="text-[10px] font-bold text-asas-silver mt-2">Commissions: {fmt(pnl.cogs)}</p>
         </div>
-        <div className="bg-[#050A05] p-6 rounded-3xl border border-emerald-500/20 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl" />
-          <p className="text-[10px] uppercase font-bold text-emerald-500 tracking-widest mb-1 relative z-10">Résultat Net</p>
-          <p className="text-3xl font-black text-emerald-400 relative z-10">{fmt(pnl.netIncome)}</p>
-          <p className="text-xs font-bold text-emerald-600 mt-2 relative z-10">Marge Nette: {Math.round(pnl.netMargin)}%</p>
+        <div className="bg-asas-sand/50 dark:bg-black/10 p-6 rounded-sm border border-asas-gold/40 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-asas-gold/10 rounded-full blur-3xl opacity-50" />
+          <p className="text-[9px] uppercase font-bold text-asas-gold tracking-widest mb-1 relative z-10">Résultat Net</p>
+          <p className="text-2xl md:text-3xl font-bold text-asas-gold relative z-10 font-mono">{fmt(pnl.netIncome)}</p>
+          <p className="text-[10px] font-bold text-asas-gold/80 mt-2 relative z-10">Marge Nette: {Math.round(pnl.netMargin)}%</p>
         </div>
       </div>
 
       <div className="flex items-center justify-between mb-6">
-         <h3 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
-            <Receipt className="w-6 h-6 text-blue-500" /> Registre des Charges
+         <h3 className="text-lg font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 font-display uppercase tracking-widest">
+            <Receipt className="w-5 h-5 text-asas-gold" /> Registre des Charges
          </h3>
-         <button onClick={() => setShowModal(true)} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20">
+         <button onClick={() => setShowModal(true)} className="px-5 py-2.5 bg-asas-charcoal text-asas-sand dark:bg-asas-sand dark:text-asas-charcoal hover:bg-black dark:hover:bg-white font-bold text-xs rounded-sm transition-colors flex items-center gap-2 shadow-sm border border-transparent">
             <PlusCircle className="w-4 h-4" /> Nouvelle Dépense
          </button>
       </div>
 
-      <div className="bg-white dark:bg-[#0A0A0A] rounded-3xl border border-black/5 dark:border-white/5 shadow-xl overflow-hidden">
+      <div className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 shadow-sm overflow-hidden">
          {expenses.length === 0 ? (
-           <div className="p-12 text-center text-gray-500 text-sm font-bold">Aucune dépense enregistrée.</div>
+           <div className="p-12 text-center text-asas-silver text-sm font-bold uppercase tracking-widest">Aucune dépense enregistrée.</div>
          ) : (
            <table className="w-full text-left text-sm">
-             <thead className="bg-gray-50 dark:bg-[#111111] text-xs uppercase text-gray-500 border-b border-black/5 dark:border-white/5">
+             <thead className="bg-asas-sand/30 dark:bg-black/10 text-[9px] uppercase text-asas-silver border-b border-asas-silver/20">
                 <tr>
                   <th className="px-6 py-4 font-bold tracking-widest">Date</th>
                   <th className="px-6 py-4 font-bold tracking-widest">Catégorie</th>
@@ -101,13 +101,13 @@ export function ExpensesSection() {
                   <th className="px-6 py-4 font-bold tracking-widest text-right">Montant</th>
                 </tr>
              </thead>
-             <tbody className="divide-y divide-black/5 dark:divide-white/5">
+             <tbody className="divide-y divide-asas-silver/10">
                 {expenses.map((exp: any) => (
-                   <tr key={exp.id} className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
-                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">{new Date(exp.expense_date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4"><span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-gray-100 dark:bg-[#1A1A1A] text-gray-600 dark:text-gray-400 border border-black/5 dark:border-white/5">{exp.category}</span></td>
-                      <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{exp.description}</td>
-                      <td className="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">{fmt(exp.amount)}</td>
+                   <tr key={exp.id} className="hover:bg-asas-sand/50 dark:hover:bg-black/10 transition-colors">
+                      <td className="px-6 py-4 font-medium text-asas-charcoal dark:text-asas-sand">{new Date(exp.expense_date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4"><span className="px-2.5 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest bg-asas-sand/80 dark:bg-white/5 text-asas-silver border border-asas-silver/20">{exp.category}</span></td>
+                      <td className="px-6 py-4 text-asas-silver">{exp.description}</td>
+                      <td className="px-6 py-4 text-right font-bold text-asas-charcoal dark:text-asas-sand font-mono">{fmt(exp.amount)}</td>
                    </tr>
                 ))}
              </tbody>
@@ -117,19 +117,19 @@ export function ExpensesSection() {
 
       {showModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-[#0A0A0A] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-black/5 dark:border-white/5">
-            <div className="p-6 border-b border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505]">
-               <h3 className="text-xl font-extrabold text-gray-900 dark:text-white">Déclarer une Dépense</h3>
-               <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Imputation sur le P&L</p>
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-[#141618] w-full max-w-md rounded-sm shadow-sm overflow-hidden border border-asas-silver/20">
+            <div className="p-6 border-b border-asas-silver/20 bg-asas-sand/30 dark:bg-black/10">
+               <h3 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand font-display uppercase tracking-widest">Déclarer une Dépense</h3>
+               <p className="text-[9px] text-asas-silver mt-1 uppercase tracking-widest font-bold">Imputation sur le P&L</p>
             </div>
             <div className="p-6 space-y-5">
                <div>
-                 <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Montant (DZD)</label>
-                 <input name="amount" type="number" required placeholder="Ex: 50000" className="w-full bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white font-bold" />
+                 <label className="block text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-2">Montant (DZD)</label>
+                 <input name="amount" type="number" required placeholder="Ex: 50000" className="w-full bg-transparent border border-asas-silver/40 rounded-sm px-4 py-2.5 text-sm text-asas-charcoal dark:text-asas-sand font-mono focus:outline-none focus:border-asas-gold transition-colors" />
                </div>
                <div>
-                 <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Catégorie</label>
-                 <select name="category" required className="w-full bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white font-bold">
+                 <label className="block text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-2">Catégorie</label>
+                 <select name="category" required className="w-full bg-white dark:bg-[#141618] border border-asas-silver/40 rounded-sm px-4 py-2.5 text-sm text-asas-charcoal dark:text-asas-sand font-bold focus:outline-none focus:border-asas-gold transition-colors">
                     <option value="marketing">Marketing & Acquisition</option>
                     <option value="salaries">Salaires & Charges</option>
                     <option value="rent">Loyer & Locaux</option>
@@ -141,13 +141,13 @@ export function ExpensesSection() {
                  </select>
                </div>
                <div>
-                 <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Description</label>
-                 <input name="description" type="text" required placeholder="Ex: Facebook Ads Octobre" className="w-full bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white" />
+                 <label className="block text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-2">Description</label>
+                 <input name="description" type="text" required placeholder="Ex: Facebook Ads Octobre" className="w-full bg-transparent border border-asas-silver/40 rounded-sm px-4 py-2.5 text-sm text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-colors" />
                </div>
             </div>
-            <div className="p-6 bg-gray-50 dark:bg-[#050505] flex justify-end gap-3 border-t border-black/5 dark:border-white/5">
-               <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#1A1A1A]">Annuler</button>
-               <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition-colors">Déclarer</button>
+            <div className="p-6 bg-asas-sand/50 dark:bg-black/10 flex justify-end gap-3 border-t border-asas-silver/20">
+               <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-sm font-bold text-xs text-asas-charcoal dark:text-asas-sand hover:bg-black/5 dark:hover:bg-white/5 border border-asas-silver/20 transition-colors">Annuler</button>
+               <button type="submit" className="px-5 py-2.5 bg-asas-gold text-white rounded-sm font-bold text-xs hover:bg-asas-gold/80 transition-colors">Déclarer</button>
             </div>
           </form>
         </div>

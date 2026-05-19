@@ -65,81 +65,89 @@ export default async function DashboardLayout({ children }: { children: React.Re
   });
 
   return (
-    <div className="flex bg-white dark:bg-[#0A0A0A] h-[100dvh] overflow-hidden selection:bg-blue-500/30 selection:text-gray-900 dark:text-white font-sans text-gray-900 dark:text-gray-100">
+    <div className="flex bg-asas-sand dark:bg-asas-charcoal h-[100dvh] overflow-hidden selection:bg-asas-gold/30 selection:text-asas-charcoal dark:text-asas-sand font-sans text-asas-charcoal dark:text-asas-sand">
       <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
       {/* Sidebar - Desktop */}
-      <aside className="w-[280px] bg-white dark:bg-[#0A0A0A] border-r border-gray-200 dark:border-[#262626] flex-col shrink-0 hidden md:flex z-10 relative group">
-        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-        <div className="px-6 py-8 flex items-center justify-between">
+      <aside className="w-[280px] bg-asas-charcoal border-r border-asas-silver/20 flex-col shrink-0 hidden md:flex z-10 relative group">
+        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-asas-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+        
+        {/* Decorative Gold Pattern Overlay (very subtle) */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay z-0"
+          style={{ 
+            backgroundImage: 'radial-gradient(circle at center, #C7A15A 1px, transparent 1px)', 
+            backgroundSize: '20px 20px' 
+          }} 
+        />
+
+        <div className="px-6 py-8 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-bl from-blue-600 to-indigo-900 border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.2)]">
-              <Building2 className="w-5 h-5 text-gray-900 dark:text-white" strokeWidth={1.5} />
+            <div className="w-10 h-10 flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-asas-gold" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight text-lg font-display">ASAS</p>
-              <p className="text-[9px] uppercase font-bold tracking-[0.2em] text-blue-400/80 leading-tight">Operating System</p>
+              <p className="font-bold text-asas-sand tracking-widest leading-tight text-xl font-display uppercase">ASAS<span className="text-asas-silver mx-2 font-sans font-light">|</span>أساس</p>
+              <p className="text-[9px] uppercase font-bold tracking-[0.2em] text-asas-gold/80 leading-tight mt-0.5">Real Estate ERP</p>
             </div>
           </div>
         </div>
 
-        <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar">
-          <p className="text-[10px] font-bold text-[#525252] uppercase tracking-widest mb-3 px-3">Menu Principal</p>
+        <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar relative z-10">
+          <p className="text-[10px] font-bold text-asas-silver/60 uppercase tracking-widest mb-3 px-3">Navigation</p>
           <nav className="flex flex-col gap-1">
             {filteredNav.map(({ href, label, Icon }) => (
               <Link key={href} href={href}
-                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#A3A3A3] rounded-xl hover:bg-gray-200 dark:hover:bg-[#171717] hover:text-gray-900 dark:hover:text-white transition-all group relative">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-blue-500 rounded-r-full transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>
-                <Icon className="h-4 w-4 text-[#525252] group-hover:text-blue-400 transition-colors" strokeWidth={1.5} />
+                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-asas-sand/60 rounded-sm hover:bg-white/5 hover:text-asas-sand transition-all group relative">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-asas-gold transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>
+                <Icon className="h-4 w-4 text-asas-silver group-hover:text-asas-gold transition-colors" strokeWidth={1.5} />
                 <span className="group-hover:translate-x-0.5 transition-transform">{label}</span>
               </Link>
             ))}
           </nav>
         </div>
 
-        <div className="mt-auto px-6 py-6 border-t border-gray-200 dark:border-[#262626] shrink-0">
+        <div className="mt-auto px-6 py-6 border-t border-asas-silver/10 shrink-0 relative z-10">
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-[#171717] border border-gray-200 dark:border-[#262626] flex items-center justify-center text-gray-800 dark:text-gray-300 font-bold shrink-0 shadow-inner">
+            <div className="w-10 h-10 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center text-asas-sand font-bold shrink-0">
                {initial}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{(profile as any)?.full_name}</p>
-              <p className="text-[11px] text-[#A3A3A3] capitalize truncate font-medium">{roleDisplay}</p>
+              <p className="text-sm font-bold text-asas-sand truncate">{(profile as any)?.full_name}</p>
+              <p className="text-[11px] text-asas-silver capitalize truncate font-medium">{roleDisplay}</p>
             </div>
           </div>
           
           <form action="/auth/signout" method="post">
-            <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#A3A3A3] hover:text-[#EF4444] bg-gray-200 dark:bg-[#171717] hover:bg-[#EF4444]/10 border border-gray-200 dark:border-[#262626] hover:border-[#EF4444]/20 rounded-xl transition-all">
-              <LogOut className="h-4 w-4" strokeWidth={2} /> Déconnexion
+            <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-asas-sand/70 hover:text-white bg-white/5 hover:bg-asas-copper/20 border border-transparent hover:border-asas-copper/30 rounded-sm transition-all">
+              <LogOut className="h-4 w-4" strokeWidth={1.5} /> Déconnexion
             </button>
           </form>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-gray-50 dark:bg-[#050505] md:rounded-tl-[2.5rem] md:border-t md:border-l md:border-gray-200 dark:border-[#262626] md:m-2 md:mr-0 md:mb-0 shadow-2xl">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-asas-sand dark:bg-[#141618] border-l border-asas-silver/20 shadow-sm">
         {/* Top Header */}
-        <header className="h-[72px] bg-white dark:bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
+        <header className="h-[72px] bg-white/50 dark:bg-asas-charcoal/80 backdrop-blur-xl border-b border-asas-silver/20 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
           <div className="flex items-center gap-4 w-full max-w-xl">
             <div className="md:hidden flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-bl from-blue-600 to-indigo-900 flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-gray-900 dark:text-white" strokeWidth={1.5} />
-              </div>
-              <p className="font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight text-lg font-display">ASAS</p>
+              <Building2 className="w-5 h-5 text-asas-gold" strokeWidth={1.5} />
+              <p className="font-extrabold text-asas-charcoal dark:text-asas-sand tracking-widest uppercase leading-tight text-lg font-display">ASAS</p>
             </div>
             
             <button 
               onClick={() => {
                 if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('asas-omnibar-open'))
               }}
-              className="hidden sm:flex items-center px-4 py-2.5 bg-gray-200 dark:bg-[#171717] hover:bg-gray-300 dark:hover:bg-[#262626] border border-gray-200 dark:border-[#262626] hover:border-gray-400 dark:hover:border-[#404040] rounded-2xl w-full text-left transition-all group"
+              className="hidden sm:flex items-center px-4 py-2 bg-white dark:bg-black/20 hover:bg-gray-50 dark:hover:bg-black/30 border border-asas-silver/40 dark:border-asas-silver/20 hover:border-asas-gold dark:hover:border-asas-gold rounded-sm w-full text-left transition-all group"
             >
-              <Search className="w-4 h-4 text-gray-500 mr-3 group-hover:text-blue-500 transition-colors shrink-0" strokeWidth={2} />
-              <span className="bg-transparent border-none outline-none text-sm w-full text-gray-500 font-medium overflow-hidden whitespace-nowrap overflow-ellipsis">
-                 Rechercher (Ctrl+K)...
+              <Search className="w-4 h-4 text-asas-silver mr-3 group-hover:text-asas-gold transition-colors shrink-0" strokeWidth={1.5} />
+              <span className="bg-transparent border-none outline-none text-sm w-full text-asas-charcoal/60 dark:text-asas-silver font-medium overflow-hidden whitespace-nowrap overflow-ellipsis">
+                 Rechercher / بحث (Ctrl+K)...
               </span>
               <div className="hidden lg:flex items-center gap-1 shrink-0 ml-2">
-                <kbd className="px-2 py-1 text-[10px] font-bold text-gray-500 bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-[#262626] rounded-md shadow-sm">⌘</kbd>
-                <kbd className="px-2 py-1 text-[10px] font-bold text-gray-500 bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-[#262626] rounded-md shadow-sm">K</kbd>
+                <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-asas-silver bg-asas-sand dark:bg-black border border-asas-silver/20 rounded-sm shadow-sm">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-asas-silver bg-asas-sand dark:bg-black border border-asas-silver/20 rounded-sm shadow-sm">K</kbd>
               </div>
             </button>
           </div>
@@ -149,22 +157,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
               onClick={() => {
                 if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('asas-omnibar-open'))
               }}
-              className="sm:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
+              className="sm:hidden p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-all"
             >
-              <Search className="w-5 h-5" strokeWidth={2} />
+              <Search className="w-5 h-5" strokeWidth={1.5} />
             </button>
             <ThemeToggle />
-            <button className="relative p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all">
-              <Bell className="w-5 h-5" strokeWidth={2} />
-              <span className="absolute top-2.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-[#0A0A0A] shadow-sm"></span>
+            <button className="relative p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-all">
+              <Bell className="w-5 h-5" strokeWidth={1.5} />
+              <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-asas-copper rounded-full border border-white dark:border-asas-charcoal"></span>
             </button>
-            <div className="w-px h-6 bg-gray-200 dark:bg-[#262626] hidden sm:block"></div>
+            <div className="w-px h-6 bg-asas-silver/30 hidden sm:block"></div>
             <div className="hidden sm:flex items-center gap-3 pl-2">
               <div className="flex flex-col items-end">
-                <span className="text-sm font-bold text-gray-900 dark:text-white leading-none">{(profile as any)?.full_name}</span>
-                <span className="text-[11px] text-gray-500 font-medium mt-1">{roleDisplay}</span>
+                <span className="text-sm font-bold text-asas-charcoal dark:text-asas-sand leading-none">{(profile as any)?.full_name}</span>
+                <span className="text-[11px] text-asas-silver font-medium mt-1">{roleDisplay}</span>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-900/50 to-blue-800/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold shadow-sm">
+              <div className="w-9 h-9 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center text-asas-sand font-bold">
                 {initial}
               </div>
             </div>
@@ -172,8 +180,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </header>
 
         {/* Scrollable Main Area */}
-        <main className="flex-1 overflow-y-auto flex flex-col w-full bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white custom-scrollbar relative bg-dot-grid pb-28 md:pb-0">
-          <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#0A0A0A] to-transparent pointer-events-none -z-10"></div>
+        <main className="flex-1 overflow-y-auto flex flex-col w-full text-asas-charcoal dark:text-asas-sand custom-scrollbar relative pb-28 md:pb-0">
+          <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white/30 dark:from-black/10 to-transparent pointer-events-none -z-10"></div>
           <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full flex-1 flex flex-col pt-8">
             {children}
           </div>

@@ -2,18 +2,23 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display), system-ui, sans-serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Tajawal";
+  --font-display: var(--font-display), "Cinzel", serif;
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
 
-  --color-brand: #1A2A4A;
-  --color-brand-light: #243656;
-  --color-brand-gold: #D4A017;
+  /* ASAS Brand Colors */
+  --color-asas-charcoal: #0F1113;
+  --color-asas-sand: #F2EDE4;
+  --color-asas-emerald: #0D2824;
+  --color-asas-gold: #C7A15A;
+  --color-asas-navy: #081D33;
+  --color-asas-copper: #B87333;
+  --color-asas-silver: #A7A9AC;
 }
 
 :root { 
-  --brand: #1A2A4A; 
-  --brand-gold: #D4A017; 
+  --brand: #0F1113; 
+  --brand-gold: #C7A15A; 
 }
 
 * { 
@@ -21,7 +26,7 @@
 }
 
 body { 
-  @apply bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-gray-100 antialiased; 
+  @apply bg-asas-sand dark:bg-asas-charcoal text-asas-charcoal dark:text-asas-sand antialiased; 
   font-family: var(--font-sans);
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;

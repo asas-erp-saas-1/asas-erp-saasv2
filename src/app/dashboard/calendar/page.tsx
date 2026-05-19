@@ -82,30 +82,30 @@ export default function CalendarPage() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-black/5 dark:border-white/5 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-asas-silver/20 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 font-display">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.2)]">
-              <CalendarIcon className="h-6 w-6 text-indigo-500" /> 
+          <h1 className="text-2xl sm:text-3xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
+            <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center shadow-sm">
+              <CalendarIcon className="h-6 w-6 text-asas-gold" /> 
             </div>
             Agenda Opérationnel
           </h1>
-          <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-2">Projection des missions & visites programmées</p>
+          <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-2">Projection des missions & visites programmées</p>
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="flex items-center bg-gray-200 dark:bg-[#171717] rounded-xl p-1 border border-black/5 dark:border-white/5 shadow-inner">
-            <button onClick={prevMonth} className="p-2 hover:bg-white dark:hover:bg-[#262626] rounded-lg transition-colors text-gray-600 dark:text-gray-300">
+          <div className="flex items-center bg-white dark:bg-[#141618] rounded-sm p-1 border border-asas-silver/20 shadow-sm">
+            <button onClick={prevMonth} className="p-2 hover:bg-asas-sand/50 dark:hover:bg-black/10 rounded-sm transition-colors text-asas-charcoal dark:text-asas-sand">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="px-4 font-bold text-sm tracking-wide capitalize w-36 text-center">{monthName}</span>
-            <button onClick={nextMonth} className="p-2 hover:bg-white dark:hover:bg-[#262626] rounded-lg transition-colors text-gray-600 dark:text-gray-300">
+            <span className="px-4 font-bold text-xs tracking-widest uppercase w-36 text-center text-asas-charcoal dark:text-asas-sand">{monthName}</span>
+            <button onClick={nextMonth} className="p-2 hover:bg-asas-sand/50 dark:hover:bg-black/10 rounded-sm transition-colors text-asas-charcoal dark:text-asas-sand">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-black font-bold text-sm rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal hover:bg-black dark:hover:bg-white font-bold text-xs rounded-sm shadow-sm hover:scale-[1.02] active:scale-95 transition-all outline-none"
           >
             Nouvelle Opération
           </button>
@@ -113,11 +113,11 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar Grid */}
-      <div className="flex-1 min-h-0 flex flex-col mt-6 border border-black/5 dark:border-white/5 rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-[#0A0A0A]">
+      <div className="flex-1 min-h-0 flex flex-col mt-6 border border-asas-silver/20 rounded-sm overflow-hidden shadow-sm bg-white dark:bg-[#141618]">
         {/* Days Header */}
-        <div className="grid grid-cols-7 border-b border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505]">
+        <div className="grid grid-cols-7 border-b border-asas-silver/20 bg-asas-sand/50 dark:bg-black/10">
           {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => (
-            <div key={d} className="px-2 py-3 text-center text-[10px] font-bold uppercase tracking-widest text-gray-500">
+            <div key={d} className="px-2 py-3 text-center text-[9px] font-bold uppercase tracking-widest text-asas-silver">
               {d}
             </div>
           ))}
@@ -126,19 +126,19 @@ export default function CalendarPage() {
         {/* Days Grid */}
         <div className="flex-1 grid grid-cols-7 grid-rows-5 overflow-y-auto">
           {daysArray.map((date, i) => {
-            if (!date) return <div key={i} className="border-b border-r border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-[#050505]/50 p-2 min-h-[100px]" />
+            if (!date) return <div key={i} className="border-b border-r border-asas-silver/10 bg-asas-silver/5 p-2 min-h-[100px]" />
             
             const dateStr = date.toISOString().slice(0, 10)
             const isToday = dateStr === todayStr
             const dayTasks = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr))
             
             return (
-              <div key={i} className={clsx("border-b border-r border-black/5 dark:border-white/5 p-2 flex flex-col min-h-[120px] transition-colors hover:bg-gray-50 dark:hover:bg-[#111111]", isToday && "bg-blue-500/5 dark:bg-blue-500/5")}>
+              <div key={i} className={clsx("border-b border-r border-asas-silver/10 p-2 flex flex-col min-h-[120px] transition-colors hover:bg-asas-sand/30 dark:hover:bg-black/10", isToday && "bg-asas-gold/5 dark:bg-asas-gold/5")}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className={clsx("text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full", isToday ? "bg-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)]" : "text-gray-700 dark:text-gray-300")}>
+                  <span className={clsx("text-xs font-bold w-6 h-6 flex items-center justify-center rounded-sm", isToday ? "bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal shadow-sm" : "text-asas-charcoal dark:text-asas-sand font-mono")}>
                     {date.getDate()}
                   </span>
-                  {dayTasks.length > 0 && <span className="text-[9px] font-bold text-gray-400 bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded">{dayTasks.length}</span>}
+                  {dayTasks.length > 0 && <span className="text-[9px] font-bold text-asas-charcoal dark:text-asas-sand bg-asas-silver/20 px-1.5 py-0.5 rounded-sm">{dayTasks.length}</span>}
                 </div>
                 
                 <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-1">
@@ -150,11 +150,11 @@ export default function CalendarPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className={clsx(
-                        "text-[9px] font-bold p-1.5 rounded-md truncate cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-1",
-                        task.status === 'done' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 line-through" :
-                        task.priority === 'urgent' ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20" :
-                        task.priority === 'high' ? "bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20" :
-                        "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                        "text-[9px] font-bold p-1.5 rounded-sm truncate cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-1",
+                        task.status === 'done' ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20 line-through" :
+                        task.priority === 'urgent' ? "bg-red-500/10 text-red-500 border border-red-500/20" :
+                        task.priority === 'high' ? "bg-orange-500/10 text-orange-500 border border-orange-500/20" :
+                        "bg-asas-navy/10 text-asas-navy dark:text-asas-sand border border-asas-navy/20"
                       )}
                       title={task.title}
                     >

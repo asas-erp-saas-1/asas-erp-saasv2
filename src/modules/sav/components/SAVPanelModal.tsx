@@ -126,21 +126,21 @@ export function SAVPanelModal({ deal, onClose, onUpdate }: { deal: Deal, onClose
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="relative w-full max-w-2xl bg-white dark:bg-[#0A0A0A] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 flex flex-col max-h-[90vh] overflow-hidden"
+        className="relative w-full max-w-2xl bg-white dark:bg-[#141618] rounded-sm shadow-2xl border border-asas-silver/20 flex flex-col max-h-[90vh] overflow-hidden"
       >
         {/* Header */}
-        <div className="px-8 py-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-gray-50 dark:bg-[#050505] shrink-0">
+        <div className="px-8 py-6 border-b border-asas-silver/20 flex items-center justify-between bg-asas-sand/50 dark:bg-black/10 shrink-0">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-500/10 px-2 py-1 rounded-md mb-2 inline-block">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-asas-gold bg-asas-gold/10 px-2 py-1 rounded-sm mb-2 inline-block border border-asas-gold/20">
               Gestion SAV
             </span>
-            <h2 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 font-display uppercase tracking-widest">
               Lot {deal.properties?.reference_code}
             </h2>
-            <p className="text-sm font-medium text-gray-500 mt-1">Acquéreur: {deal.clients?.full_name}</p>
+            <p className="text-[9px] font-bold text-asas-silver mt-1 uppercase tracking-widest">Acquéreur: {deal.clients?.full_name}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-colors bg-white dark:bg-[#141618] border border-asas-silver/20 hover:bg-asas-sand/50 dark:hover:bg-black/10 rounded-sm cursor-pointer">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -148,18 +148,18 @@ export function SAVPanelModal({ deal, onClose, onUpdate }: { deal: Deal, onClose
            
            {/* Actions */}
            <div className="flex items-center gap-3">
-             <button onClick={generatePV} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-xl font-bold text-sm transition-colors active:scale-95">
-                <FileText className="w-4 h-4" /> Générer PV de Livraison (PDF)
+             <button onClick={generatePV} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal hover:bg-asas-charcoal/80 dark:hover:bg-asas-sand/80 border border-transparent rounded-sm font-bold text-[9px] uppercase tracking-widest transition-colors active:scale-95 cursor-pointer">
+                <FileText className="w-4 h-4" /> PV Livr. (PDF)
              </button>
-             <button onClick={() => setIsWhatsAppOpen(true)} className="flex items-center justify-center px-4 py-3 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-xl font-bold text-sm transition-colors active:scale-95" title="Contacter sur WhatsApp">
+             <button onClick={() => setIsWhatsAppOpen(true)} className="flex items-center justify-center px-4 py-3 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-sm font-bold text-[9px] uppercase tracking-widest transition-colors active:scale-95 cursor-pointer" title="Contacter sur WhatsApp">
                 <MessageCircle className="w-4 h-4" /> WhatsApp
              </button>
            </div>
 
            {/* Réserves / Snags List */}
            <div>
-              <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-2 mb-4">
-                 <Wrench className="w-4 h-4 text-indigo-500" /> Réserves & Interventions
+              <h3 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex items-center gap-2 mb-4 font-display">
+                 <Wrench className="w-4 h-4 text-asas-gold" /> Réserves & Interventions
               </h3>
 
               <form onSubmit={handleAddTask} className="flex gap-2 mb-6">
@@ -168,35 +168,35 @@ export function SAVPanelModal({ deal, onClose, onUpdate }: { deal: Deal, onClose
                   value={newTaskTitle}
                   onChange={e => setNewTaskTitle(e.target.value)}
                   placeholder="Ex: Peinture écaillée au salon..."
-                  className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="flex-1 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm px-4 py-3 text-[10px] uppercase font-bold tracking-widest focus:outline-none focus:border-asas-gold"
                 />
-                <button disabled={!newTaskTitle.trim() || isAdding} type="submit" className="w-12 shrink-0 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl flex items-center justify-center transition-colors">
-                  {isAdding ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
+                <button disabled={!newTaskTitle.trim() || isAdding} type="submit" className="w-12 shrink-0 bg-asas-gold hover:bg-asas-gold/80 disabled:opacity-50 text-white rounded-sm flex items-center justify-center transition-colors cursor-pointer">
+                  {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                 </button>
               </form>
 
               {loading ? (
-                <div className="py-10 text-center flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
+                <div className="py-10 text-center flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-asas-silver" /></div>
               ) : tasks.length === 0 ? (
-                <div className="p-6 text-center border border-dashed border-gray-300 dark:border-[#262626] rounded-2xl">
-                  <p className="text-sm font-medium text-gray-500">Aucune réserve n'a été signalée pour le moment.</p>
+                <div className="p-6 text-center border border-dashed border-asas-silver/20 rounded-sm">
+                  <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver">Aucune réserve signalée.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {tasks.map(task => (
-                    <div key={task.id} className={`flex items-start gap-4 p-4 rounded-xl border transition-colors ${task.status === 'done' ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-white dark:bg-[#0A0A0A] border-black/5 dark:border-white/5'}`}>
-                       <button onClick={() => toggleTaskStatus(task)} className="mt-0.5 shrink-0">
+                    <div key={task.id} className={`flex items-start gap-4 p-4 rounded-sm border transition-colors ${task.status === 'done' ? 'bg-asas-emerald/10 border-asas-emerald/20' : 'bg-white dark:bg-[#141618] border-asas-silver/20'}`}>
+                       <button onClick={() => toggleTaskStatus(task)} className="mt-0.5 shrink-0 cursor-pointer">
                          {task.status === 'done' ? (
-                           <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                           <CheckCircle2 className="w-4 h-4 text-asas-emerald" />
                          ) : (
-                           <div className="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600" />
+                           <div className="w-4 h-4 rounded-sm border border-asas-silver/40" />
                          )}
                        </button>
                        <div className="min-w-0">
-                         <p className={`text-sm font-bold truncate ${task.status === 'done' ? 'text-gray-500 line-through' : 'text-gray-900 dark:text-white'}`}>
+                         <p className={`text-[10px] font-bold uppercase tracking-widest truncate ${task.status === 'done' ? 'text-asas-silver line-through' : 'text-asas-charcoal dark:text-asas-sand'}`}>
                            {task.title.replace('[SAV] ', '')}
                          </p>
-                         <p className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-widest">
+                         <p className="text-[9px] font-bold text-asas-silver mt-1 uppercase tracking-widest">
                            {task.status === 'done' ? 'Levée' : 'Signalée'}
                          </p>
                        </div>

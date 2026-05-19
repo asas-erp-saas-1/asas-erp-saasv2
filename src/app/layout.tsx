@@ -1,19 +1,20 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
+import { Cinzel, Tajawal, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { env } from '@/lib/env'
 import { GlobalErrorTracker } from '@/components/GlobalErrorTracker'
 import { clsx } from 'clsx'
 import { ThemeProvider } from '@/components/ThemeProvider'
 
-const inter = Inter({
-  subsets: ['latin'],
+const tajawal = Tajawal({
+  weight: ['300', '400', '500', '700', '800'],
+  subsets: ['latin', 'arabic'],
   variable: '--font-sans',
   display: 'swap',
 })
 
-const spaceGrotesk = Space_Grotesk({
+const cinzel = Cinzel({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
@@ -35,15 +36,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
+    <html lang="fr" suppressHydrationWarning className={clsx(tajawal.variable, cinzel.variable, jetbrainsMono.variable)}>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#1A2A4A" />
+        <meta name="theme-color" content="#0F1113" />
       </head>
-      <body className="bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-gray-100 antialiased font-sans flex flex-col min-h-screen selection:bg-blue-500/30">
+      <body className="bg-asas-sand dark:bg-asas-charcoal text-asas-charcoal dark:text-asas-sand antialiased font-sans flex flex-col min-h-screen selection:bg-asas-gold/30">
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {

@@ -60,41 +60,41 @@ export function AgentDashboard({ agentId, agentName }: { agentId: string, agentN
   if (!data) return <div className="p-6 md:p-8 text-gray-500 text-xs font-bold uppercase tracking-widest animate-pulse">Décryptage du profil...</div>
 
   return (
-    <div className="p-6 md:p-8 bg-gray-50 dark:bg-[#050505] border-y lg:border border-black/5 dark:border-white/5 lg:rounded-3xl lg:m-6 shadow-2xl relative">
+    <div className="p-6 md:p-8 bg-white dark:bg-[#141618] border-y lg:border border-asas-silver/20 lg:rounded-sm lg:m-6 shadow-sm relative">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white uppercase tracking-wide">{agentName} <span className="text-gray-500">I-Performance</span></h2>
-        <span className="px-3 py-1 bg-gray-200 dark:bg-[#171717] rounded-full text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400 border border-black/5 dark:border-white/5">
+        <h2 className="text-2xl font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-wide font-display">{agentName} <span className="text-asas-silver ml-2 text-sm font-sans tracking-widest">I-Performance</span></h2>
+        <span className="px-3 py-1 bg-asas-sand/50 dark:bg-black/10 rounded-sm text-[9px] font-bold uppercase tracking-widest text-asas-silver border border-asas-silver/20">
            Rang #{data.rank} • {data.tier}
         </span>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-6 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl shadow-lg relative overflow-hidden group">
-          <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2 relative z-10">Pipeline Liquidé</p>
-          <p className="text-3xl font-extrabold text-gray-900 dark:text-white mt-1 relative z-10">{data.closedDeals} <span className="text-sm text-gray-500 font-bold uppercase tracking-widest">Protocoles</span></p>
+        <div className="p-6 bg-asas-sand/30 dark:bg-[#0A0A0A] border border-asas-silver/20 rounded-sm shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-all">
+          <div className="absolute inset-0 bg-asas-gold/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mb-2 relative z-10">Pipeline Liquidé</p>
+          <p className="text-3xl font-bold font-mono text-asas-charcoal dark:text-asas-sand mt-1 relative z-10">{data.closedDeals} <span className="text-[9px] text-asas-silver font-bold uppercase tracking-widest font-sans">Protocoles</span></p>
         </div>
         
-        <div className="p-6 bg-blue-500/10 border border-blue-500/20 rounded-2xl shadow-lg relative overflow-hidden">
-          <p className="text-[10px] uppercase font-bold tracking-widest text-blue-400 mb-2">Conversion Réussie</p>
-          <p className="text-3xl font-extrabold text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] mt-1">{Math.round(data.closingRatePct)}%</p>
+        <div className="p-6 bg-asas-gold/10 border border-asas-gold/20 rounded-sm shadow-sm relative overflow-hidden">
+          <p className="text-[9px] uppercase font-bold tracking-widest text-asas-gold mb-2">Conversion Réussie</p>
+          <p className="text-3xl font-bold font-mono text-asas-gold mt-1">{Math.round(data.closingRatePct)}%</p>
         </div>
 
-        <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl shadow-lg relative overflow-hidden">
-          <p className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 mb-2">Revenu Généré (Total)</p>
-          <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1 drop-shadow-sm">{fmt(data.totalRevenue)} <span className="text-lg">DZD</span></p>
+        <div className="p-6 bg-asas-emerald/10 border border-asas-emerald/20 rounded-sm shadow-sm relative overflow-hidden">
+          <p className="text-[9px] uppercase font-bold tracking-widest text-asas-emerald mb-2">Revenu Généré (Total)</p>
+          <p className="text-3xl font-bold font-mono text-asas-emerald mt-1">{fmt(data.totalRevenue)} <span className="text-sm font-sans">DZD</span></p>
         </div>
 
-        <div className="p-6 bg-purple-500/10 border border-purple-500/20 rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <div className="p-6 bg-orange-500/10 border border-orange-500/20 rounded-sm shadow-sm relative overflow-hidden flex flex-col justify-between">
           <div>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-purple-600 dark:text-purple-400 mb-2">Commissions à Payer</p>
-            <p className="text-3xl font-extrabold text-purple-600 dark:text-purple-400 mt-1 drop-shadow-sm">{fmt(data.commissionOutstanding)} <span className="text-lg">DZD</span></p>
+            <p className="text-[9px] uppercase font-bold tracking-widest text-orange-500 mb-2">Commissions à Payer</p>
+            <p className="text-3xl font-bold font-mono text-orange-500 mt-1">{fmt(data.commissionOutstanding)} <span className="text-sm font-sans">DZD</span></p>
             {data.commissionEarned > 0 && (
-              <p className="text-xs text-purple-500 mt-2 font-medium">Déjà versé : {fmt(data.commissionEarned)} DZD</p>
+              <p className="text-[9px] text-orange-500/70 mt-2 font-bold uppercase tracking-widest">Déjà versé : {fmt(data.commissionEarned)} DZD</p>
             )}
           </div>
           {data.commissionOutstanding > 0 && (
-            <button onClick={openSettleModal} className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg shadow-md transition-colors w-full">
+            <button onClick={openSettleModal} className="mt-4 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white text-[10px] uppercase tracking-widest font-bold rounded-sm shadow-sm transition-colors w-full cursor-pointer">
               Régler Commission
             </button>
           )}
@@ -103,26 +103,26 @@ export function AgentDashboard({ agentId, agentName }: { agentId: string, agentN
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-black/5 dark:border-white/5">
-              <h3 className="text-lg font-extrabold text-gray-900 dark:text-white">Détail des Commissions (En Attente)</h3>
-              <p className="text-sm text-gray-500 mt-1">Solder les accords pour {agentName}</p>
+          <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm shadow-sm w-full max-w-lg overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-asas-silver/20">
+              <h3 className="text-lg font-bold text-asas-charcoal dark:text-asas-sand font-display uppercase tracking-widest">Détail des Commissions (En Attente)</h3>
+              <p className="text-[9px] text-asas-silver font-bold uppercase tracking-widest mt-1">Solder les accords pour {agentName}</p>
             </div>
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               {agreements.length === 0 ? (
-                <p className="text-gray-500 text-sm">Aucune commission en attente.</p>
+                <p className="text-asas-silver text-[9px] font-bold uppercase tracking-widest">Aucune commission en attente.</p>
               ) : (
                 <div className="space-y-4">
                   {agreements.map((a) => (
-                    <div key={a.agreement_id} className="p-4 border border-black/5 dark:border-white/5 rounded-xl bg-gray-50 dark:bg-[#111111] flex items-center justify-between">
+                    <div key={a.agreement_id} className="p-5 border border-asas-silver/20 rounded-sm bg-asas-sand/30 dark:bg-black/10 flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-bold text-gray-900 dark:text-white">Transaction #{a.deal_id.slice(0,6)}</p>
-                        <p className="text-xs text-gray-500 mt-1">Reste à payer : <span className="font-bold text-gray-800 dark:text-gray-200">{a.outstanding_balance.toLocaleString()} DZD</span></p>
+                        <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest">Transaction #{a.deal_id.slice(0,6)}</p>
+                        <p className="text-[9px] uppercase tracking-widest font-bold text-asas-silver mt-1">Reste à payer : <span className="font-mono text-asas-charcoal dark:text-asas-sand">{a.outstanding_balance.toLocaleString()} DZD</span></p>
                       </div>
                       <button 
                         disabled={loading}
                         onClick={() => settle(a.agreement_id, a.outstanding_balance)}
-                        className="px-3 py-1.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-80 text-xs font-bold rounded-lg disabled:opacity-50"
+                        className="px-4 py-2.5 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal hover:bg-asas-charcoal/80 dark:hover:bg-asas-sand/80 text-[9px] uppercase tracking-widest font-bold rounded-sm disabled:opacity-50 cursor-pointer"
                       >
                         Valider Pmt
                       </button>
@@ -131,8 +131,8 @@ export function AgentDashboard({ agentId, agentName }: { agentId: string, agentN
                 </div>
               )}
             </div>
-            <div className="p-6 border-t border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505] flex justify-end">
-              <button disabled={loading} onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-200 dark:bg-[#171717] hover:bg-gray-300 dark:hover:bg-[#262626] text-gray-900 dark:text-white text-sm font-bold rounded-lg transition-colors">
+            <div className="p-6 border-t border-asas-silver/20 bg-asas-sand/50 dark:bg-black/10 flex justify-end">
+              <button disabled={loading} onClick={() => setShowModal(false)} className="px-5 py-2.5 bg-white dark:bg-[#141618] border border-asas-silver/20 hover:bg-asas-sand/50 dark:hover:bg-black/10 text-asas-charcoal dark:text-asas-sand text-[9px] uppercase tracking-widest font-bold rounded-sm transition-colors cursor-pointer">
                 Fermer
               </button>
             </div>

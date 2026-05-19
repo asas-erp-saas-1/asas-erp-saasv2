@@ -30,12 +30,12 @@ const RISK_STYLE: Record<string, string> = {
 }
 
 const COLUMNS = [
-  { key: 'draft',       label: 'Brouillon',      color: 'bg-gray-800 border-gray-700 text-gray-800 dark:text-gray-300',       dot: 'bg-gray-500' },
-  { key: 'active',      label: 'En cours',       color: 'bg-blue-500/10 border-blue-500/20 text-blue-400',     dot: 'bg-blue-500' },
-  { key: 'negotiation', label: 'Négociation',    color: 'bg-amber-500/10 border-amber-500/20 text-amber-400',   dot: 'bg-amber-500' },
-  { key: 'notary',      label: 'Attente Notaire',color: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400', dot: 'bg-indigo-500' },
-  { key: 'closed',      label: 'Conclu',         color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', dot: 'bg-emerald-500' },
-  { key: 'cancelled',   label: 'Annulé',         color: 'bg-red-500/10 border-red-500/20 text-red-400',     dot: 'bg-red-500' },
+  { key: 'draft',       label: 'Brouillon',      color: 'bg-asas-silver/10 border-asas-silver/20 text-asas-charcoal dark:text-asas-silver',       dot: 'bg-asas-silver' },
+  { key: 'active',      label: 'En cours',       color: 'bg-asas-navy/10 border-asas-navy/20 text-asas-navy dark:text-asas-sand/80',     dot: 'bg-asas-navy' },
+  { key: 'negotiation', label: 'Négociation',    color: 'bg-asas-copper/10 border-asas-copper/20 text-asas-copper',   dot: 'bg-asas-copper' },
+  { key: 'notary',      label: 'Attente Notaire',color: 'bg-asas-gold/10 border-asas-gold/20 text-asas-gold', dot: 'bg-asas-gold' },
+  { key: 'closed',      label: 'Conclu',         color: 'bg-asas-emerald/10 border-asas-emerald/20 text-asas-emerald', dot: 'bg-asas-emerald' },
+  { key: 'cancelled',   label: 'Annulé',         color: 'bg-red-500/10 border-red-500/20 text-red-500',     dot: 'bg-red-500' },
 ] as const
 
 type DealStatus = typeof COLUMNS[number]['key']
@@ -65,27 +65,27 @@ function DealCard({ deal, isSelected, onSelect, onWhatsApp, index }: { deal: Dea
           {...provided.dragHandleProps}
           onClick={onSelect}
           className={clsx(
-            'bg-gray-100 dark:bg-[#121212] rounded-xl border p-4 shadow-lg transition-all cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-[#181818]',
-            isSelected ? 'border-blue-500/50 ring-1 ring-blue-500/50' : 'border-black/10 dark:border-white/10',
-            snapshot.isDragging && 'shadow-2xl shadow-blue-500/10 ring-1 ring-blue-500/50 rotate-2 scale-105 z-50 cursor-grabbing'
+            'bg-white dark:bg-asas-charcoal rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/30',
+            isSelected ? 'border-asas-gold/50 ring-1 ring-asas-gold/50' : 'border-asas-silver/20',
+            snapshot.isDragging && 'shadow-md shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#141618]'
           )}
         >
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="flex-1 min-w-0">
-               <p className={clsx("font-bold text-sm truncate", isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-800 dark:text-gray-200')}>
+               <p className={clsx("font-bold text-sm truncate", isSelected ? 'text-asas-charcoal dark:text-asas-sand' : 'text-asas-charcoal dark:text-asas-sand/80')}>
                  {(deal as any).clients?.full_name ?? 'Client Inconnu'}
                </p>
                {(deal as any).properties?.projects?.name && (
-                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate">{(deal as any).properties.projects.name}</p>
+                 <p className="text-xs text-asas-silver mt-1 truncate">{(deal as any).properties.projects.name}</p>
                )}
             </div>
-            <div className={clsx('h-2.5 w-2.5 rounded-full shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10 mt-1', RISK_STYLE[deal.risk_level || 'low'])} />
+            <div className={clsx('h-2.5 w-2.5 rounded-full shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-asas-silver/20 mt-1', RISK_STYLE[deal.risk_level || 'low'])} />
           </div>
 
           <div className="flex flex-col gap-2 mb-4">
-            <span className="text-sm font-bold text-gray-800 dark:text-gray-300">{fmt(agreedPrice)}</span>
+            <span className="text-sm font-bold text-asas-navy dark:text-asas-sand font-mono">{fmt(agreedPrice)}</span>
             {deal.next_action && (
-              <span className={clsx('text-[10px] uppercase tracking-wider flex items-center gap-1.5 px-2 py-1 rounded-md border w-fit', isOverdue ? 'bg-red-500/10 text-red-400 border-red-500/20 font-bold' : 'bg-black/5 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-black/10 dark:border-gray-700 font-medium')}>
+              <span className={clsx('text-[9px] uppercase tracking-wider flex items-center gap-1.5 px-2 py-1 rounded-sm border w-fit font-bold', isOverdue ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-black/5 dark:bg-white/5 text-asas-silver border-asas-silver/10')}>
                 {isOverdue && <AlertTriangle className="h-3 w-3" />}
                 <Clock className="h-3 w-3" />
                 {deal.next_action}
@@ -94,32 +94,32 @@ function DealCard({ deal, isSelected, onSelect, onWhatsApp, index }: { deal: Dea
           </div>
 
           <div className="flex flex-col w-full">
-            <div className="w-full flex justify-between text-[10px] uppercase font-bold tracking-wider mb-1.5">
-              <span className={pct === 100 ? 'text-emerald-500 dark:text-emerald-400' : 'text-gray-500'}>Payé</span>
-              <span className="text-gray-800 dark:text-gray-300">{pct}%</span>
+            <div className="w-full flex justify-between text-[9px] uppercase font-bold tracking-wider mb-1.5">
+              <span className={pct === 100 ? 'text-asas-emerald' : 'text-asas-silver'}>Payé</span>
+              <span className="text-asas-charcoal dark:text-asas-sand font-mono">{pct}%</span>
             </div>
-            <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden mb-4">
+            <div className="w-full h-1 bg-asas-sand/50 dark:bg-black/20 rounded-full overflow-hidden mb-4">
               <div
                 style={{ width: `${pct}%` }}
-                className={clsx('h-full rounded-full transition-all duration-500', pct === 100 ? 'bg-emerald-500' : pct > 0 ? 'bg-blue-500' : 'bg-gray-400 dark:bg-gray-600')}
+                className={clsx('h-full rounded-full transition-all duration-500', pct === 100 ? 'bg-asas-emerald' : pct > 0 ? 'bg-asas-gold' : 'bg-asas-silver/40')}
               />
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 pt-3 border-t border-black/5 dark:border-white/5">
+            <div className="flex items-center gap-2 pt-3 border-t border-asas-silver/10">
               <button 
                 onClick={(e) => { e.stopPropagation(); }}
-                className="flex items-center justify-center p-2.5 min-w-[36px] min-h-[36px] border border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-300 hover:text-gray-900 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all" title="Initier Appel">
+                className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 rounded-sm transition-all" title="Initier Appel">
                 <Phone className="h-3.5 w-3.5" />
               </button>
               <button 
                 onClick={(e) => { e.stopPropagation(); onWhatsApp(deal); }}
-                className="flex items-center justify-center p-2.5 min-w-[36px] min-h-[36px] border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-all" title="Message WhatsApp">
+                className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-[#25D366]/40 rounded-sm transition-all" title="Message WhatsApp">
                 <MessageCircle className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onSelect(); }}
-                className="ml-auto flex items-center gap-1.5 min-h-[36px] text-[9px] uppercase tracking-widest font-bold bg-white text-black px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-all shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+                className="ml-auto flex items-center justify-center w-full max-w-[90px] gap-1.5 min-h-[36px] text-[9px] uppercase tracking-widest font-bold bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal px-3 py-1.5 rounded-sm hover:bg-black dark:hover:bg-white transition-all shadow-sm"
               >
                 Ouvrir
               </button>
@@ -223,32 +223,32 @@ export default function DealsPage() {
   const byStatus = (status: string) => deals.filter(d => d.status === status)
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#0A0A0A] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 text-gray-900 dark:text-gray-100">
+    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand">
       {/* Left: list */}
-      <div className={clsx('flex flex-col bg-white dark:bg-[#0A0A0A] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'lg:w-[45%] border-r border-black/5 dark:border-white/5 w-full' : 'w-full')}>
+      <div className={clsx('flex flex-col bg-white dark:bg-[#141618] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'lg:w-[45%] border-r border-asas-silver/20 w-full' : 'w-full')}>
         {/* Header */}
-        <div className="px-6 py-5 border-b border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A] z-10 shrink-0">
+        <div className="px-6 py-5 border-b border-asas-silver/20 bg-asas-sand/30 dark:bg-black/10 z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
             <div>
-              <h1 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2 tracking-tight font-display">
+              <h1 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 tracking-tight font-display uppercase">
                 Transactions
               </h1>
-              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1.5 hidden sm:block">{total} actives sur le réseau</p>
+              <p className="text-[10px] uppercase tracking-widest text-asas-silver font-bold mt-1.5 hidden sm:block">{total} actives sur le réseau</p>
             </div>
-            <button onClick={() => router.push('/dashboard/deals/new')} className="flex items-center gap-2 px-4 py-2.5 bg-white text-black rounded-full text-xs font-bold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95 shrink-0">
-              <Plus className="h-4 w-4" strokeWidth={2.5} /> Initier Deal
+            <button onClick={() => router.push('/dashboard/deals/new')} className="flex items-center gap-2 px-4 py-2.5 bg-asas-charcoal hover:bg-black dark:bg-asas-sand dark:hover:bg-white text-asas-sand dark:text-asas-charcoal rounded-sm text-xs font-bold transition-all border border-transparent shrink-0 shadow-sm">
+              <Plus className="h-4 w-4" strokeWidth={2} /> Initier Deal
             </button>
           </div>
 
           {/* Search */}
           <div className="relative mb-5">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
             <input
               type="text"
               placeholder="Rechercher entité, projet..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-[#050505] text-sm font-medium border border-black/10 dark:border-white/10 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white transition-all placeholder:text-gray-600"
+              className="w-full pl-11 pr-4 py-2 bg-transparent text-sm font-medium border border-asas-silver/40 rounded-sm focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all placeholder:text-asas-silver"
             />
           </div>
 
@@ -264,10 +264,10 @@ export default function DealsPage() {
                 key={f.value}
                 onClick={() => { setStatus(f.value); setPage(1) }}
                 className={clsx(
-                  'px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all border',
+                  'px-4 py-1.5 rounded-sm text-[9px] uppercase tracking-widest font-bold transition-all border',
                   statusFilter === f.value
-                    ? 'bg-blue-500/10 text-gray-900 dark:text-white border-blue-500/20'
-                    : 'bg-transparent text-gray-500 hover:text-gray-800 dark:text-gray-300 border-black/5 dark:border-white/5 hover:border-black/10 dark:border-white/10'
+                    ? 'bg-asas-gold/10 text-asas-gold border-asas-gold/20'
+                    : 'bg-transparent text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand border-asas-silver/20 hover:border-asas-gold/40'
                 )}
               >
                 {f.label}
@@ -277,25 +277,25 @@ export default function DealsPage() {
         </div>
 
         {/* Kanban board */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-gray-50 dark:bg-[#050505]">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent">
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="flex h-full gap-4 p-6 min-w-max items-start">
               {loading ? (
                 [...Array(5)].map((_, i) => (
-                  <div key={i} className="w-[300px] h-[80vh] bg-white dark:bg-[#0A0A0A] animate-pulse rounded-2xl border border-black/5 dark:border-white/5" />
+                  <div key={i} className="w-[300px] h-[80vh] bg-white dark:bg-[#141618] animate-pulse rounded-sm border border-asas-silver/20" />
                 ))
               ) : (
                 COLUMNS.map(col => {
                   const colDeals = byStatus(col.key)
                   return (
-                    <div key={col.key} className="w-[320px] flex flex-col bg-white dark:bg-[#0A0A0A] rounded-2xl border border-black/5 dark:border-white/5 overflow-hidden max-h-full">
+                    <div key={col.key} className="w-[320px] flex flex-col bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden max-h-full">
                       {/* Column header */}
-                      <div className="px-5 py-4 border-b border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A] flex items-center justify-between shrink-0">
+                      <div className="px-5 py-4 border-b border-asas-silver/10 bg-white dark:bg-[#141618] flex items-center justify-between shrink-0">
                         <div className="flex items-center gap-2">
-                          <div className={clsx('h-2 w-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]', col.dot)} />
-                          <span className="text-sm font-bold text-gray-800 dark:text-gray-200 tracking-wide">{col.label}</span>
+                          <div className={clsx('h-2 w-2 rounded-full inline-block', col.dot)} />
+                          <span className="text-sm font-bold text-asas-charcoal dark:text-asas-sand tracking-wide uppercase font-display">{col.label}</span>
                         </div>
-                        <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-md border tracking-widest', col.color)}>
+                        <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-sm border tracking-widest', col.color)}>
                           {colDeals.length}
                         </span>
                       </div>
@@ -307,14 +307,14 @@ export default function DealsPage() {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             className={clsx(
-                              "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10",
-                              snapshot.isDraggingOver ? "bg-gray-100 dark:bg-[#121212]" : ""
+                              "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-asas-silver/20",
+                              snapshot.isDraggingOver ? "bg-asas-sand/50 dark:bg-black/10" : ""
                             )}
                           >
                             {colDeals.length === 0 && !snapshot.isDraggingOver ? (
-                              <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-black/10 dark:border-white/10 rounded-xl text-gray-600 bg-black/5 dark:bg-white/5">
-                                <Handshake className="h-6 w-6 mb-3 opacity-50 text-gray-500" />
-                                <span className="text-xs uppercase tracking-widest font-bold">Zone Vide</span>
+                              <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-asas-silver/20 rounded-sm text-asas-silver bg-black/5 dark:bg-white/5">
+                                <Handshake className="h-6 w-6 mb-3 opacity-30 text-asas-silver" />
+                                <span className="text-[10px] uppercase tracking-widest font-bold">Zone Vide</span>
                               </div>
                             ) : (
                               colDeals.map((deal, index) => (
@@ -409,13 +409,14 @@ export default function DealsPage() {
       </AnimatePresence>
 
       {!selectedId && (
-        <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-gray-50 dark:bg-[#050505] border-l border-black/5 dark:border-white/5 text-center p-12">
-          <div className="w-24 h-24 bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-3xl flex items-center justify-center mb-6 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-blue-500/10 blur-xl group-hover:bg-blue-500/20 transition-all"></div>
-            <Handshake className="w-10 h-10 text-gray-600 dark:text-gray-400 relative z-10" />
+        <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-transparent border-l border-asas-silver/20 text-center p-12 relative overflow-hidden">
+          <div className="absolute inset-0 bg-transparent opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#C7A15A 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
+          <div className="w-24 h-24 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm flex items-center justify-center mb-6 relative overflow-hidden group shadow-sm">
+            <div className="absolute inset-0 bg-asas-gold/5 blur-xl group-hover:bg-asas-gold/10 transition-all"></div>
+            <Handshake className="w-10 h-10 text-asas-gold relative z-10" />
           </div>
-          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 tracking-tight font-display">Poste de Contrôle</h2>
-          <p className="text-sm font-medium text-gray-500 max-w-sm">
+          <h2 className="text-2xl font-bold text-asas-charcoal dark:text-asas-sand mb-2 tracking-tight font-display uppercase">Poste de Contrôle</h2>
+          <p className="text-sm font-medium text-asas-silver max-w-sm relative z-10">
             Sélectionnez une entité dans la liste pour accéder aux indicateurs financiers, calculs de risques et actions prédictives.
           </p>
         </div>

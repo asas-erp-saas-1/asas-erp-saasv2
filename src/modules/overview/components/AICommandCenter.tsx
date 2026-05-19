@@ -70,18 +70,18 @@ export function AICommandCenter() {
     : defaultInsights;
 
   return (
-    <div className="bg-gray-50 dark:bg-[#050505] rounded-[2rem] p-8 mt-6 text-gray-900 dark:text-white shadow-2xl relative overflow-hidden flex flex-col border border-black/5 dark:border-white/5 group">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-indigo-500/20 transition-all duration-700"></div>
+    <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-8 mt-6 text-asas-charcoal dark:text-asas-sand shadow-sm relative overflow-hidden flex flex-col group">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-asas-navy/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-asas-navy/10 transition-all duration-700"></div>
       
       <div className="relative z-10">
-        <h3 className="text-2xl font-extrabold mb-1 tracking-tight font-display text-gray-900 dark:text-white flex items-center gap-3">
-          <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-xl">
+        <h3 className="text-2xl font-bold mb-1 tracking-tight font-display text-asas-charcoal dark:text-asas-sand flex items-center gap-3 uppercase">
+          <div className="p-2 bg-asas-navy/10 text-asas-navy dark:text-asas-sand/80 rounded-sm">
             <BrainCircuit strokeWidth={1.5} className="w-6 h-6" />
           </div>
-          Cortex IA : Analyses Prédictives
+          Cortex IA : Prédictions <span className="opacity-40 text-asas-silver mx-2 font-sans font-light">|</span> <span className="opacity-40">الذكاء الاصطناعي</span>
         </h3>
-        <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8">
-          Moteur d'intelligence ASAS v4.0. Traitement en temps réel des vecteurs de transaction.
+        <p className="text-asas-silver/80 text-sm font-medium leading-relaxed mb-8">
+          Moteur d'intelligence ASAS v4.0. Traitement en temps réel des activités.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -93,16 +93,16 @@ export function AICommandCenter() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
-              className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-5 hover:border-black/10 dark:border-white/10 hover:bg-[#0f0f0f] transition-all"
+              className="bg-asas-sand/10 dark:bg-black/20 border border-asas-silver/10 rounded-sm p-5 hover:border-asas-silver/30 transition-all"
             >
                <div className="flex flex-col h-full">
                  <div className="flex items-center gap-3 mb-4">
-                   <div className={`w-10 h-10 rounded-xl ${insight.bg} flex items-center justify-center`}>
+                   <div className={`w-10 h-10 rounded-sm ${insight.bg} flex items-center justify-center`}>
                      <Icon className={`w-5 h-5 ${insight.color}`} strokeWidth={2} />
                    </div>
-                   <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{insight.title}</h4>
+                   <h4 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand leading-tight">{insight.title}</h4>
                  </div>
-                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-auto leading-relaxed">{insight.message}</p>
+                 <p className="text-sm text-asas-charcoal/70 dark:text-asas-silver mt-auto leading-relaxed">{insight.message}</p>
                </div>
             </motion.div>
             );
