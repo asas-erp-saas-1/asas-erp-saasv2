@@ -10,6 +10,7 @@ import { Clock } from 'lucide-react';
 import type { Activity } from '@/types/app';
 import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
+import { SchedulePaymentModal } from '@/app/dashboard/deals/SchedulePaymentModal'
 
 function DealActivitiesSection({ dealId }: { dealId: string }) {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -249,6 +250,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [loading, setLoading] = useState(true)
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
 
   const reloadData = () => {
     setLoading(true)
@@ -583,13 +585,20 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
       <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-xl mt-6">
         <div className="flex items-center justify-between mb-6">
            <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-emerald-500" /> Registre des Paiements & Appels de Fonds
+            <DollarSign className="w-5 h-5 text-emerald-500" /> Registre des Paiements & Échéancier
           </h3>
-          <button 
-             onClick={() => setIsDepositModalOpen(true)}
-             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors">
-            Encaisser
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+               onClick={() => setIsScheduleModalOpen(true)}
+               className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 text-xs font-bold rounded-lg transition-colors">
+              + Échéance
+            </button>
+            <button 
+               onClick={() => setIsDepositModalOpen(true)}
+               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors">
+              Encaisser
+            </button>
+          </div>
         </div>
         
         {(!deal.deal_payments || deal.deal_payments.length === 0) ? (
@@ -672,6 +681,14 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           dealId={dealId}
           onClose={() => setIsDepositModalOpen(false)}
           onSuccess={() => { setIsDepositModalOpen(false); reloadData() }}
+        />
+      )}
+      
+      {isScheduleModalOpen && (
+        <SchedulePaymentModal 
+          dealId={dealId}
+          onClose={() => setIsScheduleModalOpen(false)}
+          onSuccess={() => { setIsScheduleModalOpen(false); reloadData() }}
         />
       )}
     </div>

@@ -71,6 +71,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, data: payment });
     }
 
+    if (command.type === 'SCHEDULE_PAYMENT') {
+      const { dealId, amount, due_date, notes } = command.payload;
+      const payment = await kernel.mutate('deal_payments', 'INSERT', {
+        deal_id: dealId || command.aggregateId,
+        amount,
+        due_date,
+        status: 'pending',
+        notes: notes || 'Appel de fonds / Tranche'
+      });
+      return NextResponse.json({ success: true, data: payment });
+    }
+
     if (command.type === 'TRIGGER_PROJECT_TRANCHE') {
       const { projectId, trancheLabel, tranchePct } = command.payload;
       const { DealService } = await import('@/services/deals/deal.service');
