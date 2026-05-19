@@ -7,6 +7,7 @@ import { motion, Variants } from 'motion/react'
 import { clsx } from 'clsx'
 import { SecurityPanel } from './SecurityPanel'
 import { AppInviteWidget } from './AppInviteWidget'
+import { SystemValidationWidget } from './SystemValidationWidget'
 import Link from 'next/link'
 
 type Config = {
@@ -156,6 +157,10 @@ export default function SettingsPage() {
 
         <motion.div variants={item}>
             <AppInviteWidget />
+        </motion.div>
+
+        <motion.div variants={item}>
+            <SystemValidationWidget />
         </motion.div>
 
         <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 gap-8">
