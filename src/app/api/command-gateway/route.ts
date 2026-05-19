@@ -22,6 +22,20 @@ export async function POST(request: Request) {
     
     // In our simplified Kernel wrapper, we map common command types to Kernel Mutates.
     // For deals:
+    if (command.type === 'CREATE_CLIENT') {
+      const { full_name, phone, email, type, source, nationality } = command.payload;
+      const client = await kernel.mutate('clients', 'INSERT', {
+        agency_id: identity.tenantId,
+        full_name,
+        phone: phone || null,
+        email: email || null,
+        type: type || 'buyer',
+        source: source || 'other',
+        nationality: nationality || null
+      });
+      return NextResponse.json({ success: true, data: client });
+    }
+
     if (command.type === 'SET_DEAL_STAGE') {
       const { stage, notes, lostReason } = command.payload;
       

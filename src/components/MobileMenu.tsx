@@ -32,12 +32,27 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
     setMounted(true)
   }, [])
 
-  const BOTTOM_NAV = [
-    { href: '/dashboard/overview', label: 'Vue', Icon: LayoutGrid },
+  const role = profile?.role || 'agent'
+  
+  const filteredNav = NAV.filter(i => {
+    if (role === 'agent') {
+      return !['/dashboard/finance', '/dashboard/agents', '/dashboard/metrics'].includes(i.href);
+    }
+    return true;
+  })
+
+  // Determine bottom nav based on role
+  const BOTTOM_NAV = role === 'agent' ? [
+    { href: '/dashboard/overview', label: 'Tâches', Icon: CheckSquare },
     { href: '/dashboard/leads', label: 'Leads', Icon: Users },
     { href: '/dashboard/deals', label: 'Deals', Icon: Handshake },
     { href: '/dashboard/properties', label: 'Biens', Icon: Building2 },
-  ]
+  ] : [
+    { href: '/dashboard/overview', label: 'Vue', Icon: LayoutGrid },
+    { href: '/dashboard/leads', label: 'Leads', Icon: Users },
+    { href: '/dashboard/finance', label: 'Finance', Icon: DollarSign },
+    { href: '/dashboard/metrics', label: 'Stats', Icon: BarChart2 },
+  ];
 
   if (!mounted) return null;
 
@@ -134,7 +149,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
         <div className="flex-1 overflow-y-auto px-5 py-6 custom-scrollbar overscroll-contain">
           <p className="text-[10px] font-bold text-[#525252] uppercase tracking-widest mb-3 px-2">Menu Principal</p>
           <nav className="flex flex-col gap-2">
-            {NAV.map(({ href, label, Icon }) => {
+            {filteredNav.map(({ href, label, Icon }) => {
               const isActive = pathname.startsWith(href)
               return (
                 <Link 

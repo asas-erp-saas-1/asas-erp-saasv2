@@ -55,6 +55,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const roleDisplay = profile.role === 'owner' ? 'CEO / Admin' : profile.role;
   const initial = profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U';
 
+  const role = profile.role || 'agent';
+  const filteredNav = NAV.filter(i => {
+    if (role === 'agent') {
+      return !['/dashboard/finance', '/dashboard/agents', '/dashboard/metrics'].includes(i.href);
+    }
+    return true;
+  });
+
   return (
     <div className="flex bg-white dark:bg-[#0A0A0A] h-[100dvh] overflow-hidden selection:bg-blue-500/30 selection:text-gray-900 dark:text-white font-sans text-gray-900 dark:text-gray-100">
       <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
@@ -76,7 +84,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar">
           <p className="text-[10px] font-bold text-[#525252] uppercase tracking-widest mb-3 px-3">Menu Principal</p>
           <nav className="flex flex-col gap-1">
-            {NAV.map(({ href, label, Icon }) => (
+            {filteredNav.map(({ href, label, Icon }) => (
               <Link key={href} href={href}
                 className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#A3A3A3] rounded-xl hover:bg-gray-200 dark:hover:bg-[#171717] hover:text-gray-900 dark:hover:text-white transition-all group relative">
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-blue-500 rounded-r-full transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>

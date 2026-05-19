@@ -5,6 +5,7 @@ import { Users, Plus, Search, Phone, Mail, ChevronRight, Globe, FileUser } from 
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
+import { ClientCreateModal } from './ClientCreateModal'
 
 interface Client {
   id: string; full_name: string; phone: string | null; email: string | null
@@ -24,8 +25,9 @@ export default function ClientsPage() {
   const [search,  setSearch]  = useState('')
   const [type,    setType]    = useState('')
   const [loading, setLoading] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  useEffect(() => {
+  const loadClients = () => {
     const params = new URLSearchParams({ limit: '50' })
     if (search) params.set('q', search)
     if (type)   params.set('type', type)
@@ -42,6 +44,10 @@ export default function ClientsPage() {
         setTotal(0);
       })
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadClients()
   }, [search, type])
 
   return (
@@ -59,7 +65,7 @@ export default function ClientsPage() {
             </h1>
             <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-2">{total} identités enregistrées</p>
           </div>
-          <button className="flex items-center gap-2 px-5 py-3 bg-white text-black rounded-xl text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-5 py-3 bg-white text-black rounded-xl text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] active:scale-95">
             <Plus className="h-4 w-4" strokeWidth={2.5} /> Nouveau Profil
           </button>
         </div>
@@ -173,6 +179,15 @@ export default function ClientsPage() {
           )}
         </div>
       </div>
+      {isModalOpen && (
+        <ClientCreateModal
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={() => {
+            setIsModalOpen(false)
+            loadClients()
+          }}
+        />
+      )}
     </div>
   )
 }
