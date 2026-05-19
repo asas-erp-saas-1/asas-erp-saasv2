@@ -37,10 +37,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#1A2A4A" />
       </head>
       <body className="bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-gray-100 antialiased font-sans flex flex-col min-h-screen selection:bg-blue-500/30">
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js').then(
+                function(registration) { console.log('SW registration successful with scope: ', registration.scope); },
+                function(err) { console.log('SW registration failed: ', err); }
+              );
+            });
+          }
+        `}} />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GlobalErrorTracker />
           {children}

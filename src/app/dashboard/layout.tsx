@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { CommandPalette } from '@/components/CommandPalette'
 
 const NAV = [
   { href: '/dashboard/overview',   label: 'Vue d\'ensemble',    Icon: LayoutGrid  },
@@ -126,21 +127,32 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <p className="font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight text-lg font-display">ASAS</p>
             </div>
             
-            <div className="hidden sm:flex items-center px-4 py-2.5 bg-gray-200 dark:bg-[#171717] hover:bg-gray-300 dark:hover:bg-[#262626] border border-gray-200 dark:border-[#262626] hover:border-gray-400 dark:hover:border-[#404040] rounded-2xl w-full focus-within:bg-gray-50 dark:focus-within:bg-[#050505] focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all group">
-              <Search className="w-4 h-4 text-gray-500 mr-3 group-focus-within:text-blue-500 transition-colors" strokeWidth={2} />
-              <input 
-                type="text" 
-                placeholder="Rechercher (Ctrl+K)..." 
-                className="bg-transparent border-none outline-none text-sm w-full text-gray-900 dark:text-white placeholder-gray-500 font-medium"
-              />
-              <div className="hidden lg:flex items-center gap-1">
+            <button 
+              onClick={() => {
+                if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('asas-omnibar-open'))
+              }}
+              className="hidden sm:flex items-center px-4 py-2.5 bg-gray-200 dark:bg-[#171717] hover:bg-gray-300 dark:hover:bg-[#262626] border border-gray-200 dark:border-[#262626] hover:border-gray-400 dark:hover:border-[#404040] rounded-2xl w-full text-left transition-all group"
+            >
+              <Search className="w-4 h-4 text-gray-500 mr-3 group-hover:text-blue-500 transition-colors shrink-0" strokeWidth={2} />
+              <span className="bg-transparent border-none outline-none text-sm w-full text-gray-500 font-medium overflow-hidden whitespace-nowrap overflow-ellipsis">
+                 Rechercher (Ctrl+K)...
+              </span>
+              <div className="hidden lg:flex items-center gap-1 shrink-0 ml-2">
                 <kbd className="px-2 py-1 text-[10px] font-bold text-gray-500 bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-[#262626] rounded-md shadow-sm">⌘</kbd>
                 <kbd className="px-2 py-1 text-[10px] font-bold text-gray-500 bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-[#262626] rounded-md shadow-sm">K</kbd>
               </div>
-            </div>
+            </button>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button 
+              onClick={() => {
+                if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('asas-omnibar-open'))
+              }}
+              className="sm:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
+            >
+              <Search className="w-5 h-5" strokeWidth={2} />
+            </button>
             <ThemeToggle />
             <button className="relative p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all">
               <Bell className="w-5 h-5" strokeWidth={2} />
@@ -167,6 +179,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </main>
       </div>
+      <CommandPalette />
     </div>
   )
 }
