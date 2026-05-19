@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Building2, LayoutTemplate, ShieldCheck, HardHat, CalendarRange, ArrowRight, Activity, Percent, Plus, Search } from "lucide-react"
+import { Building2, LayoutTemplate, ShieldCheck, HardHat, CalendarRange, ArrowRight, Activity, Percent, Plus, Search, FileText } from "lucide-react"
 import { motion, Variants } from "motion/react"
 import { clsx } from 'clsx'
 import Link from 'next/link'
@@ -78,6 +78,9 @@ export default function ProjectsPage() {
         </div>
         
         <div className="flex items-center gap-3">
+           <Link href="/dashboard/projects/bordereaux" className="flex items-center gap-2 px-6 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-2xl text-sm font-bold transition-transform active:scale-95">
+             <FileText className="w-4 h-4" /> Bordereaux Promoteurs
+           </Link>
            <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform active:scale-95 disabled:opacity-50">
              <Plus className="w-4 h-4" /> Nouveau Programme
            </button>
