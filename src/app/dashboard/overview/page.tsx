@@ -5,6 +5,7 @@ import { AgentActionFeed } from '@/modules/workspace/components/AgentActionFeed'
 import { LayoutDashboard } from 'lucide-react'
 import { getMetricsData } from '@/actions/metricActions'
 import { kernel } from '@/lib/kernel/core'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Overview — ASAS RE-OS',
@@ -14,21 +15,29 @@ export const metadata: Metadata = {
 export default async function OverviewPage() {
   let metrics;
   let identity;
+  let shouldRedirectTo: string | null = null;
 
   try {
     metrics = await getMetricsData();
     identity = await kernel.identity();
-  } catch (error) {
-    // If identity throws, the dashboard layout try/catch will handle the redirect.
-    // We just return null here to avoid crashing the server component render.
-    return null;
+  } catch (error: any) {
+    const errorMsg = error?.message || '';
+    if (errorMsg.includes('Tenant isolation failure')) {
+      shouldRedirectTo = '/onboarding';
+    } else {
+      shouldRedirectTo = '/login';
+    }
   }
 
-  if (identity.role === 'agent') {
+  if (shouldRedirectTo) {
+    redirect(shouldRedirectTo);
+  }
+
+  if (identity!.role === 'agent') {
     let mappedActions: any[] = [];
     try {
       const tasks = await kernel.query('tasks', { 
-        filters: { assigned_to: identity.userId, status: 'pending' },
+        filters: { assigned_to: identity!.userId, status: 'pending' },
         limit: 20,
         orderBy: { column: 'due_date', ascending: true }
       });

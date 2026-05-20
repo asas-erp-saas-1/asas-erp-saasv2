@@ -6,19 +6,30 @@ export const dynamic = 'force-dynamic'
 
 export default async function TeamSettingsPage() {
   let identity;
+  let shouldRedirectTo: string | null = null;
+
   try {
     identity = await kernel.identity()
-  } catch (err) {
-    return null;
+  } catch (err: any) {
+    const errorMsg = err?.message || '';
+    if (errorMsg.includes('Tenant isolation failure')) {
+      shouldRedirectTo = '/onboarding';
+    } else {
+      shouldRedirectTo = '/login';
+    }
   }
 
-  if (identity.role !== 'owner' && identity.role !== 'manager') {
+  if (shouldRedirectTo) {
+    redirect(shouldRedirectTo);
+  }
+
+  if (identity!.role !== 'owner' && identity!.role !== 'manager') {
     redirect('/dashboard/settings')
   }
 
   // Fetch profiles belonging to this tenant
   const profiles = await kernel.query('profiles', {
-    filters: { agency_id: identity.tenantId },
+    filters: { agency_id: identity!.tenantId },
     limit: 100
   })
 
@@ -32,5 +43,5 @@ export default async function TeamSettingsPage() {
     last_active: p.last_active || null
   }))
 
-  return <TeamManagementClient initialProfiles={mappedProfiles} currentUserRole={identity.role} />
+  return <TeamManagementClient initialProfiles={mappedProfiles} currentUserRole={identity!.role} />
 }

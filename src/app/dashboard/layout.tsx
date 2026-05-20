@@ -32,6 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     avatar_url: null,
   };
   let identity;
+  let shouldRedirectTo: string | null = null;
 
   try {
     identity = await kernel.identity();
@@ -48,10 +49,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const errorMsg = error?.message || '';
     console.error('Failed to resolve identity in layout:', errorMsg);
     if (errorMsg.includes('Tenant isolation failure')) {
-      redirect('/onboarding');
+      shouldRedirectTo = '/onboarding';
     } else {
-      redirect('/login');
+      shouldRedirectTo = '/login';
     }
+  }
+
+  if (shouldRedirectTo) {
+    redirect(shouldRedirectTo);
   }
 
   const roleDisplay = profile.role === 'owner' ? 'CEO / Admin' : profile.role;
