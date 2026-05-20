@@ -33,7 +33,12 @@ export default async function OverviewPage() {
     redirect(shouldRedirectTo);
   }
 
-  if (identity!.role === 'agent') {
+  // Fallback to prevent crash if redirect fails or is in progress
+  if (!identity) {
+    return null;
+  }
+
+  if (identity.role === 'agent') {
     let mappedActions: any[] = [];
     try {
       const tasks = await kernel.query('tasks', { 

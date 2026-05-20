@@ -23,13 +23,17 @@ export default async function TeamSettingsPage() {
     redirect(shouldRedirectTo);
   }
 
-  if (identity!.role !== 'owner' && identity!.role !== 'manager') {
+  if (!identity) {
+    return null;
+  }
+
+  if (identity.role !== 'owner' && identity.role !== 'manager') {
     redirect('/dashboard/settings')
   }
 
   // Fetch profiles belonging to this tenant
   const profiles = await kernel.query('profiles', {
-    filters: { agency_id: identity!.tenantId },
+    filters: { agency_id: identity.tenantId },
     limit: 100
   })
 
@@ -43,5 +47,5 @@ export default async function TeamSettingsPage() {
     last_active: p.last_active || null
   }))
 
-  return <TeamManagementClient initialProfiles={mappedProfiles} currentUserRole={identity!.role} />
+  return <TeamManagementClient initialProfiles={mappedProfiles} currentUserRole={identity.role} />
 }

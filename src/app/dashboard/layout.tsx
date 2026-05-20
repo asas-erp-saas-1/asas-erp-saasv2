@@ -59,6 +59,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect(shouldRedirectTo);
   }
 
+  if (!identity) {
+    return null;
+  }
+
   const roleDisplay = profile.role === 'owner' ? 'CEO / Admin' : profile.role;
   const initial = profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U';
 
