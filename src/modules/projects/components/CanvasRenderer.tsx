@@ -163,13 +163,13 @@ export default function CanvasRenderer({ properties }: { properties: Property[] 
 
        {/* Panel Lateral Si selectionné */}
        {selectedId && (
-         <div className="absolute top-4 right-4 w-72 bg-white dark:bg-[#0A0A0A] rounded-2xl shadow-2xl border border-black/10 dark:border-white/10 p-5 z-10 backdrop-blur-md">
+         <div className="absolute top-4 right-4 w-72 bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 p-5 z-10 backdrop-blur-md">
             {(() => {
                const p = properties.find(x => x.id === selectedId)
                if (!p) return null
                return (
                  <>
-                   <div className="flex justify-between items-start mb-4 border-b border-black/5 dark:border-white/5 pb-4">
+                   <div className="flex justify-between items-start mb-4 border-b border-asas-silver/20 pb-4">
                      <div>
                        <span className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-md ${
                          p.status === 'sold' ? 'bg-emerald-500/20 text-emerald-500' :

@@ -342,11 +342,11 @@ export default function DealsPage() {
 
         {/* Pagination - only show if needed */}
         {total > LIMIT && (
-          <div className="px-6 py-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#0A0A0A] flex items-center justify-between shrink-0">
+          <div className="px-6 py-4 border-t border-asas-silver/20 bg-white dark:bg-[#141618] flex items-center justify-between shrink-0">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#050505] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-[#141618] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
             >Précédent</button>
             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Page {page} / {Math.ceil(total / LIMIT)}</span>
             <button

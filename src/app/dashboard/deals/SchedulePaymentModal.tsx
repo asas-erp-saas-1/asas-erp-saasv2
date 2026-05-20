@@ -61,9 +61,9 @@ export function SchedulePaymentModal({ dealId, onClose, onSuccess }: { dealId: s
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-md bg-white dark:bg-[#0A0A0A] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-6 flex flex-col"
+        className="relative w-full max-w-md bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-6 flex flex-col"
       >
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+        <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
           <X className="w-4 h-4" />
         </button>
         
@@ -83,7 +83,7 @@ export function SchedulePaymentModal({ dealId, onClose, onSuccess }: { dealId: s
              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Montant DZD</label>
              <input 
                type="number" required placeholder="Ex: 1500000"
-               className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-lg font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+               className="w-full px-4 py-3 bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-lg font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                value={amount} onChange={e => setAmount(e.target.value)}
              />
           </div>

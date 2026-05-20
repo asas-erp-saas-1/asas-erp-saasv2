@@ -69,7 +69,7 @@ export function AgentDashboard({ agentId, agentName }: { agentId: string, agentN
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-6 bg-asas-sand/30 dark:bg-[#0A0A0A] border border-asas-silver/20 rounded-sm shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-all">
+        <div className="p-6 bg-asas-sand/30 dark:bg-[#141618] border border-asas-silver/20 rounded-sm shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-all">
           <div className="absolute inset-0 bg-asas-gold/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mb-2 relative z-10">Pipeline Liquidé</p>
           <p className="text-3xl font-bold font-mono text-asas-charcoal dark:text-asas-sand mt-1 relative z-10">{data.closedDeals} <span className="text-[9px] text-asas-silver font-bold uppercase tracking-widest font-sans">Protocoles</span></p>

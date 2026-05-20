@@ -46,9 +46,9 @@ export function ClientCreateModal({ onClose, onSuccess }: { onClose: () => void,
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[#0A0A0A] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-black/5 dark:border-white/5 relative flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-[#141618] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-asas-silver/20 relative flex flex-col max-h-[90vh]">
         
-        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505]">
+        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5 bg-white dark:bg-[#141618]">
            <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
                  <User className="h-5 w-5" />
@@ -67,7 +67,7 @@ export function ClientCreateModal({ onClose, onSuccess }: { onClose: () => void,
           <form id="create-client-form" onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-[10px] uppercase font-bold text-gray-500 mb-2 tracking-widest">Nom Complet *</label>
-              <input type="text" name="full_name" required className="w-full bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-bold" placeholder="Ex: Jean Dupont" />
+              <input type="text" name="full_name" required className="w-full bg-gray-50 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-bold" placeholder="Ex: Jean Dupont" />
             </div>
             
             <div className="grid grid-cols-2 gap-4">

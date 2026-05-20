@@ -11,7 +11,7 @@ export default function PortalLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-[#050505] min-h-screen text-gray-900 dark:text-gray-100 font-sans antialiased overflow-x-hidden selection:bg-indigo-500/30">
+    <div className="bg-white dark:bg-[#141618] min-h-screen text-gray-900 dark:text-gray-100 font-sans antialiased overflow-x-hidden selection:bg-indigo-500/30">
       {children}
     </div>
   )

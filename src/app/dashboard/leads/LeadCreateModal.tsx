@@ -76,9 +76,9 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-lg bg-white dark:bg-[#0A0A0A] rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10 overflow-hidden flex flex-col max-h-full"
+        className="relative w-full max-w-lg bg-white dark:bg-[#141618] rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10 overflow-hidden flex flex-col max-h-full"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-asas-silver/20 bg-white dark:bg-[#141618]">
           <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
             <User className="w-4 h-4 text-blue-500" /> Nouvelle Entité (Lead)
           </h2>
@@ -102,7 +102,7 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
                   type="text"
                   required
                   placeholder="Nom complet du prospect"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500"
                   value={formData.clientName}
                   onChange={e => setFormData({ ...formData, clientName: e.target.value })}
                 />

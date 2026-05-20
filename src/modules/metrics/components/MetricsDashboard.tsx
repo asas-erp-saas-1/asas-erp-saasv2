@@ -48,10 +48,10 @@ export function MetricsDashboard() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-gray-50 dark:bg-[#050505] border border-black/10 dark:border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-md">
-          <p className="text-gray-900 dark:text-white font-bold mb-1">{label}</p>
+        <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-4 rounded-sm shadow-sm">
+          <p className="text-asas-charcoal dark:text-asas-sand font-bold text-[10px] uppercase tracking-widest mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-sm font-medium" style={{ color: entry.color }}>
+            <p key={index} className="text-sm font-bold font-mono" style={{ color: entry.color }}>
               {entry.name === 'rev' ? (entry.value / 1000000).toFixed(1) + 'M DZD' : entry.value}
             </p>
           ))}

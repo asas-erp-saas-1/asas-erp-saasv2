@@ -63,13 +63,13 @@ export function CancelDealModal({ dealId, dealVersion, onClose, onSuccess }: { d
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="relative w-full max-w-sm bg-white dark:bg-[#0A0A0A] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-6 flex flex-col"
+        className="relative w-full max-w-sm bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-6 flex flex-col"
       >
-        <button onClick={onClose} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+        <button onClick={onClose} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
           <X className="w-4 h-4" />
         </button>
         
-        <div className="w-12 h-12 bg-gray-100 dark:bg-[#111111] rounded-2xl flex items-center justify-center mb-4">
+        <div className="w-12 h-12 bg-gray-100 dark:bg-[#141618] rounded-2xl flex items-center justify-center mb-4">
           <Frown className="w-6 h-6 text-gray-500" />
         </div>
         
@@ -89,8 +89,8 @@ export function CancelDealModal({ dealId, dealVersion, onClose, onSuccess }: { d
                 onClick={() => handleSelectReason(reason.id)}
                 disabled={loading}
                 className={clsx(
-                  "w-full flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5 transition-all text-left group hover:scale-[1.02]",
-                  loading ? "opacity-50 cursor-not-allowed" : "hover:border-black/20 dark:hover:border-white/20 bg-gray-50 dark:bg-[#111111] hover:bg-white dark:hover:bg-[#1A1A1A]"
+                  "w-full flex items-center gap-3 p-3 rounded-xl border border-asas-silver/20 transition-all text-left group hover:scale-[1.02]",
+                  loading ? "opacity-50 cursor-not-allowed" : "hover:border-black/20 dark:hover:border-white/20 bg-white dark:bg-[#111111] hover:bg-white dark:hover:bg-[#1A1A1A]"
                 )}
               >
                 <div className={clsx("w-8 h-8 rounded-lg flex flex-shrink-0 items-center justify-center", reason.color)}>

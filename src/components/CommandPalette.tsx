@@ -124,7 +124,7 @@ export function CommandPalette() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ ease: "easeOut", duration: 0.2 }}
-              className="relative w-full max-w-2xl bg-white dark:bg-[#0A0A0A] rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-white/10"
+              className="relative w-full max-w-2xl bg-white dark:bg-[#141618] rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-white/10"
             >
               <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 dark:border-white/10">
                 <Search className="w-5 h-5 text-gray-400" />
@@ -136,7 +136,7 @@ export function CommandPalette() {
                   className="flex-1 bg-transparent border-none outline-none text-base font-medium text-gray-900 dark:text-white placeholder-gray-400"
                 />
                 {isLoading && <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />}
-                <kbd className="hidden sm:inline-flex px-2 py-1 text-[10px] items-center justify-center font-bold text-gray-500 bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/5 rounded-md shadow-sm">ESC</kbd>
+                <kbd className="hidden sm:inline-flex px-2 py-1 text-[10px] items-center justify-center font-bold text-gray-500 bg-asas-sand/50 dark:bg-white/10 border border-gray-200 dark:border-white/5 rounded-md shadow-sm">ESC</kbd>
                 <button onClick={() => setIsOpen(false)} className="sm:hidden p-1 bg-gray-100 dark:bg-white/10 rounded-md">
                   <X className="w-4 h-4 text-gray-500" />
                 </button>
@@ -153,7 +153,7 @@ export function CommandPalette() {
                   <div className="p-4">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-2 mb-2">Requêtes Rapides</p>
                     <div className="grid grid-cols-2 gap-2">
-                         <button onClick={() => { router.push('/dashboard/leads/new'); setIsOpen(false); }} className="flex flex-col text-left p-3 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                         <button onClick={() => { router.push('/dashboard/leads/new'); setIsOpen(false); }} className="flex flex-col text-left p-3 rounded-xl bg-white dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
                            <span className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><Users className="w-4 h-4"/> Nlle. Requête </span>
                            <span className="text-xs text-gray-500">Créer un nouveau prospect</span>
                          </button>

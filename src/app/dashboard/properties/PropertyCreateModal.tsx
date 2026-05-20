@@ -80,9 +80,9 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-lg bg-white dark:bg-[#0A0A0A] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden flex flex-col"
+        className="relative w-full max-w-lg bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden flex flex-col"
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505]">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-asas-silver/20 bg-white dark:bg-[#141618]">
           <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
             Acquisition Fluide (1-Minute)
           </h2>
@@ -95,7 +95,7 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
           <div className="flex gap-4 mb-8">
              <button 
                 onClick={simulateVoiceNote} 
-                className={`flex-1 overflow-hidden relative p-8 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all ${isRecording ? 'bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20' : 'bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-white/5 border border-black/5 dark:border-white/5'}`}
+                className={`flex-1 overflow-hidden relative p-8 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all ${isRecording ? 'bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20' : 'bg-gray-50 dark:bg-[#141618] hover:bg-asas-sand/50 dark:hover:bg-white/5 border border-black/5 dark:border-white/5'}`}
              >
                 {isRecording && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />}
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isRecording ? 'bg-red-500 text-white' : 'bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gray-300'}`}>

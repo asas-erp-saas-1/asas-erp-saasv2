@@ -103,8 +103,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid relative">
-      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#0A0A0A] to-transparent pointer-events-none z-0"></div>
+    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid relative">
+      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#141618] to-transparent pointer-events-none z-0"></div>
       <div className="w-full max-w-md p-6 sm:p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0A0A0A] rounded-3xl shadow-2xl z-10 relative">
         <div className="flex items-center justify-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-bl from-blue-600 to-indigo-900 border border-blue-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
@@ -129,7 +129,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+                className="w-full bg-gray-50 dark:bg-[#141618] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
                 placeholder="admin@asas.com"
               />
             </div>

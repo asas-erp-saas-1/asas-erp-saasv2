@@ -107,12 +107,12 @@ export default function OnboardingPage() {
   };
 
   if (checking) {
-     return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">Vérification...</div>
+     return <div className="min-h-screen bg-[#141618] flex items-center justify-center text-white">Vérification...</div>
   }
 
   return (
-    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid relative">
-      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#0A0A0A] to-transparent pointer-events-none z-0"></div>
+    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid relative">
+      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#141618] to-transparent pointer-events-none z-0"></div>
       
       <motion.div 
          initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,7 @@ export default function OnboardingPage() {
               required
               value={agencyName}
               onChange={(e) => setAgencyName(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold text-lg"
+              className="w-full bg-gray-50 dark:bg-[#141618] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold text-lg"
               placeholder="Ex: ASAS Immobilier"
             />
           </div>

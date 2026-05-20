@@ -58,7 +58,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9000] bg-white dark:bg-[#0A0A0A]/95 backdrop-blur-3xl border-t border-black/5 dark:border-white/5 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9000] bg-white dark:bg-[#141618]/95 backdrop-blur-3xl border-t border-asas-silver/20 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300">
         <nav className="flex items-center justify-around px-2 h-[68px]">
           {BOTTOM_NAV.map(({ href, label, Icon }) => {
             const isActive = pathname.startsWith(href)
@@ -180,7 +180,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-800 to-gray-700 border border-gray-600 flex items-center justify-center text-gray-900 dark:text-white font-bold shrink-0 shadow-lg relative">
                 {initial}
-                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#050505]"></div>
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#141618]"></div>
               </div>
               <div className="overflow-hidden">
                 <p className="text-[15px] font-bold text-gray-900 dark:text-white truncate leading-tight">{profile?.full_name}</p>

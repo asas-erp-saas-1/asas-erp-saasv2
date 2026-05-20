@@ -72,7 +72,7 @@ export default function ProjectDetail() {
           <Link href={`/dashboard/projects/${id}/canvas`} className="flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 active:translate-y-0 text-center">
              <Map className="w-4 h-4" /> Plan Interactif
           </Link>
-          <div className="flex bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-2xl p-4 gap-6">
+          <div className="flex bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-2xl p-4 gap-6">
              <div>
                 <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Chiffre d'Affaires Projeté</p>
                 <p className="text-xl font-black text-gray-900 dark:text-white">{(totalValue / 1_000_000).toFixed(1)}M DZD</p>
@@ -90,7 +90,7 @@ export default function ProjectDetail() {
         
         {/* Lots Status Grid */}
         <div className="lg:col-span-2 space-y-6">
-           <div className="bg-white dark:bg-[#050505] rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl p-8">
+           <div className="bg-white dark:bg-[#141618] rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl p-8">
              <div className="flex items-center justify-between mb-8">
                <h2 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
                  <Layers className="w-6 h-6 text-indigo-500" /> État des Lots (Grille Comm.)
@@ -98,7 +98,7 @@ export default function ProjectDetail() {
                <div className="flex gap-4">
                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50" /><span className="text-xs font-bold text-gray-500">Vendu</span></div>
                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-md bg-amber-500/20 border border-amber-500/50" /><span className="text-xs font-bold text-gray-500">Réservé</span></div>
-                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-md bg-gray-100 dark:bg-[#111111] border border-black/10 dark:border-white/10" /><span className="text-xs font-bold text-gray-500">Dispo</span></div>
+                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-md bg-asas-sand/50 dark:bg-[#141618] border border-black/10 dark:border-white/10" /><span className="text-xs font-bold text-gray-500">Dispo</span></div>
                </div>
              </div>
 
@@ -111,7 +111,7 @@ export default function ProjectDetail() {
                      "p-4 rounded-2xl border transition-all hover:scale-[1.02]",
                      p.status === 'sold' ? "bg-emerald-500/10 border-emerald-500/30" :
                      p.status === 'reserved' ? "bg-amber-500/10 border-amber-500/30" :
-                     "bg-gray-50 dark:bg-[#0A0A0A] border-black/5 dark:border-white/5 hover:border-indigo-500/30"
+                     "bg-white dark:bg-[#0A0A0A] border-black/5 dark:border-white/5 hover:border-indigo-500/30"
                    )}>
                      <div className="flex justify-between items-start mb-2">
                        <span className="text-xs font-bold font-mono text-gray-500">{p.type}</span>

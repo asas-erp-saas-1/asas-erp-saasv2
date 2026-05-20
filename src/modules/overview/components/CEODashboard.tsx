@@ -10,8 +10,8 @@ import { ManagerExceptions } from './ManagerExceptions'
 const AICommandCenter = dynamic(() => import('./AICommandCenter').then(mod => mod.AICommandCenter), {
   ssr: false,
   loading: () => (
-    <div className="bg-gray-50 dark:bg-[#050505] rounded-[2rem] p-8 mt-6 border border-black/5 dark:border-white/5 h-64 flex items-center justify-center">
-      <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500/50" />
+    <div className="bg-white dark:bg-[#141618] rounded-sm p-8 mt-6 border border-asas-silver/20 h-64 flex items-center justify-center shadow-sm">
+      <RefreshCcw className="w-6 h-6 animate-spin text-asas-silver" />
     </div>
   )
 })

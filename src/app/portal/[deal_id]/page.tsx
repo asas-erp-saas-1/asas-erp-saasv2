@@ -43,9 +43,9 @@ export default function CustomerPortal({ params }: { params: { deal_id: string }
   const pct = price > 0 ? (paid / price) * 100 : 0
 
   return (
-    <div className="min-h-screen w-full bg-[#050505] text-white selection:bg-indigo-500/30">
+    <div className="min-h-screen w-full bg-[#141618] text-white selection:bg-indigo-500/30">
       {/* Header */}
-      <header className="border-b border-white/5 bg-[#0A0A0A]/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-white/5 bg-[#141618]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
@@ -102,7 +102,7 @@ export default function CustomerPortal({ params }: { params: { deal_id: string }
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
-                 <div className="bg-[#111111] border border-white/5 rounded-xl p-4">
+                 <div className="bg-[#141618] border border-white/5 rounded-xl p-4">
                     <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-bold">Type</p>
                     <p className="font-bold text-sm">{deal.properties?.type || 'Appartement'}</p>
                  </div>

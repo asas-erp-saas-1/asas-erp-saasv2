@@ -64,7 +64,7 @@ export function ManagerExceptions() {
                 {reassigningId === exception.id ? (
                   <div className="flex items-center gap-2 pt-3 border-t border-red-500/10">
                     <select 
-                      className="flex-1 text-sm bg-asas-sand/50 dark:bg-[#050505] border border-asas-silver/20 rounded-sm px-2 py-1.5 outline-none focus:border-red-500"
+                      className="flex-1 text-sm bg-asas-sand/50 dark:bg-[#141618] border border-asas-silver/20 rounded-sm px-2 py-1.5 outline-none focus:border-red-500"
                       onChange={(e) => handleReassign(exception.id, e.target.value)}
                       defaultValue=""
                     >

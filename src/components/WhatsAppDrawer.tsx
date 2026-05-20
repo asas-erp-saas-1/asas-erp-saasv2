@@ -62,7 +62,7 @@ export function WhatsAppDrawer({ isOpen, onClose, clientName, clientPhone, conte
       {/* Sheet */}
       <div
         className={clsx(
-          "fixed inset-x-0 sm:inset-x-auto sm:right-0 sm:top-0 bottom-0 z-[9999] sm:w-[400px] w-full bg-white dark:bg-[#0A0A0A] sm:border-l border-t sm:border-t-0 border-black/10 dark:border-white/10 flex flex-col shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "fixed inset-x-0 sm:inset-x-auto sm:right-0 sm:top-0 bottom-0 z-[9999] sm:w-[400px] w-full bg-white dark:bg-[#141618] sm:border-l border-t sm:border-t-0 border-black/10 dark:border-white/10 flex flex-col shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen ? "translate-y-0 sm:translate-x-0" : "translate-y-full sm:translate-y-0 sm:translate-x-full"
         )}
       >
@@ -70,7 +70,7 @@ export function WhatsAppDrawer({ isOpen, onClose, clientName, clientPhone, conte
           <div className="w-12 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full"></div>
         </div>
 
-        <div className="px-6 pb-4 pt-4 sm:pt-6 flex items-center justify-between border-b border-black/5 dark:border-white/5 shrink-0">
+        <div className="px-6 pb-4 pt-4 sm:pt-6 flex items-center justify-between border-b border-asas-silver/20 shrink-0">
           <div className="flex flex-col">
             <h2 className="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-emerald-500" />
@@ -99,7 +99,7 @@ export function WhatsAppDrawer({ isOpen, onClose, clientName, clientPhone, conte
                   "p-4 rounded-xl border cursor-pointer transition-all",
                   selectedTemplate === t.id 
                     ? "bg-emerald-500/10 border-emerald-500/30 ring-1 ring-emerald-500/50 shadow-sm"
-                    : "bg-gray-50 dark:bg-[#111111] border-black/10 dark:border-white/10 hover:border-emerald-500/30"
+                    : "bg-white dark:bg-[#141618] border-black/10 dark:border-white/10 hover:border-emerald-500/30"
                 )}
               >
                 <p className="text-sm font-bold text-gray-900 dark:text-white mb-2">{t.title}</p>
@@ -118,7 +118,7 @@ export function WhatsAppDrawer({ isOpen, onClose, clientName, clientPhone, conte
           )}
         </div>
 
-        <div className="p-6 border-t border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505] shrink-0">
+        <div className="p-6 border-t border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#141618] shrink-0">
           <button
             onClick={handleSend}
             disabled={!selectedTemplate}

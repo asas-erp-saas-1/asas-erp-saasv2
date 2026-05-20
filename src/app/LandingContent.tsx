@@ -6,13 +6,13 @@ import { motion } from 'motion/react';
 
 export function LandingContent() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white overflow-hidden relative">
+    <div className="min-h-screen bg-white dark:bg-[#141618] text-gray-900 dark:text-white overflow-hidden relative">
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none -z-10"></div>
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
 
       {/* Navigation */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-gray-50 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5">
+      <header className="fixed top-0 inset-x-0 z-50 bg-gray-50 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-asas-silver/20">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
@@ -107,7 +107,7 @@ export function LandingContent() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <div className="bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 p-8 rounded-[2rem] hover:border-black/10 dark:border-white/10 transition-all hover:-translate-y-1 group">
+    <div className="bg-white dark:bg-[#141618] border border-black/5 dark:border-white/5 p-8 rounded-[2rem] hover:border-black/10 dark:border-white/10 transition-all hover:-translate-y-1 group">
       <div className="w-14 h-14 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
         {icon}
       </div>

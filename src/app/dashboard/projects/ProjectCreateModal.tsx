@@ -52,9 +52,9 @@ export function ProjectCreateModal({ onClose, onSuccess }: { onClose: () => void
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="relative w-full max-w-lg bg-white dark:bg-[#0A0A0A] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-8 flex flex-col max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-lg bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-8 flex flex-col max-h-[90vh] overflow-y-auto"
       >
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
           <X className="w-4 h-4" />
         </button>
         
@@ -73,7 +73,7 @@ export function ProjectCreateModal({ onClose, onSuccess }: { onClose: () => void
            <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Nom du Programme</label>
               <input required type="text"
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                 value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
                 placeholder="Ex: Résidence Les Jasmins" 
               />
@@ -108,7 +108,7 @@ export function ProjectCreateModal({ onClose, onSuccess }: { onClose: () => void
                </div>
            </div>
 
-           <div className="pt-4 mt-8 border-t border-black/5 dark:border-white/5">
+           <div className="pt-4 mt-8 border-t border-asas-silver/20">
               <button disabled={loading} type="submit" className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50">
                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Créer le Programme"}
               </button>

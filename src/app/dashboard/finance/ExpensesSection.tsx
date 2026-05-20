@@ -54,7 +54,7 @@ export function ExpensesSection() {
     loadData()
   }
 
-  if (loading || !pnl) return <div className="animate-pulse h-64 bg-gray-100 rounded-3xl mt-8" />
+  if (loading || !pnl) return <div className="animate-pulse h-64 bg-asas-sand/50 rounded-3xl mt-8" />
 
   return (
     <div className="mt-12">

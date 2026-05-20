@@ -56,11 +56,11 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-[#0A0A0A] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-black/5 dark:border-white/5 bg-gray-100 dark:bg-[#111111]">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-asas-silver/20 bg-asas-sand/50 dark:bg-[#141618]">
           <div>
              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
@@ -209,7 +209,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                     <input 
                       type="text" 
                       id="new-note-input"
-                      className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="flex-1 bg-white dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                       placeholder="Ajouter une note rapide..."
                       onKeyDown={async (e) => {
                         if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {

@@ -139,7 +139,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               onClick={() => {
                 if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('asas-omnibar-open'))
               }}
-              className="hidden sm:flex items-center px-4 py-2 bg-white dark:bg-black/20 hover:bg-gray-50 dark:hover:bg-black/30 border border-asas-silver/40 dark:border-asas-silver/20 hover:border-asas-gold dark:hover:border-asas-gold rounded-sm w-full text-left transition-all group"
+              className="hidden sm:flex items-center px-4 py-2 bg-white dark:bg-black/20 hover:bg-white dark:hover:bg-black/30 border border-asas-silver/40 dark:border-asas-silver/20 hover:border-asas-gold dark:hover:border-asas-gold rounded-sm w-full text-left transition-all group"
             >
               <Search className="w-4 h-4 text-asas-silver mr-3 group-hover:text-asas-gold transition-colors shrink-0" strokeWidth={1.5} />
               <span className="bg-transparent border-none outline-none text-sm w-full text-asas-charcoal/60 dark:text-asas-silver font-medium overflow-hidden whitespace-nowrap overflow-ellipsis">

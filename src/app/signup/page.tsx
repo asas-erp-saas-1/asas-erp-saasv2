@@ -61,8 +61,8 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12">
-        <div className="w-full max-w-md p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0A0A0A] rounded-3xl shadow-2xl text-center">
+      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-gray-900 dark:text-white px-4 py-12">
+        <div className="w-full max-w-md p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#141618] rounded-3xl shadow-2xl text-center">
             <h2 className="text-2xl font-bold mb-4">Vérifiez votre Email</h2>
             <p className="text-gray-500">Un lien de confirmation a été envoyé à <strong>{email}</strong>. Cliquez sur ce lien pour activer votre compte, puis connectez-vous.</p>
             <button onClick={() => router.push('/login')} className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold">Retour à la connexion</button>
@@ -97,7 +97,7 @@ export default function SignupPage() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+              className="w-full bg-gray-50 dark:bg-[#141618] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
               placeholder="Jean Dupont"
             />
           </div>

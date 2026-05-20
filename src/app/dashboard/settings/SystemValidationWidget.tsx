@@ -29,23 +29,25 @@ export function SystemValidationWidget() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-[2rem] border border-blue-500/20 p-8 shadow-2xl relative overflow-hidden group mb-8">
-      <div className="absolute top-0 right-0 p-6 opacity-10 blur-xl">
-        <Database className="w-48 h-48 text-blue-300" />
+    <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-8 shadow-sm relative overflow-hidden group mb-8 hover:border-asas-gold/40 transition-colors">
+      <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
+        <Database className="w-24 h-24 text-asas-navy dark:text-asas-sand" />
       </div>
       
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-xl font-extrabold text-white flex items-center gap-2 font-display mb-2">
-            <Zap className="h-5 w-5 text-blue-400" />
+          <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 font-display mb-2 uppercase tracking-widest">
+            <div className="w-8 h-8 rounded-sm bg-asas-navy/10 border border-asas-navy/20 flex items-center justify-center text-asas-navy dark:text-asas-sand">
+              <Zap className="h-4 w-4" />
+            </div>
             Validation Staging (Pre-Release)
           </h2>
-          <p className="text-sm font-medium text-blue-200/80 max-w-xl">
+          <p className="text-[10px] font-bold text-asas-silver max-w-xl">
             Générez un ensemble complet de données opérationnelles (Promoteurs, Projets, Biens, Clients, Leads) pour valider l'architecture et les pipelines. Recommandé uniquement pour l'environnement de staging.
           </p>
           
-          {error && <p className="mt-4 text-xs font-bold text-red-400 bg-red-400/10 px-3 py-2 rounded-lg inline-block border border-red-400/20">{error}</p>}
-          {success && <p className="mt-4 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-3 py-2 rounded-lg inline-block flex items-center gap-2 border border-emerald-400/20"><CheckCircle className="w-4 h-4"/> Environnement provisionné avec succès !</p>}
+          {error && <p className="mt-4 text-[9px] font-bold text-red-500 bg-red-500/10 px-3 py-2 rounded-sm inline-block border border-red-500/20 uppercase tracking-widest">{error}</p>}
+          {success && <p className="mt-4 text-[9px] font-bold text-asas-emerald bg-asas-emerald/10 px-3 py-2 rounded-sm inline-flex items-center gap-2 border border-asas-emerald/20 uppercase tracking-widest"><CheckCircle className="w-3 h-3"/> Environnement provisionné avec succès !</p>}
         </div>
         
         <div className="shrink-0">
@@ -53,18 +55,18 @@ export function SystemValidationWidget() {
             onClick={handleSeed}
             disabled={loading || success}
             className={clsx(
-              "flex items-center gap-2 px-6 py-4 rounded-xl text-sm font-bold shadow-xl transition-all w-full md:w-auto justify-center",
+              "flex items-center gap-2 px-6 py-4 rounded-sm text-[9px] uppercase tracking-widest font-bold shadow-sm transition-all w-full md:w-auto justify-center cursor-pointer",
               success 
-                ? "bg-emerald-500 text-white shadow-emerald-500/20"
-                : "bg-white hover:bg-blue-50 hover:scale-105 active:scale-95 text-blue-900"
+                ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20"
+                : "bg-white dark:bg-[#141618] border border-asas-silver/20 hover:bg-asas-sand/50 dark:hover:bg-black/10 text-asas-charcoal dark:text-asas-sand hover:text-asas-gold"
             )}
           >
             {loading ? (
-              <><RefreshCcw className="w-5 h-5 animate-spin" /> Provisionnement...</>
+              <><RefreshCcw className="w-4 h-4 animate-spin" /> Provisionnement...</>
             ) : success ? (
-              <><CheckCircle className="w-5 h-5" /> Terminé</>
+              <><CheckCircle className="w-4 h-4" /> Terminé</>
             ) : (
-              <><Database className="w-5 h-5" /> Injecter Données de Test</>
+              <><Database className="w-4 h-4" /> Injecter Données de Test</>
             )}
           </button>
         </div>

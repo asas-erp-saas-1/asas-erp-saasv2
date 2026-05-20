@@ -99,7 +99,7 @@ export default function BordereauxPage() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", bounce: 0, duration: 0.8 }}
-        className="bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 shadow-2xl rounded-[2.5rem] relative overflow-hidden"
+        className="bg-white dark:bg-[#141618] border border-asas-silver/20 shadow-2xl rounded-[2.5rem] relative overflow-hidden"
       >
         <div className="bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-transparent border-b border-black/10 dark:border-white/10 p-8 relative overflow-hidden backdrop-blur-xl">
           <div className="relative z-10 max-w-2xl">
@@ -117,7 +117,7 @@ export default function BordereauxPage() {
                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
           ) : data.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-white dark:bg-[#0A0A0A] rounded-3xl border border-black/5 dark:border-white/5 border-dashed">
+            <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-white dark:bg-[#141618] rounded-3xl border border-black/5 dark:border-white/5 border-dashed">
                <Building2 className="h-10 w-10 text-white/20 mb-4" />
                <p className="text-lg font-bold text-gray-900 dark:text-white mb-1">Aucun Promoteur Actif</p>
                <p className="text-xs uppercase tracking-widest">Connectez des promoteurs à vos projets pour voir les états</p>
@@ -141,7 +141,7 @@ export default function BordereauxPage() {
                      </div>
                      
                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-gray-50 dark:bg-[#111111] rounded-2xl p-4 border border-black/5 dark:border-white/5">
+                        <div className="bg-white dark:bg-[#141618] rounded-2xl p-4 border border-black/5 dark:border-white/5">
                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Fonds Collectés</p>
                            <p className="text-lg font-black text-gray-900 dark:text-white">{fmt(dev.metrics.total_collected)}</p>
                         </div>

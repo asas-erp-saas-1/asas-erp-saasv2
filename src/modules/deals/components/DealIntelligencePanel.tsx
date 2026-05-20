@@ -36,7 +36,7 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
   }, [dealId]);
 
   return (
-    <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl mt-6">
+    <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6">
       <div className="flex items-center justify-between mb-4">
         <h4 className="text-sm uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
           <Clock className="w-4 h-4" /> Activités & Notes
@@ -47,7 +47,7 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
         <input 
           type="text" 
           id="new-deal-note-input"
-          className="flex-1 bg-white dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="flex-1 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm px-4 py-2 text-[10px] uppercase font-bold text-asas-charcoal dark:text-asas-sand focus:outline-none focus:ring-1 focus:ring-asas-gold"
           placeholder="Ajouter une note..."
           onKeyDown={async (e) => {
             if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
@@ -101,9 +101,9 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
           {activities.map((act) => (
             <div key={act.id} className="relative pl-6 pb-2">
               <div className="absolute top-2 left-[11px] bottom-[-16px] w-[2px] bg-black/5 dark:bg-white/5" />
-              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-gray-50 dark:ring-[#050505]" />
+              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-gray-50 dark:ring-[#141618]" />
               
-              <div className="bg-white dark:bg-[#111111] border border-black/5 dark:border-white/5 rounded-lg p-4 transition-colors hover:bg-gray-50 dark:hover:bg-[#141414]">
+              <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-4 transition-colors hover:bg-asas-sand/30 dark:hover:bg-white/5">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">{act.type}</span>
                   <span className="text-[10px] text-gray-500 font-mono">
@@ -157,7 +157,7 @@ function DealVaultSection({ dealId }: { dealId: string }) {
   }, [dealId]);
 
   return (
-    <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-xl mt-6">
+    <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6">
       <div className="flex items-center justify-between mb-6">
         <h4 className="text-sm uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
           <FileText className="w-4 h-4" /> Le Coffre-Fort (Documents)
@@ -168,7 +168,7 @@ function DealVaultSection({ dealId }: { dealId: string }) {
         <input 
           type="url" 
           id="new-vault-link-input"
-          className="flex-1 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="flex-1 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm px-4 py-2 text-[10px] uppercase font-bold text-asas-charcoal dark:text-asas-sand focus:outline-none focus:ring-1 focus:ring-asas-gold"
           placeholder="https://drive.google.com/... (Lien du document)"
           onKeyDown={async (e) => {
             if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
@@ -225,7 +225,7 @@ function DealVaultSection({ dealId }: { dealId: string }) {
                  href={url} 
                  target="_blank" 
                  rel="noopener noreferrer"
-                 className="flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1A1A1A] transition-colors"
+                 className="flex items-center gap-3 p-3 rounded-sm border border-asas-silver/20 bg-asas-sand/50 dark:bg-[#141618] hover:bg-asas-sand dark:hover:bg-white/5 transition-colors"
                >
                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
                    <Download className="w-5 h-5" />
@@ -377,8 +377,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   return (
           <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 pb-[env(safe-area-inset-bottom)]">
       {/* Header section */}
-      <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 overflow-hidden">
-        <div className="border-b border-black/5 dark:border-white/5 flex items-center justify-between px-6 py-4 bg-white dark:bg-[#0A0A0A]/50 flex-wrap gap-4">
+      <div className="bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 overflow-hidden">
+        <div className="border-b border-asas-silver/20 flex items-center justify-between px-6 py-4 bg-asas-sand/30 dark:bg-black/20 flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
               <FileText className="w-5 h-5" />
@@ -415,7 +415,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                 <MessageCircle className="h-4 w-4" />
               </button>
             )}
-            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-black/5 dark:border-white/5 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
+            <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-asas-silver/20 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
               <CheckSquare className="w-4 h-4" /> Créer Tâche
             </button>
             <button onClick={handleGenerateContract} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 border border-transparent rounded-lg text-sm font-medium text-white transition-colors shadow-sm whitespace-nowrap active:scale-95">
@@ -516,7 +516,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
             <p className="text-sm font-medium text-indigo-500/80 mb-6">Le dossier notaire doit être complet pour planifier la signature officielle.</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                {['Livret Foncier', 'Acte de Propriété', 'Pièces d\'identité'].map((doc, idx) => (
-                 <div key={idx} className="bg-white dark:bg-[#111111] border border-indigo-500/20 rounded-xl p-4 flex items-center justify-between">
+                 <div key={idx} className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-4 flex items-center justify-between">
                    <div className="flex items-center gap-3">
                      <input type="checkbox" className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
                      <span className="text-sm font-bold text-gray-900 dark:text-white">{doc}</span>
@@ -532,7 +532,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           </div>
         )}
 
-        <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl">
+        <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm">
            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-gray-500" /> Calendrier de la Transaction
           </h3>
@@ -543,7 +543,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
               <p className="text-xs text-gray-500">{new Date(deal.created_at).toLocaleDateString()}</p>
             </div>
              <div className="relative">
-              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[29px] top-1.5 ring-4 ring-[#0A0A0A]" />
+              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[29px] top-1.5 ring-4 ring-[#141618]" />
               <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Négociation en cours</p>
               <p className="text-xs text-blue-400 font-medium">Actuel</p>
             </div>
@@ -555,7 +555,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           </div>
         </div>
 
-        <div className="bg-gray-50 dark:bg-[#050505] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-2xl flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm flex flex-col justify-between">
            <div>
              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Calculator className="w-5 h-5 text-gray-500" /> Commission Agent
@@ -565,7 +565,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
             </p>
            </div>
            
-           <div className="mt-6 p-4 bg-white dark:bg-[#0A0A0A] rounded-xl border border-black/5 dark:border-white/5">
+           <div className="mt-6 p-4 bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20">
              <div className="flex justify-between items-center mb-4">
                <span className="text-sm text-gray-500 font-bold uppercase tracking-widest">Part Agence (60%)</span>
                <span className="text-sm font-bold text-gray-900 dark:text-white">{((agreedPrice * 0.03 * 0.6) / 1000).toFixed(1)}k DZD</span>
@@ -582,7 +582,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-xl mt-6">
+      <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6">
         <div className="flex items-center justify-between mb-6">
            <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-emerald-500" /> Registre des Paiements & Échéancier
@@ -647,7 +647,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                                  e.currentTarget.innerText = "Valider";
                               }
                            }}
-                           className="px-3 py-1.5 bg-gray-100 hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 dark:bg-white/5 dark:hover:bg-emerald-500/10 dark:text-gray-300 dark:hover:text-emerald-400 text-xs font-bold rounded-lg border border-transparent hover:border-emerald-500/20 transition-all">
+                           className="px-3 py-1.5 bg-asas-sand/50 hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 dark:bg-white/5 dark:hover:bg-emerald-500/10 dark:text-gray-300 dark:hover:text-emerald-400 text-xs font-bold rounded-lg border border-transparent hover:border-emerald-500/20 transition-all">
                            Valider
                         </button>
                       )}
