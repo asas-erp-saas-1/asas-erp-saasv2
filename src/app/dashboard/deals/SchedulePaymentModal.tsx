@@ -63,27 +63,27 @@ export function SchedulePaymentModal({ dealId, onClose, onSuccess }: { dealId: s
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative w-full max-w-md bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-6 flex flex-col"
       >
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+        <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 text-asas-silver hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
           <X className="w-4 h-4" />
         </button>
         
-        <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-4 text-blue-500 border border-blue-500/20">
+        <div className="w-12 h-12 bg-blue-500/10 rounded-sm flex items-center justify-center mb-4 text-asas-navy dark:text-asas-sand border border-blue-500/20">
           <CalendarIcon className="w-6 h-6" />
         </div>
         
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">Programmer une Échéance</h2>
+        <h2 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand mb-2 leading-tight">Programmer une Échéance</h2>
         <p className="text-sm text-gray-500 font-medium mb-6">
           Ajoutez un appel de fonds ou une tranche à l'échéancier de cette transaction. Le paiement apparaîtra en attente (Pending).
         </p>
 
-        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold rounded-xl">{error}</div>}
+        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold rounded-sm">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Montant DZD</label>
              <input 
                type="number" required placeholder="Ex: 1500000"
-               className="w-full px-4 py-3 bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-lg font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+               className="w-full px-4 py-3 bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-lg font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                value={amount} onChange={e => setAmount(e.target.value)}
              />
           </div>
@@ -92,7 +92,7 @@ export function SchedulePaymentModal({ dealId, onClose, onSuccess }: { dealId: s
              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Date d'Échéance (Limit deadline)</label>
              <input 
                type="date" required 
-               className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+               className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                value={dueDate} onChange={e => setDueDate(e.target.value)}
              />
           </div>
@@ -109,7 +109,7 @@ export function SchedulePaymentModal({ dealId, onClose, onSuccess }: { dealId: s
           <button
             type="submit"
             disabled={loading || !amount || !dueDate || !notes}
-            className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+            className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold text-white bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black disabled:opacity-50 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
           >
             {loading ? 'Création...' : <><CheckCircle2 className="w-5 h-5" /> Valider l'Échéance</>}
           </button>

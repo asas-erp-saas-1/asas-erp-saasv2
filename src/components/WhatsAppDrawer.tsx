@@ -62,33 +62,33 @@ export function WhatsAppDrawer({ isOpen, onClose, clientName, clientPhone, conte
       {/* Sheet */}
       <div
         className={clsx(
-          "fixed inset-x-0 sm:inset-x-auto sm:right-0 sm:top-0 bottom-0 z-[9999] sm:w-[400px] w-full bg-white dark:bg-[#141618] sm:border-l border-t sm:border-t-0 border-black/10 dark:border-white/10 flex flex-col shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "fixed inset-x-0 sm:inset-x-auto sm:right-0 sm:top-0 bottom-0 z-[9999] sm:w-[400px] w-full bg-white dark:bg-[#141618] sm:border-l border-t sm:border-t-0 border-asas-silver/20 flex flex-col shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen ? "translate-y-0 sm:translate-x-0" : "translate-y-full sm:translate-y-0 sm:translate-x-full"
         )}
       >
         <div className="w-full flex justify-center pt-3 pb-1 sm:hidden shrink-0">
-          <div className="w-12 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full"></div>
+          <div className="w-12 h-1.5 bg-asas-silver/20 rounded-sm"></div>
         </div>
 
         <div className="px-6 pb-4 pt-4 sm:pt-6 flex items-center justify-between border-b border-asas-silver/20 shrink-0">
           <div className="flex flex-col">
-            <h2 className="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-[10px] uppercase tracking-widest font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-[#25D366]" />
               Action WhatsApp
             </h2>
-            <p className="text-xs text-gray-500 mt-1">Destinataire: <span className="font-bold text-gray-800 dark:text-gray-300">{clientName}</span></p>
+            <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mt-1">Destinataire: <span className="font-bold text-asas-charcoal dark:text-asas-sand">{clientName}</span></p>
           </div>
           <button 
             type="button"
             onClick={onClose}
-            className="p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand bg-asas-sand/50 dark:bg-black/10 hover:bg-asas-silver/10 rounded-sm transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Modèles de messages ({contextType})</p>
+          <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mb-4">Modèles de messages ({contextType})</p>
           
           <div className="space-y-3">
             {activeTemplates.map(t => (
@@ -96,33 +96,33 @@ export function WhatsAppDrawer({ isOpen, onClose, clientName, clientPhone, conte
                 key={t.id}
                 onClick={() => setSelectedTemplate(t.id)}
                 className={clsx(
-                  "p-4 rounded-xl border cursor-pointer transition-all",
+                  "p-4 rounded-sm border cursor-pointer transition-all",
                   selectedTemplate === t.id 
-                    ? "bg-emerald-500/10 border-emerald-500/30 ring-1 ring-emerald-500/50 shadow-sm"
-                    : "bg-white dark:bg-[#141618] border-black/10 dark:border-white/10 hover:border-emerald-500/30"
+                    ? "bg-[#25D366]/10 border-[#25D366]/30 shadow-sm"
+                    : "bg-white dark:bg-[#141618] border-asas-silver/20 hover:border-[#25D366]/30"
                 )}
               >
-                <p className="text-sm font-bold text-gray-900 dark:text-white mb-2">{t.title}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">{t.text}</p>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-asas-charcoal dark:text-asas-sand mb-2">{t.title}</p>
+                <p className="text-xs font-medium text-asas-charcoal/80 dark:text-asas-silver line-clamp-3 leading-relaxed">{t.text}</p>
               </div>
             ))}
           </div>
 
           {selectedTemplate && (
             <div className="mt-6">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Aperçu du message</p>
-              <div className="p-4 bg-[#e5ddd5] dark:bg-[#075e54]/20 rounded-xl rounded-tr-none border border-black/5 dark:border-[#075e54]/50 shadow-sm">
-                <p className="text-sm text-gray-900 dark:text-gray-200 whitespace-pre-wrap">{currentMessage}</p>
+              <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mb-2">Aperçu du message</p>
+              <div className="p-4 bg-[#e5ddd5] dark:bg-[#075e54]/20 rounded-sm border border-[#075e54]/20 shadow-sm relative before:absolute before:border-[8px] before:border-transparent before:border-b-[#e5ddd5] dark:before:border-b-[#075e54]/20 before:-top-[16px] before:left-4">
+                <p className="text-sm font-medium text-asas-charcoal dark:text-asas-sand whitespace-pre-wrap">{currentMessage}</p>
               </div>
             </div>
           )}
         </div>
 
-        <div className="p-6 border-t border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#141618] shrink-0">
+        <div className="p-6 border-t border-asas-silver/20 bg-asas-sand/30 dark:bg-black/10 shrink-0">
           <button
             onClick={handleSend}
             disabled={!selectedTemplate}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 disabled:opacity-50 disabled:cursor-not-allowed text-[#25D366] text-[10px] uppercase tracking-widest font-bold rounded-sm shadow-sm transition-all active:scale-[0.98] cursor-pointer"
           >
             <Send className="w-4 h-4" /> 
             Envoyer sur WhatsApp

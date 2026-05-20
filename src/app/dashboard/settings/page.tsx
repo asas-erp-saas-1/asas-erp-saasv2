@@ -110,8 +110,8 @@ export default function SettingsPage() {
 
   if (loading || !config) return (
     <div className="flex-1 w-full max-w-4xl mx-auto space-y-6 bg-[#000000]">
-      <div className="h-16 w-1/3 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-2xl animate-pulse mb-8" />
-      {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-3xl animate-pulse" />)}
+      <div className="h-16 w-1/3 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm animate-pulse mb-8" />
+      {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-sm animate-pulse" />)}
     </div>
   )
 

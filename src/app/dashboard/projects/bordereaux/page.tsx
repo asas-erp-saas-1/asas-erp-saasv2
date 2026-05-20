@@ -74,15 +74,15 @@ export default function BordereauxPage() {
   return (
     <div className="w-full relative pb-12">
       {/* Decorative Blur */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-asas-navy/10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 relative z-10">
         <div>
-          <Link href="/dashboard/projects" className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors mb-2">
+          <Link href="/dashboard/projects" className="flex items-center gap-2 text-sm font-bold text-asas-silver hover:text-gray-900 dark:hover:text-white transition-colors mb-2">
             <ChevronLeft className="w-4 h-4" /> Retour aux Programmes
           </Link>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display">
             <div className="w-12 h-12 rounded-[1.25rem] bg-gradient-to-br from-indigo-500 to-purple-800 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.2)]">
               <FileText className="h-6 w-6 text-white" strokeWidth={1.5} />
             </div>
@@ -104,7 +104,7 @@ export default function BordereauxPage() {
         <div className="bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-transparent border-b border-black/10 dark:border-white/10 p-8 relative overflow-hidden backdrop-blur-xl">
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 font-display">Reddition de Comptes Promoteur</h2>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed mb-0">
+            <p className="text-sm font-medium text-asas-charcoal/80 dark:text-asas-silver leading-relaxed mb-0">
               Générez les états de reversement officiels pour chaque partenaire de promotion immobilière. 
               Les bordereaux calculent automatiquement les fonds collectés et déduisent vos honoraires de commercialisation.
             </p>
@@ -113,11 +113,11 @@ export default function BordereauxPage() {
 
         <div className="p-8 bg-[#030303] min-h-[400px]">
           {loading ? (
-            <div className="flex items-center justify-center py-20 text-blue-500">
+            <div className="flex items-center justify-center py-20 text-asas-navy dark:text-asas-sand">
                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
           ) : data.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-white dark:bg-[#141618] rounded-3xl border border-black/5 dark:border-white/5 border-dashed">
+            <div className="flex flex-col items-center justify-center py-20 text-gray-500 bg-white dark:bg-[#141618] rounded-sm border border-black/5 dark:border-white/5 border-dashed">
                <Building2 className="h-10 w-10 text-white/20 mb-4" />
                <p className="text-lg font-bold text-gray-900 dark:text-white mb-1">Aucun Promoteur Actif</p>
                <p className="text-xs uppercase tracking-widest">Connectez des promoteurs à vos projets pour voir les états</p>
@@ -135,13 +135,13 @@ export default function BordereauxPage() {
                         </div>
                         <button 
                            onClick={() => handleDownload(dev)}
-                           className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-xl transition-colors flex items-center gap-2">
+                           className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-sm transition-colors flex items-center gap-2">
                            <Download className="w-4 h-4" /> PDF
                         </button>
                      </div>
                      
                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-white dark:bg-[#141618] rounded-2xl p-4 border border-black/5 dark:border-white/5">
+                        <div className="bg-white dark:bg-[#141618] rounded-sm p-4 border border-black/5 dark:border-white/5">
                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Fonds Collectés</p>
                            <p className="text-lg font-black text-gray-900 dark:text-white">{fmt(dev.metrics.total_collected)}</p>
                         </div>
@@ -155,7 +155,7 @@ export default function BordereauxPage() {
                         <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 ml-1 border-b border-black/5 dark:border-white/5 pb-2">Détail par Programme</p>
                         <div className="space-y-3">
                            {dev.projects.map((proj: any) => (
-                              <div key={proj.id} className="flex items-center justify-between text-sm py-2 px-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors">
+                              <div key={proj.id} className="flex items-center justify-between text-sm py-2 px-3 hover:bg-asas-sand/30 dark:hover:bg-white/5 rounded-xl transition-colors">
                                  <div>
                                     <p className="font-bold text-gray-900 dark:text-gray-100">{proj.name}</p>
                                     <p className="text-xs text-gray-500">{proj.sold_count} lots vendus</p>

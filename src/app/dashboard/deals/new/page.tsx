@@ -59,14 +59,14 @@ function DealForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-4 sm:mt-8 bg-white dark:bg-[#141618] border border-asas-silver/20 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl">
+    <div className="max-w-2xl mx-auto mt-4 sm:mt-8 bg-white dark:bg-[#141618] border border-asas-silver/20 p-5 sm:p-8 rounded-sm sm:rounded-sm shadow-2xl">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/20">
+        <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-sm flex items-center justify-center border border-emerald-500/20">
           <Handshake className="w-6 h-6" strokeWidth={1.5} />
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight font-display">Nouvelle Transaction</h1>
-          <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mt-1">Création de deal</p>
+          <h1 className="text-2xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight font-display">Nouvelle Transaction</h1>
+          <p className="text-sm font-bold text-asas-silver uppercase tracking-widest mt-1">Création de deal</p>
         </div>
       </div>
 
@@ -79,10 +79,10 @@ function DealForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Titre de la transaction</label>
+          <label className="block text-sm font-bold text-asas-charcoal/80 dark:text-asas-silver mb-2 uppercase tracking-wide">Titre de la transaction</label>
           <input
             type="text"
-            className="w-full bg-[#111] border border-black/10 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+            className="w-full bg-[#111] border border-black/10 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold focus:border-asas-gold transition-all font-medium"
             placeholder="ex: Appartement T4 Atlas"
             value={formData.title}
             onChange={e => setFormData({ ...formData, title: e.target.value })}

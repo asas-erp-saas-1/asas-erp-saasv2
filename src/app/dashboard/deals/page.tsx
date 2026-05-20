@@ -14,7 +14,7 @@ import { WhatsAppDrawer } from '@/components/WhatsAppDrawer'
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_STYLE: Record<string, string> = {
-  draft:       'bg-gray-800 text-gray-800 dark:text-gray-300 border-gray-700',
+  draft:       'bg-gray-800 text-asas-charcoal/90 dark:text-asas-sand/90 border-gray-700',
   active:      'bg-blue-500/10 text-blue-400 border-blue-500/20',
   negotiation: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   notary:      'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
@@ -346,13 +346,13 @@ export default function DealsPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-[#141618] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-asas-charcoal/80 dark:text-asas-silver bg-white dark:bg-[#141618] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-asas-charcoal dark:text-asas-sand"
             >Précédent</button>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Page {page} / {Math.ceil(total / LIMIT)}</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-asas-silver">Page {page} / {Math.ceil(total / LIMIT)}</span>
             <button
               disabled={page >= Math.ceil(total / LIMIT)}
               onClick={() => setPage(p => p + 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#050505] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-asas-sand/30 dark:bg-[#050505] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
             >Suivant</button>
           </div>
         )}

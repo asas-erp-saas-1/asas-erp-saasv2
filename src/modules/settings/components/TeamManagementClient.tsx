@@ -23,8 +23,8 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
   owner: <ShieldAlert className="w-4 h-4 text-purple-500" />,
-  manager: <ShieldCheck className="w-4 h-4 text-blue-500" />,
-  agent: <Shield className="w-4 h-4 text-gray-500" />
+  manager: <ShieldCheck className="w-4 h-4 text-asas-navy dark:text-asas-sand" />,
+  agent: <Shield className="w-4 h-4 text-asas-silver" />
 }
 
 export function TeamManagementClient({ initialProfiles, currentUserRole }: { initialProfiles: Profile[], currentUserRole: string }) {

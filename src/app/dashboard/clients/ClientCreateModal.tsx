@@ -46,16 +46,16 @@ export function ClientCreateModal({ onClose, onSuccess }: { onClose: () => void,
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[#141618] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-asas-silver/20 relative flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-[#141618] w-full max-w-lg rounded-sm shadow-2xl overflow-hidden border border-asas-silver/20 relative flex flex-col max-h-[90vh]">
         
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5 bg-white dark:bg-[#141618]">
            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-sm bg-blue-500/10 text-asas-navy dark:text-asas-sand flex items-center justify-center">
                  <User className="h-5 w-5" />
               </div>
               <div>
-                 <h2 className="text-xl font-extrabold text-gray-900 dark:text-white">Nouveau Profil Client</h2>
-                 <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-1">Enregistrement dans le CRM</p>
+                 <h2 className="text-xl font-extrabold text-asas-charcoal dark:text-asas-sand">Nouveau Profil Client</h2>
+                 <p className="text-[10px] uppercase tracking-widest font-bold text-asas-silver mt-1">Enregistrement dans le CRM</p>
               </div>
            </div>
            <button onClick={onClose} className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
@@ -67,13 +67,13 @@ export function ClientCreateModal({ onClose, onSuccess }: { onClose: () => void,
           <form id="create-client-form" onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-[10px] uppercase font-bold text-gray-500 mb-2 tracking-widest">Nom Complet *</label>
-              <input type="text" name="full_name" required className="w-full bg-gray-50 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-bold" placeholder="Ex: Jean Dupont" />
+              <input type="text" name="full_name" required className="w-full bg-asas-sand/30 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold font-bold" placeholder="Ex: Jean Dupont" />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
                <div>
                   <label className="block text-[10px] uppercase font-bold text-gray-500 mb-2 tracking-widest">Téléphone</label>
-                  <input type="tel" name="phone" className="w-full bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="+213 555 000 000" />
+                  <input type="tel" name="phone" className="w-full bg-gray-50 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="+213 555 000 000" />
                </div>
                <div>
                   <label className="block text-[10px] uppercase font-bold text-gray-500 mb-2 tracking-widest">Email</label>
@@ -111,10 +111,10 @@ export function ClientCreateModal({ onClose, onSuccess }: { onClose: () => void,
         </div>
 
         <div className="p-6 border-t border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#050505] flex justify-end gap-3 shrink-0">
-           <button onClick={onClose} disabled={loading} className="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#1A1A1A] transition-colors disabled:opacity-50">
+           <button onClick={onClose} disabled={loading} className="px-5 py-2.5 rounded-xl font-bold text-sm text-asas-charcoal/80 dark:text-asas-silver hover:bg-gray-200 dark:hover:bg-[#1A1A1A] transition-colors disabled:opacity-50">
              Annuler
            </button>
-           <button form="create-client-form" type="submit" disabled={loading} className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50">
+           <button form="create-client-form" type="submit" disabled={loading} className="flex items-center gap-2 px-5 py-2.5 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50">
              <Plus className="w-4 h-4" /> {loading ? 'Création...' : 'Créer Profil'}
            </button>
         </div>

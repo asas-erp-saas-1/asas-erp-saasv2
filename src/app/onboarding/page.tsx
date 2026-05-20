@@ -107,60 +107,60 @@ export default function OnboardingPage() {
   };
 
   if (checking) {
-     return <div className="min-h-screen bg-[#141618] flex items-center justify-center text-white">Vérification...</div>
+     return <div className="min-h-screen bg-[#141618] flex items-center justify-center text-asas-sand text-[10px] uppercase font-bold tracking-widest">Vérification...</div>
   }
 
   return (
-    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid relative">
-      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#141618] to-transparent pointer-events-none z-0"></div>
+    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand px-4 py-12 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-asas-sand dark:from-black/10 to-transparent pointer-events-none z-0"></div>
       
       <motion.div 
          initial={{ opacity: 0, y: 20 }}
          animate={{ opacity: 1, y: 0 }}
-         className="w-full max-w-lg p-6 sm:p-10 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0A0A0A] rounded-3xl shadow-2xl z-10 relative"
+         className="w-full max-w-lg p-6 sm:p-10 border border-asas-silver/20 bg-white dark:bg-[#141618] rounded-sm shadow-sm z-10 relative"
       >
         <div className="flex items-center justify-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-bl from-indigo-600 to-purple-900 border border-indigo-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(79,70,229,0.3)]">
-            <Rocket className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center shadow-sm">
+            <Rocket className="w-8 h-8 text-asas-gold" />
           </div>
         </div>
-        <h2 className="text-3xl font-extrabold text-center mb-3 font-display tracking-tight text-gray-900 dark:text-white">Création du Workspace</h2>
-        <p className="text-gray-600 dark:text-gray-400 text-center text-sm mb-10 pb-6 border-b border-gray-200 dark:border-white/5">
+        <h2 className="text-2xl font-bold text-center mb-3 font-display uppercase tracking-widest text-asas-charcoal dark:text-asas-sand">Création du Workspace</h2>
+        <p className="text-asas-charcoal/80 dark:text-asas-silver text-center text-[10px] uppercase font-bold tracking-widest mb-10 pb-6 border-b border-asas-silver/20">
            Configurez votre agence pour commencer à utiliser ASAS ERP.
         </p>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-4 rounded-xl mb-6 font-medium">
+          <div className="bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444] text-[10px] uppercase font-bold tracking-widest p-4 rounded-sm mb-6">
             {error}
           </div>
         )}
 
         <form onSubmit={handleOnboarding} className="flex flex-col gap-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Nom de l'Agence / Promotion</label>
+            <label className="block text-[10px] font-bold text-asas-silver uppercase tracking-widest mb-2">Nom de l'Agence / Promotion</label>
             <input
               type="text"
               required
               value={agencyName}
               onChange={(e) => setAgencyName(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-[#141618] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold text-lg"
+              className="w-full bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 rounded-sm px-4 py-3.5 text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-all font-bold text-lg"
               placeholder="Ex: ASAS Immobilier"
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Téléphone Principal</label>
+            <label className="block text-[10px] font-bold text-asas-silver uppercase tracking-widest mb-2">Téléphone Principal</label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+              className="w-full bg-asas-sand/50 dark:bg-white/5 border border-asas-silver/20 rounded-sm px-4 py-3.5 text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-all font-bold text-lg cursor-pointer"
               placeholder="+213 550 00 00 00"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl transition-all mt-6 disabled:opacity-50 relative overflow-hidden group flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+            className="w-full bg-asas-navy border border-asas-silver/20 hover:bg-asas-charcoal dark:hover:bg-black text-asas-sand font-bold text-[10px] uppercase tracking-widest py-4 rounded-sm transition-all mt-6 disabled:opacity-50 relative group flex items-center justify-center gap-2 shadow-sm cursor-pointer"
           >
             {loading ? 'Configuration en cours...' : 'Terminer l\'installation'}
             {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" strokeWidth={2} />}

@@ -56,17 +56,17 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-sm shadow-2xl flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-asas-silver/20 bg-asas-sand/50 dark:bg-[#141618]">
           <div>
-             <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-               <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+             <h2 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2">
+               <User className="h-5 w-5 text-asas-charcoal/80 dark:text-asas-silver" />
                Détails du Prospect
              </h2>
-             <p className="text-xs text-gray-500 uppercase tracking-widest mt-1 font-bold">INFO ET HISTORIQUE</p>
+             <p className="text-xs text-asas-silver uppercase tracking-widest mt-1 font-bold">INFO ET HISTORIQUE</p>
           </div>
           <button 
             onClick={onClose}
@@ -80,7 +80,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
         <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10">
           {loading ? (
             <div className="flex flex-col gap-4 animate-pulse">
-              <div className="h-24 bg-black/5 dark:bg-white/5 rounded-xl border border-black/5 dark:border-white/5" />
+              <div className="h-24 bg-black/5 dark:bg-white/5 rounded-sm border border-black/5 dark:border-white/5" />
               <div className="h-64 bg-black/5 dark:bg-white/5 rounded-xl border border-black/5 dark:border-white/5" />
             </div>
           ) : !lead ? (
@@ -91,12 +91,12 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
             <div className="space-y-6">
               
               {/* Profile Card */}
-              <div className="bg-gray-100 dark:bg-[#111111] border border-black/5 dark:border-white/5 rounded-xl p-5 shadow-inner">
+              <div className="bg-gray-100 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-xl p-5 shadow-inner">
                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                    {(lead as any).clients?.full_name ?? 'Client Inconnu'}
                  </h3>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 text-sm text-gray-800 dark:text-gray-300">
+                    <div className="flex items-center gap-3 text-sm text-asas-charcoal/90 dark:text-asas-sand/90">
                       <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
                          <Phone className="w-4 h-4 text-emerald-400" />
                       </div>
@@ -209,7 +209,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                     <input 
                       type="text" 
                       id="new-note-input"
-                      className="flex-1 bg-white dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="flex-1 bg-white dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                       placeholder="Ajouter une note rapide..."
                       onKeyDown={async (e) => {
                         if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
@@ -251,7 +251,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                           console.error(err);
                         }
                       }}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-colors">
+                      className="px-4 py-2 bg-asas-navy text-white rounded-xl text-sm font-bold hover:bg-asas-charcoal dark:hover:bg-black transition-colors">
                       Ajouter
                     </button>
                   </div>

@@ -93,7 +93,7 @@ export default function BrandPreviewDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-asas-silver/20 text-xs uppercase tracking-wider text-asas-charcoal/60 dark:text-asas-sand/60 bg-gray-50/50 dark:bg-black/10">
+                <tr className="border-b border-asas-silver/20 text-xs uppercase tracking-wider text-asas-charcoal/60 dark:text-asas-sand/60 bg-asas-sand/30/50 dark:bg-black/10">
                   <th className="p-4 font-semibold whitespace-nowrap">Ref / المرجع</th>
                   <th className="p-4 font-semibold">Entity / الكيان</th>
                   <th className="p-4 font-semibold">Category / الفئة</th>

@@ -57,7 +57,7 @@ export function AgentDashboard({ agentId, agentName }: { agentId: string, agentN
     }
   }
 
-  if (!data) return <div className="p-6 md:p-8 text-gray-500 text-xs font-bold uppercase tracking-widest animate-pulse">Décryptage du profil...</div>
+  if (!data) return <div className="p-6 md:p-8 text-asas-silver text-xs font-bold uppercase tracking-widest animate-pulse">Décryptage du profil...</div>
 
   return (
     <div className="p-6 md:p-8 bg-white dark:bg-[#141618] border-y lg:border border-asas-silver/20 lg:rounded-sm lg:m-6 shadow-sm relative">

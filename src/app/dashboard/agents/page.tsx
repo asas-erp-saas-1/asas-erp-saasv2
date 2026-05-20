@@ -93,15 +93,15 @@ export default function AgentsPage() {
           {loading ? (
             <div className="space-y-3 p-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-20 bg-gray-200 dark:bg-[#171717] rounded-2xl animate-pulse" />
+                <div key={i} className="h-20 bg-gray-200 dark:bg-[#171717] rounded-sm animate-pulse" />
               ))}
             </div>
           ) : agents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 py-20">
+            <div className="flex flex-col items-center justify-center h-full text-asas-silver py-20">
               <div className="w-20 h-20 bg-gray-200 dark:bg-[#171717] rounded-full flex items-center justify-center mb-4">
-                 <Users className="h-10 w-10 text-gray-600 dark:text-gray-400" />
+                 <Users className="h-10 w-10 text-asas-charcoal/80 dark:text-asas-silver" />
               </div>
-              <p className="font-extrabold text-gray-900 dark:text-white">Aucun agent trouvé</p>
+              <p className="font-extrabold text-asas-charcoal dark:text-asas-sand">Aucun agent trouvé</p>
               <p className="text-sm mt-1">Les données de classement n'ont pas pu être chargées.</p>
             </div>
           ) : (

@@ -29,7 +29,7 @@ export default function ProjectDetail() {
     load()
   }, [load])
 
-  if (loading) return <div className="p-8 text-center text-gray-500 animate-pulse">Chargement du programme...</div>
+  if (loading) return <div className="p-8 text-center text-asas-silver animate-pulse">Chargement du programme...</div>
   if (!project) return <div className="p-8 text-center text-red-500">Programme introuvable</div>
 
   const properties: Property[] = project.properties || []
@@ -57,8 +57,8 @@ export default function ProjectDetail() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 relative z-10">
         <div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-4 font-display">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-800 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-4 font-display">
+            <div className="w-14 h-14 rounded-sm bg-gradient-to-br from-indigo-600 to-blue-800 flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <Building2 className="h-7 w-7 text-white" strokeWidth={1.5} />
             </div>
             {project.name}
@@ -69,7 +69,7 @@ export default function ProjectDetail() {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
-          <Link href={`/dashboard/projects/${id}/canvas`} className="flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 active:translate-y-0 text-center">
+          <Link href={`/dashboard/projects/${id}/canvas`} className="flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm rounded-sm transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 active:translate-y-0 text-center">
              <Map className="w-4 h-4" /> Plan Interactif
           </Link>
           <div className="flex bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-2xl p-4 gap-6">
@@ -130,15 +130,15 @@ export default function ProjectDetail() {
            {/* Échéancier VEFA Global */}
            <div className="bg-white dark:bg-[#050505] rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl p-8">
               <h2 className="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3 mb-6">
-                 <BadgePercent className="w-6 h-6 text-blue-500" /> Échéancier Global des Appels de Fonds (VEFA)
+                 <BadgePercent className="w-6 h-6 text-asas-navy dark:text-asas-sand" /> Échéancier Global des Appels de Fonds (VEFA)
               </h2>
               <p className="text-sm font-medium text-gray-500 mb-6">Lorsque vous validez une phase de construction, les appels de fonds sont automatiquement générés pour toutes les transactions en cours sur ce projet.</p>
               
               <div className="space-y-4">
                  {project.tranches?.length ? project.tranches.map((tranche: any, i: number) => (
-                   <div key={i} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", tranche.done ? "bg-emerald-500/5 border-emerald-500/20" : "bg-gray-50 dark:bg-[#0A0A0A] border-black/5 dark:border-white/5")}>
+                   <div key={i} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", tranche.done ? "bg-emerald-500/5 border-emerald-500/20" : "bg-asas-sand/30 dark:bg-[#0A0A0A] border-black/5 dark:border-white/5")}>
                       <div className="flex items-center gap-4">
-                         <div className={clsx("w-8 h-8 rounded-lg flex items-center justify-center", tranche.done ? "bg-emerald-500/20 text-emerald-500" : "bg-gray-200 dark:bg-[#111111] text-gray-400")}>
+                         <div className={clsx("w-8 h-8 rounded-lg flex items-center justify-center", tranche.done ? "bg-emerald-500/20 text-emerald-500" : "bg-gray-200 dark:bg-white/5 text-gray-400")}>
                            {tranche.done ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-xs font-bold">{i+1}</span>}
                          </div>
                          <div>
@@ -179,7 +179,7 @@ export default function ProjectDetail() {
                               alert('Erreur lors du déclenchement de l\'appel de fonds');
                             }
                           }}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-sm transition-all">
+                          className="px-4 py-2 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-sm transition-all">
                           Déclencher Appel
                         </button>
                       )}
@@ -257,7 +257,7 @@ export default function ProjectDetail() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-           <div className="bg-white dark:bg-[#0A0A0A] rounded-3xl border border-black/5 dark:border-white/5 p-6 shadow-xl">
+           <div className="bg-white dark:bg-[#0A0A0A] rounded-sm border border-black/5 dark:border-white/5 p-6 shadow-xl">
              <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">Mix Produit</h3>
              <div className="space-y-4">
                 {Object.entries(byType).map(([type, count]) => (

@@ -76,20 +76,20 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-lg bg-white dark:bg-[#141618] rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10 overflow-hidden flex flex-col max-h-full"
+        className="relative w-full max-w-lg bg-white dark:bg-[#141618] rounded-sm shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10 overflow-hidden flex flex-col max-h-full"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-asas-silver/20 bg-white dark:bg-[#141618]">
-          <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
-            <User className="w-4 h-4 text-blue-500" /> Nouvelle Entité (Lead)
+          <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex items-center gap-2">
+            <User className="w-4 h-4 text-asas-navy dark:text-asas-sand" /> Nouvelle Entité (Lead)
           </h2>
-          <button onClick={onClose} className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors text-gray-500">
+          <button onClick={onClose} className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors text-asas-silver">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium rounded-xl">
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium rounded-sm">
               {error}
             </div>
           )}
@@ -102,14 +102,14 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
                   type="text"
                   required
                   placeholder="Nom complet du prospect"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500"
+                  className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold focus:border-asas-gold transition-all placeholder:text-gray-500"
                   value={formData.clientName}
                   onChange={e => setFormData({ ...formData, clientName: e.target.value })}
                 />
                 <input
                   type="tel"
                   placeholder="Téléphone (WhatsApp)"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500 font-mono tracking-wide"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500 font-mono tracking-wide"
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
                 />
@@ -160,7 +160,7 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-3 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-400 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            className="px-6 py-3 rounded-xl text-sm font-bold text-asas-charcoal/80 dark:text-asas-silver bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
           >
             Annuler
           </button>
@@ -168,7 +168,7 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
             form="lead-form"
             type="submit"
             disabled={loading}
-            className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20"
+            className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black disabled:opacity-50 transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20"
           >
             <Save className="w-4 h-4" />
             {loading ? 'Création...' : 'Créer & Capturer'}

@@ -36,8 +36,8 @@ export function CEODashboard({ initialMetrics }: { initialMetrics?: any }) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-gray-600 dark:text-gray-400">
-        <RefreshCcw className="w-10 h-10 animate-spin mb-6 text-blue-500" strokeWidth={1.5} />
+      <div className="flex flex-col items-center justify-center py-32 text-asas-charcoal/80 dark:text-asas-silver">
+        <RefreshCcw className="w-10 h-10 animate-spin mb-6 text-asas-navy dark:text-asas-sand" strokeWidth={1.5} />
         <p className="text-sm font-bold uppercase tracking-widest animate-pulse">Synchronisation OS en cours...</p>
       </div>
     )
@@ -61,7 +61,7 @@ export function CEODashboard({ initialMetrics }: { initialMetrics?: any }) {
   return (
     <div className="mt-8 pb-12 overflow-hidden">
       {kpis.dataFreshness === 'stale' && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-start gap-3 backdrop-blur-sm">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 bg-amber-500/10 border border-amber-500/20 rounded-sm p-4 flex items-start gap-3 backdrop-blur-sm">
           <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-bold text-amber-800 tracking-tight">Données non synchronisées</h4>

@@ -23,12 +23,12 @@ export default async function InvitePage({ params }: { params: { code: string } 
     // Need to login or signup first
     // Save invite code to a cookie to process after login? Or just pass it in URL
     return (
-      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid">
-         <div className="w-full max-w-md p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#141618] rounded-3xl shadow-2xl text-center">
+      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand px-4 py-12 bg-dot-grid">
+         <div className="w-full max-w-md p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#141618] rounded-sm shadow-2xl text-center">
             <h2 className="text-2xl font-bold mb-4">Invitation Reçue</h2>
-            <p className="text-gray-500 mb-8">Connectez-vous ou créez un compte pour accepter l'invitation à rejoindre l'agence.</p>
+            <p className="text-asas-silver mb-8">Connectez-vous ou créez un compte pour accepter l'invitation à rejoindre l'agence.</p>
             <div className="space-y-4">
-              <Link href={`/login?invite=${params.code}`} className="block w-full px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all">
+              <Link href={`/login?invite=${params.code}`} className="block w-full px-6 py-3 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black text-white rounded-sm font-bold transition-all">
                 Se Connecter
               </Link>
               <Link href={`/signup?invite=${params.code}`} className="block w-full px-6 py-3 bg-asas-sand/50 hover:bg-gray-200 dark:bg-[#141618] dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl font-bold border border-gray-200 dark:border-white/10 transition-all">
@@ -58,7 +58,7 @@ export default async function InvitePage({ params }: { params: { code: string } 
   }
 
   return (
-    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12">
+    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-asas-sand/30 dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12">
       <div className="w-full max-w-md p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0A0A0A] rounded-3xl shadow-2xl text-center">
          <h2 className="text-xl font-bold mb-4 text-red-500">Lien invalide ou expiré</h2>
          <p className="text-gray-500">Cette invitation n'existe plus ou a déjà été utilisée.</p>

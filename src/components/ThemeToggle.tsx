@@ -14,7 +14,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <button className="relative p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all">
+      <button className="relative p-2.5 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:bg-asas-sand/50 dark:hover:bg-white/5 rounded-sm transition-all cursor-pointer">
         <div className="w-5 h-5" />
       </button>
     )
@@ -23,7 +23,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="relative p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
+      className="relative p-2.5 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:bg-asas-sand/50 dark:hover:bg-white/5 rounded-sm transition-all cursor-pointer"
       title="Basculer le thème clair/sombre"
     >
       {theme === 'dark' ? (

@@ -103,7 +103,7 @@ export function CreateTaskModal({ leadId, dealId, onClose, onSuccess }: CreateTa
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">
+            <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-sm text-sm">
               {error}
             </div>
           )}

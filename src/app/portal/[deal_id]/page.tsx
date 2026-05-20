@@ -85,12 +85,12 @@ export default function CustomerPortal({ params }: { params: { deal_id: string }
              initial={{ opacity: 0, y: 10 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ delay: 0.2 }}
-             className="md:col-span-2 bg-[#0A0A0A] border border-white/5 p-8 rounded-3xl relative overflow-hidden"
+             className="md:col-span-2 bg-[#0A0A0A] border border-white/5 p-8 rounded-sm relative overflow-hidden"
            >
               <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               
               <div className="flex items-start gap-4 mb-8 relative z-10">
-                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                 <div className="w-12 h-12 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                     <Building2 className="w-6 h-6 text-indigo-400" />
                  </div>
                  <div>
@@ -102,11 +102,11 @@ export default function CustomerPortal({ params }: { params: { deal_id: string }
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
-                 <div className="bg-[#141618] border border-white/5 rounded-xl p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-bold">Type</p>
+                 <div className="bg-[#141618] border border-white/5 rounded-sm p-4">
+                    <p className="text-[10px] uppercase tracking-widest text-asas-silver mb-1 font-bold">Type</p>
                     <p className="font-bold text-sm">{deal.properties?.type || 'Appartement'}</p>
                  </div>
-                 <div className="bg-[#111111] border border-white/5 rounded-xl p-4">
+                 <div className="bg-white/5 border border-white/5 rounded-xl p-4">
                     <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-bold">Surface</p>
                     <p className="font-bold text-sm">{deal.properties?.area_sqm ? `${deal.properties.area_sqm} m²` : '---'}</p>
                  </div>

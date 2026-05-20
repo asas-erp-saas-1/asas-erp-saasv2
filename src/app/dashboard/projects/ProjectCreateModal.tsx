@@ -58,22 +58,22 @@ export function ProjectCreateModal({ onClose, onSuccess }: { onClose: () => void
           <X className="w-4 h-4" />
         </button>
         
-        <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6">
-          <Building2 className="w-6 h-6 text-blue-500" />
+        <div className="w-12 h-12 bg-blue-500/10 rounded-sm flex items-center justify-center mb-6">
+          <Building2 className="w-6 h-6 text-asas-navy dark:text-asas-sand" />
         </div>
         
-        <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2 leading-tight">Nouveau Programme Immobilier</h2>
-        <p className="text-sm text-gray-500 font-medium mb-8">
+        <h2 className="text-2xl font-black text-asas-charcoal dark:text-asas-sand mb-2 leading-tight">Nouveau Programme Immobilier</h2>
+        <p className="text-sm text-asas-silver font-medium mb-8">
           Structurez votre opération (Vente sur plan, lots, échéanciers).
         </p>
 
-        {error && <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold rounded-xl">{error}</div>}
+        {error && <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold rounded-sm">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-5">
            <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Nom du Programme</label>
               <input required type="text"
-                className="w-full px-4 py-3 bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                 value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
                 placeholder="Ex: Résidence Les Jasmins" 
               />
@@ -84,7 +84,7 @@ export function ProjectCreateModal({ onClose, onSuccess }: { onClose: () => void
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input type="text"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 bg-asas-sand/30 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                   value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})}
                   placeholder="Ex: Cheraga, Alger" 
                 />
@@ -109,7 +109,7 @@ export function ProjectCreateModal({ onClose, onSuccess }: { onClose: () => void
            </div>
 
            <div className="pt-4 mt-8 border-t border-asas-silver/20">
-              <button disabled={loading} type="submit" className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50">
+              <button disabled={loading} type="submit" className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50">
                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Créer le Programme"}
               </button>
            </div>

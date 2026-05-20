@@ -72,20 +72,20 @@ export function LogDepositModal({ dealId, onClose, onSuccess }: { dealId: string
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative w-full max-w-md bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-6 flex flex-col"
       >
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
+        <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 text-asas-silver hover:text-gray-900 dark:hover:text-white transition-colors bg-asas-sand/50 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full">
           <X className="w-4 h-4" />
         </button>
         
-        <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-4 text-emerald-500 border border-emerald-500/20">
+        <div className="w-12 h-12 bg-emerald-500/10 rounded-sm flex items-center justify-center mb-4 text-emerald-500 border border-emerald-500/20">
           <DollarSign className="w-6 h-6" />
         </div>
         
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">Consigner une Avance (Arrhes)</h2>
+        <h2 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand mb-2 leading-tight">Consigner une Avance (Arrhes)</h2>
         <p className="text-sm text-gray-500 font-medium mb-6">
           Saisissez le montant en DZD et attachez une preuve photographique (Reçu manuscrit ou espèces). Le manager recevra une alerte immédiate.
         </p>
 
-        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold rounded-xl">{error}</div>}
+        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold rounded-sm">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -107,7 +107,7 @@ export function LogDepositModal({ dealId, onClose, onSuccess }: { dealId: string
                  "w-full h-32 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-all",
                  hasPhoto 
                    ? "bg-emerald-500/5 py-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                   : "border-black/10 dark:border-white/10 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500"
+                   : "border-black/10 dark:border-white/10 bg-asas-sand/30 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500"
                )}
              >
                {hasPhoto ? (

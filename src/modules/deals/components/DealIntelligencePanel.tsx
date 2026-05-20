@@ -38,7 +38,7 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
   return (
     <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
+        <h4 className="text-sm uppercase tracking-widest text-asas-silver font-bold flex items-center gap-2">
           <Clock className="w-4 h-4" /> Activités & Notes
         </h4>
       </div>
@@ -89,19 +89,19 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
               console.error(err);
             }
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-colors">
+          className="px-4 py-2 bg-asas-navy text-white rounded-sm text-sm font-bold hover:bg-asas-charcoal dark:hover:bg-black transition-colors">
           Ajouter
         </button>
       </div>
       
       {loading ? (
-        <p className="text-sm text-gray-500">Chargement...</p>
+        <p className="text-sm text-asas-silver">Chargement...</p>
       ) : activities.length > 0 ? (
         <div className="space-y-4">
           {activities.map((act) => (
             <div key={act.id} className="relative pl-6 pb-2">
               <div className="absolute top-2 left-[11px] bottom-[-16px] w-[2px] bg-black/5 dark:bg-white/5" />
-              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-gray-50 dark:ring-[#141618]" />
+              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-asas-navy dark:border-asas-sand/20 dark:text-asas-sand dark:bg-white/10 ring-4 ring-gray-50 dark:ring-[#141618]" />
               
               <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-4 transition-colors hover:bg-asas-sand/30 dark:hover:bg-white/5">
                 <div className="flex items-center justify-between mb-2">
@@ -113,7 +113,7 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
                     })}
                   </span>
                 </div>
-                <p className="text-sm text-gray-800 dark:text-gray-300">
+                <p className="text-sm text-asas-charcoal/90 dark:text-asas-sand/90">
                   {act.description}
                 </p>
                 {(act as any).profiles?.full_name && (
@@ -208,7 +208,7 @@ function DealVaultSection({ dealId }: { dealId: string }) {
                 }
              } catch (err) {}
           }}
-          className="px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl text-sm font-bold hover:opacity-80 transition-colors">
+          className="px-4 py-2 bg-asas-charcoal text-white dark:bg-white dark:text-gray-900 rounded-xl text-sm font-bold hover:opacity-80 transition-colors">
           Joindre
         </button>
       </div>
@@ -227,7 +227,7 @@ function DealVaultSection({ dealId }: { dealId: string }) {
                  rel="noopener noreferrer"
                  className="flex items-center gap-3 p-3 rounded-sm border border-asas-silver/20 bg-asas-sand/50 dark:bg-[#141618] hover:bg-asas-sand dark:hover:bg-white/5 transition-colors"
                >
-                 <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+                 <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-asas-navy dark:text-asas-sand flex items-center justify-center shrink-0">
                    <Download className="w-5 h-5" />
                  </div>
                  <div className="overflow-hidden">
@@ -355,7 +355,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
   if (loading) {
     return (
-      <div className="p-8 h-full flex flex-col justify-center items-center text-gray-600 dark:text-gray-400">
+      <div className="p-8 h-full flex flex-col justify-center items-center text-asas-charcoal/80 dark:text-asas-silver">
         <div className="w-8 h-8 border-4 border-gray-200 border-t-[#1A2A4A] rounded-full animate-spin mb-4" />
         <p className="text-sm font-medium animate-pulse">Chargement de la transaction...</p>
       </div>
@@ -384,7 +384,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none mb-1">
+              <h2 className="text-lg font-bold text-asas-charcoal dark:text-asas-sand tracking-tight leading-none mb-1">
                 Transaction #{dealId.substring(0,8).toUpperCase()}
               </h2>
               <div className="text-xs text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-2">
@@ -479,7 +479,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
 
       {/* AI Insights & Risk */}
       {isCritical ? (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-500/10 p-5 rounded-2xl border border-red-500/20 flex gap-4 shadow-sm relative overflow-hidden backdrop-blur-sm">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-500/10 p-5 rounded-sm border border-red-500/20 flex gap-4 shadow-sm relative overflow-hidden backdrop-blur-sm">
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/20 rounded-full blur-3xl" />
           <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center shrink-0 border border-red-500/30 backdrop-blur-md">
              <AlertTriangle className="w-6 h-6 text-red-500" />

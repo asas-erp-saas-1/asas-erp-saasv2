@@ -25,8 +25,8 @@ export function MetricsDashboard() {
 
   if (loading || !metrics) {
       return (
-        <div className="flex flex-col items-center justify-center py-32 text-gray-600 dark:text-gray-400">
-          <RefreshCcw className="w-10 h-10 animate-spin mb-6 text-blue-500" strokeWidth={1.5} />
+        <div className="flex flex-col items-center justify-center py-32 text-asas-charcoal/80 dark:text-asas-silver">
+          <RefreshCcw className="w-10 h-10 animate-spin mb-6 text-asas-navy dark:text-asas-sand" strokeWidth={1.5} />
           <p className="text-sm font-bold uppercase tracking-widest animate-pulse">Chargement des analytiques...</p>
         </div>
       )

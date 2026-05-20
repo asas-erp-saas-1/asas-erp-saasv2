@@ -174,20 +174,20 @@ export default function CanvasRenderer({ properties }: { properties: Property[] 
                        <span className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-md ${
                          p.status === 'sold' ? 'bg-emerald-500/20 text-emerald-500' :
                          p.status === 'reserved' ? 'bg-amber-500/20 text-amber-500' :
-                         'bg-blue-500/20 text-blue-500'
+                         'bg-blue-500/20 text-asas-navy dark:text-asas-sand'
                        }`}>
                          {p.status}
                        </span>
-                       <h3 className="text-xl font-extrabold text-gray-900 dark:text-white mt-2">{p.reference_code}</h3>
+                       <h3 className="text-xl font-extrabold text-asas-charcoal dark:text-asas-sand mt-2">{p.reference_code}</h3>
                      </div>
                    </div>
                    <div className="space-y-3 text-sm">
-                     <div className="flex justify-between"><span className="text-gray-500 font-bold uppercase tracking-wider text-[10px]">Type</span><span className="font-bold text-gray-900 dark:text-white">{p.type}</span></div>
+                     <div className="flex justify-between"><span className="text-asas-silver font-bold uppercase tracking-wider text-[10px]">Type</span><span className="font-bold text-gray-900 dark:text-white">{p.type}</span></div>
                      <div className="flex justify-between"><span className="text-gray-500 font-bold uppercase tracking-wider text-[10px]">Surface</span><span className="font-bold text-gray-900 dark:text-white">{p.area_sqm} m²</span></div>
                      <div className="flex justify-between"><span className="text-gray-500 font-bold uppercase tracking-wider text-[10px]">Prix</span><span className="font-black text-gray-900 dark:text-white">{(p.list_price / 1000000).toFixed(1)}M DZD</span></div>
                    </div>
                    
-                   <button className="w-full mt-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-colors">
+                   <button className="w-full mt-6 py-2.5 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black text-white rounded-sm text-xs font-bold transition-colors">
                      Voir la fiche détaillée
                    </button>
                  </>
