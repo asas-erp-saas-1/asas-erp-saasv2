@@ -5,7 +5,13 @@ import { TeamManagementClient } from '@/modules/settings/components/TeamManageme
 export const dynamic = 'force-dynamic'
 
 export default async function TeamSettingsPage() {
-  const identity = await kernel.identity()
+  let identity;
+  try {
+    identity = await kernel.identity()
+  } catch (err) {
+    return null;
+  }
+
   if (identity.role !== 'owner' && identity.role !== 'manager') {
     redirect('/dashboard/settings')
   }

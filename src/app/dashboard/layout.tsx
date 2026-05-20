@@ -45,8 +45,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
       };
     }
   } catch (error: any) {
-    console.error('Failed to resolve identity in layout:', error.message);
-    if (error.message.includes('Tenant isolation failure')) {
+    const errorMsg = error?.message || '';
+    console.error('Failed to resolve identity in layout:', errorMsg);
+    if (errorMsg.includes('Tenant isolation failure')) {
       redirect('/onboarding');
     } else {
       redirect('/login');
