@@ -60,6 +60,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, data: lead });
     }
 
+    if (command.type === 'UPDATE_PROPERTY_STATUS') {
+      const { status } = command.payload;
+      const prop = await kernel.mutate('properties', 'UPDATE', { status }, { id: command.aggregateId });
+      return NextResponse.json({ success: true, data: prop });
+    }
+
     if (command.type === 'LOG_DEPOSIT') {
       const { amount, method, notes } = command.payload;
       const payment = await kernel.mutate('deal_payments', 'INSERT', {

@@ -100,7 +100,7 @@ function MultiSelect({ options, selected, onChange, label }: { options: { id: st
 }
 
 // ─── Lead card ────────────────────────────────────────────────────────────────
-function LeadCard({ lead, onConvert, onSelect, onWhatsApp, index }: { lead: Lead; onConvert: (id: string) => void; onSelect: (id: string) => void; onWhatsApp: (lead: Lead) => void; index: number }) {
+function LeadCard({ lead, onConvert, onSelect, onWhatsApp, onStatusChange, index }: { lead: Lead; onConvert: (id: string) => void; onSelect: (id: string) => void; onWhatsApp: (lead: Lead) => void; onStatusChange: (id: string, s: string) => void; index: number }) {
   const hours  = inactiveHours(lead.last_activity)
   const isHot  = hours < 24
   const isStale = hours > 48
@@ -170,23 +170,40 @@ function LeadCard({ lead, onConvert, onSelect, onWhatsApp, index }: { lead: Lead
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-3 border-t border-asas-silver/10">
-            <button 
-              onClick={(e) => { e.stopPropagation(); }}
-              className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 rounded-sm transition-all" title="Initier Appel">
-              <Phone className="h-3.5 w-3.5" />
-            </button>
+          <div className="flex items-center gap-2 pt-3 border-t border-asas-silver/10 mt-2">
+            
+            <div className="relative isolate" onClick={(e) => e.stopPropagation()}>
+              <select
+                value={lead.status}
+                onChange={(e) => onStatusChange(lead.id, e.target.value)}
+                className="appearance-none block w-full bg-asas-sand/50 dark:bg-[#141618] border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand text-[9px] uppercase tracking-widest font-bold py-2 pl-2 pr-6 rounded-sm focus:outline-none focus:border-asas-gold/50 cursor-pointer"
+              >
+                {COLUMNS.map(c => (
+                  <option key={c.key} value={c.key}>{c.label}</option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-asas-silver">
+                <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615l-4.695 4.502c-0.268 0.268-0.707 0.268-0.975 0l-4.695-4.502c-0.408-0.418-0.436-1.17 0-1.615z"/></svg>
+              </div>
+            </div>
+
             <button 
               onClick={(e) => { e.stopPropagation(); onWhatsApp(lead); }}
-              className="flex items-center justify-center p-2 min-w-[36px] min-h-[36px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-[#25D366]/40 rounded-sm transition-all" title="Message WhatsApp">
+              className="flex items-center justify-center p-2 min-w-[32px] min-h-[32px] border border-asas-silver/20 bg-[#25D366]/5 dark:bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/10 rounded-sm transition-all shadow-sm" title="Message WhatsApp">
               <MessageCircle className="h-3.5 w-3.5" />
             </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); }}
+              className="flex items-center justify-center p-2 min-w-[32px] min-h-[32px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 rounded-sm transition-all" title="Initier Appel">
+              <Phone className="h-3.5 w-3.5" />
+            </button>
+
             {lead.status !== 'converted' && (
               <button
                 onClick={(e) => { e.stopPropagation(); onConvert(lead.id) }}
-                className="ml-auto w-full max-w-[120px] flex items-center justify-center gap-1.5 min-h-[36px] text-[9px] uppercase tracking-widest font-bold bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal px-3 py-1.5 rounded-sm hover:bg-black dark:hover:bg-white transition-all"
+                className="ml-auto flex items-center justify-center gap-1.5 min-h-[32px] text-[9px] uppercase tracking-widest font-bold bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal px-3 py-1.5 rounded-sm hover:bg-black dark:hover:bg-white transition-all shadow-sm"
               >
-                Promouvoir <ArrowRight className="h-3 w-3" />
+                Deal <ArrowRight className="h-3 w-3" />
               </button>
             )}
           </div>
@@ -275,6 +292,31 @@ export default function LeadsPage() {
 // Group by status
 const byStatus = (status: string) => filtered.filter(l => l.status === status)
 const activeColumns = COLUMNS.filter(c => c.key !== 'converted')
+
+async function onStatusChange(leadId: string, newStatus: string) {
+  setLeads(current => current.map(lead => 
+    lead.id === leadId ? { ...lead, status: newStatus as any } : lead
+  ))
+  try {
+    const { v4: uuidv4 } = await import('uuid')
+    const res = await fetch('/api/command-gateway', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        commandId: uuidv4(),
+        aggregateId: leadId,
+        type: 'SET_LEAD_STATUS',
+        expectedVersion: 1,
+        payload: { status: newStatus }
+      })
+    })
+    const data = await res.json()
+    if (!res.ok || !data.success) throw new Error(data.error || 'Conflict')
+  } catch (e: any) {
+    import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'LeadsPage onStatusChange' }))
+    load() // Revert
+  }
+}
 
 async function onDragEnd(result: DropResult) {
   const { destination, source, draggableId } = result
@@ -399,7 +441,7 @@ return (
                           </div>
                         ) : (
                           colLeads.map((lead, index) => (
-                            <LeadCard key={lead.id} lead={lead} index={index} onConvert={handleConvert} onSelect={setSelectedLeadId} onWhatsApp={setWhatsAppLead} />
+                            <LeadCard key={lead.id} lead={lead} index={index} onConvert={handleConvert} onSelect={setSelectedLeadId} onWhatsApp={setWhatsAppLead} onStatusChange={onStatusChange} />
                           ))
                         )}
                         {provided.placeholder}

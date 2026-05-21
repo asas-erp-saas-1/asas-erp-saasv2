@@ -111,9 +111,9 @@ export default function ClientsPage() {
                   <tr>
                     <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Profil</th>
                     <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Canal</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Type</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Source</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Localité</th>
+                    <th className="hidden sm:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Type</th>
+                    <th className="hidden md:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Source</th>
+                    <th className="hidden lg:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Localité</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
@@ -137,25 +137,33 @@ export default function ClientsPage() {
 
                         {/* Contact */}
                         <td className="px-6 py-5 space-y-2">
-                           {c.phone && <div className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand"><Phone className="h-3.5 w-3.5 text-asas-silver" />{c.phone}</div>}
-                           {c.email && <div className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand"><Mail className="h-3.5 w-3.5 text-asas-silver" />{c.email}</div>}
+                           {c.phone && (
+                              <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand hover:text-[#25D366] transition-colors w-fit p-1 -m-1">
+                                <Phone className="h-3.5 w-3.5 text-asas-silver" />{c.phone}
+                              </a>
+                           )}
+                           {c.email && (
+                              <a href={`mailto:${c.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand hover:text-asas-gold transition-colors w-fit p-1 -m-1">
+                                <Mail className="h-3.5 w-3.5 text-asas-silver" />{c.email}
+                              </a>
+                           )}
                            {!c.phone && !c.email && <span className="text-xs text-asas-silver">—</span>}
                         </td>
 
                         {/* Type */}
-                        <td className="px-6 py-5 align-middle">
+                        <td className="hidden sm:table-cell px-6 py-5 align-middle">
                            <span className={clsx('px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold rounded-sm border', cfg.color)}>
                               {cfg.label}
                            </span>
                         </td>
 
                         {/* Source */}
-                        <td className="px-6 py-5 text-[9px] uppercase tracking-widest font-bold text-asas-silver align-middle">
+                        <td className="hidden md:table-cell px-6 py-5 text-[9px] uppercase tracking-widest font-bold text-asas-silver align-middle">
                            {c.source || <span className="text-asas-silver/50">—</span>}
                         </td>
 
                         {/* Nationality */}
-                        <td className="px-6 py-5 align-middle">
+                        <td className="hidden lg:table-cell px-6 py-5 align-middle">
                            <div className="flex items-center gap-3">
                               {c.nationality ? (
                                  <>

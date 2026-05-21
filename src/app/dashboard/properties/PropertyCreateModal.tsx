@@ -94,38 +94,39 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
         <div className="p-6">
           <div className="flex gap-4 mb-8">
              <button 
+                type="button"
                 onClick={simulateVoiceNote} 
-                className={`flex-1 overflow-hidden relative p-8 rounded-sm flex flex-col items-center justify-center gap-3 transition-all ${isRecording ? 'bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20' : 'bg-asas-sand/30 dark:bg-[#141618] hover:bg-asas-sand/50 dark:hover:bg-white/5 border border-black/5 dark:border-white/5'}`}
+                className={`flex-1 overflow-hidden relative p-8 rounded-sm flex flex-col items-center justify-center gap-3 transition-all ${isRecording ? 'bg-red-500/10 border border-red-500 shadow-sm' : 'bg-asas-sand/30 dark:bg-[#141618] hover:bg-asas-sand/50 dark:hover:bg-white/5 border border-asas-silver/20'}`}
              >
                 {isRecording && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />}
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isRecording ? 'bg-red-500 text-white' : 'bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-asas-sand/90'}`}>
-                   <Mic className={`w-8 h-8 ${isRecording ? 'animate-bounce' : ''}`} />
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isRecording ? 'bg-red-500 text-white' : 'bg-white dark:bg-white/5 text-asas-silver border border-asas-silver/20'}`}>
+                   <Mic className={`w-6 h-6 ${isRecording ? 'animate-bounce' : ''}`} />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-bold text-gray-900 dark:text-white">{isRecording ? 'Écoute en cours...' : 'Note Vocale (IA)'}</p>
-                  <p className="text-xs font-medium text-gray-500 mt-1">Ex: "F4 à Cheraga, 45 millions"</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand">{isRecording ? 'Écoute...' : 'Note Vocale (IA)'}</p>
+                  <p className="text-[9px] font-medium text-asas-silver mt-1">Ex: "F4 à Cheraga..."</p>
                 </div>
              </button>
              
-             <button className="flex-1 p-8 rounded-2xl flex flex-col items-center justify-center gap-3 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/5 border border-black/5 dark:border-white/5 transition-all">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gray-300">
-                   <Camera className="w-8 h-8" />
+             <button type="button" className="flex-1 p-8 rounded-sm border border-asas-silver/20 flex flex-col items-center justify-center gap-3 bg-asas-sand/30 dark:bg-[#141618] hover:bg-asas-sand/50 dark:hover:bg-white/5 transition-all">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white dark:bg-white/5 text-asas-silver border border-asas-silver/20">
+                   <Camera className="w-6 h-6" />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-bold text-gray-900 dark:text-white">Photos Express</p>
-                  <p className="text-xs font-medium text-gray-500 mt-1">Saisie Automatique</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand">Photos Express</p>
+                  <p className="text-[9px] font-medium text-asas-silver mt-1 border border-transparent">Saisie Automatique</p>
                 </div>
              </button>
           </div>
 
           <form id="prop-form" onSubmit={handleSubmit} className="space-y-4">
-             {error && <div className="p-4 bg-red-500/10 text-red-500 text-sm font-bold rounded-sm">{error}</div>}
+             {error && <div className="p-4 bg-red-500/10 text-red-500 text-sm font-bold rounded-sm border border-red-500/20">{error}</div>}
 
              <div className="grid grid-cols-2 gap-4">
                 <div>
-                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Gabarit</label>
+                   <label className="block text-xs font-bold text-asas-silver uppercase tracking-widest mb-1.5">Gabarit</label>
                    <select 
-                     className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
+                     className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-[#111111] border border-asas-silver/20 rounded-sm text-sm font-medium text-asas-charcoal dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                      value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}
                    >
                      <option value="f2">F2</option>
@@ -136,22 +137,22 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
                    </select>
                 </div>
                 <div>
-                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Prix (DZD)</label>
+                   <label className="block text-xs font-bold text-asas-silver uppercase tracking-widest mb-1.5">Prix (DZD)</label>
                    <input 
                      type="number" required placeholder="45000000"
-                     className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                     className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-[#111111] border border-asas-silver/20 rounded-sm text-sm font-mono font-bold text-asas-charcoal dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                      value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
                    />
                 </div>
              </div>
              
              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Secteur Géo</label>
+                <label className="block text-xs font-bold text-asas-silver uppercase tracking-widest mb-1.5">Secteur Géo</label>
                 <div className="relative">
-                   <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                   <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-asas-silver" />
                    <input 
                      type="text" required placeholder="Ex: HYDRA, CHERAGA"
-                     className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                     className="w-full pl-10 pr-4 py-3 bg-asas-sand/30 dark:bg-[#111111] border border-asas-silver/20 rounded-sm text-sm font-medium text-asas-charcoal dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                      value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})}
                    />
                 </div>
@@ -159,16 +160,16 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
           </form>
         </div>
 
-        <div className="border-t border-black/5 dark:border-white/5 p-6 bg-gray-50 dark:bg-[#0A0A0A] flex justify-end gap-3">
+        <div className="border-t border-asas-silver/20 p-6 bg-asas-sand/30 dark:bg-[#0A0A0A] flex justify-end gap-3 rounded-b-[2rem]">
           <button
             type="button" onClick={onClose}
-            className="px-6 py-3 rounded-xl text-sm font-bold text-asas-charcoal/80 dark:text-asas-silver bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            className="px-6 py-3 rounded-sm border border-asas-silver/20 text-[10px] uppercase tracking-widest font-bold text-asas-charcoal dark:text-asas-silver bg-white dark:bg-[#141618] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           >
             Annuler
           </button>
           <button
             form="prop-form" type="submit" disabled={loading}
-            className="px-8 py-3 rounded-xl text-sm font-bold text-white bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black disabled:opacity-50 transition-colors shadow-lg shadow-blue-500/20 active:scale-95 flex items-center gap-2"
+            className="px-8 py-3 rounded-sm text-[10px] uppercase tracking-widest font-bold text-asas-sand bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black disabled:opacity-50 transition-colors shadow-sm active:scale-95 flex items-center gap-2"
           >
             <Save className="w-4 h-4" /> {loading ? 'Création...' : 'Publier Actif'}
           </button>

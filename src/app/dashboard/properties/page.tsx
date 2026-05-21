@@ -31,7 +31,7 @@ function fmt(n: number): string {
   return new Intl.NumberFormat('fr-DZ').format(n)+' DZD'
 }
 
-function PropertyCard({ property }: { property: Property }) {
+function PropertyCard({ property, onStatusChange }: { property: Property; onStatusChange: (id: string, s: string) => void }) {
   const cfg = STATUS_CONFIG[property.status] ?? STATUS_CONFIG.available!
   const StatusIcon = cfg.icon
   return (
@@ -39,10 +39,10 @@ function PropertyCard({ property }: { property: Property }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden shadow-sm hover:border-asas-gold/30 transition-all group"
+      className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden shadow-sm hover:border-asas-gold/30 transition-all group flex flex-col h-full"
     >
       {/* Image placeholder */}
-      <div className="h-48 bg-asas-sand/30 dark:bg-black/10 flex items-center justify-center relative overflow-hidden">
+      <div className="h-48 shrink-0 bg-asas-sand/30 dark:bg-black/10 flex items-center justify-center relative overflow-hidden">
         {property.images?.[0] ? (
           <Image src={property.images[0]} alt="Property image" fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         ) : (
@@ -55,7 +55,7 @@ function PropertyCard({ property }: { property: Property }) {
         </span>
       </div>
 
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-3">
           <div>
             <span className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">{TYPE_LABELS[property.type] ?? property.type}</span>
@@ -74,10 +74,22 @@ function PropertyCard({ property }: { property: Property }) {
           </p>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-asas-silver/10">
-          <div className="flex items-center gap-4 text-[9px] uppercase tracking-widest font-bold text-asas-silver">
-            {property.area_sqm && <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-asas-gold" />{property.area_sqm} m²</span>}
-            {property.projects?.developers && <span className="flex items-center gap-1.5 truncate"><span className="w-1.5 h-1.5 rounded-full bg-asas-silver" />{property.projects.developers.name}</span>}
+        <div className="flex items-center justify-between pt-4 border-t border-asas-silver/10 mt-auto">
+          <div className="flex items-center gap-4 text-[9px] uppercase tracking-widest font-bold text-asas-silver flex-1">
+            <div className="relative isolate" onClick={(e) => e.stopPropagation()}>
+              <select
+                value={property.status}
+                onChange={(e) => onStatusChange(property.id, e.target.value)}
+                className="appearance-none block w-full bg-asas-sand/50 dark:bg-[#141618] border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand text-[9px] uppercase tracking-widest font-bold py-2 pl-2 pr-6 rounded-sm focus:outline-none focus:border-asas-gold/50 cursor-pointer"
+              >
+                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                  <option key={k} value={k}>{v.label}</option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-asas-silver">
+                <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615l-4.695 4.502c-0.268 0.268-0.707 0.268-0.975 0l-4.695-4.502c-0.408-0.418-0.436-1.17 0-1.615z"/></svg>
+              </div>
+            </div>
           </div>
           <button 
             onClick={(e) => {
@@ -85,7 +97,7 @@ function PropertyCard({ property }: { property: Property }) {
               const text = `Découvrez ce bien exceptionnel :\nType: ${TYPE_LABELS[property.type] ?? property.type}\nPièces: ${property.rooms || '-'}\nSuperficie: ${property.area_sqm ? property.area_sqm + 'm²' : '-'}\nPrix: ${fmt(property.list_price)}\nProjet: ${property.projects?.name || 'Indépendant'}\n\nEn savoir plus: ${window.location.origin}/p/${property.id}`;
               window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
             }}
-            className="flex items-center justify-center p-2 rounded-sm bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
+            className="flex items-center justify-center p-2 rounded-sm bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366]/20 transition-colors ml-2"
             title="Partager via WhatsApp"
           >
             <MessageCircle className="w-4 h-4" />
@@ -223,7 +235,28 @@ export default function PropertiesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {properties.map((p, i) => <PropertyCard key={p.id} property={p} />)}
+            {properties.map((p, i) => <PropertyCard key={p.id} property={p} onStatusChange={async (id, s) => {
+              setProperties(curr => curr.map(prop => prop.id === id ? { ...prop, status: s } : prop))
+              try {
+                const { v4: uuidv4 } = await import('uuid')
+                const res = await fetch('/api/command-gateway', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    commandId: uuidv4(),
+                    aggregateId: id,
+                    type: 'UPDATE_PROPERTY_STATUS',
+                    expectedVersion: 1, // simplified for ui update
+                    payload: { status: s }
+                  })
+                })
+                const data = await res.json()
+                if (!res.ok || !data.success) throw new Error(data.error || 'Conflict')
+              } catch (e: any) {
+                import('@/lib/observability/errors').then(mod => mod.ErrorTracker.captureError(e, { context: 'PropertiesPage onStatusChange' }))
+                load() // Revert
+              }
+            }} />)}
           </div>
         )}
 
