@@ -5,6 +5,7 @@ import { motion, Variants } from 'motion/react'
 import { TrendingUp, Users, Target, Activity, AlertCircle, RefreshCcw, Wallet, Briefcase, ArrowRight, ArrowUpRight, BarChart3, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { PerformanceChart } from './PerformanceChart'
 import { ManagerExceptions } from './ManagerExceptions'
 
 const AICommandCenter = dynamic(() => import('./AICommandCenter').then(mod => mod.AICommandCenter), {
@@ -148,6 +149,10 @@ export function CEODashboard({ initialMetrics }: { initialMetrics?: any }) {
 
       <motion.div variants={item}>
         <ManagerExceptions />
+      </motion.div>
+
+      <motion.div variants={item} className="mt-6 mb-6">
+        <PerformanceChart />
       </motion.div>
 
       {/* Secondary Bento Area */}
