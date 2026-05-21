@@ -1,25 +1,26 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { motion } from 'motion/react'
 import { Loader2, FileText, CheckCircle2, MapPin, Download, MessageCircle, Building2, Wallet } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { Deal } from '@/types/app'
 import Link from 'next/link'
 
-export default function CustomerPortal({ params }: { params: { deal_id: string } }) {
+export default function CustomerPortal({ params }: { params: Promise<{ deal_id: string }> }) {
+  const { deal_id } = use(params)
   const [deal, setDeal] = useState<Deal | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/deals?id=${params.deal_id}`)
+    fetch(`/api/deals?id=${deal_id}`)
       .then(res => res.json())
       .then(d => {
         setDeal(d.data?.[0] || null)
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [params.deal_id])
+  }, [deal_id])
 
   if (loading) {
     return (

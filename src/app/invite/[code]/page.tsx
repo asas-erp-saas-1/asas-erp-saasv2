@@ -5,7 +5,8 @@ import { Building2, Rocket, ArrowRight } from 'lucide-react';
 import { kernel } from '@/lib/kernel/core';
 import Link from 'next/link';
 
-export default async function InvitePage({ params }: { params: { code: string } }) {
+export default async function InvitePage({ params }: { params: Promise<{ code: string }> }) {
+  const { code } = await params;
   const cookieStore = await cookies();
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
@@ -28,10 +29,10 @@ export default async function InvitePage({ params }: { params: { code: string } 
             <h2 className="text-2xl font-bold mb-4">Invitation Reçue</h2>
             <p className="text-asas-silver mb-8">Connectez-vous ou créez un compte pour accepter l'invitation à rejoindre l'agence.</p>
             <div className="space-y-4">
-              <Link href={`/login?invite=${params.code}`} className="block w-full px-6 py-3 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black text-white rounded-sm font-bold transition-all">
+              <Link href={`/login?invite=${code}`} className="block w-full px-6 py-3 bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black text-white rounded-sm font-bold transition-all">
                 Se Connecter
               </Link>
-              <Link href={`/signup?invite=${params.code}`} className="block w-full px-6 py-3 bg-asas-sand/50 hover:bg-gray-200 dark:bg-[#141618] dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl font-bold border border-gray-200 dark:border-white/10 transition-all">
+              <Link href={`/signup?invite=${code}`} className="block w-full px-6 py-3 bg-asas-sand/50 hover:bg-gray-200 dark:bg-[#141618] dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl font-bold border border-gray-200 dark:border-white/10 transition-all">
                 Créer un compte
               </Link>
             </div>
@@ -42,7 +43,7 @@ export default async function InvitePage({ params }: { params: { code: string } 
 
   // Find agency based on invite code (In a real app, from an 'invites' table. For now, simulate or mock)
   // For demo, if code starts with 'ag-', we accept it.
-  if (params.code.startsWith('ag-')) {
+  if (code.startsWith('ag-')) {
     // If we map code straight to a specific ID, let's just grab the first agency for demo purposes
     // since we can't easily query an `invites` table that doesn't exist yet.
     const { data: agencies } = await supabase.from('agencies').select('id, name').limit(1);
