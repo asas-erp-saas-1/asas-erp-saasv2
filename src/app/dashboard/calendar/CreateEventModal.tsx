@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
+import { clsx } from 'clsx'
 import { X, Calendar as CalendarIcon, Clock, Link as LinkIcon, Loader2 } from 'lucide-react'
 import { getAccessToken } from '@/lib/google-auth'
 
@@ -60,115 +61,109 @@ export function CreateEventModal({ onClose, onSuccess, selectedDate }: { onClose
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-[2px]">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm shadow-xl w-full max-w-md overflow-hidden flex flex-col"
+        className="bg-white dark:bg-[#1a1c1e] border border-gray-200 dark:border-white/10 rounded-[8px] shadow-2xl w-full max-w-[450px] overflow-hidden flex flex-col font-sans"
       >
-        <div className="p-4 border-b border-asas-silver/20 flex items-center justify-between bg-asas-sand/50 dark:bg-black/10">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-asas-charcoal dark:text-asas-sand flex items-center gap-2">
+        <div className="p-1 border-b border-gray-100 dark:border-white/5 flex items-center justify-between bg-gray-50/50 dark:bg-black/10">
+          <div className="flex items-center gap-2 pl-3">
             <CalendarIcon className="w-4 h-4 text-[#4285F4]" />
-            Nouvel Événement Google
-          </h2>
-          <button onClick={onClose} className="p-1 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-colors">
-            <X className="w-4 h-4" />
+            <h2 className="text-[14px] font-medium text-gray-700 dark:text-gray-200">
+              Nouvel Événement Google
+            </h2>
+          </div>
+          <button onClick={onClose} className="p-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors hover:bg-black/5 dark:hover:bg-white/5 rounded-full mr-1">
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 flex flex-col gap-4">
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-xs rounded-sm">
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm rounded-[4px]">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-[10px] font-bold uppercase tracking-widest text-asas-silver mb-1.5">Titre de l'événement <span className="text-red-500">*</span></label>
-            <input 
-              required
-              aria-label="Titre"
-              type="text" 
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              className="w-full bg-white dark:bg-black/20 border border-asas-silver/30 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-asas-gold text-asas-charcoal dark:text-asas-sand transition-colors"
-              placeholder="Ex: Réunion Client avec M. Yassine"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-               <label className="block text-[10px] font-bold uppercase tracking-widest text-asas-silver mb-1.5 flex items-center gap-1.5">
-                 <CalendarIcon className="w-3 h-3" /> Date <span className="text-red-500">*</span>
-               </label>
+            <div className="flex items-center gap-4 border-b border-gray-200 dark:border-white/10 relative">
+               <div className="w-8 shrink-0 flex items-center justify-center opacity-0"><CalendarIcon className="w-5 h-5"/></div>
                <input 
                  required
-                 aria-label="Date"
-                 type="date" 
-                 value={date}
-                 onChange={e => setDate(e.target.value)}
-                 className="w-full bg-white dark:bg-black/20 border border-asas-silver/30 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-asas-gold text-asas-charcoal dark:text-asas-sand transition-colors"
+                 aria-label="Ajouter un titre"
+                 type="text" 
+                 value={title}
+                 onChange={e => setTitle(e.target.value)}
+                 className="w-full bg-transparent border-none px-0 py-3 text-2xl font-normal text-gray-800 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:border-none focus:ring-0 leading-tight"
+                 placeholder="Ajouter un titre"
+                 autoFocus
                />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-               <div>
-                 <label className="block text-[10px] font-bold uppercase tracking-widest text-asas-silver mb-1.5 flex items-center gap-1.5">
-                   <Clock className="w-3 h-3" /> Début <span className="text-red-500">*</span>
-                 </label>
-                 <input 
-                   required
-                   aria-label="Heure de début"
-                   type="time" 
-                   value={startTime}
-                   onChange={e => setStartTime(e.target.value)}
-                   className="w-full bg-white dark:bg-black/20 border border-asas-silver/30 rounded-sm px-2 py-2 text-sm focus:outline-none focus:border-asas-gold text-asas-charcoal dark:text-asas-sand transition-colors"
-                 />
-               </div>
-               <div>
-                 <label className="block text-[10px] font-bold uppercase tracking-widest text-asas-silver mb-1.5 flex items-center gap-1.5">
-                   <Clock className="w-3 h-3" /> Fin <span className="text-red-500">*</span>
-                 </label>
-                 <input 
-                   required
-                   aria-label="Heure de fin"
-                   type="time" 
-                   value={endTime}
-                   onChange={e => setEndTime(e.target.value)}
-                   className="w-full bg-white dark:bg-black/20 border border-asas-silver/30 rounded-sm px-2 py-2 text-sm focus:outline-none focus:border-asas-gold text-asas-charcoal dark:text-asas-sand transition-colors"
-                 />
-               </div>
+               <div className={clsx("absolute bottom-0 left-12 right-0 h-0.5 bg-[#1a73e8] transition-transform origin-left scale-x-0", title ? "scale-x-100" : "")}></div>
             </div>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-bold uppercase tracking-widest text-asas-silver mb-1.5 flex items-center gap-1.5">
-              <LinkIcon className="w-3 h-3" /> Description
-            </label>
+          <div className="flex items-start gap-4 mt-2">
+            <div className="w-8 pt-2.5 shrink-0 flex items-center justify-center text-gray-400"><Clock className="w-5 h-5" /></div>
+            <div className="flex-1 space-y-3">
+              <input 
+                required
+                aria-label="Date"
+                type="date" 
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="bg-gray-100 dark:bg-white/5 border-none rounded-[4px] px-3 py-1.5 text-[14px] focus:outline-none focus:ring-2 ring-[#4285F4] text-gray-800 dark:text-gray-200 transition-shadow w-fit"
+              />
+              
+              <div className="flex items-center gap-2">
+                <input 
+                  required
+                  aria-label="Heure de début"
+                  type="time" 
+                  value={startTime}
+                  onChange={e => setStartTime(e.target.value)}
+                  className="bg-gray-100 dark:bg-white/5 border-none rounded-[4px] px-3 py-1.5 text-[14px] focus:outline-none focus:ring-2 ring-[#1a73e8] text-gray-800 dark:text-gray-200 transition-shadow"
+                />
+                <span className="text-gray-500 font-medium">-</span>
+                <input 
+                  required
+                  aria-label="Heure de fin"
+                  type="time" 
+                  value={endTime}
+                  onChange={e => setEndTime(e.target.value)}
+                  className="bg-gray-100 dark:bg-white/5 border-none rounded-[4px] px-3 py-1.5 text-[14px] focus:outline-none focus:ring-2 ring-[#1a73e8] text-gray-800 dark:text-gray-200 transition-shadow"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 mt-2">
+            <div className="w-8 pt-2.5 shrink-0 flex items-center justify-center text-gray-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
             <textarea 
               aria-label="Description"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full bg-white dark:bg-black/20 border border-asas-silver/30 rounded-sm px-3 py-2 text-sm h-24 focus:outline-none focus:border-asas-gold text-asas-charcoal dark:text-asas-sand transition-colors resize-none"
-              placeholder="Détails de l'événement..."
+              className="w-full bg-gray-100 dark:bg-white/5 border-none rounded-[4px] px-3 py-2 text-[14px] h-24 focus:outline-none focus:ring-2 ring-[#1a73e8] text-gray-800 dark:text-gray-200 transition-shadow resize-none"
+              placeholder="Ajouter une description"
             />
           </div>
 
-          <div className="flex justify-end gap-3 mt-4">
+          <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-white/5">
             <button 
               type="button" 
               onClick={onClose}
-              className="px-4 py-2 text-sm font-bold text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-colors"
+              className="px-5 py-2 text-[14px] font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 rounded-[4px] transition-colors"
             >
               Annuler
             </button>
             <button 
               type="submit" 
               disabled={loading}
-              className="flex items-center gap-2 px-5 py-2 bg-[#4285F4] text-white hover:bg-[#3367D6] font-bold text-sm rounded-sm shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center min-w-[100px] gap-2 px-5 py-2 bg-[#1a73e8] text-white hover:bg-[#1557b0] font-medium text-[14px] rounded-[4px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarIcon className="w-4 h-4" />}
-              Créer Événement
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Enregistrer"}
             </button>
           </div>
         </form>
