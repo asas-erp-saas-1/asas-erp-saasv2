@@ -2,21 +2,11 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, Clock, ArrowRight } from 'lucide-react'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, CheckSquare, ArrowRight, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { clsx } from 'clsx'
-import { CreateTaskModal } from '../tasks/CreateTaskModal'
+import { CreateEventModal } from './CreateEventModal'
 import { initAuth, googleSignIn } from '@/lib/google-auth'
-
-interface Task {
-  id:          string
-  title:       string
-  description: string | null
-  priority:    'low' | 'medium' | 'high' | 'urgent'
-  status:      'pending' | 'in_progress' | 'done' | 'cancelled'
-  due_date:    string | null
-  is_automated: boolean
-}
 
 interface GoogleEvent {
   id: string;
@@ -24,10 +14,10 @@ interface GoogleEvent {
   start: { date?: string; dateTime?: string };
   end: { date?: string; dateTime?: string };
   htmlLink?: string;
+  description?: string;
 }
 
 export default function CalendarPage() {
-  const [tasks, setTasks] = useState<Task[]>([])
   const [googleEvents, setGoogleEvents] = useState<GoogleEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -38,23 +28,8 @@ export default function CalendarPage() {
   // Standard Calendar State
   const [currentDate, setCurrentDate] = useState(new Date())
 
-  const load = async () => {
-    setLoading(true)
-    try {
-      // Fetch upcoming and past tasks
-      const res = await fetch('/api/tasks?limit=250')
-      if (res.ok) {
-        const data = await res.json()
-        setTasks(data.data || [])
-      }
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const fetchGoogleEvents = async (token: string, dateObj: Date) => {
+    setLoading(true)
     try {
       // Find timeMin and timeMax for current month view
       const start = new Date(dateObj.getFullYear(), dateObj.getMonth() - 1, 1).toISOString();
@@ -68,17 +43,21 @@ export default function CalendarPage() {
       }
     } catch (e) {
       console.error(e)
+    } finally {
+      setLoading(false)
     }
   };
 
   useEffect(() => {
-    load()
     const unsubscribe = initAuth(
       (user, token) => {
         setNeedsAuth(false)
         fetchGoogleEvents(token, currentDate)
       },
-      () => setNeedsAuth(true)
+      () => {
+        setNeedsAuth(true)
+        setLoading(false)
+      }
     );
     return () => {
        if (typeof unsubscribe === 'function') unsubscribe();
@@ -141,20 +120,7 @@ export default function CalendarPage() {
 
   // Build agenda for selected date
   const agendaItems = useMemo(() => {
-    const items: Array<{ id: string, title: string, time: string, type: 'task'|'google', status?: string, priority?: string, link?: string }> = []
-    
-    tasks.forEach(t => {
-      if (t.due_date && t.due_date.startsWith(selectedDateStr)) {
-        items.push({
-          id: t.id,
-          type: 'task',
-          title: t.title,
-          time: t.due_date.includes('T') ? t.due_date.substring(11, 16) : 'Journée',
-          status: t.status,
-          priority: t.priority
-        })
-      }
-    })
+    const items: Array<{ id: string, title: string, time: string, link?: string }> = []
 
     googleEvents.forEach(e => {
       let isMatch = false
@@ -168,7 +134,6 @@ export default function CalendarPage() {
       if (isMatch) {
         items.push({
           id: e.id,
-          type: 'google',
           title: e.summary || 'Sans Titre',
           time: timeStr,
           link: e.htmlLink || ''
@@ -177,19 +142,28 @@ export default function CalendarPage() {
     })
 
     return items.sort((a, b) => a.time.localeCompare(b.time))
-  }, [tasks, googleEvents, selectedDateStr])
+  }, [googleEvents, selectedDateStr])
 
   const formatEventTime = (dateTime?: string, date?: string) => {
     if (dateTime) return new Date(dateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     return 'Journée'
   }
 
+  const handleRefresh = async () => {
+    import('@/lib/google-auth').then(mod => {
+      mod.getAccessToken().then(token => {
+        if (token) fetchGoogleEvents(token, currentDate);
+      });
+    });
+  }
+
   return (
     <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col h-full overflow-hidden p-6 max-w-[1600px] mx-auto w-full">
       {isModalOpen && (
-        <CreateTaskModal 
+        <CreateEventModal 
+          selectedDate={selectedDate}
           onClose={() => setIsModalOpen(false)} 
-          onSuccess={load} 
+          onSuccess={handleRefresh} 
         />
       )}
 
@@ -268,13 +242,12 @@ export default function CalendarPage() {
               const isToday = dateStr === todayStr
               const isSelected = dateStr === selectedDateStr
               
-              const dayTasks = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr))
               const dayGoogleEvents = googleEvents.filter(e => {
                  if (e.start.dateTime) return e.start.dateTime.startsWith(dateStr)
                  if (e.start.date) return e.start.date === dateStr
                  return false
               })
-              const totalCount = dayTasks.length + dayGoogleEvents.length
+              const totalCount = dayGoogleEvents.length
               
               return (
                 <div 
@@ -299,28 +272,6 @@ export default function CalendarPage() {
                   </div>
                   
                   <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-1">
-                    {loading ? (
-                      <div />
-                    ) : dayTasks.map(task => (
-                      <div 
-                        key={task.id}
-                        className={clsx(
-                          "text-[9.5px] font-medium p-1.5 rounded-sm truncate flex items-center gap-1.5",
-                          task.status === 'done' ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20 line-through" :
-                          task.priority === 'urgent' ? "bg-red-500/10 text-red-500 border border-red-500/20" :
-                          task.priority === 'high' ? "bg-orange-500/10 text-orange-500 border border-orange-500/20" :
-                          "bg-asas-navy/10 text-asas-navy dark:text-asas-sand border border-asas-navy/20"
-                        )}
-                        title={task.title}
-                      >
-                        <div className={clsx("w-1.5 h-1.5 rounded-full shrink-0", 
-                          task.status === 'done' ? "bg-asas-emerald" : 
-                          task.priority === 'urgent' ? "bg-red-500" :
-                          task.priority === 'high' ? "bg-orange-500" : "bg-asas-navy dark:bg-asas-sand"
-                        )}></div>
-                        <span className="truncate">{task.title}</span>
-                      </div>
-                    ))}
                     {!loading && dayGoogleEvents.map(event => (
                       <div 
                         key={event.id}
@@ -369,41 +320,20 @@ export default function CalendarPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     key={item.id} 
-                    className={clsx(
-                      "p-3 rounded-sm border shadow-sm flex flex-col gap-2 relative overflow-hidden group bg-white dark:bg-[#141618] hover:border-asas-silver/40 transition-colors",
-                      item.type === 'google' ? "border-[#4285F4]/30" : "border-asas-silver/20"
-                    )}
+                    className="p-3 rounded-sm border shadow-sm flex flex-col gap-2 relative overflow-hidden group bg-white dark:bg-[#141618] hover:border-asas-silver/40 transition-colors border-[#4285F4]/30"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
-                        {item.type === 'google' ? (
-                          <div className="w-6 h-6 rounded-sm bg-[#4285F4]/10 flex items-center justify-center shrink-0">
-                            <CalendarIcon className="w-3.5 h-3.5 text-[#4285F4]" />
-                          </div>
-                        ) : (
-                          <div className="w-6 h-6 rounded-sm bg-asas-navy/10 flex items-center justify-center shrink-0">
-                            <CheckSquare className="w-3.5 h-3.5 text-asas-navy dark:text-asas-sand" />
-                          </div>
-                        )}
+                        <div className="w-6 h-6 rounded-sm bg-[#4285F4]/10 flex items-center justify-center shrink-0">
+                          <CalendarIcon className="w-3.5 h-3.5 text-[#4285F4]" />
+                        </div>
                         <span className="text-[11px] font-mono font-bold text-asas-silver">{item.time}</span>
                       </div>
                       
-                      {item.type === 'task' && item.priority && (
-                        <span className={clsx("text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-sm",
-                          item.priority === 'urgent' ? 'bg-red-500/10 text-red-500' :
-                          item.priority === 'high' ? 'bg-orange-500/10 text-orange-500' : 'bg-asas-silver/10 text-asas-silver'
-                        )}>{item.priority}</span>
-                      )}
-                      
-                      {item.type === 'google' && (
-                        <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-sm bg-[#4285F4]/10 text-[#4285F4]">Google</span>
-                      )}
+                      <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-sm bg-[#4285F4]/10 text-[#4285F4]">Google</span>
                     </div>
                     
-                    <h4 className={clsx(
-                      "text-sm font-bold leading-tight mt-1",
-                      item.status === 'done' ? "text-asas-silver line-through" : "text-asas-charcoal dark:text-asas-sand"
-                    )}>
+                    <h4 className="text-sm font-bold leading-tight mt-1 text-asas-charcoal dark:text-asas-sand">
                       {item.title}
                     </h4>
 
