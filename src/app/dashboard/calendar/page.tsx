@@ -33,6 +33,7 @@ export default function CalendarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [needsAuth, setNeedsAuth] = useState(true)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
   // Standard Calendar State
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -136,9 +137,55 @@ export default function CalendarPage() {
 
   const monthName = currentDate.toLocaleString('fr-FR', { month: 'long', year: 'numeric' })
   const todayStr = new Date().toISOString().slice(0, 10)
+  const selectedDateStr = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
+
+  // Build agenda for selected date
+  const agendaItems = useMemo(() => {
+    const items: Array<{ id: string, title: string, time: string, type: 'task'|'google', status?: string, priority?: string, link?: string }> = []
+    
+    tasks.forEach(t => {
+      if (t.due_date && t.due_date.startsWith(selectedDateStr)) {
+        items.push({
+          id: t.id,
+          type: 'task',
+          title: t.title,
+          time: t.due_date.includes('T') ? t.due_date.substring(11, 16) : 'Journée',
+          status: t.status,
+          priority: t.priority
+        })
+      }
+    })
+
+    googleEvents.forEach(e => {
+      let isMatch = false
+      let timeStr = 'Journée'
+      if (e.start.dateTime) {
+        isMatch = e.start.dateTime.startsWith(selectedDateStr)
+        if (isMatch) timeStr = new Date(e.start.dateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+      } else if (e.start.date) {
+        isMatch = e.start.date === selectedDateStr
+      }
+      if (isMatch) {
+        items.push({
+          id: e.id,
+          type: 'google',
+          title: e.summary || 'Sans Titre',
+          time: timeStr,
+          link: e.htmlLink || ''
+        })
+      }
+    })
+
+    return items.sort((a, b) => a.time.localeCompare(b.time))
+  }, [tasks, googleEvents, selectedDateStr])
+
+  const formatEventTime = (dateTime?: string, date?: string) => {
+    if (dateTime) return new Date(dateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    return 'Journée'
+  }
 
   return (
-    <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col h-full overflow-hidden p-6 max-w-7xl mx-auto w-full">
+    <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col h-full overflow-hidden p-6 max-w-[1600px] mx-auto w-full">
       {isModalOpen && (
         <CreateTaskModal 
           onClose={() => setIsModalOpen(false)} 
@@ -158,12 +205,13 @@ export default function CalendarPage() {
           <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-2">Projection des missions & visites programmées</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {needsAuth ? (
             <button 
               onClick={handleGoogleLogin} 
               disabled={isLoggingIn}
               className="flex items-center gap-2 px-4 py-2 border border-asas-silver/20 hover:bg-black/5 dark:hover:bg-white/5 rounded-sm transition-colors"
+              title="Synchronisez avec Google Calendar"
             >
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-4 h-4">
                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
@@ -199,81 +247,176 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="flex-1 min-h-0 flex flex-col mt-6 border border-asas-silver/20 rounded-sm overflow-hidden shadow-sm bg-white dark:bg-[#141618]">
-        {/* Days Header */}
-        <div className="grid grid-cols-7 border-b border-asas-silver/20 bg-asas-sand/50 dark:bg-black/10">
-          {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => (
-            <div key={d} className="px-2 py-3 text-center text-[9px] font-bold uppercase tracking-widest text-asas-silver">
-              {d}
-            </div>
-          ))}
-        </div>
-        
-        {/* Days Grid */}
-        <div className="flex-1 grid grid-cols-7 grid-rows-5 overflow-y-auto">
-          {daysArray.map((date, i) => {
-            if (!date) return <div key={i} className="border-b border-r border-asas-silver/10 bg-asas-silver/5 p-2 min-h-[100px]" />
-            
-            const dateStr = date.toISOString().slice(0, 10)
-            const isToday = dateStr === todayStr
-            const dayTasks = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr))
-            const dayGoogleEvents = googleEvents.filter(e => {
-               if (e.start.dateTime) return e.start.dateTime.startsWith(dateStr)
-               if (e.start.date) return e.start.date === dateStr
-               return false
-            })
-            const totalCount = dayTasks.length + dayGoogleEvents.length
-            
-            return (
-              <div key={i} className={clsx("border-b border-r border-asas-silver/10 p-2 flex flex-col min-h-[120px] transition-colors hover:bg-asas-sand/30 dark:hover:bg-black/10", isToday && "bg-asas-gold/5 dark:bg-asas-gold/5")}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className={clsx("text-xs font-bold w-6 h-6 flex items-center justify-center rounded-sm", isToday ? "bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal shadow-sm" : "text-asas-charcoal dark:text-asas-sand font-mono")}>
-                    {date.getDate()}
-                  </span>
-                  {totalCount > 0 && <span className="text-[9px] font-bold text-asas-charcoal dark:text-asas-sand bg-asas-silver/20 px-1.5 py-0.5 rounded-sm">{totalCount}</span>}
-                </div>
-                
-                <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-1">
-                  {loading ? (
-                    <div />
-                  ) : dayTasks.map(task => (
-                    <motion.div 
-                      key={task.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className={clsx(
-                        "text-[9px] font-bold p-1.5 rounded-sm truncate cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-1",
-                        task.status === 'done' ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20 line-through" :
-                        task.priority === 'urgent' ? "bg-red-500/10 text-red-500 border border-red-500/20" :
-                        task.priority === 'high' ? "bg-orange-500/10 text-orange-500 border border-orange-500/20" :
-                        "bg-asas-navy/10 text-asas-navy dark:text-asas-sand border border-asas-navy/20"
-                      )}
-                      title={task.title}
-                    >
-                      {task.status === 'done' ? <CheckSquare className="w-3 h-3 shrink-0" /> : <Clock className="w-3 h-3 shrink-0" />}
-                      <span className="truncate">{task.title}</span>
-                    </motion.div>
-                  ))}
-                  {!loading && dayGoogleEvents.map(event => (
-                    <motion.div 
-                      key={event.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-[9px] font-bold p-1.5 rounded-sm truncate cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-1 bg-[#4285F4]/10 text-[#4285F4] border border-[#4285F4]/20"
-                      title={event.summary}
-                      onClick={() => {
-                        if (event.htmlLink) window.open(event.htmlLink, '_blank')
-                      }}
-                    >
-                      <CalendarIcon className="w-3 h-3 shrink-0" />
-                      <span className="truncate">{event.summary || 'Sans Titre'}</span>
-                    </motion.div>
-                  ))}
-                </div>
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row mt-6 gap-6">
+        {/* Calendar Grid */}
+        <div className="flex-1 flex flex-col border border-asas-silver/20 rounded-sm overflow-hidden shadow-sm bg-white dark:bg-[#141618]">
+          {/* Days Header */}
+          <div className="grid grid-cols-7 border-b border-asas-silver/20 bg-asas-sand/50 dark:bg-black/10 shrink-0">
+            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => (
+              <div key={d} className="px-2 py-3 text-center text-[9px] font-bold uppercase tracking-widest text-asas-silver">
+                {d}
               </div>
-            )
-          })}
+            ))}
+          </div>
+          
+          {/* Days Grid */}
+          <div className="flex-1 grid grid-cols-7 grid-rows-5 overflow-y-auto custom-scrollbar">
+            {daysArray.map((date, i) => {
+              if (!date) return <div key={i} className="border-b border-r border-asas-silver/10 bg-asas-silver/5 p-2 min-h-[100px]" />
+              
+              const dateStr = date.toISOString().slice(0, 10)
+              const isToday = dateStr === todayStr
+              const isSelected = dateStr === selectedDateStr
+              
+              const dayTasks = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr))
+              const dayGoogleEvents = googleEvents.filter(e => {
+                 if (e.start.dateTime) return e.start.dateTime.startsWith(dateStr)
+                 if (e.start.date) return e.start.date === dateStr
+                 return false
+              })
+              const totalCount = dayTasks.length + dayGoogleEvents.length
+              
+              return (
+                <div 
+                  key={i} 
+                  onClick={() => setSelectedDate(date)}
+                  className={clsx(
+                    "border-b border-r border-asas-silver/10 p-2 flex flex-col min-h-[120px] transition-colors cursor-pointer group", 
+                    isToday ? "bg-asas-gold/5 dark:bg-asas-gold/5" : "hover:bg-asas-sand/30 dark:hover:bg-black/10",
+                    isSelected && !isToday && "bg-asas-silver/10"
+                  )}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={clsx(
+                      "text-xs font-bold w-6 h-6 flex items-center justify-center rounded-sm transition-colors", 
+                      isToday ? "bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal shadow-sm" : 
+                      isSelected ? "bg-asas-gold text-white shadow-sm" :
+                      "text-asas-charcoal dark:text-asas-sand font-mono group-hover:bg-asas-silver/20"
+                    )}>
+                      {date.getDate()}
+                    </span>
+                    {totalCount > 0 && <span className="text-[9px] font-bold text-asas-charcoal dark:text-asas-sand bg-asas-silver/20 px-1.5 py-0.5 rounded-sm">{totalCount}</span>}
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-1">
+                    {loading ? (
+                      <div />
+                    ) : dayTasks.map(task => (
+                      <div 
+                        key={task.id}
+                        className={clsx(
+                          "text-[9.5px] font-medium p-1.5 rounded-sm truncate flex items-center gap-1.5",
+                          task.status === 'done' ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20 line-through" :
+                          task.priority === 'urgent' ? "bg-red-500/10 text-red-500 border border-red-500/20" :
+                          task.priority === 'high' ? "bg-orange-500/10 text-orange-500 border border-orange-500/20" :
+                          "bg-asas-navy/10 text-asas-navy dark:text-asas-sand border border-asas-navy/20"
+                        )}
+                        title={task.title}
+                      >
+                        <div className={clsx("w-1.5 h-1.5 rounded-full shrink-0", 
+                          task.status === 'done' ? "bg-asas-emerald" : 
+                          task.priority === 'urgent' ? "bg-red-500" :
+                          task.priority === 'high' ? "bg-orange-500" : "bg-asas-navy dark:bg-asas-sand"
+                        )}></div>
+                        <span className="truncate">{task.title}</span>
+                      </div>
+                    ))}
+                    {!loading && dayGoogleEvents.map(event => (
+                      <div 
+                        key={event.id}
+                        className="text-[9.5px] font-medium p-1.5 rounded-sm truncate flex items-center gap-1.5 bg-[#4285F4]/10 text-[#4285F4] border border-[#4285F4]/20"
+                        title={event.summary}
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#4285F4]"></div>
+                        <span className="w-8 shrink-0 opacity-80 font-mono text-[8px]">{formatEventTime(event.start.dateTime)}</span>
+                        <span className="truncate">{event.summary || 'Sans Titre'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Selected Date Agenda Sidebar */}
+        <div className="w-full lg:w-80 flex flex-col shrink-0 border border-asas-silver/20 rounded-sm bg-white dark:bg-[#141618] overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-asas-silver/20 bg-asas-sand/50 dark:bg-black/10">
+            <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex justify-between items-center">
+              <span>Agenda {selectedDateStr === todayStr ? 'du Jour' : ''}</span>
+              <span className="text-xs text-asas-silver font-mono bg-white dark:bg-[#141618] px-2 py-0.5 rounded-sm shadow-sm">{selectedDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}</span>
+            </h2>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-asas-sand/20 dark:bg-transparent">
+            {loading ? (
+              <div className="animate-pulse flex flex-col gap-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-16 bg-asas-silver/10 rounded-sm"></div>
+                ))}
+              </div>
+            ) : agendaItems.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-asas-silver/60 py-12">
+                <CheckSquare className="w-8 h-8 mb-3 opacity-20" />
+                <p className="text-xs font-bold uppercase tracking-widest">Aucune opération prévue</p>
+                <p className="text-[10px] mt-1 opacity-70">Votre agenda est libre pour cette journée.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {agendaItems.map((item, index) => (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    key={item.id} 
+                    className={clsx(
+                      "p-3 rounded-sm border shadow-sm flex flex-col gap-2 relative overflow-hidden group bg-white dark:bg-[#141618] hover:border-asas-silver/40 transition-colors",
+                      item.type === 'google' ? "border-[#4285F4]/30" : "border-asas-silver/20"
+                    )}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        {item.type === 'google' ? (
+                          <div className="w-6 h-6 rounded-sm bg-[#4285F4]/10 flex items-center justify-center shrink-0">
+                            <CalendarIcon className="w-3.5 h-3.5 text-[#4285F4]" />
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 rounded-sm bg-asas-navy/10 flex items-center justify-center shrink-0">
+                            <CheckSquare className="w-3.5 h-3.5 text-asas-navy dark:text-asas-sand" />
+                          </div>
+                        )}
+                        <span className="text-[11px] font-mono font-bold text-asas-silver">{item.time}</span>
+                      </div>
+                      
+                      {item.type === 'task' && item.priority && (
+                        <span className={clsx("text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-sm",
+                          item.priority === 'urgent' ? 'bg-red-500/10 text-red-500' :
+                          item.priority === 'high' ? 'bg-orange-500/10 text-orange-500' : 'bg-asas-silver/10 text-asas-silver'
+                        )}>{item.priority}</span>
+                      )}
+                      
+                      {item.type === 'google' && (
+                        <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-sm bg-[#4285F4]/10 text-[#4285F4]">Google</span>
+                      )}
+                    </div>
+                    
+                    <h4 className={clsx(
+                      "text-sm font-bold leading-tight mt-1",
+                      item.status === 'done' ? "text-asas-silver line-through" : "text-asas-charcoal dark:text-asas-sand"
+                    )}>
+                      {item.title}
+                    </h4>
+
+                    {item.link && (
+                      <a href={item.link} target="_blank" rel="noreferrer" className="text-[10px] flex items-center gap-1 text-[#4285F4] hover:underline mt-1 w-fit">
+                        Voir dans Google Calendar <ArrowRight className="w-3 h-3" />
+                      </a>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
