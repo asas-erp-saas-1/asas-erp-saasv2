@@ -66,6 +66,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, data: prop });
     }
 
+    if (command.type === 'CREATE_DEAL') {
+      const { client_id, property_id, agreed_price, deal_type, agent_id } = command.payload;
+      const { DealService } = await import('@/services/deals/deal.service');
+      const deal = await DealService.createDeal({
+        clientId: client_id,
+        propertyId: property_id,
+        agreedPrice: Number(agreed_price),
+        dealType: deal_type || 'sale',
+        agentId: agent_id
+      });
+      // Update property status to reserved upon reservation
+      await kernel.mutate('properties', 'UPDATE', { status: 'reserved' }, { id: property_id });
+      return NextResponse.json({ success: true, data: deal });
+    }
+
     if (command.type === 'LOG_DEPOSIT') {
       const { amount, method, notes } = command.payload;
       const payment = await kernel.mutate('deal_payments', 'INSERT', {

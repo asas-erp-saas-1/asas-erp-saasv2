@@ -11,6 +11,7 @@ import type { Activity } from '@/types/app';
 import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
 import { SchedulePaymentModal } from '@/app/dashboard/deals/SchedulePaymentModal'
+import { WhatsAppTemplateModal } from './WhatsAppTemplateModal'
 
 function DealPortalChatSection({ dealId }: { dealId: string }) {
   const [messages, setMessages] = useState<any[]>([]);
@@ -637,6 +638,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false)
+  const [whatsAppPayment, setWhatsAppPayment] = useState<any>(null)
 
   const reloadData = () => {
     setLoading(true)
@@ -1044,6 +1047,16 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                            <Download className="w-3.5 h-3.5" /> Reçu
                         </button>
                       )}
+                      <button 
+                         onClick={() => {
+                            setWhatsAppPayment(payment);
+                            setIsWhatsAppModalOpen(true);
+                         }}
+                         className="px-3 py-1.5 flex items-center gap-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] text-xs font-bold rounded-lg border border-[#25D366]/15 hover:border-[#25D366]/30 transition-all cursor-pointer"
+                         title="Préparer une communication WhatsApp"
+                      >
+                         <MessageCircle className="w-3.5 h-3.5" /> WA
+                      </button>
                     </div>
                  </div>
               ))}
@@ -1076,6 +1089,20 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           dealId={dealId}
           onClose={() => setIsScheduleModalOpen(false)}
           onSuccess={() => { setIsScheduleModalOpen(false); reloadData() }}
+        />
+      )}
+      
+      {isWhatsAppModalOpen && (
+        <WhatsAppTemplateModal
+          deal={deal}
+          payment={whatsAppPayment}
+          onClose={() => {
+            setIsWhatsAppModalOpen(false);
+            setWhatsAppPayment(null);
+          }}
+          onSuccess={() => {
+            reloadData();
+          }}
         />
       )}
     </div>

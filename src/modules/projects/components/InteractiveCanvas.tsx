@@ -33,6 +33,6 @@ export function InteractiveCanvas({ projectId }: { projectId: string }) {
   if (loading) return <div className="w-full h-full flex items-center justify-center text-asas-silver animate-pulse">Chargement des géométries...</div>
 
   return (
-     <CanvasRenderer properties={properties} />
+     <CanvasRenderer properties={properties} onReload={load} />
   )
 }
