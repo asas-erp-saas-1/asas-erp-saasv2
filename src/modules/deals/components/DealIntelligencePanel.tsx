@@ -6,11 +6,168 @@ import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calend
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
-import { Clock } from 'lucide-react';
+import { Clock, Send } from 'lucide-react';
 import type { Activity } from '@/types/app';
 import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
 import { SchedulePaymentModal } from '@/app/dashboard/deals/SchedulePaymentModal'
+
+function DealPortalChatSection({ dealId }: { dealId: string }) {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newMessage, setNewMessage] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const loadMessages = () => {
+    fetch(`/api/portal/message?deal_id=${dealId}`)
+      .then(res => res.json())
+      .then(data => {
+        setMessages(data.data || []);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadMessages();
+    const interval = setInterval(loadMessages, 5000);
+    return () => clearInterval(interval);
+  }, [dealId]);
+
+  const handleSend = async (textToSend?: string) => {
+    const text = (typeof textToSend === 'string' ? textToSend : newMessage).trim();
+    if (!text || sending) return;
+    setNewMessage("");
+    setSending(true);
+
+    const optAct = {
+      id: crypto.randomUUID(),
+      deal_id: dealId,
+      type: 'message',
+      description: `[AGENT_MSG] ${text}`,
+      created_at: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, optAct]);
+
+    try {
+      const res = await fetch('/api/portal/message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dealId,
+          message: text,
+          sender: 'agent'
+        })
+      });
+      if (res.ok) {
+        loadMessages();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const quickReplies = [
+    "Votre document d'identité a bien été enregistré dans le Coffre-fort GED.",
+    "Merci de nous transmettre le justificatif de virement pour valider l'Appel de fonds.",
+    "Bonjour, le chantier progresse conformément au calendrier contractuel !",
+    "La signature officielle chez le notaire a été programmée. Merci d'être présent."
+  ];
+
+  return (
+    <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6">
+      <div className="flex items-center justify-between mb-4 border-b border-asas-silver/10 pb-3">
+        <h4 className="text-sm uppercase tracking-widest text-[#1A2A4A] dark:text-[#E8D1A7] font-bold flex items-center gap-2">
+          <MessageCircle className="w-4 h-4 text-indigo-400" /> Communication Portail Acquéreur
+        </h4>
+        <span className="text-[8px] bg-indigo-500/10 text-indigo-500 dark:bg-white/5 dark:text-gray-300 border border-indigo-500/20 px-2 py-0.5 rounded font-black uppercase tracking-wider">
+          Canal Direct Live
+        </span>
+      </div>
+
+      <div className="h-64 overflow-y-auto mb-4 border border-asas-silver/20 rounded-sm p-4 space-y-3 bg-[#faf9f5] dark:bg-black/15 scrollbar-thin">
+        {loading ? (
+          <p className="text-xs text-asas-silver italic animate-pulse">Chargement de la messagerie...</p>
+        ) : messages.length === 0 ? (
+          <div className="h-full flex flex-col justify-center items-center text-center p-4">
+            <MessageCircle className="w-8 h-8 text-asas-silver/40 mb-2" />
+            <p className="text-xs font-bold text-asas-silver">Aucun message pour le moment</p>
+            <p className="text-[10px] text-gray-500 max-w-[280px] mt-1">L'acquéreur verra vos messages s'afficher instantanément sur son Espace.</p>
+          </div>
+        ) : (
+          messages.map((m: any) => {
+            const isAgent = m.description.startsWith('[AGENT_MSG] ');
+            const bodyText = m.description.replace('[AGENT_MSG] ', '').replace('[PORTAL_MSG] ', '');
+            
+            return (
+              <div key={m.id} className={clsx("flex flex-col", isAgent ? "items-end" : "items-start")}>
+                <div className="flex items-center gap-1.5 mb-1 max-w-[80%]">
+                  <span className={clsx("text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm", 
+                    isAgent ? "bg-asas-navy/10 text-[#1A2A4A]" : "bg-emerald-500/10 text-emerald-500"
+                  )}>
+                    {isAgent ? 'Vous (Agent)' : 'Client (Acquéreur)'}
+                  </span>
+                  <span className="text-[8px] text-gray-500 font-mono">
+                    {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+                <div className={clsx("max-w-[85%] rounded-md px-3.5 py-2 text-xs font-medium leading-relaxed shadow-xs border", 
+                  isAgent 
+                    ? "bg-[#1A2A4A] text-white border-transparent" 
+                    : "bg-white dark:bg-[#1f2124] text-asas-charcoal dark:text-asas-sand border-asas-silver/20"
+                )}>
+                  {bodyText}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <div className="mb-4">
+        <p className="text-[9px] uppercase tracking-widest text-asas-silver font-bold mb-2">Réponses Pré-enregistrées (Quick replies)</p>
+        <div className="flex flex-wrap gap-2">
+          {quickReplies.map((reply, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleSend(reply)}
+              disabled={sending}
+              type="button"
+              className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-asas-sand/40 hover:bg-asas-gold/20 dark:bg-white/5 border border-asas-silver/30 dark:border-white/5 hover:border-asas-gold px-2.5 py-1.5 rounded transition-all text-left max-w-full truncate cursor-pointer"
+              title={reply}
+            >
+              {reply}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          disabled={sending}
+          placeholder="Répondre à l'acquéreur en direct..."
+          className="flex-1 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm px-4 py-2 text-xs text-asas-charcoal dark:text-asas-sand focus:outline-none focus:ring-1 focus:ring-asas-gold placeholder-gray-500 font-medium"
+        />
+        <button
+          type="submit"
+          disabled={!newMessage.trim() || sending}
+          className="px-4 py-2 bg-[#1A2A4A] hover:bg-[#1A2A4A]/80 disabled:bg-asas-silver/20 text-white rounded-sm text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer"
+        >
+          {sending ? <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+          Envoyer
+        </button>
+      </form>
+    </div>
+  );
+}
 
 function DealActivitiesSection({ dealId }: { dealId: string }) {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -23,7 +180,7 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
       .then(res => res.json())
       .then(data => {
         if (mounted) {
-          const filtered = (data.data || []).filter((a: any) => !a.description?.startsWith('[VAULT]') && !a.description?.startsWith('[VAULT-JSON]'));
+          const filtered = (data.data || []).filter((a: any) => a.type !== 'message' && !a.description?.startsWith('[VAULT]') && !a.description?.startsWith('[VAULT-JSON]'));
           setActivities(filtered);
           setLoading(false);
         }
@@ -895,6 +1052,7 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
       </div>
 
       <DealVaultSection dealId={dealId} />
+      <DealPortalChatSection dealId={dealId} />
       <DealActivitiesSection dealId={dealId} />
 
       {isTaskModalOpen && (

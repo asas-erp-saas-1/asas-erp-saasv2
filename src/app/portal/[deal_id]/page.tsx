@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, useRef } from 'react'
 import { motion } from 'motion/react'
-import { Loader2, FileText, CheckCircle2, MapPin, Download, MessageCircle, Building2, Wallet, UploadCloud, Check, File, FileCode } from 'lucide-react'
+import { Loader2, FileText, CheckCircle2, MapPin, Download, MessageCircle, Building2, Wallet, UploadCloud, Check, File, FileCode, Send, Clock } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { Deal } from '@/types/app'
 import Link from 'next/link'
@@ -18,6 +18,13 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
   const [uploadCategory, setUploadCategory] = useState("CNI / Passeport")
   const [uploadProgress, setUploadProgress] = useState(0)
 
+  // Portal messaging states
+  const [messages, setMessages] = useState<any[]>([])
+  const [messagesLoading, setMessagesLoading] = useState(true)
+  const [newMessage, setNewMessage] = useState("")
+  const [sendingMessage, setSendingMessage] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
   const loadDocs = () => {
     setDocsLoading(true)
     fetch(`/api/activities?deal_id=${deal_id}`)
@@ -32,6 +39,26 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
       .catch(() => setDocsLoading(false))
   };
 
+  const loadMessages = () => {
+    fetch(`/api/portal/message?deal_id=${deal_id}`)
+      .then(res => res.json())
+      .then(data => {
+        setMessages(data.data || [])
+        setMessagesLoading(false)
+      })
+      .catch(() => setMessagesLoading(false))
+  }
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      scrollToBottom()
+    }
+  }, [messages])
+
   useEffect(() => {
     fetch(`/api/deals?id=${deal_id}`)
       .then(res => res.json())
@@ -42,7 +69,71 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
       .catch(() => setLoading(false))
 
     loadDocs()
+    loadMessages()
+
+    // Poll every 5 seconds for agent replies
+    const pollInterval = setInterval(() => {
+      fetch(`/api/portal/message?deal_id=${deal_id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            setMessages(data.data)
+          }
+        })
+        .catch(() => {})
+    }, 5000)
+
+    return () => clearInterval(pollInterval)
   }, [deal_id])
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newMessage.trim() || sendingMessage) return
+    const text = newMessage.trim()
+    setNewMessage("")
+    setSendingMessage(true)
+
+    // Optimistically add client message
+    const placeholderMsg = {
+      id: crypto.randomUUID(),
+      deal_id,
+      type: 'message',
+      description: `[PORTAL_MSG] ${text}`,
+      created_at: new Date().toISOString()
+    }
+    setMessages(prev => [...prev, placeholderMsg])
+
+    try {
+      const res = await fetch('/api/portal/message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dealId: deal_id,
+          message: text,
+          sender: 'client'
+        })
+      })
+      if (res.ok) {
+        const data = await fetch(`/api/portal/message?deal_id=${deal_id}`).then(r => r.json())
+        if (data.data) setMessages(data.data)
+      }
+    } catch(err) {
+      console.error(err)
+    } finally {
+      setSendingMessage(false)
+    }
+  }
+
+  // Parse custom prefix from message description
+  const parseMessage = (desc: string) => {
+    if (desc.startsWith('[PORTAL_MSG] ')) {
+      return { body: desc.replace('[PORTAL_MSG] ', ''), isMe: true }
+    }
+    if (desc.startsWith('[AGENT_MSG] ')) {
+      return { body: desc.replace('[AGENT_MSG] ', ''), isMe: false }
+    }
+    return { body: desc, isMe: false }
+  }
 
   if (loading) {
     return (
@@ -144,25 +235,100 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
               </div>
            </motion.div>
 
-           {/* Contact Agent */}
-           <motion.div 
-             initial={{ opacity: 0, y: 10 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.3 }}
-             className="bg-[#0A0A0A] border border-white/5 p-8 rounded-3xl flex flex-col justify-between"
-           >
-              <div>
-                <p className="text-sm font-medium text-gray-500 mb-4 flex items-center gap-2">Votre Conseiller ASAS</p>
-                <p className="text-lg font-bold">{deal.profiles?.full_name || 'Équipe Commerciale'}</p>
-                <p className="text-sm text-gray-400 mt-1">À votre disposition pour toute question concernant votre dossier.</p>
-              </div>
-              <button 
-                onClick={() => window.open(`https://wa.me/213000000000`, '_blank')} // Fallback agent number
-                className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border border-[#25D366]/20 rounded-xl font-bold text-sm transition-colors active:scale-95"
-              >
-                 <MessageCircle className="w-4 h-4" /> Message WhatsApp
-              </button>
-           </motion.div>
+           {/* Messagerie Instantanée & Contact Conseiller */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-[#0A0A0A] border border-white/5 p-6 rounded-sm flex flex-col h-[480px] justify-between relative mb-6"
+            >
+               {/* Chat Header */}
+               <div className="pb-3 border-b border-white/5">
+                 <div className="flex items-center gap-3">
+                   <div className="relative w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 font-bold uppercase text-sm">
+                     {(deal.profiles?.full_name || 'EQ')[0]}
+                     <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-black" />
+                   </div>
+                   <div>
+                     <p className="text-[10px] uppercase tracking-widest text-[#a1a1a5] font-bold">Votre Conseiller ASAS</p>
+                     <p className="text-xs font-bold text-white leading-tight">{deal.profiles?.full_name || 'Équipe Commerciale'}</p>
+                   </div>
+                 </div>
+               </div>
+
+               {/* Message History Area */}
+               <div className="flex-1 overflow-y-auto py-4 space-y-3 pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                 {messagesLoading ? (
+                   <div className="flex flex-col items-center justify-center h-full space-y-2">
+                     <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
+                     <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Chargement du canal...</p>
+                   </div>
+                 ) : messages.length === 0 ? (
+                   <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                     <MessageCircle className="w-8 h-8 text-gray-600 mb-2" />
+                     <p className="text-xs font-bold text-gray-400">Canal de Discussion Sécurisé</p>
+                     <p className="text-[10px] text-gray-500 mt-1 max-w-[180px]">Posez vos questions à votre conseiller directement d'ici.</p>
+                   </div>
+                 ) : (
+                   messages.map((msg) => {
+                     const parsed = parseMessage(msg.description);
+                     return (
+                       <div key={msg.id} className={clsx("flex flex-col", parsed.isMe ? "items-end" : "items-start")}>
+                         <div className={clsx(
+                           "max-w-[85%] rounded-2xl px-3.5 py-2 text-xs font-medium leading-relaxed shadow-sm",
+                           parsed.isMe 
+                             ? "bg-indigo-600 text-white rounded-br-none" 
+                             : "bg-white/5 hover:bg-white/10 border border-white/5 text-gray-200 rounded-bl-none"
+                         )}>
+                           <p className="whitespace-pre-wrap break-words">{parsed.body}</p>
+                         </div>
+                         <span className="text-[8px] text-gray-500 font-bold font-mono mt-1 px-1 flex items-center gap-1">
+                           <Clock className="w-2.5 h-2.5" />
+                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                         </span>
+                       </div>
+                     );
+                   })
+                 )}
+                 <div ref={messagesEndRef} />
+               </div>
+
+               {/* Chat Input Form */}
+               <div className="border-t border-white/5 pt-3">
+                 <form onSubmit={handleSendMessage} className="flex gap-2">
+                   <input
+                     type="text"
+                     value={newMessage}
+                     onChange={(e) => setNewMessage(e.target.value)}
+                     disabled={sendingMessage}
+                     placeholder="Tapez votre message..."
+                     className="flex-1 bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition-colors placeholder-gray-500"
+                   />
+                   <button
+                     type="submit"
+                     disabled={!newMessage.trim() || sendingMessage || messagesLoading}
+                     className="p-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-white/5 disabled:hover:bg-white/5 text-white disabled:text-gray-600 rounded-xl transition-all active:scale-95 flex items-center justify-center shrink-0"
+                   >
+                     {sendingMessage ? (
+                       <Loader2 className="w-4 h-4 animate-spin" />
+                     ) : (
+                       <Send className="w-4 h-4" />
+                     )}
+                   </button>
+                 </form>
+                 <div className="mt-3 text-center">
+                   <button
+                     type="button"
+                     onClick={() => window.open("https://wa.me/213000000000", "_blank")}
+                     className="text-[9px] font-bold uppercase tracking-widest text-[#25D366] hover:underline flex items-center justify-center gap-1 mx-auto bg-transparent border-none cursor-pointer"
+                   >
+                     <MessageCircle className="w-3 h-3" /> Ouvrir sur WhatsApp
+                   </button>
+                 </div>
+               </div>
+            </motion.div>
+
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -390,9 +556,9 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
                            <UploadCloud className="w-4 h-4 text-indigo-400" />
                            <span className="text-xs font-bold uppercase tracking-wider text-[#797af0] group-hover:text-white">Choisir un fichier (PDF, PNG, JPG)</span>
                            <input 
-                             id="client-portal-uploader"
-                             type="file"
-                             className="hidden"
+                             id="client-portal-uploader" type="file" className="hidden"
+
+               
                              accept="image/*,application/pdf"
                              onChange={async (e) => {
                                if (e.target.files && e.target.files[0]) {
