@@ -53,3 +53,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    if (!id) {
+      return NextResponse.json({ error: 'Activity ID is required' }, { status: 400 });
+    }
+
+    const res = await kernel.mutate('activities', 'DELETE', { id });
+    return NextResponse.json({ success: true, data: res });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+

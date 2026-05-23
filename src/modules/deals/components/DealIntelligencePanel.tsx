@@ -2,7 +2,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText, CheckSquare, MessageCircle, Download } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, User, Building, MapPin, Calculator, Calendar, ArrowUpRight, DollarSign, FileText, CheckSquare, MessageCircle, Download, Trash2, UploadCloud, RefreshCw, File } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
@@ -23,7 +23,7 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
       .then(res => res.json())
       .then(data => {
         if (mounted) {
-          const filtered = (data.data || []).filter((a: any) => !a.description?.startsWith('[VAULT]'));
+          const filtered = (data.data || []).filter((a: any) => !a.description?.startsWith('[VAULT]') && !a.description?.startsWith('[VAULT-JSON]'));
           setActivities(filtered);
           setLoading(false);
         }
@@ -135,114 +135,343 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
 function DealVaultSection({ dealId }: { dealId: string }) {
   const [links, setLinks] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploadCategory, setUploadCategory] = useState("CNI");
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  useEffect(() => {
-    let mounted = true;
+  const fetchVaultDocs = () => {
     setLoading(true);
     fetch(`/api/activities?deal_id=${dealId}`)
       .then(res => res.json())
       .then(data => {
-        if (mounted) {
-          // Identify vault links by checking if description starts with [VAULT]
-          const vaultLinks = (data.data || []).filter((a: any) => a.type === 'note' && a.description.startsWith('[VAULT]'));
-          setLinks(vaultLinks);
-          setLoading(false);
-        }
+        // Identify both legacy [VAULT] links and new structured [VAULT-JSON] data nodes
+        const vaultLinks = (data.data || []).filter((a: any) => 
+          a.type === 'note' && (a.description.startsWith('[VAULT]') || a.description.startsWith('[VAULT-JSON]'))
+        );
+        setLinks(vaultLinks);
+        setLoading(false);
       })
       .catch(err => {
         console.error(err);
-        if (mounted) setLoading(false);
+        setLoading(false);
       });
-    return () => { mounted = false; };
+  };
+
+  useEffect(() => {
+    fetchVaultDocs();
   }, [dealId]);
 
-  return (
-    <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6">
-      <div className="flex items-center justify-between mb-6">
-        <h4 className="text-sm uppercase tracking-widest text-gray-500 font-bold flex items-center gap-2">
-          <FileText className="w-4 h-4" /> Le Coffre-Fort (Documents)
-        </h4>
-      </div>
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
 
-      <div className="mb-6 flex gap-2">
-        <input 
-          type="url" 
-          id="new-vault-link-input"
-          className="flex-1 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm px-4 py-2 text-[10px] uppercase font-bold text-asas-charcoal dark:text-asas-sand focus:outline-none focus:ring-1 focus:ring-asas-gold"
-          placeholder="https://drive.google.com/... (Lien du document)"
-          onKeyDown={async (e) => {
-            if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
-              const val = e.currentTarget.value.trim();
-              e.currentTarget.value = '';
-              try {
-                const res = await fetch('/api/activities', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ deal_id: dealId, type: 'note', description: `[VAULT] ${val}` })
-                });
-                if (res.ok) {
-                  const newAct = await res.json();
-                  setLinks(prev => [newAct.data, ...prev]);
-                }
-              } catch (err) {
-                console.error(err);
-              }
-            }
-          }}
-        />
+  const uploadFile = async (file: File) => {
+    if (!file) return;
+    setUploading(true);
+    setUploadProgress(10);
+    
+    try {
+      // Read file as Base64/DataURL
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const dataUrl = reader.result as string;
+        setUploadProgress(40);
+
+        const res = await fetch("/api/documents/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filename: file.name,
+            category: uploadCategory,
+            dataUrl,
+            dealId,
+            portalUpload: false
+          })
+        });
+
+        setUploadProgress(80);
+
+        if (res.ok) {
+           setUploadProgress(100);
+           setTimeout(() => {
+             setUploading(false);
+             setUploadProgress(0);
+             fetchVaultDocs();
+           }, 500);
+        } else {
+           const errData = await res.json();
+           alert(errData.error || "Une erreur est survenue lors du téléversement");
+           setUploading(false);
+           setUploadProgress(0);
+        }
+      };
+    } catch (err) {
+      console.error(err);
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      await uploadFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      await uploadFile(e.target.files[0]);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Voulez-vous vraiment retirer ce document du coffre-fort ?")) return;
+    try {
+      const res = await fetch(`/api/activities?id=${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+         setLinks(prev => prev.filter(l => l.id !== id));
+      } else {
+         alert("Échec de la suppression.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return "---";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1048576) return `${Math.round(bytes / 1024)} KB`;
+    return `${(bytes / 1048576).toFixed(1)} MB`;
+  };
+
+  // Helper to parse unstructured legacy notes or structured JSON nodes smoothly
+  const parseDocument = (link: Activity) => {
+    const isJson = link.description.startsWith('[VAULT-JSON]');
+    if (isJson) {
+      try {
+        const payloadStr = link.description.replace('[VAULT-JSON] ', '').trim();
+        const payload = JSON.parse(payloadStr);
+        return {
+          id: link.id,
+          filename: payload.filename,
+          category: payload.category || "Autre",
+          url: payload.url,
+          size: payload.size,
+          uploadedBy: payload.uploadedBy || "Agent",
+          date: new Date(payload.timestamp || link.created_at).toLocaleDateString('fr-FR')
+        };
+      } catch (err) {
+         return {
+          id: link.id,
+          filename: "Document Corrompu",
+          category: "Autre",
+          url: "#",
+          size: 0,
+          uploadedBy: "Inconnu",
+          date: new Date(link.created_at).toLocaleDateString('fr-FR')
+         };
+      }
+    } else {
+      // Legacy parsing
+      const url = link.description.replace('[VAULT] ', '').trim();
+      let guessedFilename = "Lien Document Externe";
+      try {
+        const u = new URL(url);
+        guessedFilename = u.pathname.split('/').pop() || u.hostname;
+      } catch(e){}
+      return {
+        id: link.id,
+        filename: guessedFilename,
+        category: "Lien Externe",
+        url: url,
+        size: undefined,
+        uploadedBy: "Agent",
+        date: new Date(link.created_at).toLocaleDateString('fr-FR')
+      };
+    }
+  };
+
+  const getCategoryColor = (cat: string) => {
+    switch (cat) {
+      case "CNI":
+      case "CNI / Passeport":
+        return "bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/50";
+      case "Livret Foncier":
+        return "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50";
+      case "Contrat VEFA Signé":
+      case "Contrat":
+        return "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/50";
+      case "Attestation de Virement":
+      case "Paiement":
+        return "bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/50";
+      case "Lien Externe":
+        return "bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50";
+      default:
+        return "bg-gray-100 dark:bg-[#1f2124] text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800/30";
+    }
+  };
+
+  const parsedDocs = links.map(parseDocument);
+
+  return (
+    <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6 font-sans">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h4 className="text-sm uppercase tracking-widest text-asas-charcoal dark:text-asas-sand font-bold flex items-center gap-2">
+            <FileText className="w-4 h-4 text-asas-gold" /> Le Coffre-Fort (compliance)
+          </h4>
+          <p className="text-[8px] text-asas-silver uppercase tracking-wider font-semibold mt-1">Classification et archivage des pièces contractuelles</p>
+        </div>
         <button 
-          onClick={async () => {
-             const input = document.getElementById('new-vault-link-input') as HTMLInputElement;
-             if (!input || !input.value.trim() || loading) return;
-             const val = input.value.trim();
-             input.value = '';
-             try {
-                const res = await fetch('/api/activities', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ deal_id: dealId, type: 'note', description: `[VAULT] ${val}` })
-                });
-                if (res.ok) {
-                  const newAct = await res.json();
-                  setLinks(prev => [newAct.data, ...prev]);
-                }
-             } catch (err) {}
-          }}
-          className="px-4 py-2 bg-asas-charcoal text-white dark:bg-white dark:text-gray-900 rounded-xl text-sm font-bold hover:opacity-80 transition-colors">
-          Joindre
+          onClick={fetchVaultDocs}
+          className="p-1 px-2.5 bg-asas-sand/30 dark:bg-[#25282c]/30 hover:bg-asas-sand/50 dark:hover:bg-[#25282c]/70 text-asas-silver border border-asas-silver/20 rounded-sm text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 transition-colors"
+        >
+          <RefreshCw className="w-3 h-3" /> Synchroniser
         </button>
       </div>
 
+      {/* Upload and Category control */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="md:col-span-1 flex flex-col justify-center">
+          <label className="text-[9px] uppercase tracking-widest font-extrabold text-asas-silver mb-2">Choisir la Catégorie</label>
+          <select 
+            value={uploadCategory}
+            onChange={(e) => setUploadCategory(e.target.value)}
+            className="w-full bg-white dark:bg-[#1c1e21] border border-asas-silver/20 rounded-sm px-3 py-2 text-[10px] uppercase font-bold text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold cursor-pointer"
+          >
+            <option value="CNI / Passeport">CNI / Passeport</option>
+            <option value="Livret Foncier">Livret Foncier</option>
+            <option value="Contrat VEFA Signé">Contrat de Réservation Signé</option>
+            <option value="Attestation de Virement">Attestation de Virement</option>
+            <option value="Autre">Autre document</option>
+          </select>
+        </div>
+
+        {/* Drag and drop panel */}
+        <div className="md:col-span-2">
+          <form 
+            onDragEnter={handleDrag} 
+            onDragLeave={handleDrag} 
+            onDragOver={handleDrag} 
+            onDrop={handleDrop}
+            onSubmit={(e) => e.preventDefault()}
+            className={clsx(
+              "border border-dashed rounded-sm p-6 text-center transition-all flex flex-col items-center justify-center relative cursor-pointer min-h-[100px]",
+              dragActive ? "border-asas-gold bg-asas-gold/5" : "border-asas-silver/30 bg-asas-sand/20 dark:bg-black/10 hover:border-asas-gold/40"
+            )}
+            onClick={() => document.getElementById('deal-vault-file-picker')?.click()}
+          >
+            <input 
+              id="deal-vault-file-picker" 
+              type="file" 
+              className="hidden" 
+              onChange={handleFileChange} 
+              accept="application/pdf,image/*" 
+            />
+
+            {uploading ? (
+              <div className="space-y-3 w-full max-w-[200px]">
+                <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-asas-silver">
+                   <span>Téléversement...</span>
+                   <span>{uploadProgress}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-asas-silver/20 rounded-full overflow-hidden">
+                   <div className="h-full bg-asas-gold transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                </div>
+              </div>
+            ) : (
+              <>
+                <UploadCloud className="w-6 h-6 text-asas-silver group-hover:text-asas-gold mb-2" />
+                <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-wider">
+                   {dragActive ? "Déposer ici" : "Glisser-déposer un document ou cliquer"}
+                </p>
+                <p className="text-[8px] text-asas-silver font-semibold uppercase tracking-widest mt-1">PDF, PNG, JPEG (Max. 5MB)</p>
+              </>
+            )}
+          </form>
+        </div>
+      </div>
+
       {loading ? (
-        <p className="text-sm text-gray-500">Chargement du coffre-fort...</p>
-      ) : links.length > 0 ? (
+        <div className="p-4 text-center text-asas-silver text-[9px] uppercase tracking-widest font-bold">Chargement du coffre-fort...</div>
+      ) : parsedDocs.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {links.map((link) => {
-             const url = link.description.replace('[VAULT] ', '').trim();
-             return (
-               <a 
-                 key={link.id} 
-                 href={url} 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="flex items-center gap-3 p-3 rounded-sm border border-asas-silver/20 bg-asas-sand/50 dark:bg-[#141618] hover:bg-asas-sand dark:hover:bg-white/5 transition-colors"
-               >
-                 <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-asas-navy dark:text-asas-sand flex items-center justify-center shrink-0">
-                   <Download className="w-5 h-5" />
-                 </div>
-                 <div className="overflow-hidden">
-                   <p className="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">Document {new Date(link.created_at).toLocaleDateString()}</p>
-                   <p className="text-[10px] text-gray-500 truncate mt-0.5">{url}</p>
-                 </div>
-               </a>
-             )
-          })}
+          {parsedDocs.map((doc) => (
+            <div 
+              key={doc.id} 
+              className="flex items-center justify-between p-4 rounded-sm border border-asas-silver/20 bg-asas-sand/50 dark:bg-[#181a1c] hover:border-asas-gold/20 transition-all group"
+            >
+              <a 
+                href={doc.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 overflow-hidden flex-1"
+              >
+                <div className="w-10 h-10 rounded-sm bg-asas-gold/10 text-asas-gold flex items-center justify-center shrink-0 border border-asas-gold/15">
+                  <File className="w-5 h-5" />
+                </div>
+                <div className="overflow-hidden min-w-0 pr-2">
+                  <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                     <span className={clsx("text-[8px] font-extrabold uppercase tracking-widest px-1.5 py-0.5 rounded-sm border", getCategoryColor(doc.category))}>
+                       {doc.category}
+                     </span>
+                     <span className="text-[8px] bg-black/5 dark:bg-white/5 text-asas-silver px-1 rounded-sm uppercase tracking-widest font-bold font-mono">
+                        {doc.uploadedBy === "Client" ? "Client" : "Agent"}
+                     </span>
+                  </div>
+                  <h5 className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand truncate uppercase leading-tight" title={doc.filename}>
+                     {doc.filename}
+                  </h5>
+                  <p className="text-[8px] text-asas-silver font-bold uppercase tracking-wider mt-0.5">
+                    {doc.date} {doc.size ? `· ${formatFileSize(doc.size)}` : ""}
+                  </p>
+                </div>
+              </a>
+
+              <div className="flex items-center gap-1.5 shrink-0 pl-1">
+                 <a 
+                   href={doc.url} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="p-1 px-2 bg-white dark:bg-[#1e2124] hover:bg-asas-sand dark:hover:bg-[#25282c] border border-asas-silver/25 hover:border-asas-gold/40 text-asas-silver dark:hover:text-asas-sand rounded-sm tracking-widest text-[8px] font-bold uppercase transition-colors"
+                   title="Télécharger"
+                 >
+                   <Download className="w-3.5 h-3.5" />
+                 </a>
+                 <button 
+                   onClick={() => handleDelete(doc.id)}
+                   className="p-1 px-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 hover:border-red-500/20 rounded-sm transition-colors"
+                   title="Supprimer"
+                 >
+                   <Trash2 className="w-3.5 h-3.5" />
+                 </button>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
-        <p className="text-sm text-gray-500">Aucun document joint. (CNI, Livret Foncier, etc.)</p>
+        <div className="py-8 text-center border border-dashed border-asas-silver/10 rounded-sm bg-asas-sand/20 dark:bg-[#1a1c1e]/40">
+           <p className="text-[10px] font-extrabold uppercase tracking-widest text-asas-silver">Coffre-fort vide</p>
+           <p className="text-[8px] text-asas-silver font-semibold uppercase tracking-widest mt-1">Glissez-déposez des scans d'identité, de versements ou de quittances.</p>
+        </div>
       )}
     </div>
-  )
+  );
 }
 
 export function DealIntelligencePanel({ dealId }: { dealId: string }) {

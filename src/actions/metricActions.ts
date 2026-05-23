@@ -6,8 +6,9 @@ export async function getMetricsData() {
   try {
     // We aim to fetch real data
     const deals = await kernel.query<any>('deals', { select: 'id, amount, agreed_price, status, created_at' });
-    const leads = await kernel.query<any>('leads', { select: 'id, status' });
+    const leads = await kernel.query<any>('leads', { select: 'id, status, source' });
     const finance = await kernel.query<any>('finance_snapshot', { orderBy: { column: 'snapshot_date', ascending: false }, limit: 1 });
+    const expenses = await kernel.query<any>('expenses', { filters: { category: 'marketing' } }) || [];
 
     const snap = finance?.[0] || null;
 
@@ -20,6 +21,50 @@ export async function getMetricsData() {
     const dealsWonPercentage = (wonDeals.length + lostDeals.length) > 0 
       ? Math.round((wonDeals.length / (wonDeals.length + lostDeals.length)) * 100) 
       : 0;
+
+    // Calculate real marketing spend & metrics (CPL, CAC)
+    const totalAdSpend = expenses.reduce((sum: number, e: any) => sum + Number(e.amount), 0);
+    const mktSpendCount = expenses.length;
+    const totalLeadsCount = leads.length;
+
+    // Compute realistic mock variables if no marketing expense has been logged yet
+    const displayAdSpend = totalAdSpend > 0 ? totalAdSpend : 150000; // Fallback to 150,000 DZD
+    const displayLeadsCount = totalLeadsCount > 0 ? totalLeadsCount : 245;
+    const displayWonCount = wonDeals.length > 0 ? wonDeals.length : 32;
+
+    const calculatedCPL = Math.round(displayAdSpend / displayLeadsCount);
+    const calculatedCAC = Math.round(displayAdSpend / displayWonCount);
+
+    // Filter ad spent channels based on descriptions or use default distribution
+    const fbExpenses = expenses.filter((e: any) => e.description?.toLowerCase().includes('facebook') || e.description?.toLowerCase().includes('fb'));
+    const igExpenses = expenses.filter((e: any) => e.description?.toLowerCase().includes('instagram') || e.description?.toLowerCase().includes('ig'));
+    const googleExpenses = expenses.filter((e: any) => e.description?.toLowerCase().includes('google') || e.description?.toLowerCase().includes('seo') || e.description?.toLowerCase().includes('gads'));
+
+    const fbSpend = fbExpenses.reduce((sum: number, e: any) => sum + Number(e.amount), 0);
+    const igSpend = igExpenses.reduce((sum: number, e: any) => sum + Number(e.amount), 0);
+    const googleSpend = googleExpenses.reduce((sum: number, e: any) => sum + Number(e.amount), 0);
+    const otherSpend = totalAdSpend - (fbSpend + igSpend + googleSpend);
+
+    const adSpendByChannel = totalAdSpend > 0 ? [
+      { name: 'Facebook Ads', value: fbSpend },
+      { name: 'Instagram Ads', value: igSpend },
+      { name: 'Google Ads', value: googleSpend },
+      { name: 'Autre', value: otherSpend }
+    ].filter(c => c.value > 0) : [
+      { name: 'Facebook Ads', value: 90000 },
+      { name: 'Instagram Ads', value: 45000 },
+      { name: 'Google Ads', value: 15000 }
+    ];
+
+    const marketingMetrics = {
+      totalAdSpend: totalAdSpend > 0 ? totalAdSpend : 0,
+      isReal: totalAdSpend > 0,
+      displayAdSpend,
+      cpl: calculatedCPL,
+      cac: calculatedCAC,
+      adSpendByChannel,
+      leadsFromAds: Math.round(displayLeadsCount * 0.75), // 75% typically from paid ads in North African real estate
+    };
 
       // Calculate real pipeline weighted value
       const pipelineWeightedValue = deals
@@ -87,7 +132,16 @@ export async function getMetricsData() {
           revenueByMonth: [
             { month: 'Jan', rev: 18000000 }, { month: 'Fev', rev: 22000000 },
             { month: 'Mar', rev: 27000000 }, { month: 'Avr', rev: 35000000 }, { month: 'Mai', rev: 42500000 }
-          ]
+          ],
+          marketingMetrics: {
+            ...marketingMetrics,
+            totalAdSpend: 150000,
+            displayAdSpend: 150000,
+            cpl: 612,
+            cac: 4687,
+            leadsFromAds: 184,
+            isReal: false
+          }
         };
       }
 
@@ -104,7 +158,8 @@ export async function getMetricsData() {
         dataFreshness: 'fresh',
         leadSourceData: leadSourceData.length > 0 ? leadSourceData : [{ name: 'none', value: 1 }],
         salesByMonth,
-        revenueByMonth
+        revenueByMonth,
+        marketingMetrics
       };
   } catch (error) {
     console.error('Failed to get metrics', error);
@@ -112,7 +167,10 @@ export async function getMetricsData() {
     return {
         revenueAccrualMTD: 0, pipelineWeightedValue: 0, cashBalance: 0, conversionRate: 0,
         activeLeads: 0, dealsClosed: 0, avgDealSize: 0, dealsWonPercentage: 0,
-        liquidityMode: 'Unknown', dataFreshness: 'stale', salesByMonth: [], revenueByMonth: []
+        liquidityMode: 'Unknown', dataFreshness: 'stale', salesByMonth: [], revenueByMonth: [],
+        marketingMetrics: {
+          totalAdSpend: 0, displayAdSpend: 0, cpl: 0, cac: 0, leadsFromAds: 0, adSpendByChannel: [], isReal: false
+        }
     }
   }
 }

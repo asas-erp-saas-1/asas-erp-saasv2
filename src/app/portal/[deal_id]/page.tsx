@@ -2,15 +2,35 @@
 
 import { useState, useEffect, use } from 'react'
 import { motion } from 'motion/react'
-import { Loader2, FileText, CheckCircle2, MapPin, Download, MessageCircle, Building2, Wallet } from 'lucide-react'
+import { Loader2, FileText, CheckCircle2, MapPin, Download, MessageCircle, Building2, Wallet, UploadCloud, Check, File, FileCode } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { Deal } from '@/types/app'
 import Link from 'next/link'
+import { jsPDF } from 'jspdf'
 
 export default function CustomerPortal({ params }: { params: Promise<{ deal_id: string }> }) {
   const { deal_id } = use(params)
   const [deal, setDeal] = useState<Deal | null>(null)
   const [loading, setLoading] = useState(true)
+  const [docs, setDocs] = useState<any[]>([])
+  const [docsLoading, setDocsLoading] = useState(true)
+  const [uploadingDoc, setUploadingDoc] = useState(false)
+  const [uploadCategory, setUploadCategory] = useState("CNI / Passeport")
+  const [uploadProgress, setUploadProgress] = useState(0)
+
+  const loadDocs = () => {
+    setDocsLoading(true)
+    fetch(`/api/activities?deal_id=${deal_id}`)
+      .then(res => res.json())
+      .then(data => {
+        const vaultLinks = (data.data || []).filter((a: any) => 
+          a.type === 'note' && (a.description.startsWith('[VAULT]') || a.description.startsWith('[VAULT-JSON]'))
+        );
+        setDocs(vaultLinks);
+        setDocsLoading(false);
+      })
+      .catch(() => setDocsLoading(false))
+  };
 
   useEffect(() => {
     fetch(`/api/deals?id=${deal_id}`)
@@ -20,6 +40,8 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
         setLoading(false)
       })
       .catch(() => setLoading(false))
+
+    loadDocs()
   }, [deal_id])
 
   if (loading) {
@@ -95,29 +117,29 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
                     <Building2 className="w-6 h-6 text-indigo-400" />
                  </div>
                  <div>
-                   <h2 className="text-xl font-bold">{deal.properties?.projects?.name || 'Programme Immobilier'}</h2>
-                   <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
-                     <MapPin className="w-3 h-3" /> Lot {deal.properties?.reference_code || '---'}
-                   </p>
+                    <h2 className="text-xl font-bold">{deal.properties?.projects?.name || 'Programme Immobilier'}</h2>
+                    <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
+                      <MapPin className="w-3 h-3" /> Lot {deal.properties?.reference_code || '---'}
+                    </p>
                  </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
                  <div className="bg-[#141618] border border-white/5 rounded-sm p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-asas-silver mb-1 font-bold">Type</p>
-                    <p className="font-bold text-sm">{deal.properties?.type || 'Appartement'}</p>
+                     <p className="text-[10px] uppercase tracking-widest text-[#a1a1a5] mb-1 font-bold">Type</p>
+                     <p className="font-bold text-sm">{deal.properties?.type || 'Appartement'}</p>
                  </div>
-                 <div className="bg-white/5 border border-white/5 rounded-xl p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-bold">Surface</p>
-                    <p className="font-bold text-sm">{deal.properties?.area_sqm ? `${deal.properties.area_sqm} m²` : '---'}</p>
+                 <div className="bg-[#141618] border border-white/5 rounded-sm p-4">
+                     <p className="text-[10px] uppercase tracking-widest text-[#a1a1a5] mb-1 font-bold">Surface</p>
+                     <p className="font-bold text-sm">{deal.properties?.area_sqm ? `${deal.properties.area_sqm} m²` : '---'}</p>
                  </div>
-                 <div className="bg-[#111111] border border-white/5 rounded-xl p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-bold">Pièces</p>
-                    <p className="font-bold text-sm">{deal.properties?.rooms || '---'}</p>
+                 <div className="bg-[#141618] border border-white/5 rounded-sm p-4">
+                     <p className="text-[10px] uppercase tracking-widest text-[#a1a1a5] mb-1 font-bold">Pièces</p>
+                     <p className="font-bold text-sm">{deal.properties?.rooms || '---'}</p>
                  </div>
-                 <div className="bg-[#111111] border border-white/5 rounded-xl p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-bold">Livraison</p>
-                    <p className="font-bold text-sm">T4 2026</p>
+                 <div className="bg-[#141618] border border-white/5 rounded-sm p-4">
+                     <p className="text-[10px] uppercase tracking-widest text-[#a1a1a5] mb-1 font-bold">Livraison</p>
+                     <p className="font-bold text-sm">T4 2026</p>
                  </div>
               </div>
            </motion.div>
@@ -155,37 +177,37 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
                 <Wallet className="w-5 h-5 text-indigo-400" /> Échéancier Financier
              </h3>
              <div className="mb-8">
-               <div className="flex justify-between items-end mb-2">
-                 <div>
-                   <p className="text-3xl font-black">{(paid / 1000000).toFixed(1)} <span className="text-sm text-gray-500">M DZD</span></p>
-                   <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Payé sur {(price / 1000000).toFixed(1)} M</p>
-                 </div>
-                 <div className="text-xl font-bold text-indigo-400">{pct.toFixed(0)}%</div>
-               </div>
-               <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                 <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${pct}%` }} />
-               </div>
+                <div className="flex justify-between items-end mb-2">
+                  <div>
+                    <p className="text-3xl font-black">{(paid / 1000000).toFixed(1)} <span className="text-sm text-gray-500">M DZD</span></p>
+                    <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Payé sur {(price / 1000000).toFixed(1)} M</p>
+                  </div>
+                  <div className="text-xl font-bold text-indigo-400">{pct.toFixed(0)}%</div>
+                </div>
+                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${pct}%` }} />
+                </div>
              </div>
 
              <div className="space-y-3">
-               {(!deal.deal_payments || deal.deal_payments.length === 0) ? (
-                  <p className="text-sm text-gray-400">Aucun paiement ou appel de fonds enregistré.</p>
-               ) : (
-                  (deal.deal_payments as any[]).sort((a,b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()).map(payment => (
-                     <div key={payment.id} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", payment.status === 'paid' ? "bg-[#111111] border-white/5" : "bg-[#0A0A0A] border-white/5 opacity-50")}>
-                        <div className="flex items-center gap-3">
-                           {payment.status === 'paid' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-600" />}
-                           <div>
-                             <p className="text-sm font-bold">Appel de Fonds</p>
-                             <p className="text-[10px] uppercase text-gray-500 tracking-wider">
-                                {payment.status === 'paid' ? `Réglé le ${new Date(payment.updated_at || payment.due_date).toLocaleDateString()}` : `Prévu pour le ${new Date(payment.due_date).toLocaleDateString()}`}
-                             </p>
-                           </div>
-                        </div>
-                        <span className={clsx("text-sm font-bold", payment.status === 'paid' ? "text-white" : "text-gray-400")}>{((payment.amount) / 1000000).toFixed(2)} M</span>
-                     </div>
-                  ))
-               )}
+                {(!deal.deal_payments || deal.deal_payments.length === 0) ? (
+                   <p className="text-sm text-gray-400">Aucun paiement ou appel de fonds enregistré.</p>
+                ) : (
+                   (deal.deal_payments as any[]).sort((a,b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()).map(payment => (
+                      <div key={payment.id} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", payment.status === 'paid' ? "bg-[#111111] border-white/5" : "bg-[#0A0A0A] border-white/5 opacity-50")}>
+                         <div className="flex items-center gap-3">
+                            {payment.status === 'paid' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-600" />}
+                            <div>
+                              <p className="text-sm font-bold">Appel de Fonds</p>
+                              <p className="text-[10px] uppercase text-gray-500 tracking-wider">
+                                 {payment.status === 'paid' ? `Réglé le ${new Date(payment.updated_at || payment.due_date).toLocaleDateString()}` : `Prévu pour le ${new Date(payment.due_date).toLocaleDateString()}`}
+                              </p>
+                            </div>
+                         </div>
+                         <span className={clsx("text-sm font-bold", payment.status === 'paid' ? "text-white" : "text-gray-400")}>{((payment.amount) / 1000000).toFixed(2)} M</span>
+                      </div>
+                   ))
+                )}
              </div>
           </motion.section>
 
@@ -194,30 +216,230 @@ export default function CustomerPortal({ params }: { params: Promise<{ deal_id: 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-[#0A0A0A] border border-white/5 p-8 rounded-3xl"
+            className="bg-[#0A0A0A] border border-white/5 p-8 rounded-3xl space-y-8"
           >
-             <h3 className="text-lg font-bold flex items-center gap-2 mb-6">
-                <FileText className="w-5 h-5 text-indigo-400" /> Documents & Contrats
-             </h3>
-             <div className="space-y-4">
-                {[
-                  { name: 'Contrat de Réservation', status: 'Signé', id: 'res' },
-                  { name: 'Plans de Masse & Intérieur', status: 'Disponible', id: 'plan' },
-                  { name: 'Appel de fonds N°1', status: 'Réglé', id: 'app1' }
-                ].map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-colors cursor-pointer group">
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                           <FileText className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold group-hover:text-white">{doc.name}</p>
-                          <p className="text-[10px] uppercase text-gray-400 tracking-widest">{doc.status}</p>
-                        </div>
-                     </div>
-                     <Download className="w-4 h-4 text-gray-500 group-hover:text-indigo-400 transition-colors" />
+             <div>
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                   <FileText className="w-5 h-5 text-indigo-400" /> Documents de Acquisition & GED
+                </h3>
+                <p className="text-[10px] uppercase tracking-widest text-[#989a9e] mt-1">Vos documents officiels et téléchargement de vos contrats</p>
+             </div>
+
+             {/* Contract generation helper */}
+             <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+               <div>
+                 <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300">Contrat de Réservation / Dossier de Réservation</h4>
+                 <p className="text-[10px] text-gray-400 mt-1">Générez et téléchargez instantanément un exemplaire certifié de votre réservation de lot.</p>
+               </div>
+               <button 
+                 onClick={() => {
+                   if (!deal) return
+                   const doc = new jsPDF()
+                   const clientName = deal.clients?.full_name || 'Acquéreur ASAS OS'
+                   const propertyRef = deal.properties?.reference_code || 'Lot-VEFA'
+                   const projectName = deal.properties?.projects?.name || 'Résidence ASAS'
+                   const agreedPrice = (deal as any).agreed_price || (deal as any).amount || 0
+
+                   doc.setFont("helvetica", "bold")
+                   doc.setFontSize(20)
+                   doc.text("CONTRAT DE RESERVATION (VEFA)", 105, 25, { align: "center" })
+
+                   doc.setFontSize(10)
+                   doc.setFont("helvetica", "normal")
+                   doc.text(`Identifiant Dossier : ${deal_id.substring(0,8).toUpperCase()}`, 20, 45)
+                   doc.text(`Fait le : ${new Date().toLocaleDateString('fr-FR')}`, 20, 52)
+
+                   doc.setFont("helvetica", "bold")
+                   doc.setFontSize(12)
+                   doc.text("1. PARTIES CONTRACTANTES", 20, 70)
+                   doc.setFont("helvetica", "normal")
+                   doc.setFontSize(10)
+                   doc.text(`Promoteur : ASAS OS Promotion Immobilière, Alger`, 25, 80)
+                   doc.text(`Bénéficiaire : M./Mme ${clientName}`, 25, 88)
+                   if (deal.clients?.phone) {
+                      doc.text(`Téléphone portable : ${deal.clients.phone}`, 25, 96)
+                   }
+
+                   doc.setFont("helvetica", "bold")
+                   doc.setFontSize(12)
+                   doc.text("2. DESIGNATION DU BIEN IMMOBILIER", 20, 115)
+                   doc.setFont("helvetica", "normal")
+                   doc.setFontSize(10)
+                   doc.text(`Résidence / Projet : ${projectName}`, 25, 125)
+                   doc.text(`Numéro de Lot : ${propertyRef}`, 25, 133)
+                   doc.text(`Type de lot : ${deal.properties?.type || 'Appartement'}`, 25, 141)
+                   if (deal.properties?.area_sqm) {
+                      doc.text(`Superficie approximative : ${deal.properties.area_sqm} m²`, 25, 149)
+                   }
+
+                   doc.setFont("helvetica", "bold")
+                   doc.setFontSize(12)
+                   doc.text("3. ENUMERATION FINANCIERE", 20, 165)
+                   doc.setFont("helvetica", "normal")
+                   doc.setFontSize(10)
+                   doc.text(`Prix de cession convenu : ${new Intl.NumberFormat('fr-DZ').format(agreedPrice)} DZD`, 25, 175)
+                   doc.text(`Ce paiement sera échelonné selon le calendrier approuvé et annexé.`, 25, 183)
+
+                   const y = 210
+                   doc.setFont("helvetica", "bold")
+                   doc.text("SIGNATURES DES PARTIES :", 20, y)
+                   doc.text("Le Promoteur (Cachet & Signature)", 30, y + 15)
+                   doc.text("Le Bénéficiaire Acquéreur", 130, y + 15)
+
+                   doc.save(`Contrat_Reservation_${propertyRef}.pdf`)
+                 }}
+                 className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 border border-transparent text-white rounded-xl text-[9px] uppercase font-bold tracking-widest transition-colors cursor-pointer"
+               >
+                 Générer PDF
+               </button>
+             </div>
+
+             {/* Documents Real List */}
+             <div className="space-y-3">
+               {docsLoading ? (
+                  <p className="text-center py-4 text-xs text-gray-400">Synchronisation des justificatifs...</p>
+               ) : docs.length === 0 ? (
+                  <div className="py-8 text-center border border-white/5 rounded-xl bg-white/5">
+                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#9ea0a3]">Coffre-fort vide</p>
+                     <p className="text-[9px] text-gray-500 mt-1">Aucun document n'a encore été mis en ligne pour cette transaction.</p>
                   </div>
-                ))}
+               ) : (
+                 docs.map((rawDoc) => {
+                   const isJson = rawDoc.description.startsWith('[VAULT-JSON]');
+                   let docInfoObj: any = {};
+                   if (isJson) {
+                     try {
+                        docInfoObj = JSON.parse(rawDoc.description.replace('[VAULT-JSON] ', '').trim());
+                     } catch(e){}
+                   } else {
+                     const url = rawDoc.description.replace('[VAULT] ', '').trim();
+                     docInfoObj = {
+                        filename: "Document Externe",
+                        category: "Lien Externe",
+                        url: url,
+                        uploadedBy: "Promoteur",
+                        size: undefined
+                     };
+                   }
+
+                   const displayTitle = docInfoObj.filename || "Fichier Joint";
+                   const displayCat = docInfoObj.category || "Autre";
+                   const isFromClient = docInfoObj.uploadedBy === "Client";
+
+                   return (
+                     <div key={rawDoc.id} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-colors cursor-pointer group">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                           <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors shrink-0">
+                              <FileText className="w-5 h-5" />
+                           </div>
+                           <div className="overflow-hidden">
+                             <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                                <span className="text-[8px] font-bold uppercase tracking-widest bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded-sm">
+                                   {displayCat}
+                                </span>
+                                <span className="text-[8px] bg-white/5 text-gray-400 px-1 rounded-sm uppercase tracking-widest font-bold font-mono">
+                                   {isFromClient ? "Transmis par vous" : "Transmis par l'agence"}
+                                </span>
+                             </div>
+                             <p className="text-sm font-bold group-hover:text-white truncate">{displayTitle}</p>
+                           </div>
+                        </div>
+                        <a 
+                          href={docInfoObj.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-2.5 bg-white/5 group-hover:bg-[#25D366]/10 hover:!bg-[#25D366]/20 border border-white/5 group-hover:border-[#25D366]/20 group-hover:text-[#25D366] text-gray-400 rounded-xl transition-all block shrink-0"
+                          title="Télécharger"
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                     </div>
+                   );
+                 })
+               )}
+             </div>
+
+             {/* Client file uploader */}
+             <div className="border-t border-white/5 pt-6">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-4">Transmettre un document (CNI, Virement)</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-1">
+                     <label className="text-[9px] uppercase tracking-widest font-bold text-gray-500 block mb-2">Type de Document</label>
+                     <select 
+                       value={uploadCategory}
+                       onChange={(e) => setUploadCategory(e.target.value)}
+                       className="w-full bg-[#141618] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                     >
+                        <option value="CNI / Passeport">CNI / Passeport (Identité)</option>
+                        <option value="Justificatif de Versement">Preuve de Versement</option>
+                        <option value="Autre">Autre pièce jointe</option>
+                     </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                     <label className="text-[9px] uppercase tracking-widest font-bold text-gray-500 block mb-2">Sélectionner le fichier</label>
+                     {uploadingDoc ? (
+                        <div className="w-full bg-white/5 rounded-xl p-3 border border-indigo-500/30 flex items-center justify-between text-xs text-indigo-300 font-bold">
+                           <span className="animate-pulse">Transfert de votre justificatif...</span>
+                           <span>{uploadProgress}%</span>
+                        </div>
+                     ) : (
+                        <div 
+                          className="w-full bg-[#111111] hover:bg-[#141618] border border-dashed border-white/10 hover:border-indigo-500/50 rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                          onClick={() => document.getElementById('client-portal-uploader')?.click()}
+                        >
+                           <UploadCloud className="w-4 h-4 text-indigo-400" />
+                           <span className="text-xs font-bold uppercase tracking-wider text-[#797af0] group-hover:text-white">Choisir un fichier (PDF, PNG, JPG)</span>
+                           <input 
+                             id="client-portal-uploader"
+                             type="file"
+                             className="hidden"
+                             accept="image/*,application/pdf"
+                             onChange={async (e) => {
+                               if (e.target.files && e.target.files[0]) {
+                                 const f = e.target.files[0];
+                                 setUploadingDoc(true);
+                                 setUploadProgress(15);
+                                 try {
+                                    const r = new FileReader();
+                                    r.readAsDataURL(f);
+                                    r.onload = async () => {
+                                      setUploadProgress(40);
+                                      const res = await fetch("/api/documents/upload", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                          filename: f.name,
+                                          category: uploadCategory,
+                                          dataUrl: r.result as string,
+                                          dealId: deal_id,
+                                          portalUpload: true
+                                        })
+                                      });
+                                      setUploadProgress(80);
+                                      if (res.ok) {
+                                        setUploadProgress(100);
+                                        setTimeout(() => {
+                                           setUploadingDoc(false);
+                                           setUploadProgress(0);
+                                           loadDocs();
+                                        }, 400);
+                                      } else {
+                                        alert("Erreur lors du transfert de la pièce");
+                                        setUploadingDoc(false);
+                                        setUploadProgress(0);
+                                      }
+                                    };
+                                 } catch(err) {
+                                   setUploadingDoc(false);
+                                   setUploadProgress(0);
+                                 }
+                               }
+                             }}
+                           />
+                        </div>
+                     )}
+                  </div>
+                </div>
              </div>
           </motion.section>
         </div>
