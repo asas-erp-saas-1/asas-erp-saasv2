@@ -5,6 +5,28 @@ import { ErrorTracker } from '@/lib/observability/errors';
 
 export function GlobalErrorTracker() {
   useEffect(() => {
+    // Register Service Worker
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      const registerSW = () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('SW registration successful with scope: ', registration.scope);
+          })
+          .catch((err) => {
+            console.log('SW registration failed: ', err);
+          });
+      };
+
+      if (document.readyState === 'complete') {
+        registerSW();
+      } else {
+        window.addEventListener('load', registerSW);
+        return () => window.removeEventListener('load', registerSW);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const handleWindowError = (event: ErrorEvent) => {
       ErrorTracker.captureError(event.error || new Error(event.message), {
         context: 'GlobalWindowUnhandledError',
