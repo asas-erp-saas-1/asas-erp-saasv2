@@ -38,25 +38,20 @@ export async function POST(request: Request) {
 
     if (command.type === 'SET_DEAL_STAGE') {
       const { stage, notes, lostReason } = command.payload;
-      
-      const payload: any = {
-        status: stage,
-        version: command.expectedVersion + 1
-      };
-      if (lostReason) payload.lost_reason = lostReason;
-      if (notes) payload.notes = notes;
-
-      const deal = await kernel.mutate('deals', 'UPDATE', payload, { id: command.aggregateId });
+      const { DealService } = await import('@/services/deals/deal.service');
+      const deal = await DealService.changeDealStatus(
+        command.aggregateId,
+        stage,
+        command.expectedVersion || 1,
+        { lostReason: lostReason || notes }
+      );
       return NextResponse.json({ success: true, data: deal });
     }
 
     if (command.type === 'SET_LEAD_STATUS') {
-      const { status } = command.payload;
-      const payload: any = {
-        status,
-        last_activity: new Date().toISOString()
-      };
-      const lead = await kernel.mutate('leads', 'UPDATE', payload, { id: command.aggregateId });
+      const { status, lostReason } = command.payload;
+      const { LeadService } = await import('@/services/leads/lead.service');
+      const lead = await LeadService.updateStatus(command.aggregateId, status, { lostReason });
       return NextResponse.json({ success: true, data: lead });
     }
 

@@ -15,16 +15,31 @@ export class RealtimeEngine {
       return;
     }
     
-    const room = `tenant:${tenantId}:${channel}`;
-    const ch = supabase.channel(room);
-    
-    await ch.send({
-      type: 'broadcast',
-      event: event,
-      payload: payload
-    });
-    
-    await supabase.removeChannel(ch);
+    try {
+      const room = `tenant:${tenantId}:${channel}`;
+      const ch = supabase.channel(room);
+      
+      ch.subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          try {
+            await ch.send({
+              type: 'broadcast',
+              event: event,
+              payload: payload
+            });
+          } catch (sendErr) {
+            console.warn('[Realtime] Failed to send broadcast payload:', sendErr);
+          } finally {
+            // Give 2 seconds for packet delivery before pruning channel
+            setTimeout(() => {
+              supabase.removeChannel(ch).catch(() => {});
+            }, 2000);
+          }
+        }
+      });
+    } catch (err) {
+      console.warn('[Realtime] Error initializing or subscribing to channel:', err);
+    }
   }
 
   static async notifyLeadCreated(tenantId: string, lead: any) {

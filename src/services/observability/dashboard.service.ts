@@ -7,7 +7,7 @@ export class TenantDashboardService {
     // never get another tenant's logs.
     return await kernel.query('audit_logs', {
       select: 'id, user_id, entity_type, entity_id, action, created_at',
-      filters: { tenant_id: tenantId },
+      filters: { agency_id: tenantId },
       orderBy: { column: 'created_at', ascending: false },
       limit: 100
     });
@@ -17,7 +17,7 @@ export class TenantDashboardService {
     // Retrieves unique user activities per day/hour, etc.
     const logs = await kernel.query<{ user_id: string }>('audit_logs', {
       select: 'user_id',
-      filters: { tenant_id: tenantId },
+      filters: { agency_id: tenantId },
       limit: 1000
     });
 

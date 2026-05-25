@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "description": "Real Estate Operating System SaaS",
   "workspaces": [
-    "packages/*",
-    "apps/*",
     "tooling/*"
   ],
   "scripts": {
@@ -14,7 +12,7 @@
     "start": "next start -p 3000",
     "lint": "next lint",
     "enforce:ast": "node ./tooling/ast-enforcer/enforce.js",
-    "enforce:boundaries": "npx dependency-cruiser --config .dependency-cruiser.js packages apps",
+    "enforce:boundaries": "npx dependency-cruiser --config .dependency-cruiser.js src",
     "enforce:types": "tsc --noEmit"
   },
   "dependencies": {

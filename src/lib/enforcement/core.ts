@@ -70,7 +70,10 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
         
         let safeMatch = match || {};
         if (action !== 'INSERT') {
-          safeMatch = { ...safeMatch, agency_id: identity.tenantId };
+          const tenantColumn = ['subscriptions', 'tenant_usage', 'invoices', 'payments', 'outbox_events', 'pipeline_metrics'].includes(tableName) 
+            ? 'tenant_id' 
+            : 'agency_id';
+          safeMatch = { ...safeMatch, [tenantColumn]: identity.tenantId };
         }
 
         Logger.info(`Executing Kernel Mutate`, { tenantId: identity.tenantId, userId: identity.userId, action, table: tableName });

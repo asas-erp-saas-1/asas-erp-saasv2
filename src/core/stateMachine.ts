@@ -11,6 +11,7 @@ export const DEAL_STATUS = {
   DRAFT:       'draft',
   ACTIVE:      'active',
   NEGOTIATION: 'negotiation',
+  NOTARY:      'notary',
   CLOSED:      'closed',
   CANCELLED:   'cancelled',
 } as const
@@ -21,7 +22,8 @@ export type DealStatus = typeof DEAL_STATUS[keyof typeof DEAL_STATUS]
 const DEAL_TRANSITIONS: Record<DealStatus, DealStatus[]> = {
   draft:       ['active', 'cancelled'],
   active:      ['negotiation', 'cancelled'],
-  negotiation: ['closed', 'active', 'cancelled'],
+  negotiation: ['notary', 'closed', 'active', 'cancelled'],
+  notary:      ['closed', 'negotiation', 'cancelled'],
   closed:      [],     // terminal — immutable
   cancelled:   [],     // terminal
 }
@@ -69,10 +71,20 @@ export const DEAL_STATE_CONFIG: Record<DealStatus, DealStateConfig> = {
     agentActions:  ['log_activity', 'update_next_action'],
     managerActions: ['add_payment', 'mark_payment_paid', 'close', 'cancel'],
   },
+  notary: {
+    label:         'Notary signing',
+    description:   'Undergoing notary validation',
+    stepIndex:     3,
+    isTerminal:    false,
+    isLocked:      false,
+    colorClass:    'purple',
+    agentActions:  ['log_activity', 'update_next_action'],
+    managerActions: ['close', 'cancel'],
+  },
   closed: {
     label:         'Closed',
     description:   'Deal completed — read-only',
-    stepIndex:     3,
+    stepIndex:     4,
     isTerminal:    true,
     isLocked:      true,
     colorClass:    'green',
@@ -116,7 +128,19 @@ export const DEAL_TRANSITION_META: TransitionMeta[] = [
     buttonStyle: 'primary',
   },
   {
+    from: 'negotiation', to: 'notary',
+    label: 'Send to Notary', confirmMsg: 'Send this deal to notary? Payment schedules will remain read-only.',
+    requiresReason: false, requiresCheck: null, managerOnly: true,
+    buttonStyle: 'primary',
+  },
+  {
     from: 'negotiation', to: 'closed',
+    label: 'Close Deal ✓', confirmMsg: 'Close this deal? All payments must be paid.',
+    requiresReason: false, requiresCheck: 'all_payments_paid', managerOnly: true,
+    buttonStyle: 'success',
+  },
+  {
+    from: 'notary', to: 'closed',
     label: 'Close Deal ✓', confirmMsg: 'Close this deal? All payments must be paid.',
     requiresReason: false, requiresCheck: 'all_payments_paid', managerOnly: true,
     buttonStyle: 'success',
@@ -124,6 +148,12 @@ export const DEAL_TRANSITION_META: TransitionMeta[] = [
   {
     from: 'negotiation', to: 'active',
     label: 'Back to Active', confirmMsg: 'Return to active state?',
+    requiresReason: true, requiresCheck: null, managerOnly: true,
+    buttonStyle: 'secondary',
+  },
+  {
+    from: 'notary', to: 'negotiation',
+    label: 'Back to Negotiation', confirmMsg: 'Return to negotiation?',
     requiresReason: true, requiresCheck: null, managerOnly: true,
     buttonStyle: 'secondary',
   },
@@ -141,6 +171,12 @@ export const DEAL_TRANSITION_META: TransitionMeta[] = [
   },
   {
     from: 'negotiation', to: 'cancelled',
+    label: 'Cancel Deal', confirmMsg: 'Cancel? All pending payments will be cancelled.',
+    requiresReason: true, requiresCheck: null, managerOnly: true,
+    buttonStyle: 'danger',
+  },
+  {
+    from: 'notary', to: 'cancelled',
     label: 'Cancel Deal', confirmMsg: 'Cancel? All pending payments will be cancelled.',
     requiresReason: true, requiresCheck: null, managerOnly: true,
     buttonStyle: 'danger',
@@ -194,7 +230,7 @@ export class DealStateMachine {
 
   // Pipeline steps for UI (excludes cancelled)
   static pipelineSteps(): DealStatus[] {
-    return ['draft', 'active', 'negotiation', 'closed']
+    return ['draft', 'active', 'negotiation', 'notary', 'closed']
   }
 }
 

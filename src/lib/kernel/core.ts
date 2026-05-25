@@ -88,8 +88,13 @@ const kernelCore: IKernel = {
     let q = supabase.from(tableName).select(options?.select || '*');
     if (options?.filters) {
       for (const [k, v] of Object.entries(options.filters)) {
-        if (v === null) q = q.is(k, null);
-        else q = q.eq(k, v);
+        if (v === null) {
+          q = q.is(k, null);
+        } else if (Array.isArray(v)) {
+          q = q.in(k, v);
+        } else {
+          q = q.eq(k, v);
+        }
       }
     }
     if (options?.orderBy) {

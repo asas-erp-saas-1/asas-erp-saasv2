@@ -32,10 +32,15 @@ export class QueryInterceptor {
     
     this.checkRBAC(tableName, 'READ', identity.role);
 
-    // Hard-inject agency_id to prevent cross-tenant data leakage
+    // Dynamic resolution of multi-tenant keys
+    const tenantColumn = ['subscriptions', 'tenant_usage', 'invoices', 'payments', 'outbox_events', 'pipeline_metrics'].includes(tableName) 
+      ? 'tenant_id' 
+      : 'agency_id';
+
+    // Hard-inject the correct tenant key to prevent cross-tenant data leakage
     const scopedFilters = {
       ...(options?.filters ? this.sanitizePayload(options.filters) : {}),
-      agency_id: identity.tenantId
+      [tenantColumn]: identity.tenantId
     };
 
     // Role-based implicit constraints:
@@ -61,10 +66,14 @@ export class QueryInterceptor {
 
     let scopedData = { ...this.sanitizePayload(data) };
 
+    const tenantColumn = ['subscriptions', 'tenant_usage', 'invoices', 'payments', 'outbox_events', 'pipeline_metrics'].includes(tableName) 
+      ? 'tenant_id' 
+      : 'agency_id';
+
     if (action === 'INSERT') {
-      // Force agency_id ownership on creation
-      scopedData.agency_id = identity.tenantId;
-    } else if (action === 'UPDATE' && scopedData.agency_id && scopedData.agency_id !== identity.tenantId) {
+      // Force correct tenant ownership on creation
+      scopedData[tenantColumn] = identity.tenantId;
+    } else if (action === 'UPDATE' && scopedData[tenantColumn] && scopedData[tenantColumn] !== identity.tenantId) {
       // Prevent attempts to move data to another tenant
       RuntimeGuard.triggerViolation('Attempt to mutate cross-tenant boundary detected.');
     }

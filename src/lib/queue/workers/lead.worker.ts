@@ -6,9 +6,9 @@ export async function processLeadAssignment(payload: { tenantId: string, leadId:
     console.log(`Assigning lead ${payload.leadId} in tenant ${payload.tenantId}`);
     
     // Find agents
-    const agents = await tx.query<any>('tenant_members', {
-      select: 'user_id',
-      filters: { tenant_id: payload.tenantId, role: 'agent' }
+    const agents = await tx.query<any>('profiles', {
+      select: 'id',
+      filters: { agency_id: payload.tenantId, role: 'agent' }
     });
     
     if (agents.length === 0) {
@@ -17,7 +17,7 @@ export async function processLeadAssignment(payload: { tenantId: string, leadId:
     }
     
     // Pick first (simulated round robin fallback)
-    const agentId = agents[0].user_id;
+    const agentId = agents[0].id;
     
     await tx.mutate('leads', 'UPDATE', { assigned_to: agentId }, { id: payload.leadId });
     

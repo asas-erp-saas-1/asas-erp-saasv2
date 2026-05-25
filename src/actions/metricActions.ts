@@ -1,9 +1,23 @@
 'use server';
 
 import { kernel } from '@/lib/kernel/core';
+import { CacheService } from '@/lib/cache/cache.service';
 
 export async function getMetricsData() {
   try {
+    let tenantId = 'unknown';
+    try {
+      const identity = await kernel.identity();
+      tenantId = identity.tenantId;
+      
+      const cached = await CacheService.get<any>(tenantId, 'dashboard_metrics');
+      if (cached) {
+        return cached;
+      }
+    } catch (_) {
+      // Identity check can fail if called in non-auth contexts, fall forward
+    }
+
     // We aim to fetch real data
     const deals = await kernel.query<any>('deals', { select: 'id, amount, agreed_price, status, created_at' });
     const leads = await kernel.query<any>('leads', { select: 'id, status, source' });
@@ -108,7 +122,7 @@ export async function getMetricsData() {
 
       // Default mock data if DB is completely empty for a better presentation
       if (deals.length === 0 && leads.length === 0 && !snap) {
-        return {
+        const fallbackMetrics = {
           revenueAccrualMTD: 42500000,
           pipelineWeightedValue: 125000000,
           cashBalance: 84000000,
@@ -143,9 +157,14 @@ export async function getMetricsData() {
             isReal: false
           }
         };
+
+        if (tenantId !== 'unknown') {
+          await CacheService.set(tenantId, 'dashboard_metrics', fallbackMetrics, 15);
+        }
+        return fallbackMetrics;
       }
 
-      return {
+      const freshMetrics = {
         revenueAccrualMTD: totalWonAmount, // Technically should be filtered by current month
         pipelineWeightedValue: pipelineWeightedValue,
         cashBalance: snap ? snap.cash_balance : 0,
@@ -161,6 +180,11 @@ export async function getMetricsData() {
         revenueByMonth,
         marketingMetrics
       };
+
+      if (tenantId !== 'unknown') {
+        await CacheService.set(tenantId, 'dashboard_metrics', freshMetrics, 15);
+      }
+      return freshMetrics;
   } catch (error) {
     console.error('Failed to get metrics', error);
     // Return empty state

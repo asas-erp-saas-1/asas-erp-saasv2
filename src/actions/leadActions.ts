@@ -5,9 +5,13 @@ import { ErrorTracker } from '@/lib/observability/errors';
 import { revalidatePath } from 'next/cache';
 import { Database } from '@/types/supabase';
 
-export async function updateLeadStatusAction(id: string, newStatus: Database['public']['Enums']['lead_status']) {
+export async function updateLeadStatusAction(
+  id: string, 
+  newStatus: Database['public']['Enums']['lead_status'],
+  metadata?: { lostReason?: string }
+) {
   try {
-    const lead = await LeadService.updateStatus(id, newStatus);
+    const lead = await LeadService.updateStatus(id, newStatus, metadata);
     revalidatePath('/dashboard/leads');
     return { success: true, data: lead };
   } catch (error: any) {

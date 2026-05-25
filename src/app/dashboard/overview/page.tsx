@@ -49,28 +49,59 @@ export default async function OverviewPage() {
           orderBy: { column: 'due_date', ascending: true }
         });
 
-        mappedActions = await Promise.all((tasks || []).map(async (t: any) => {
+        // 1. Gather all non-null lead_ids and deal_ids to load in bulk
+        const leadIds = Array.from(new Set((tasks || []).map((t: any) => t.lead_id).filter(Boolean)));
+        const dealIds = Array.from(new Set((tasks || []).map((t: any) => t.deal_id).filter(Boolean)));
+
+        // 2. Query all leads and deals in bulk
+        const leadsList = leadIds.length > 0 
+          ? await kernel.query<any>('leads', { filters: { id: leadIds } }) 
+          : [];
+        const dealsList = dealIds.length > 0 
+          ? await kernel.query<any>('deals', { filters: { id: dealIds } }) 
+          : [];
+
+        // Map leads and deals by ID for constant time lookups
+        const leadsMap = new Map<string, any>(leadsList.map(l => [l.id, l]));
+        const dealsMap = new Map<string, any>(dealsList.map(d => [d.id, d]));
+
+        // Gather all client_ids from both maps
+        const clientIds = Array.from(new Set([
+          ...leadsList.map(l => l.client_id).filter(Boolean),
+          ...dealsList.map(d => d.client_id).filter(Boolean)
+        ]));
+
+        // Query all clients in bulk
+        const clientsList = clientIds.length > 0 
+          ? await kernel.query<any>('clients', { filters: { id: clientIds } }) 
+          : [];
+        const clientsMap = new Map<string, any>(clientsList.map(c => [c.id, c]));
+
+        // 3. Assemble tasks mapping in-memory (O(1) lookup per item)
+        mappedActions = (tasks || []).map((t: any) => {
            let leadName = 'Tâche Interne';
            let phone = '';
            let type = t.priority === 'urgent' ? 'urgent' : (t.priority === 'high' ? 'whatsapp' : 'viewing');
            
            if (t.lead_id) {
-             const leads = await kernel.query<any>('leads', { filters: { id: t.lead_id }, limit: 1 });
-             if (leads && leads[0] && leads[0].client_id) {
-                const client = await kernel.query<any>('clients', { filters: { id: leads[0].client_id }, limit: 1 });
-                if (client && client[0]) {
-                   leadName = client[0].full_name;
-                   phone = client[0].phone || '';
+             const lead = leadsMap.get(t.lead_id);
+             if (lead && lead.client_id) {
+                const client = clientsMap.get(lead.client_id);
+                if (client) {
+                   leadName = client.full_name;
+                   phone = client.phone || '';
                 }
              }
            } else if (t.deal_id) {
-             const deals = await kernel.query<any>('deals', { filters: { id: t.deal_id }, limit: 1 });
-             if (deals && deals[0]) {
-                leadName = `Deal #${deals[0].id.substring(0,8)}`;
-                const clients = await kernel.query<any>('clients', { filters: { id: deals[0].client_id }, limit: 1 });
-                if (clients && clients[0]) {
-                   leadName = clients[0].full_name;
-                   phone = clients[0].phone || '';
+             const deal = dealsMap.get(t.deal_id);
+             if (deal) {
+                leadName = `Deal #${deal.id.substring(0,8)}`;
+                if (deal.client_id) {
+                   const client = clientsMap.get(deal.client_id);
+                   if (client) {
+                      leadName = client.full_name;
+                      phone = client.phone || '';
+                   }
                 }
              }
            }
@@ -89,7 +120,7 @@ export default async function OverviewPage() {
              time: timeStr,
              phone: phone
            };
-        }));
+        });
       } catch (err) {
         console.error('Failed to fetch agent tasks:', err);
         // Fallback mappedActions remains empty array
