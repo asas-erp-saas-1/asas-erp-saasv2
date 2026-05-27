@@ -26,6 +26,7 @@ function fmt(n: number): string {
 }
 
 import { ExpensesSection } from './ExpensesSection'
+import { LedgerSection } from './LedgerSection'
 
 export default function FinancePage() {
   const [cash,    setCash]    = useState<CashPosition | null>(null)
@@ -201,6 +202,7 @@ export default function FinancePage() {
           </motion.div>
         )}
 
+        <LedgerSection />
         <ExpensesSection />
       </div>
     </div>

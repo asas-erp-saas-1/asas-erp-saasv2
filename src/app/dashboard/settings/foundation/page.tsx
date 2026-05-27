@@ -29,11 +29,12 @@ import Link from 'next/link'
 import { clsx } from 'clsx'
 
 export default function FoundationDashboard() {
-  const [activeTab, setActiveTab] = useState<'branches' | 'audit' | 'documents' | 'communications' | 'tasks'>('branches')
+  const [activeTab, setActiveTab] = useState<'branches' | 'teams' | 'audit' | 'documents' | 'communications' | 'tasks'>('branches')
   
   // States
   const [context, setContext] = useState<any>(null)
   const [branches, setBranches] = useState<any[]>([])
+  const [teams, setTeams] = useState<any[]>([])
   const [auditLogs, setAuditLogs] = useState<any[]>([])
   const [documents, setDocuments] = useState<any[]>([])
   const [comms, setComms] = useState<any[]>([])
@@ -48,6 +49,9 @@ export default function FoundationDashboard() {
   // Form states
   const [showAddBranch, setShowAddBranch] = useState(false)
   const [newBranch, setNewBranch] = useState({ name: '', code: '', city: '', address: '', phone: '' })
+
+  const [showAddTeam, setShowAddTeam] = useState(false)
+  const [newTeam, setNewTeam] = useState({ name: '', branchId: '', managerId: '' })
   
   const [showAddTask, setShowAddTask] = useState(false)
   const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'medium', assignedTo: '', dueDate: '' })
@@ -74,6 +78,12 @@ export default function FoundationDashboard() {
       const branchRes = await fetch('/api/foundation?action=branches')
       if (branchRes.ok) {
         setBranches(await branchRes.json())
+      }
+
+      // 2.1 Load Teams
+      const teamsRes = await fetch('/api/foundation?action=teams')
+      if (teamsRes.ok) {
+        setTeams(await teamsRes.json())
       }
 
       // 3. Load Forensic Audits
@@ -154,6 +164,38 @@ export default function FoundationDashboard() {
       loadAllData()
     } catch (err: any) {
       setErrorMsg(err.message || 'Erreur lors de la création de la succursale.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleAddTeam(e: React.FormEvent) {
+    e.preventDefault()
+    setSubmitting(true)
+    setErrorMsg('')
+    setSuccessMsg('')
+
+    try {
+      const res = await fetch('/api/foundation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_team',
+          ...newTeam
+        })
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Erreur lors de la création de l\'équipe.')
+      }
+
+      setSuccessMsg('Équipe créée avec succès.')
+      setNewTeam({ name: '', branchId: '', managerId: '' })
+      setShowAddTeam(false)
+      loadAllData()
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Erreur lors de la création de l\'équipe.')
     } finally {
       setSubmitting(false)
     }
@@ -328,6 +370,7 @@ export default function FoundationDashboard() {
       <div className="flex border-b border-asas-silver/20 overflow-x-auto whitespace-nowrap custom-scrollbar">
         {[
           { id: 'branches', label: 'Succursales & Groupes', Icon: Building2 },
+          { id: 'teams', label: 'Réseaux & Équipes', Icon: UserPlus2 },
           { id: 'audit', label: 'Registre Forensic (Audit)', Icon: Activity },
           { id: 'tasks', label: 'Masse-Tâches & SLA', Icon: Clock },
           { id: 'documents', label: 'Matrice Documentaire', Icon: FileText },
@@ -460,6 +503,79 @@ export default function FoundationDashboard() {
                     ))}
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {/* Teams Tab */}
+            {activeTab === 'teams' && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-asas-silver/10">
+                  <div>
+                    <h3 className="text-xs uppercase font-extrabold tracking-widest text-asas-charcoal dark:text-asas-sand">Équipes Commerciales & Réseaux</h3>
+                    <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-1">Organisez vos agents en plusieurs équipes attribuées à vos succursales.</p>
+                  </div>
+                  <button 
+                    onClick={() => setShowAddTeam(!showAddTeam)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal text-[9px] uppercase font-bold tracking-widest rounded-sm hover:opacity-95 cursor-pointer font-sans"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Fonder une Équipe
+                  </button>
+                </div>
+
+                {showAddTeam && (
+                  <form onSubmit={handleAddTeam} className="space-y-4 p-5 border border-asas-gold/30 bg-asas-gold/5 rounded-sm">
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-asas-gold mb-2">Nouvelle Configuration Groupée</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input 
+                        type="text" 
+                        placeholder="Nom de l'équipe (ex: Alpha Team)" 
+                        required
+                        value={newTeam.name} 
+                        onChange={e => setNewTeam({ ...newTeam, name: e.target.value })}
+                        className="p-3 border border-asas-silver/20 rounded-sm text-xs bg-white dark:bg-[#0A0A0A] outline-none text-asas-charcoal dark:text-asas-sand focus:border-asas-gold font-bold uppercase tracking-widest"
+                      />
+                      <select 
+                        required
+                        value={newTeam.branchId} 
+                        onChange={e => setNewTeam({ ...newTeam, branchId: e.target.value })}
+                        className="p-3 border border-asas-silver/20 rounded-sm text-xs bg-white dark:bg-[#0A0A0A] outline-none text-asas-charcoal dark:text-asas-sand focus:border-asas-gold font-bold uppercase tracking-widest"
+                      >
+                        <option value="" disabled>Sélectionner la Succursale</option>
+                        {branches.map(b => <option key={b.id} value={b.id}>{b.name} ({b.code})</option>)}
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-asas-gold/20">
+                      <button type="submit" disabled={submitting} className="flex-1 bg-asas-navy text-white text-[10px] uppercase tracking-widest font-bold py-3 rounded-sm hover:bg-asas-charcoal dark:hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
+                         <Layers className="w-3.5 h-3.5" /> {submitting ? 'Validation...' : 'Créer l\'équipe'}
+                      </button>
+                      <button type="button" onClick={() => setShowAddTeam(false)} className="px-6 py-3 border border-asas-silver/20 hover:bg-black/5 dark:hover:bg-white/5 text-[10px] uppercase tracking-widest font-bold rounded-sm text-asas-charcoal dark:text-asas-sand cursor-pointer transition-colors">
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {teams.length === 0 ? (
+                    <div className="p-8 border border-dashed border-asas-silver/20 text-center col-span-full rounded-sm bg-asas-sand/20 dark:bg-black/10">
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-asas-silver">Aucune équipe commerciale définie.</p>
+                    </div>
+                  ) : teams.map(team => (
+                    <div key={team.id} className="p-5 border border-asas-silver/20 rounded-sm bg-asas-sand/20 dark:bg-[#181a1c] flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                           <div className="w-8 h-8 rounded-sm bg-asas-navy/10 border border-asas-navy/20 flex items-center justify-center text-asas-navy dark:text-asas-sand">
+                             <UserPlus2 className="w-4 h-4" />
+                           </div>
+                           <h4 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand font-display uppercase tracking-widest">{team.name}</h4>
+                         </div>
+                         <span className="px-2 py-0.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-sm text-[8px] uppercase tracking-widest font-bold text-asas-silver">
+                            Succursale assignée: {branches.find(b => b.id === team.branch_id)?.name || 'Inconnue'}
+                         </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             )}
 

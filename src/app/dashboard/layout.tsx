@@ -12,43 +12,41 @@ const NAV_GROUPS = [
   {
     group: "Command Center",
     items: [
-      { href: '/dashboard/overview',   label: 'Action Inbox',       Icon: LayoutGrid },
-      { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
+      { href: '/dashboard/overview',   label: 'Hub Opérationnel',   Icon: LayoutGrid },
+      { href: '/dashboard/tasks',      label: 'Tâches & Actions',   Icon: CheckSquare },
       { href: '/dashboard/calendar',   label: 'Agenda',             Icon: CalendarIcon },
     ]
   },
   {
     group: "Commercial & CRM",
     items: [
-      { href: '/dashboard/leads',      label: 'Pipeline Commercial',Icon: Users },
-      { href: '/dashboard/deals',      label: 'Opérations',         Icon: Handshake },
+      { href: '/dashboard/leads',      label: 'Pipeline Prospection',Icon: Users },
+      { href: '/dashboard/deals',      label: 'Dossiers Vente',      Icon: Handshake },
       { href: '/dashboard/clients',    label: 'Base Profils',       Icon: UserSquare2 },
     ]
   },
   {
-    group: "Chantier & Promotion",
+    group: "Construction & Projets",
     items: [
-      { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2 },
-      { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2 },
-      { href: '/dashboard/sav',        label: 'SAV & Livraisons',   Icon: CheckSquare },
+      { href: '/dashboard/projects',   label: 'Projets',            Icon: Building2 },
+      { href: '/dashboard/properties', label: 'Unités (Biens)',     Icon: Building2 },
+      { href: '/dashboard/sav',        label: 'Livraison & SAV',    Icon: CheckSquare },
     ]
   },
   {
-    group: "Finance & Back-Office",
+    group: "Finance & Comptabilité",
     items: [
-      { href: '/dashboard/finance',    label: 'Finance & Trésorerie', Icon: DollarSign },
-      { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users },
+      { href: '/dashboard/finance',    label: 'Trésorerie & Encaissements', Icon: DollarSign },
+      { href: '/dashboard/agents',     label: 'RH & Commerciaux',  Icon: Users },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
-    group: "Intelligence & Settings",
+    group: "Gouvernance & Paramètres",
     items: [
-      { href: '/dashboard/intelligence', label: 'Décisions', Icon: Award },
-      { href: '/dashboard/copilot',    label: 'Copilote IA',        Icon: Bot },
-      { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2 },
-      { href: '/dashboard/orchestration', label: 'Orchestrateur', Icon: Zap },
-      { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings },
+      { href: '/dashboard/intelligence', label: 'Dashboard Décisionnel', Icon: Award },
+      { href: '/dashboard/orchestration', label: 'Automatismes', Icon: Zap },
+      { href: '/dashboard/settings',   label: 'Structure & Organisation',         Icon: Settings },
     ],
     roles: ['owner', 'admin']
   }

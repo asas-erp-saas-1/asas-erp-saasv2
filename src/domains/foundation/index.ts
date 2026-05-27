@@ -10,4 +10,4 @@ export { ImmutableAuditEngine } from './audit';
 export { FoundationAccessEngine } from './access';
 export { DocumentEngine } from './document';
 export { CommunicationEngine } from './communications';
-export { TaskEngine } from './tasks';
+export { OrganizationEngine, Organization } from './organization';

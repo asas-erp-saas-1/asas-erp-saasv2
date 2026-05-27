@@ -1,7 +1,7 @@
 // src/app/api/foundation/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import { Access, Audit, Documents, Communications, Tasks } from '@/domains/foundation';
+import { Access, Audit, Documents, Communications, Tasks, Organization } from '@/domains/foundation';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,10 +35,13 @@ export async function GET(req: NextRequest) {
     }
 
     if (action === 'branches') {
-      const branches = await Audit.searchVault({ agency_id: context.agencyId });
-      // Since sys_audit_vault checks only work for audit records, let's query raw branches via kernel
-      const rawBranches = await globalFetchBranches(context.agencyId);
+      const rawBranches = await Organization.listBranches();
       return NextResponse.json(rawBranches);
+    }
+
+    if (action === 'teams') {
+      const teams = await Organization.listTeams();
+      return NextResponse.json(teams);
     }
 
     if (action === 'tasks') {
@@ -80,30 +83,14 @@ export async function POST(req: NextRequest) {
     const context = await Access.resolveContext();
 
     if (action === 'create_branch') {
-      // Direct write to branches table
-      if (context.role !== 'owner' && context.scopeLevel !== 'global') {
-        return NextResponse.json({ error: 'Unauthorized: Branch establishment demands executive ownership clearance.' }, { status: 403 });
-      }
-      
       const { name, code, city, address, phone } = body;
-      const { kernel } = await import('@/lib/kernel/core');
-      const record = await kernel.mutate('branches', 'INSERT', {
-        agency_id: context.agencyId,
-        name,
-        code,
-        city,
-        address,
-        phone,
-        is_active: true
-      });
+      const record = await Organization.createBranch({ name, code, city, address, phone });
+      return NextResponse.json(record);
+    }
 
-      await Audit.log({
-        operationType: 'BRANCH_PROVISIONED',
-        entityType: 'branch',
-        entityId: (record as any).id,
-        newValues: { name, code, city }
-      });
-
+    if (action === 'create_team') {
+      const { name, branchId, managerId } = body;
+      const record = await Organization.createTeam({ name, branchId, managerId });
       return NextResponse.json(record);
     }
 
