@@ -8,23 +8,50 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { CommandPalette } from '@/components/CommandPalette'
 import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/OmnibarTriggers'
 
-const NAV = [
-  { href: '/dashboard/overview',   label: 'Vue d\'ensemble',    Icon: LayoutGrid  },
-  { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users       },
-  { href: '/dashboard/deals',      label: 'Transactions',       Icon: Handshake   },
-  { href: '/dashboard/clients',    label: 'Base Clients',       Icon: UserSquare2 },
-  { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2   },
-  { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2   },
-  { href: '/dashboard/finance',    label: 'Finance',            Icon: DollarSign  },
-  { href: '/dashboard/sav',        label: 'SAV & Livraisons',   Icon: CheckSquare },
-  { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
-  { href: '/dashboard/orchestration', label: 'Orchestrateur & SLAs', Icon: Zap },
-  { href: '/dashboard/calendar',   label: 'Agenda Opérationnel',Icon: CalendarIcon },
-  { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users       },
-  { href: '/dashboard/intelligence', label: 'Décisions & Prévisions', Icon: Award },
-  { href: '/dashboard/copilot',    label: 'Copilote IA',        Icon: Bot },
-  { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2   },
-  { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings    },
+const NAV_GROUPS = [
+  {
+    group: "Command Center",
+    items: [
+      { href: '/dashboard/overview',   label: 'Action Inbox',       Icon: LayoutGrid },
+      { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
+      { href: '/dashboard/calendar',   label: 'Agenda',             Icon: CalendarIcon },
+    ]
+  },
+  {
+    group: "Commercial & CRM",
+    items: [
+      { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users },
+      { href: '/dashboard/deals',      label: 'Transactions',       Icon: Handshake },
+      { href: '/dashboard/clients',    label: 'Base Clients',       Icon: UserSquare2 },
+    ]
+  },
+  {
+    group: "Chantier & Promotion",
+    items: [
+      { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2 },
+      { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2 },
+      { href: '/dashboard/sav',        label: 'SAV & Livraisons',   Icon: CheckSquare },
+    ]
+  },
+  {
+    group: "Finance & Back-Office",
+    items: [
+      { href: '/dashboard/finance',    label: 'Finance & Trésorerie', Icon: DollarSign },
+      { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users },
+    ],
+    roles: ['owner', 'admin', 'finance']
+  },
+  {
+    group: "Intelligence & Settings",
+    items: [
+      { href: '/dashboard/intelligence', label: 'Décisions', Icon: Award },
+      { href: '/dashboard/copilot',    label: 'Copilote IA',        Icon: Bot },
+      { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2 },
+      { href: '/dashboard/orchestration', label: 'Orchestrateur', Icon: Zap },
+      { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings },
+    ],
+    roles: ['owner', 'admin']
+  }
 ]
 
 export const dynamic = 'force-dynamic';
@@ -73,12 +100,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const initial = profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U';
 
     const role = profile.role || 'agent';
-    const filteredNav = NAV.filter(i => {
-      if (role === 'agent') {
-        return !['/dashboard/finance', '/dashboard/agents', '/dashboard/metrics', '/dashboard/intelligence'].includes(i.href);
-      }
-      return true;
-    });
 
     return (
       <div className="flex bg-asas-sand dark:bg-asas-charcoal h-[100dvh] overflow-hidden selection:bg-asas-gold/30 selection:text-asas-charcoal dark:text-asas-sand font-sans text-asas-charcoal dark:text-asas-sand">
@@ -108,18 +129,25 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           </div>
 
-          <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar relative z-10">
-            <p className="text-[10px] font-bold text-asas-silver/60 uppercase tracking-widest mb-3 px-3">Navigation</p>
-            <nav className="flex flex-col gap-1">
-              {filteredNav.map(({ href, label, Icon }) => (
-                <Link key={href} href={href}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-asas-sand/60 rounded-sm hover:bg-white/5 hover:text-asas-sand transition-all group relative">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-asas-gold transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>
-                  <Icon className="h-4 w-4 text-asas-silver group-hover:text-asas-gold transition-colors" strokeWidth={1.5} />
-                  <span className="group-hover:translate-x-0.5 transition-transform">{label}</span>
-                </Link>
-              ))}
-            </nav>
+          <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar relative z-10 space-y-6">
+            {NAV_GROUPS.map((navGroup) => {
+               if (navGroup.roles && !navGroup.roles.includes(role)) return null;
+               return (
+                 <div key={navGroup.group}>
+                   <p className="text-[10px] font-bold text-asas-silver/60 uppercase tracking-widest mb-2 px-3">{navGroup.group}</p>
+                   <nav className="flex flex-col gap-1">
+                     {navGroup.items.map(({ href, label, Icon }) => (
+                       <Link key={href} href={href}
+                         className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-asas-sand/70 rounded-sm hover:bg-white/5 hover:text-asas-sand transition-all group relative">
+                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-asas-gold transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>
+                         <Icon className="h-4 w-4 text-asas-silver group-hover:text-asas-gold transition-colors" strokeWidth={1.5} />
+                         <span className="group-hover:translate-x-0.5 transition-transform">{label}</span>
+                       </Link>
+                     ))}
+                   </nav>
+                 </div>
+               )
+            })}
           </div>
 
           <div className="mt-auto px-6 py-6 border-t border-asas-silver/10 shrink-0 relative z-10">

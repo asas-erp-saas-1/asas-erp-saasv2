@@ -1,20 +1,19 @@
 // src/app/layout.tsx
 import type { Metadata, Viewport } from 'next'
-import { Cinzel, Tajawal, JetBrains_Mono } from 'next/font/google'
+import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { env } from '@/lib/env'
 import { GlobalErrorTracker } from '@/components/GlobalErrorTracker'
 import { clsx } from 'clsx'
 import { ThemeProvider } from '@/components/ThemeProvider'
 
-const tajawal = Tajawal({
-  weight: ['300', '400', '500', '700', '800'],
-  subsets: ['latin', 'arabic'],
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
 })
 
-const cinzel = Cinzel({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
@@ -50,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={clsx(tajawal.variable, cinzel.variable, jetbrainsMono.variable)}>
+    <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
       <body className="bg-asas-sand dark:bg-asas-charcoal text-asas-charcoal dark:text-asas-sand antialiased font-sans flex flex-col min-h-screen selection:bg-asas-gold/30">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GlobalErrorTracker />

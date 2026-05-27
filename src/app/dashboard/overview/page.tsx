@@ -7,10 +7,10 @@ import { getMetricsData } from '@/actions/metricActions'
 import { kernel } from '@/lib/kernel/core'
 import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = {
-  title: 'Overview — ASAS RE-OS',
-  description: 'Executive overview dashboard',
-}
+  export const metadata: Metadata = {
+    title: 'Action Inbox — ASAS RE-OS',
+    description: 'Unified action queue for all pending tasks and operations.',
+  }
 
 export default async function OverviewPage() {
   let metrics;
@@ -133,9 +133,9 @@ export default async function OverviewPage() {
                <div className="w-12 h-12 rounded-sm bg-asas-navy border border-asas-gold/20 flex items-center justify-center shadow-[0_0_20px_rgba(199,161,90,0.1)]">
                    <LayoutDashboard className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
                </div>
-               Mon Espace <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> المساحة الخاصة بي
+               Action Inbox <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> صندوق مهام
             </h1>
-            <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Tableau de bord opérationnel</p>
+            <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Tableau d'Exécution</p>
           </div>
           <AgentActionFeed actions={mappedActions} />
         </div>
@@ -149,9 +149,9 @@ export default async function OverviewPage() {
              <div className="w-12 h-12 rounded-sm bg-asas-navy border border-asas-gold/20 flex items-center justify-center shadow-[0_0_20px_rgba(199,161,90,0.1)]">
                  <LayoutDashboard className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
              </div>
-             Vue d'ensemble <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> نظرة عامة
+             Action Inbox <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> صندوق مهام
           </h1>
-          <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Centre de commandement exécutif</p>
+          <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Centre de Commandement Exécutif</p>
         </div>
         <CEODashboard initialMetrics={metrics} />
       </div>

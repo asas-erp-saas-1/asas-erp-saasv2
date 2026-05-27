@@ -8,19 +8,46 @@ import clsx from 'clsx'
 
 import { ThemeToggle } from './ThemeToggle'
 
-const NAV = [
-  { href: '/dashboard/overview',   label: 'Vue d\'ensemble',    Icon: LayoutGrid  },
-  { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users       },
-  { href: '/dashboard/deals',      label: 'Transactions',       Icon: Handshake   },
-  { href: '/dashboard/clients',    label: 'Base Clients',       Icon: Users       },
-  { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2   },
-  { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2   },
-  { href: '/dashboard/finance',    label: 'Finance',            Icon: DollarSign  },
-  { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
-  { href: '/dashboard/calendar',   label: 'Agenda Opérationnel',Icon: Calendar    },
-  { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users       },
-  { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2   },
-  { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings    },
+const NAV_GROUPS = [
+  {
+    group: "Command Center",
+    items: [
+      { href: '/dashboard/overview',   label: 'Action Inbox',       Icon: LayoutGrid },
+      { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
+      { href: '/dashboard/calendar',   label: 'Agenda',             Icon: Calendar },
+    ]
+  },
+  {
+    group: "Commercial & CRM",
+    items: [
+      { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users },
+      { href: '/dashboard/deals',      label: 'Transactions',       Icon: Handshake },
+      { href: '/dashboard/clients',    label: 'Base Clients',       Icon: Users },
+    ]
+  },
+  {
+    group: "Chantier & Promotion",
+    items: [
+      { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2 },
+      { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2 },
+    ]
+  },
+  {
+    group: "Finance & Back-Office",
+    items: [
+      { href: '/dashboard/finance',    label: 'Finance & Trésorerie', Icon: DollarSign },
+      { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users },
+    ],
+    roles: ['owner', 'admin', 'finance']
+  },
+  {
+    group: "Intelligence & Settings",
+    items: [
+      { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2 },
+      { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings },
+    ],
+    roles: ['owner', 'admin']
+  }
 ]
 
 export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any, initial: string, roleDisplay: string }) {
@@ -34,12 +61,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
 
   const role = profile?.role || 'agent'
   
-  const filteredNav = NAV.filter(i => {
-    if (role === 'agent') {
-      return !['/dashboard/finance', '/dashboard/agents', '/dashboard/metrics'].includes(i.href);
-    }
-    return true;
-  })
+  // We no longer need filteredNav as we map NAV_GROUPS directly
 
   // Determine bottom nav based on role
   const BOTTOM_NAV = role === 'agent' ? [
@@ -147,31 +169,38 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-6 custom-scrollbar overscroll-contain">
-          <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mb-3 px-2">Menu Principal</p>
-          <nav className="flex flex-col gap-2">
-            {filteredNav.map(({ href, label, Icon }) => {
-              const isActive = pathname.startsWith(href)
+            {NAV_GROUPS.map((navGroup) => {
+              if (navGroup.roles && !navGroup.roles.includes(role)) return null;
               return (
-                <Link 
-                  key={href} 
-                  href={href}
-                  onClick={() => setIsOpen(false)}
-                  className={clsx(
-                    "flex items-center justify-between px-4 py-4 text-[10px] font-bold tracking-widest uppercase rounded-sm transition-all relative overflow-hidden group active:scale-[0.98]",
-                    isActive 
-                      ? "text-asas-charcoal dark:text-asas-sand bg-asas-gold/10 border border-asas-gold/20 shadow-[0_0_15px_rgba(199,161,90,0.05)]" 
-                      : "text-asas-charcoal/60 dark:text-asas-silver bg-asas-sand/50 dark:bg-white/5 hover:bg-asas-silver/10 hover:text-asas-charcoal dark:hover:text-asas-sand border border-transparent"
-                  )}
-                >
-                  <div className="flex items-center gap-4 relative z-10">
-                    <Icon className={clsx("h-5 w-5 transition-colors", isActive ? "text-asas-gold" : "text-asas-silver group-hover:text-asas-charcoal dark:group-hover:text-asas-sand")} strokeWidth={isActive ? 2 : 1.5} />
-                    <span>{label}</span>
+                <div key={navGroup.group} className="mb-4">
+                  <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mb-2 px-2">{navGroup.group}</p>
+                  <div className="flex flex-col gap-1">
+                    {navGroup.items.map(({ href, label, Icon }) => {
+                      const isActive = pathname.startsWith(href)
+                      return (
+                        <Link 
+                          key={href} 
+                          href={href}
+                          onClick={() => setIsOpen(false)}
+                          className={clsx(
+                            "flex items-center justify-between px-4 py-3 text-[10px] font-bold tracking-widest uppercase rounded-sm transition-all relative overflow-hidden group active:scale-[0.98]",
+                            isActive 
+                              ? "text-asas-charcoal dark:text-asas-sand bg-asas-gold/10 border border-asas-gold/20 shadow-[0_0_15px_rgba(199,161,90,0.05)]" 
+                              : "text-asas-charcoal/60 dark:text-asas-silver bg-asas-sand/50 dark:bg-white/5 hover:bg-asas-silver/10 hover:text-asas-charcoal dark:hover:text-asas-sand border border-transparent"
+                          )}
+                        >
+                          <div className="flex items-center gap-4 relative z-10">
+                            <Icon className={clsx("h-5 w-5 transition-colors", isActive ? "text-asas-gold" : "text-asas-silver group-hover:text-asas-charcoal dark:group-hover:text-asas-sand")} strokeWidth={isActive ? 2 : 1.5} />
+                            <span>{label}</span>
+                          </div>
+                          {isActive && <ChevronRight className="w-5 h-5 text-asas-gold/50" />}
+                        </Link>
+                      )
+                    })}
                   </div>
-                  {isActive && <ChevronRight className="w-5 h-5 text-asas-gold/50" />}
-                </Link>
+                </div>
               )
             })}
-          </nav>
           <div className="h-6"></div> {/* Extra space at bottom of scroll list */}
         </div>
 
