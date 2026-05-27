@@ -894,29 +894,55 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
         </motion.div>
       )}
 
-      {/* Process & Checklists */}
+      {/* Process & Checklists - Dynamic display based on Deal Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {deal.status === 'negotiation' && (
+
+        {/* Action 1: Draft/Validation Phase */}
+        {deal.status === 'draft' && (
+          <div className="bg-asas-silver/5 border border-asas-silver/20 rounded-2xl p-6 col-span-1 lg:col-span-2 shadow-sm">
+            <h3 className="text-lg font-bold text-asas-charcoal dark:text-asas-sand mb-3">Vérifications Pré-Contrat</h3>
+            <p className="text-sm text-asas-silver mb-4">La VSP (Vente sur plan) doit être validée avant la génération des appels de fonds.</p>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 p-3 bg-white dark:bg-[#1C1E20] border border-asas-silver/20 rounded-sm">
+                <input type="checkbox" className="w-5 h-5 rounded border-asas-silver/40 text-asas-gold focus:ring-asas-gold" />
+                <span className="text-sm font-bold text-asas-charcoal dark:text-asas-sand object-contain">Validation de l'identité acquéreur</span>
+              </label>
+              <label className="flex items-center gap-3 p-3 bg-white dark:bg-[#1C1E20] border border-asas-silver/20 rounded-sm">
+                <input type="checkbox" className="w-5 h-5 rounded border-asas-silver/40 text-asas-gold focus:ring-asas-gold" />
+                <span className="text-sm font-bold text-asas-charcoal dark:text-asas-sand">Validation de solvabilité / Chèque de réservation déposé</span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* Action 2: Notary Phase */}
+        {(deal.status === 'negotiation' || deal.status === 'notary') && (
           <div className="bg-indigo-500/5 dark:bg-[#050510] border border-indigo-500/20 rounded-2xl p-6 shadow-2xl col-span-1 lg:col-span-2">
             <h3 className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5" /> Documents Notaire (Checklist)
+              <FileText className="w-5 h-5" /> Signature Notaire (Gating)
             </h3>
-            <p className="text-sm font-medium text-indigo-500/80 mb-6">Le dossier notaire doit être complet pour planifier la signature officielle.</p>
+            <p className="text-sm font-medium text-indigo-500/80 mb-6">Le dossier notaire doit être complet et déposé dans le coffre-fort pour débloquer la signature officielle.</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-               {['Livret Foncier', 'Acte de Propriété', 'Pièces d\'identité'].map((doc, idx) => (
-                 <div key={idx} className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-4 flex items-center justify-between">
+               {['CNI / Passeport', 'Contrat VEFA Signé', 'Attestation de Virement'].map((doc, idx) => {
+                 // Check if it's implicitly injected in the Vault
+                 const hasDoc = parsedDocs.some(d => d.category === doc);
+                 return (
+                 <div key={idx} className={clsx("border rounded-sm p-4 flex items-center justify-between transition-all", hasDoc ? "bg-emerald-500/10 border-emerald-500/30" : "bg-white dark:bg-[#141618] border-asas-silver/20")}>
                    <div className="flex items-center gap-3">
-                     <input type="checkbox" className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                     <span className="text-sm font-bold text-gray-900 dark:text-white">{doc}</span>
+                     <div className={clsx("w-5 h-5 rounded flex items-center justify-center text-white", hasDoc ? "bg-emerald-500" : "bg-gray-300 dark:bg-[#2A2D30]")}>
+                       {hasDoc && <CheckCircle2 className="w-3 h-3" />}
+                     </div>
+                     <span className={clsx("text-sm font-bold", hasDoc ? "text-emerald-700 dark:text-emerald-400" : "text-gray-900 dark:text-white")}>{doc}</span>
                    </div>
-                   <button 
-                     onClick={() => window.open(`https://wa.me/${deal.clients?.phone?.replace(/\+/g, '')}?text=${encodeURIComponent(`Salam ${deal.clients?.full_name},\n\nPour préparer la signature chez le notaire, merci de m'envoyer une photo claire de : ${doc}.\n\nMerci !`)}`, '_blank')}
-                     className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 rounded-lg transition-colors">
-                     <MessageCircle className="w-4 h-4" />
-                   </button>
+                   {!hasDoc && (
+                     <button 
+                       onClick={() => window.open(`https://wa.me/${deal.clients?.phone?.replace(/\+/g, '')}?text=${encodeURIComponent(`Salam ${deal.clients?.full_name},\n\nPour préparer la signature chez le notaire, merci de m'envoyer le document suivant : ${doc}.\n\nMerci !`)}`, '_blank')}
+                       className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 rounded-lg transition-colors">
+                       <MessageCircle className="w-4 h-4" />
+                     </button>
+                   )}
                  </div>
-               ))}
+               )})}
             </div>
           </div>
         )}

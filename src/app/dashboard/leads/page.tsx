@@ -190,6 +190,23 @@ function LeadCard({
   const isHot = hours < 24;
   const isStale = hours > 48;
 
+  // Compute required execution action based on status and latency
+  let nextRequiredAction = "";
+  let actionColor = "";
+  if (lead.status === "new" || lead.status === "qualified") {
+      nextRequiredAction = hours > 2 ? "CONTACT INITIAL REQUIS" : "QUALIFIER PROFIL";
+      actionColor = hours > 2 ? "text-red-500 bg-red-500/10 border-red-500/20" : "text-asas-copper bg-asas-copper/10 border-asas-copper/20";
+  } else if (lead.status === "visiting") {
+      nextRequiredAction = hours > 48 ? "RELANCE VISITE OBLIGATOIRE" : "PROGRAMMER VISITE";
+      actionColor = isStale ? "text-red-500 bg-red-500/10 border-red-500/20" : "text-blue-500 bg-blue-500/10 border-blue-500/20";
+  } else if (lead.status === "negotiating") {
+      nextRequiredAction = "SÉCURISER INTENTION / PROPOSAL";
+      actionColor = "text-amber-500 bg-amber-500/10 border-amber-500/20";
+  } else if (lead.status === "option" || lead.status === "reserved") {
+      nextRequiredAction = lead.status === "reserved" ? "VÉRIFIER FINANCEMENT & CONVERTIR" : "CONCRÉTISER RÉSERVATION";
+      actionColor = "text-asas-emerald bg-asas-emerald/10 border-asas-emerald/20";
+  }
+
   return (
     <Draggable draggableId={lead.id} index={index}>
       {(provided, snapshot) => (
@@ -199,13 +216,23 @@ function LeadCard({
           {...provided.dragHandleProps}
           onClick={() => onSelect(lead.id)}
           className={clsx(
-            "bg-white dark:bg-asas-charcoal rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/30",
-            isStale ? "border-asas-copper/30" : "border-asas-silver/20",
+            "bg-white dark:bg-[#141618] rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/40 relative",
+            isStale ? "border-asas-copper/40" : "border-asas-silver/20",
             snapshot.isDragging &&
-              "shadow-md shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#141618]",
+              "shadow-lg shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#1C1E20]"
           )}
         >
-          <div className="flex items-start justify-between gap-2 mb-3">
+          {/* Execution Requirement Banner */}
+          {nextRequiredAction && (
+              <div className={clsx(
+                  "absolute top-0 left-0 right-0 py-0.5 px-2 text-[8px] uppercase tracking-widest font-black text-center whitespace-nowrap overflow-hidden text-ellipsis border-b",
+                  actionColor
+              )}>
+                  ACTION REQUISE : {nextRequiredAction}
+              </div>
+          )}
+
+          <div className="flex items-start justify-between gap-2 mb-3 mt-3">
             <div className="flex-1 min-w-0">
               <p className="font-bold text-asas-charcoal dark:text-asas-sand truncate text-sm">
                 {(lead as any).clients?.full_name ?? "Client Inconnu"}

@@ -121,6 +121,29 @@ function DealCard({
     new Date(deal.next_action_due) < new Date() &&
     !["closed", "cancelled"].includes(deal.status || "");
 
+  let mandatoryAction = "";
+  let mandatoryActionColor = "";
+
+  if (deal.status === "draft") {
+      mandatoryAction = "VALIDER CONTRAT VSP";
+      mandatoryActionColor = "bg-asas-silver/10 text-asas-charcoal dark:text-asas-silver/70 border-asas-silver/20";
+  } else if (deal.status === "active") {
+      mandatoryAction = "SURVEILLER VERSEMENTS" + (isOverdue ? " - EN RETARD!" : "");
+      mandatoryActionColor = isOverdue ? "bg-red-500/10 text-red-500 border-red-500/30" : "bg-asas-navy/10 text-asas-navy dark:text-asas-sand border-asas-navy/20";
+  } else if (deal.status === "negotiation") {
+      mandatoryAction = "COMPLÉTER DOSSIER FINANCEMENT";
+      mandatoryActionColor = "bg-asas-copper/10 text-asas-copper border-asas-copper/20";
+  } else if (deal.status === "notary") {
+      mandatoryAction = "OBTENIR SIGNATURE NOTAIRE";
+      mandatoryActionColor = "bg-asas-gold/10 text-asas-gold border-asas-gold/30";
+  } else if (deal.status === "closed") {
+      mandatoryAction = "LIVRAISON EFFECTUÉE";
+      mandatoryActionColor = "bg-asas-emerald/10 text-asas-emerald border-asas-emerald/30";
+  } else if (deal.status === "cancelled") {
+      mandatoryAction = "DOSSIER ARCHIVÉ";
+      mandatoryActionColor = "bg-red-500/10 text-red-500 border-red-500/30";
+  }
+
   return (
     <Draggable draggableId={deal.id} index={index}>
       {(provided, snapshot) => (
@@ -130,15 +153,25 @@ function DealCard({
           {...provided.dragHandleProps}
           onClick={onSelect}
           className={clsx(
-            "bg-white dark:bg-asas-charcoal rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/30",
+            "bg-white dark:bg-[#141618] rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/40 relative",
             isSelected
               ? "border-asas-gold/50 ring-1 ring-asas-gold/50"
               : "border-asas-silver/20",
             snapshot.isDragging &&
-              "shadow-md shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#141618]",
+              "shadow-lg shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#1C1E20]"
           )}
         >
-          <div className="flex items-start justify-between gap-2 mb-3">
+          {/* Execution Requirement Banner */}
+          {mandatoryAction && (
+              <div className={clsx(
+                  "absolute top-0 left-0 right-0 py-0.5 px-2 text-[8px] uppercase tracking-widest font-black text-center border-b",
+                  mandatoryActionColor
+              )}>
+                  {mandatoryAction}
+              </div>
+          )}
+
+          <div className="flex items-start justify-between gap-2 mb-3 mt-3">
             <div className="flex-1 min-w-0">
               <p
                 className={clsx(
