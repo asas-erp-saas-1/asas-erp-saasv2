@@ -176,12 +176,14 @@ function LeadCard({
   onSelect,
   onWhatsApp,
   onStatusChange,
+  onConvert,
   index,
 }: {
   lead: Lead;
   onSelect: (id: string) => void;
   onWhatsApp: (lead: Lead) => void;
   onStatusChange: (id: string, s: string) => void;
+  onConvert: (id: string) => void;
   index: number;
 }) {
   const hours = inactiveHours(lead.last_activity);
@@ -312,11 +314,22 @@ function LeadCard({
               onClick={(e) => {
                 e.stopPropagation();
               }}
-              className="ml-auto flex items-center justify-center p-2 min-w-[32px] min-h-[32px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 rounded-sm transition-all"
+              className="flex items-center justify-center p-2 min-w-[32px] min-h-[32px] border border-asas-silver/20 bg-white dark:bg-[#141618] text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 rounded-sm transition-all"
               title="Initier Appel"
             >
               <Phone className="h-3.5 w-3.5" />
             </button>
+            {lead.status === "reserved" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onConvert(lead.id);
+                }}
+                className="ml-auto flex items-center justify-center gap-1.5 min-h-[32px] text-[9px] uppercase tracking-widest font-bold bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal px-3 py-1.5 rounded-sm hover:bg-black dark:hover:bg-white transition-all shadow-sm"
+              >
+                Dossier <ArrowRight className="h-3 w-3" />
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -339,6 +352,11 @@ export default function LeadsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const router = useRouter();
+
+  async function handleConvert(leadId: string) {
+    // Navigate to new deal form pre-filled with lead
+    router.push(`/dashboard/deals/new?leadId=${leadId}`);
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -605,6 +623,7 @@ export default function LeadsPage() {
                                   onSelect={setSelectedLeadId}
                                   onWhatsApp={setWhatsAppLead}
                                   onStatusChange={onStatusChange}
+                                  onConvert={handleConvert}
                                 />
                               ))
                             )}

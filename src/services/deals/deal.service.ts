@@ -15,23 +15,43 @@ export class DealService {
 
   static async createDeal(data: { clientId: string; propertyId: string; agreedPrice: number; dealType: Database['public']['Enums']['deal_type']; leadId?: string; agentId?: string }): Promise<Deal> {
     const identity = await kernel.identity();
-    const deal = await kernel.mutate<any>('deals', 'INSERT', {
-      agency_id: identity.tenantId,
-      client_id: data.clientId,
-      property_id: data.propertyId,
-      agent_id: data.agentId || identity.userId,
-      agreed_price: data.agreedPrice,
-      deal_type: data.dealType,
-      lead_id: data.leadId || null,
-      status: 'draft',
-      risk_level: 'low',
-      total_payments_scheduled: 0,
-      total_payments_received: 0,
-      is_current: true,
-      commission_generated: false,
-      version: 1
+    return await kernel.transaction(async (tx) => {
+      const deal = await tx.mutate<any>('deals', 'INSERT', {
+        agency_id: identity.tenantId,
+        client_id: data.clientId,
+        property_id: data.propertyId,
+        agent_id: data.agentId || identity.userId,
+        agreed_price: data.agreedPrice,
+        deal_type: data.dealType,
+        lead_id: data.leadId || null,
+        status: 'draft',
+        risk_level: 'low',
+        total_payments_scheduled: 0,
+        total_payments_received: 0,
+        is_current: true,
+        commission_generated: false,
+        version: 1
+      });
+
+      if (data.leadId) {
+        await tx.mutate('leads', 'UPDATE', {
+          status: 'reserved',
+          last_activity: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, { id: data.leadId });
+
+        await tx.mutate('activities', 'INSERT', {
+          agency_id: identity.tenantId,
+          lead_id: data.leadId,
+          deal_id: deal.id,
+          type: 'status_change',
+          notes: 'Dossier Vente (Deal) créé. Statut de la piste modifié à Réservé.',
+          created_by: identity.userId
+        });
+      }
+
+      return deal as Deal;
     });
-    return deal as Deal;
   }
 
   static async changeDealStatus(
@@ -127,25 +147,6 @@ export class DealService {
             }, { id: payment.id });
           }
         }
-      }
-
-      // Sync 2: If deal is closed, and it is tied to a lead, transition that lead to 'reserved'
-      if (status === 'closed' && currentDeal.lead_id) {
-        await tx.mutate('leads', 'UPDATE', {
-          status: 'reserved',
-          last_activity: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }, { id: currentDeal.lead_id, deleted_at: null });
-        
-        // Let's even add an activity log for the lead status change to 'reserved'!
-        await tx.mutate('activities', 'INSERT', {
-          agency_id: identity.tenantId,
-          lead_id: currentDeal.lead_id,
-          deal_id: dealId,
-          type: 'status_change',
-          notes: 'Lead automatically reserved as the associated deal was closed successfully.',
-          created_by: identity.userId
-        });
       }
 
       // Sync 3: Log state change activity
