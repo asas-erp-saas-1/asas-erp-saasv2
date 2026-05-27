@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap } from 'lucide-react';
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award } from 'lucide-react';
 import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
@@ -21,6 +21,7 @@ const NAV = [
   { href: '/dashboard/orchestration', label: 'Orchestrateur & SLAs', Icon: Zap },
   { href: '/dashboard/calendar',   label: 'Agenda Opérationnel',Icon: CalendarIcon},
   { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users       },
+  { href: '/dashboard/intelligence', label: 'Décisions & Prévisions', Icon: Award },
   { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2   },
   { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings    },
 ]
@@ -73,7 +74,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const role = profile.role || 'agent';
     const filteredNav = NAV.filter(i => {
       if (role === 'agent') {
-        return !['/dashboard/finance', '/dashboard/agents', '/dashboard/metrics'].includes(i.href);
+        return !['/dashboard/finance', '/dashboard/agents', '/dashboard/metrics', '/dashboard/intelligence'].includes(i.href);
       }
       return true;
     });
