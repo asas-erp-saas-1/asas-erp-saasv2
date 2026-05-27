@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
 import { ClientCreateModal } from './ClientCreateModal'
+import { Client360Drawer } from './Client360Drawer'
 
 interface Client {
   id: string; full_name: string; phone: string | null; email: string | null
@@ -26,6 +27,7 @@ export default function ClientsPage() {
   const [type,    setType]    = useState('')
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null)
 
   const loadClients = () => {
     const params = new URLSearchParams({ limit: '50' })
@@ -127,6 +129,7 @@ export default function ClientsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
                         key={c.id} 
+                        onClick={() => setSelectedClientId(c.id)}
                         className="hover:bg-asas-sand/50 dark:hover:bg-black/10 group cursor-pointer transition-colors"
                         >
                         {/* Name */}
@@ -196,6 +199,10 @@ export default function ClientsPage() {
           }}
         />
       )}
+      <Client360Drawer
+        clientId={selectedClientId}
+        onClose={() => setSelectedClientId(null)}
+      />
     </div>
   )
 }

@@ -20,9 +20,9 @@ const NAV_GROUPS = [
   {
     group: "Commercial & CRM",
     items: [
-      { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users },
-      { href: '/dashboard/deals',      label: 'Transactions',       Icon: Handshake },
-      { href: '/dashboard/clients',    label: 'Base Clients',       Icon: UserSquare2 },
+      { href: '/dashboard/leads',      label: 'Pipeline Commercial',Icon: Users },
+      { href: '/dashboard/deals',      label: 'Opérations',         Icon: Handshake },
+      { href: '/dashboard/clients',    label: 'Base Profils',       Icon: UserSquare2 },
     ]
   },
   {

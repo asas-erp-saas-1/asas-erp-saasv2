@@ -1,6 +1,5 @@
 // src/app/dashboard/overview/page.tsx
 import { Metadata } from 'next'
-import { CEODashboard } from '@/modules/overview/components/CEODashboard'
 import { AgentActionFeed } from '@/modules/workspace/components/AgentActionFeed'
 import { LayoutDashboard } from 'lucide-react'
 import { getMetricsData } from '@/actions/metricActions'
@@ -40,14 +39,18 @@ export default async function OverviewPage() {
       return null;
     }
 
-    if (identity.role === 'agent') {
-      let mappedActions: any[] = [];
-      try {
-        const tasks = await kernel.query('tasks', { 
-          filters: { assigned_to: identity!.userId, status: 'pending' },
-          limit: 20,
-          orderBy: { column: 'due_date', ascending: true }
-        });
+    // Load actionable tasks for ALL ROLES
+    let mappedActions: any[] = [];
+    try {
+      // If admin/owner, maybe load ALL pending SLA breaches and approvals. For now, load tasks assigned to user.
+      const taskFilters: any = { assigned_to: identity!.userId, status: 'pending' };
+      // Note: A true enterprise logic would check roles to load global approvals if admin.
+      
+      const tasks = await kernel.query('tasks', { 
+        filters: taskFilters,
+        limit: 20,
+        orderBy: { column: 'due_date', ascending: true }
+      });
 
         // 1. Gather all non-null lead_ids and deal_ids to load in bulk
         const leadIds = Array.from(new Set((tasks || []).map((t: any) => t.lead_id).filter(Boolean)));
@@ -129,33 +132,17 @@ export default async function OverviewPage() {
       return (
         <div className="w-full">
           <div className="flex flex-col gap-2 mb-8">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
                <div className="w-12 h-12 rounded-sm bg-asas-navy border border-asas-gold/20 flex items-center justify-center shadow-[0_0_20px_rgba(199,161,90,0.1)]">
                    <LayoutDashboard className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
                </div>
                Action Inbox <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> صندوق مهام
             </h1>
-            <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Tableau d'Exécution</p>
+            <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Centre de Commandement Exécutif</p>
           </div>
           <AgentActionFeed actions={mappedActions} />
         </div>
       );
-    }
-
-    return (
-      <div className="w-full">
-        <div className="flex flex-col gap-2 mb-8">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-             <div className="w-12 h-12 rounded-sm bg-asas-navy border border-asas-gold/20 flex items-center justify-center shadow-[0_0_20px_rgba(199,161,90,0.1)]">
-                 <LayoutDashboard className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
-             </div>
-             Action Inbox <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> صندوق مهام
-          </h1>
-          <p className="text-sm font-bold text-asas-silver uppercase tracking-widest pl-1">Centre de Commandement Exécutif</p>
-        </div>
-        <CEODashboard initialMetrics={metrics} />
-      </div>
-    )
   } catch (err: any) {
     if (err?.message === 'NEXT_REDIRECT' || err?.digest?.startsWith('NEXT_REDIRECT')) throw err;
     unhandledError = err;

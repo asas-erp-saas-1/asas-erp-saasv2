@@ -12,6 +12,8 @@ import type { Deal } from '@/types/app'
 import { CancelDealModal } from './CancelDealModal'
 import { WhatsAppDrawer } from '@/components/WhatsAppDrawer'
 
+import { DealActionDrawer } from './DealActionDrawer'
+
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_STYLE: Record<string, string> = {
   draft:       'bg-gray-800 text-asas-charcoal/90 dark:text-asas-sand/90 border-gray-700',
@@ -270,9 +272,9 @@ export default function DealsPage() {
   const byStatus = (status: string) => deals.filter(d => d.status === status)
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand">
-      {/* Left: list */}
-      <div className={clsx('flex flex-col bg-white dark:bg-[#141618] overflow-hidden transition-all duration-300 ease-in-out', selectedId ? 'lg:w-[45%] border-r border-asas-silver/20 w-full' : 'w-full')}>
+    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand relative">
+      {/* List / Kanban */}
+      <div className="flex flex-col bg-white dark:bg-[#141618] overflow-hidden transition-all duration-300 ease-in-out w-full">
         {/* Header */}
         <div className="px-6 py-5 border-b border-asas-silver/20 bg-asas-sand/30 dark:bg-black/10 z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
@@ -406,69 +408,19 @@ export default function DealsPage() {
         )}
       </div>
 
-      {/* Right: deal detail panel */}
-      <AnimatePresence>
-        {cancelDealInfo && (
-          <CancelDealModal 
-            dealId={cancelDealInfo.id} 
-            dealVersion={cancelDealInfo.version} 
-            onClose={() => setCancelDealInfo(null)} 
-            onSuccess={() => { setCancelDealInfo(null); load() }} 
-          />
-        )}
-        {selectedId && (
-          <>
-            {/* Mobile Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-            />
-            
-            {/* Panel */}
-            <motion.div 
-              initial={{ opacity: 0, y: '100%' }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: '100%' }}
-              transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="fixed inset-x-0 bottom-0 top-[10%] z-50 bg-white dark:bg-[#0A0A0A] rounded-t-3xl shadow-2xl border-t border-black/10 dark:border-white/10 overflow-hidden flex flex-col lg:static lg:inset-auto lg:top-auto lg:z-auto lg:flex-1 lg:rounded-none lg:border-t-0 lg:shadow-none lg:bg-gray-50 dark:bg-[#050505] lg:translate-y-0"
-              style={{ transform: 'none' }}
-            >
-              {/* Mobile Drag Handle */}
-              <div className="w-full flex justify-center pt-3 pb-1 shrink-0 lg:hidden">
-                <div className="w-12 h-1.5 bg-[#262626] rounded-full"></div>
-              </div>
-              
-              <div className="hidden lg:flex sticky top-0 bg-white dark:bg-[#0A0A0A] border-b border-black/5 dark:border-white/5 py-2 px-4 items-center z-10 w-full justify-between">
-                <span className="text-sm font-bold text-gray-800 dark:text-gray-300">Détails de la Transaction</span>
-                <button onClick={() => setSelectedId(null)} className="p-2 text-xs font-bold text-gray-600 dark:text-gray-400 flex items-center gap-1 hover:text-gray-900 dark:text-white transition-colors">
-                  Fermer
-                </button>
-              </div>
-              
-              <div className="flex-1 overflow-y-auto">
-                <DealIntelligencePanel dealId={selectedId} />
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      {!selectedId && (
-        <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-transparent border-l border-asas-silver/20 text-center p-12 relative overflow-hidden">
-          <div className="absolute inset-0 bg-transparent opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#C7A15A 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
-          <div className="w-24 h-24 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm flex items-center justify-center mb-6 relative overflow-hidden group shadow-sm">
-            <div className="absolute inset-0 bg-asas-gold/5 blur-xl group-hover:bg-asas-gold/10 transition-all"></div>
-            <Handshake className="w-10 h-10 text-asas-gold relative z-10" />
-          </div>
-          <h2 className="text-2xl font-bold text-asas-charcoal dark:text-asas-sand mb-2 tracking-tight font-display uppercase">Poste de Contrôle</h2>
-          <p className="text-sm font-medium text-asas-silver max-w-sm relative z-10">
-            Sélectionnez une entité dans la liste pour accéder aux indicateurs financiers, calculs de risques et actions prédictives.
-          </p>
-        </div>
+      {cancelDealInfo && (
+        <CancelDealModal 
+          dealId={cancelDealInfo.id} 
+          dealVersion={cancelDealInfo.version} 
+          onClose={() => setCancelDealInfo(null)} 
+          onSuccess={() => { setCancelDealInfo(null); load() }} 
+        />
       )}
+
+      <DealActionDrawer
+        dealId={selectedId}
+        onClose={() => setSelectedId(null)}
+      />
 
       <WhatsAppDrawer 
         isOpen={!!whatsAppDeal} 

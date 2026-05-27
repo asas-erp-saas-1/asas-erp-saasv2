@@ -28,7 +28,7 @@ export async function getMetricsData() {
 
     const wonDeals = deals.filter(d => d.status === 'closed');
     const lostDeals = deals.filter(d => d.status === 'cancelled');
-    const activeLeads = leads.filter(l => l.status !== 'unqualified' && l.status !== 'converted');
+    const activeLeads = leads.filter(l => l.status !== 'lost' && l.status !== 'reserved');
 
     const totalWonAmount = wonDeals.reduce((sum, d) => sum + (d.agreed_price || d.amount || 0), 0);
     const avgDealSize = wonDeals.length > 0 ? totalWonAmount / wonDeals.length : 0;

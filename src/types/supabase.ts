@@ -11,7 +11,7 @@ export interface Database {
     Enums: {
       user_role:        'admin' | 'manager' | 'agent';
       deal_status:      'draft' | 'active' | 'negotiation' | 'notary' | 'closed' | 'cancelled';
-      lead_status:      'new' | 'contacted' | 'interested' | 'visit_scheduled' | 'converted' | 'lost';
+      lead_status:      'new' | 'qualified' | 'visiting' | 'negotiating' | 'option' | 'reserved' | 'lost';
       property_status:  'available' | 'reserved' | 'sold' | 'off_market';
       payment_status:   'pending' | 'paid' | 'overdue' | 'cancelled';
       risk_level:       'low' | 'medium' | 'high' | 'critical';

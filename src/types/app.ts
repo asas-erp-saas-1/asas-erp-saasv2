@@ -4,7 +4,7 @@
 export type UserRole    = 'admin' | 'manager' | 'agent'
 export type DealStatus  = 'draft' | 'active' | 'negotiation' | 'notary' | 'closed' | 'cancelled'
 export type DealLostReason = 'price_too_high' | 'lost_to_competitor' | 'financing_failed' | 'seller_backed_out' | 'other'
-export type LeadStatus  = 'new' | 'contacted' | 'interested' | 'visit_scheduled' | 'converted' | 'lost'
+export type LeadStatus  = 'new' | 'qualified' | 'visiting' | 'negotiating' | 'option' | 'reserved' | 'lost'
 export type RiskLevel   = 'low' | 'medium' | 'high' | 'critical'
 export type PaymentStatus = 'pending' | 'paid' | 'overdue' | 'cancelled'
 export type ActivityType  = 'call' | 'whatsapp' | 'email' | 'visit' | 'meeting' | 'note' | 'status_change'

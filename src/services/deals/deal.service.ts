@@ -129,21 +129,21 @@ export class DealService {
         }
       }
 
-      // Sync 2: If deal is closed, and it is tied to a lead, transition that lead to 'converted'
+      // Sync 2: If deal is closed, and it is tied to a lead, transition that lead to 'reserved'
       if (status === 'closed' && currentDeal.lead_id) {
         await tx.mutate('leads', 'UPDATE', {
-          status: 'converted',
+          status: 'reserved',
           last_activity: new Date().toISOString(),
           updated_at: new Date().toISOString()
         }, { id: currentDeal.lead_id, deleted_at: null });
         
-        // Let's even add an activity log for the lead status change to 'converted'!
+        // Let's even add an activity log for the lead status change to 'reserved'!
         await tx.mutate('activities', 'INSERT', {
           agency_id: identity.tenantId,
           lead_id: currentDeal.lead_id,
           deal_id: dealId,
           type: 'status_change',
-          notes: 'Lead automatically converted as the associated deal was closed successfully.',
+          notes: 'Lead automatically reserved as the associated deal was closed successfully.',
           created_by: identity.userId
         });
       }
