@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldCheck, Zap, Users } from 'lucide-react'
+import { Settings, Save, Check, Bell, CircleDollarSign, AlertTriangle, ShieldCheck, Zap, Users, Sliders } from 'lucide-react'
 import { motion, Variants } from 'motion/react'
 import { clsx } from 'clsx'
 import { SecurityPanel } from './SecurityPanel'
@@ -138,7 +138,10 @@ export default function SettingsPage() {
             </h1>
             <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-3">Règles métier, seuils d'inactivité et alertes financières.</p>
             </div>
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-wrap gap-4 items-center">
+              <Link href="/dashboard/settings/foundation" className="flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase font-bold tracking-widest bg-asas-navy border border-asas-gold/20 hover:border-asas-gold/40 text-asas-sand transition-all cursor-pointer">
+                  <Sliders className="w-4 h-4 text-asas-gold" /> Gérer les Fondations COEUR
+              </Link>
               <Link href="/dashboard/settings/team" className="flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase font-bold tracking-widest bg-asas-navy hover:bg-asas-navy/80 text-white transition-all cursor-pointer">
                   <Users className="w-4 h-4" /> Gérer l'Équipe (RBAC)
               </Link>
