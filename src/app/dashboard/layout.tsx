@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award } from 'lucide-react';
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Bot } from 'lucide-react';
 import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
@@ -19,9 +19,10 @@ const NAV = [
   { href: '/dashboard/sav',        label: 'SAV & Livraisons',   Icon: CheckSquare },
   { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
   { href: '/dashboard/orchestration', label: 'Orchestrateur & SLAs', Icon: Zap },
-  { href: '/dashboard/calendar',   label: 'Agenda Opérationnel',Icon: CalendarIcon},
+  { href: '/dashboard/calendar',   label: 'Agenda Opérationnel',Icon: CalendarIcon },
   { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users       },
   { href: '/dashboard/intelligence', label: 'Décisions & Prévisions', Icon: Award },
+  { href: '/dashboard/copilot',    label: 'Copilote IA',        Icon: Bot },
   { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2   },
   { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings    },
 ]
