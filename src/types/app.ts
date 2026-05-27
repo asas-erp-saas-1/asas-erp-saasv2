@@ -20,10 +20,118 @@ export interface Profile {
   phone:      string | null
   email:      string | null
   role:       UserRole
+  branch_id:  string | null
+  team_id:    string | null
   is_active:  boolean
   avatar_url: string | null
   created_at: string
   updated_at?: string
+  // Joined
+  branches?:  Branch | null
+  teams?:     Team | null
+}
+
+export interface Branch {
+  id:         string
+  agency_id:  string
+  name:       string
+  code:       string
+  city:       string | null
+  address:    string | null
+  phone:      string | null
+  is_active:  boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Team {
+  id:         string
+  agency_id:  string
+  branch_id:  string | null
+  name:       string
+  department: string | null
+  is_active:  boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface AuditLog {
+  sequence_id: number
+  agency_id:   string
+  correlation_id: string
+  timestamp:   string
+  actor_id:    string | null
+  operation_type: string
+  entity_type: string
+  entity_id:   string | null
+  old_values:  any | null
+  new_values:  any | null
+  request_ip:  string | null
+  device_signature: string | null
+  is_anomaly:  boolean
+  anomaly_reason: string | null
+}
+
+export interface DocumentRecord {
+  id:                 string
+  agency_id:          string
+  branch_id:          string | null
+  associated_entity_type: string
+  associated_entity_id:   string
+  title:              string
+  category:           string
+  storage_path:       string
+  file_size:          number | null
+  mime_type:          string | null
+  lifecycle_state:    'draft' | 'uploaded' | 'verified' | 'approved' | 'archived' | 'rejected'
+  rejection_reason:   string | null
+  verified_by:        string | null
+  verified_at:        string | null
+  uploaded_by:        string
+  hash_signature:     string | null
+  created_at:         string
+  updated_at:         string
+}
+
+export interface CommunicationLog {
+  id:               string
+  agency_id:        string
+  recipient_type:   string
+  recipient_id:     string
+  recipient_phone:  string
+  channel:          'whatsapp' | 'sms' | 'email'
+  message_content:  string
+  whatsapp_template_name: string | null
+  whatsapp_template_variables: any | null
+  delivery_status:  'pending' | 'sent' | 'failed' | 'delivered' | 'read'
+  retry_count:      number
+  max_retries:      number
+  send_after:       string
+  sent_at:          string | null
+  error_message:    string | null
+  created_at:       string
+  updated_at:       string
+}
+
+export interface FoundationTask {
+  id:               string
+  agency_id:        string
+  branch_id:        string | null
+  title:            string
+  description:      string | null
+  priority:         string
+  task_status:      string
+  due_date:         string | null
+  assigned_to:      string | null
+  created_by:       string
+  associated_entity_type: string | null
+  associated_entity_id:   string | null
+  sla_escalation_marker_hours: number
+  escalation_count: number
+  escalated_to:     string | null
+  completed_at:     string | null
+  updated_at:       string
+  created_at:       string
 }
 
 export interface Client {
