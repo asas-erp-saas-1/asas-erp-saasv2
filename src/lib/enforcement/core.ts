@@ -53,7 +53,7 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
       action: 'INSERT' | 'UPDATE' | 'DELETE', 
       data: any, 
       match?: Record<string, any>
-    ): Promise<T> => {
+    ): Promise<T | null> => {
       RuntimeGuard.assertKernelExecution();
       
       const start = Date.now();
@@ -105,7 +105,7 @@ export function enforceExecution(kernelCore: IKernel): IKernel {
       RuntimeGuard.assertKernelExecution();
       try {
         Logger.info(`Starting Kernel Transaction`);
-        return await kernelCore.transaction(async (txCore) => {
+        return await kernelCore.transaction(async (txCore: any) => {
           const enforcedTxBlock = enforceExecution(txCore as IKernel);
           return await callback(enforcedTxBlock);
         });

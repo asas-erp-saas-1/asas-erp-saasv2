@@ -7,7 +7,7 @@ import { Database } from '@/types/supabase';
 
 export async function updateLeadStatusAction(
   id: string, 
-  newStatus: Database['public']['Enums']['lead_status'],
+  newStatus: string,
   metadata?: { lostReason?: string }
 ) {
   try {

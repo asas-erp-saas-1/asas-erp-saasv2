@@ -13,7 +13,7 @@ export class DealService {
     return deals as Deal[];
   }
 
-  static async createDeal(data: { clientId: string; propertyId: string; agreedPrice: number; dealType: Database['public']['Enums']['deal_type']; leadId?: string; agentId?: string }): Promise<Deal> {
+  static async createDeal(data: { clientId: string; propertyId: string; agreedPrice: number; dealType: string; leadId?: string; agentId?: string }): Promise<Deal> {
     const identity = await kernel.identity();
     return await kernel.transaction(async (tx) => {
       const deal = await tx.mutate<any>('deals', 'INSERT', {
@@ -56,7 +56,7 @@ export class DealService {
 
   static async changeDealStatus(
     dealId: string, 
-    status: Database['public']['Enums']['deal_status'], 
+    status: string, 
     currentVersion: number = 1, 
     metadata?: { lostReason?: string }
   ): Promise<Deal> {
@@ -86,7 +86,7 @@ export class DealService {
 
       // 4. State Machine Validation
       const stateMachine = new DealStateMachine(currentDeal.status);
-      const validation = stateMachine.validate(status);
+      const validation = stateMachine.validate(status as any);
       if (!validation.ok) {
         throw new Error(validation.error || `Invalid transition from ${currentDeal.status} to ${status}`);
       }

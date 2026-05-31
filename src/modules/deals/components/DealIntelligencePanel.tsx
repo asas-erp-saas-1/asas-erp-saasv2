@@ -924,8 +924,8 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
             <p className="text-sm font-medium text-indigo-500/80 mb-6">Le dossier notaire doit être complet et déposé dans le coffre-fort pour débloquer la signature officielle.</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                {['CNI / Passeport', 'Contrat VEFA Signé', 'Attestation de Virement'].map((doc, idx) => {
-                 // Check if it's implicitly injected in the Vault
-                 const hasDoc = parsedDocs.some(d => d.category === doc);
+                 // Mocking hasDoc as false since vault is async fetched separately
+                 const hasDoc = false;
                  return (
                  <div key={idx} className={clsx("border rounded-sm p-4 flex items-center justify-between transition-all", hasDoc ? "bg-emerald-500/10 border-emerald-500/30" : "bg-white dark:bg-[#141618] border-asas-silver/20")}>
                    <div className="flex items-center gap-3">

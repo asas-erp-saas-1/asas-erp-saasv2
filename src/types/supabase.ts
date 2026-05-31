@@ -8,372 +8,568 @@ export type Json =
 
 export interface Database {
   public: {
-    Enums: {
-      user_role:        'admin' | 'manager' | 'agent';
-      deal_status:      'draft' | 'active' | 'negotiation' | 'notary' | 'closed' | 'cancelled';
-      lead_status:      'new' | 'qualified' | 'visiting' | 'negotiating' | 'option' | 'reserved' | 'lost';
-      property_status:  'available' | 'reserved' | 'sold' | 'off_market';
-      payment_status:   'pending' | 'paid' | 'overdue' | 'cancelled';
-      risk_level:       'low' | 'medium' | 'high' | 'critical';
-      task_priority:    'low' | 'medium' | 'high' | 'urgent';
-      task_status:      'pending' | 'in_progress' | 'done' | 'cancelled';
-      activity_type:    'call' | 'whatsapp' | 'email' | 'visit' | 'meeting' | 'note' | 'status_change';
-      deal_type:        'sale' | 'rental' | 'resale';
-      client_type:      'buyer' | 'seller' | 'tenant' | 'investor';
-      lead_source:      'facebook' | 'instagram' | 'referral' | 'walk_in' | 'website' | 'phone' | 'whatsapp' | 'other';
-      expense_category: 'rent' | 'salaries' | 'marketing' | 'utilities' | 'travel' | 'equipment' | 'software' | 'other';
-      alert_severity:   'low' | 'medium' | 'critical';
-    };
     Tables: {
       agencies: {
         Row: {
-          id: string; name: string; slug: string; plan: string;
-          plan_started_at: string; plan_expires_at: string | null;
-          max_agents: number; max_deals_mtd: number; max_properties: number; max_leads_mtd: number;
-          feature_ai: boolean; feature_api_access: boolean;
-          stripe_customer_id: string | null; billing_email: string | null;
-          is_active: boolean; is_suspended: boolean; suspension_reason: string | null;
-          trial_ends_at: string | null; owner_id: string | null;
-          country: string; currency: string; timezone: string;
-          created_at: string; updated_at: string;
+          id: string;
+          name: string;
+          phone: string | null;
+          email: string | null;
+          logo_url: string | null;
+          tax_id: string | null;
+          commercial_register: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['agencies']['Row']> & { name: string; slug: string };
+        Insert: Partial<Database['public']['Tables']['agencies']['Row']> & { name: string };
         Update: Partial<Database['public']['Tables']['agencies']['Row']>;
-        Relationships: [];
       };
-      profiles: {
+      invites: {
         Row: {
-          id: string; agency_id: string | null; full_name: string;
-          phone: string | null; email: string | null;
-          role: Database['public']['Enums']['user_role'];
-          branch_id: string | null; team_id: string | null;
-          is_active: boolean; avatar_url: string | null; hired_at: string | null;
-          created_at: string; updated_at: string;
+          id: string;
+          agency_id: string;
+          email: string;
+          role: string;
+          token: string;
+          status: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['profiles']['Row']> & { id: string; full_name: string };
-        Update: Partial<Database['public']['Tables']['profiles']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['invites']['Row']> & { agency_id: string; email: string; token: string };
+        Update: Partial<Database['public']['Tables']['invites']['Row']>;
       };
       branches: {
         Row: {
-          id: string; agency_id: string;
-          name: string; code: string; city: string | null; address: string | null; phone: string | null;
-          is_active: boolean; created_at: string; updated_at: string;
+          id: string;
+          agency_id: string;
+          name: string;
+          location: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['branches']['Row']> & { agency_id: string; name: string; code: string };
+        Insert: Partial<Database['public']['Tables']['branches']['Row']> & { agency_id: string; name: string };
         Update: Partial<Database['public']['Tables']['branches']['Row']>;
-        Relationships: [];
       };
-      teams: {
+      profiles: {
         Row: {
-          id: string; agency_id: string; branch_id: string | null;
-          name: string; department: string | null;
-          is_active: boolean; created_at: string; updated_at: string;
+          id: string;
+          agency_id: string | null;
+          branch_id: string | null;
+          first_name: string | null;
+          last_name: string | null;
+          role: string;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['teams']['Row']> & { agency_id: string; name: string };
-        Update: Partial<Database['public']['Tables']['teams']['Row']>;
-        Relationships: [];
-      };
-      sys_audit_vault: {
-        Row: {
-          sequence_id: number; agency_id: string;
-          correlation_id: string; timestamp: string; actor_id: string | null;
-          operation_type: string; entity_type: string; entity_id: string | null;
-          old_values: Json | null; new_values: Json | null;
-          request_ip: string | null; device_signature: string | null;
-          is_anomaly: boolean; anomaly_reason: string | null;
-        };
-        Insert: Partial<Database['public']['Tables']['sys_audit_vault']['Row']> & { agency_id: string; operation_type: string; entity_type: string };
-        Update: Partial<Database['public']['Tables']['sys_audit_vault']['Row']>;
-        Relationships: [];
-      };
-      document_records: {
-        Row: {
-          id: string; agency_id: string; branch_id: string | null;
-          associated_entity_type: string; associated_entity_id: string;
-          title: string; category: string; storage_path: string;
-          file_size: number | null; mime_type: string | null;
-          lifecycle_state: 'draft' | 'uploaded' | 'verified' | 'approved' | 'archived' | 'rejected';
-          rejection_reason: string | null; verified_by: string | null; verified_at: string | null;
-          uploaded_by: string; hash_signature: string | null;
-          created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['document_records']['Row']> & { agency_id: string; associated_entity_type: string; associated_entity_id: string; title: string; category: string; storage_path: string };
-        Update: Partial<Database['public']['Tables']['document_records']['Row']>;
-        Relationships: [];
-      };
-      communication_logs: {
-        Row: {
-          id: string; agency_id: string;
-          recipient_type: string; recipient_id: string; recipient_phone: string;
-          channel: 'whatsapp' | 'sms' | 'email';
-          message_content: string;
-          whatsapp_template_name: string | null; whatsapp_template_variables: Json | null;
-          delivery_status: 'pending' | 'sent' | 'failed' | 'delivered' | 'read';
-          retry_count: number; max_retries: number;
-          send_after: string; sent_at: string | null; error_message: string | null;
-          created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['communication_logs']['Row']> & { agency_id: string; recipient_type: string; recipient_id: string; channel: string; message_content: string };
-        Update: Partial<Database['public']['Tables']['communication_logs']['Row']>;
-        Relationships: [];
-      };
-      foundation_tasks: {
-        Row: {
-          id: string; agency_id: string; branch_id: string | null;
-          title: string; description: string | null; priority: string;
-          task_status: string; due_date: string | null;
-          assigned_to: string | null; created_by: string;
-          associated_entity_type: string | null; associated_entity_id: string | null;
-          sla_escalation_marker_hours: number; escalation_count: number; escalated_to: string | null;
-          completed_at: string | null; updated_at: string; created_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['foundation_tasks']['Row']> & { agency_id: string; title: string; created_by: string };
-        Update: Partial<Database['public']['Tables']['foundation_tasks']['Row']>;
-        Relationships: [];
-      };
-      clients: {
-        Row: {
-          id: string; agency_id: string; full_name: string;
-          phone: string | null; phone_alt: string | null; email: string | null;
-          nationality: string | null; id_number: string | null;
-          type: Database['public']['Enums']['client_type'];
-          source: Database['public']['Enums']['lead_source'] | null;
-          notes: string | null; deleted_at: string | null;
-          created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['clients']['Row']> & { agency_id: string; full_name: string };
-        Update: Partial<Database['public']['Tables']['clients']['Row']>;
-        Relationships: [];
-      };
-      developers: {
-        Row: {
-          id: string; agency_id: string; name: string;
-          country: string | null; website: string | null;
-          phone: string | null; email: string | null;
-          rating: number | null; notes: string | null;
-          is_active: boolean; deleted_at: string | null; created_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['developers']['Row']> & { agency_id: string; name: string };
-        Update: Partial<Database['public']['Tables']['developers']['Row']>;
-        Relationships: [];
-      };
-      projects: {
-        Row: {
-          id: string; agency_id: string; developer_id: string | null;
-          name: string; city: string | null; location: string | null; address: string | null;
-          description: string | null; amenities: Json; images: Json;
-          status: string; launch_date: string | null; completion_date: string | null;
-          deleted_at: string | null; created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['projects']['Row']> & { agency_id: string; name: string };
-        Update: Partial<Database['public']['Tables']['projects']['Row']>;
-        Relationships: [];
-      };
-      properties: {
-        Row: {
-          id: string; agency_id: string; project_id: string;
-          reference_code: string | null; type: string;
-          floor: number | null; rooms: string | null; area_sqm: number | null;
-          list_price: number; status: Database['public']['Enums']['property_status'];
-          features: Json; images: Json; notes: string | null;
-          deleted_at: string | null; created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['properties']['Row']> & { agency_id: string; project_id: string; type: string; list_price: number };
-        Update: Partial<Database['public']['Tables']['properties']['Row']>;
-        Relationships: [];
-      };
-      leads: {
-        Row: {
-          id: string; agency_id: string; client_id: string;
-          assigned_agent: string | null; project_id: string | null;
-          status: Database['public']['Enums']['lead_status'];
-          source: Database['public']['Enums']['lead_source'] | null;
-          budget_min: number | null; budget_max: number | null;
-          cached_score: number; score_tier: string;
-          lost_reason: string | null; notes: string | null;
-          last_activity: string; utm_source: string | null;
-          deleted_at: string | null; created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['leads']['Row']> & { agency_id: string; client_id: string };
-        Update: Partial<Database['public']['Tables']['leads']['Row']>;
-        Relationships: [];
-      };
-      deals: {
-        Row: {
-          id: string; agency_id: string; lead_id: string | null;
-          client_id: string; property_id: string; agent_id: string;
-          deal_type: Database['public']['Enums']['deal_type'];
-          status: Database['public']['Enums']['deal_status'];
-          agreed_price: number; contract_date: string | null; closing_date: string | null;
-          notes: string | null; next_action: string | null; next_action_due: string | null;
-          risk_level: Database['public']['Enums']['risk_level'];
-          at_risk_since: string | null;
-          total_payments_scheduled: number; total_payments_received: number;
-          activated_at: string | null; negotiation_started_at: string | null;
-          commission_generated: boolean; cancellation_reason: string | null;
-          total_refunded: number; is_current: boolean;
-          deleted_at: string | null; created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['deals']['Row']> & {
-          agency_id: string; client_id: string; property_id: string;
-          agent_id: string; agreed_price: number;
-        };
-        Update: Partial<Database['public']['Tables']['deals']['Row']>;
-        Relationships: [];
-      };
-      deal_payments: {
-        Row: {
-          id: string; deal_id: string; amount: number; due_date: string;
-          paid_date: string | null; status: Database['public']['Enums']['payment_status'];
-          payment_method: string | null; reference_no: string | null;
-          notes: string | null; created_by: string | null;
-          created_at: string; updated_at: string;
-        };
-        Insert: Partial<Database['public']['Tables']['deal_payments']['Row']> & { deal_id: string; amount: number; due_date: string };
-        Update: Partial<Database['public']['Tables']['deal_payments']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['profiles']['Row']> & { id: string };
+        Update: Partial<Database['public']['Tables']['profiles']['Row']>;
       };
       activities: {
         Row: {
-          id: string; agency_id: string;
-          lead_id: string | null; deal_id: string | null;
-          type: Database['public']['Enums']['activity_type'];
-          notes: string; created_by: string;
-          deleted_at: string | null; created_at: string;
+          id: string;
+          agency_id: string;
+          type: string;
+          description: string;
+          related_to_type: string | null;
+          related_to_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['activities']['Row']> & {
-          agency_id: string; type: Database['public']['Enums']['activity_type'];
-          notes: string; created_by: string;
-        };
+        Insert: Partial<Database['public']['Tables']['activities']['Row']> & { agency_id: string; type: string; description: string };
         Update: Partial<Database['public']['Tables']['activities']['Row']>;
-        Relationships: [];
       };
       tasks: {
         Row: {
-          id: string; agency_id: string; assigned_to: string; created_by: string;
-          lead_id: string | null; deal_id: string | null;
-          title: string; description: string | null;
-          priority: Database['public']['Enums']['task_priority'];
-          status: Database['public']['Enums']['task_status'];
-          due_date: string | null; done_at: string | null; is_automated: boolean;
-          created_at: string; updated_at: string;
+          id: string;
+          agency_id: string;
+          title: string;
+          description: string | null;
+          due_date: string | null;
+          status: string | null;
+          priority: string | null;
+          assigned_to: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['tasks']['Row']> & {
-          agency_id: string; assigned_to: string; created_by: string; title: string;
-        };
+        Insert: Partial<Database['public']['Tables']['tasks']['Row']> & { agency_id: string; title: string };
         Update: Partial<Database['public']['Tables']['tasks']['Row']>;
-        Relationships: [];
       };
-      commission_agreements: {
+      documents: {
         Row: {
-          id: string; agency_id: string; deal_id: string; agent_id: string;
-          agreed_amount: number; currency: string;
-          approved_by: string | null; approved_at: string | null;
-          notes: string | null; created_at: string;
+          id: string;
+          agency_id: string;
+          title: string;
+          url: string;
+          type: string | null;
+          related_to_type: string | null;
+          related_to_id: string | null;
+          uploaded_by: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['commission_agreements']['Row']> & {
-          agency_id: string; deal_id: string; agent_id: string; agreed_amount: number;
-        };
-        Update: Partial<Database['public']['Tables']['commission_agreements']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['documents']['Row']> & { agency_id: string; title: string; url: string };
+        Update: Partial<Database['public']['Tables']['documents']['Row']>;
       };
-      commission_payments: {
+      tickets: {
         Row: {
-          id: string; agency_id: string; commission_agreement_id: string;
-          agent_id: string; amount_paid: number; payment_date: string;
-          payment_method: string | null; reference_no: string | null;
-          created_by: string; notes: string | null; created_at: string;
+          id: string;
+          agency_id: string;
+          client_id: string | null;
+          unit_id: string | null;
+          title: string;
+          description: string | null;
+          priority: string | null;
+          status: string | null;
+          assigned_to: string | null;
+          category: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['commission_payments']['Row']> & {
-          agency_id: string; commission_agreement_id: string; agent_id: string;
-          amount_paid: number; created_by: string;
-        };
-        Update: Partial<Database['public']['Tables']['commission_payments']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['tickets']['Row']> & { agency_id: string; title: string };
+        Update: Partial<Database['public']['Tables']['tickets']['Row']>;
       };
-      expenses: {
+      campaigns: {
         Row: {
-          id: string; agency_id: string;
-          category: Database['public']['Enums']['expense_category'];
-          amount: number; expense_date: string; description: string;
-          paid_by: string | null; receipt_url: string | null;
-          notes: string | null; created_at: string;
+          id: string;
+          agency_id: string;
+          name: string;
+          type: string | null;
+          budget: number | null;
+          spent: number | null;
+          start_date: string | null;
+          end_date: string | null;
+          status: string | null;
+          created_at: string;
+          updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['expenses']['Row']> & {
-          agency_id: string; category: Database['public']['Enums']['expense_category'];
-          amount: number; description: string;
-        };
-        Update: Partial<Database['public']['Tables']['expenses']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['campaigns']['Row']> & { agency_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['campaigns']['Row']>;
       };
-      alerts: {
+      system_events: {
         Row: {
-          id: string; agency_id: string;
-          severity: Database['public']['Enums']['alert_severity'];
-          entity_type: string; entity_id: string | null;
-          message: string; action_required: boolean;
-          is_resolved: boolean; resolved_by: string | null;
-          resolved_at: string | null; resolution_note: string | null;
-          dedup_key: string | null; event_time: string; created_at: string;
+          id: string;
+          event_type: string;
+          aggregate_type: string;
+          aggregate_id: string;
+          payload: Json;
+          metadata: Json;
+          source_module: string;
+          created_by: string | null;
+          created_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['alerts']['Row']> & {
-          agency_id: string; severity: Database['public']['Enums']['alert_severity'];
-          entity_type: string; message: string;
-        };
-        Update: Partial<Database['public']['Tables']['alerts']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['system_events']['Row']> & { event_type: string; aggregate_type: string; aggregate_id: string; source_module: string };
+        Update: Partial<Database['public']['Tables']['system_events']['Row']>;
       };
-      agent_kpi_snapshots: {
+      execution_inbox: {
         Row: {
-          id: string; agency_id: string; agent_id: string;
-          snapshot_date: string; total_leads: number; converted_leads: number;
-          total_deals: number; active_deals: number; closed_deals: number;
-          close_rate_pct: number; total_revenue: number;
-          commission_earned: number; commission_outstanding: number;
-          avg_deal_size: number; overdue_payments: number;
-          performance_score: number; rank: number | null; created_at: string;
+          id: string;
+          task_type: string;
+          title: string;
+          description: string | null;
+          priority: string | null;
+          status: string | null;
+          assignee_id: string | null;
+          role_target: string | null;
+          domain: string;
+          reference_aggregate_type: string;
+          reference_aggregate_id: string;
+          due_date: string | null;
+          sla_breach_at: string | null;
+          payload: Json | null;
+          created_at: string;
+          updated_at: string;
+          completed_at: string | null;
+          completed_by: string | null;
         };
-        Insert: Partial<Database['public']['Tables']['agent_kpi_snapshots']['Row']> & {
-          agency_id: string; agent_id: string;
+        Insert: Partial<Database['public']['Tables']['execution_inbox']['Row']> & { task_type: string; title: string; domain: string; reference_aggregate_type: string; reference_aggregate_id: string };
+        Update: Partial<Database['public']['Tables']['execution_inbox']['Row']>;
+      };
+      approval_chains: {
+        Row: {
+          id: string;
+          target_type: string;
+          target_id: string;
+          domain: string;
+          status: string | null;
+          requested_by: string;
+          created_at: string;
+          completed_at: string | null;
         };
-        Update: Partial<Database['public']['Tables']['agent_kpi_snapshots']['Row']>;
-        Relationships: [];
+        Insert: Partial<Database['public']['Tables']['approval_chains']['Row']> & { target_type: string; target_id: string; domain: string; requested_by: string };
+        Update: Partial<Database['public']['Tables']['approval_chains']['Row']>;
+      };
+      approval_steps: {
+        Row: {
+          id: string;
+          chain_id: string;
+          step_order: number;
+          required_role: string;
+          status: string | null;
+          acted_by: string | null;
+          acted_at: string | null;
+          comments: string | null;
+        };
+        Insert: Partial<Database['public']['Tables']['approval_steps']['Row']> & { chain_id: string; step_order: number; required_role: string };
+        Update: Partial<Database['public']['Tables']['approval_steps']['Row']>;
+      };
+      projects: {
+        Row: {
+          id: string;
+          agency_id: string;
+          name: string;
+          description: string | null;
+          location: string | null;
+          status: string | null;
+          budget: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['projects']['Row']> & { agency_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['projects']['Row']>;
+      };
+      project_tranches: {
+        Row: {
+          id: string;
+          project_id: string;
+          name: string;
+          status: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['project_tranches']['Row']> & { project_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['project_tranches']['Row']>;
+      };
+      units: {
+        Row: {
+          id: string;
+          project_id: string;
+          tranche_id: string | null;
+          unit_number: string;
+          type: string;
+          surface_area: number | null;
+          floor_level: number | null;
+          base_price: number;
+          status: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['units']['Row']> & { project_id: string; unit_number: string; type: string; base_price: number };
+        Update: Partial<Database['public']['Tables']['units']['Row']>;
+      };
+      clients: {
+        Row: {
+          id: string;
+          agency_id: string;
+          first_name: string;
+          last_name: string;
+          email: string | null;
+          phone: string | null;
+          identity_document_type: string | null;
+          identity_document_number: string | null;
+          address: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['clients']['Row']> & { agency_id: string; first_name: string; last_name: string };
+        Update: Partial<Database['public']['Tables']['clients']['Row']>;
+      };
+      leads: {
+        Row: {
+          id: string;
+          agency_id: string;
+          first_name: string;
+          last_name: string;
+          phone: string | null;
+          email: string | null;
+          status: string | null;
+          interest_type: string | null;
+          assigned_to: string | null;
+          campaign_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['leads']['Row']> & { agency_id: string; first_name: string; last_name: string };
+        Update: Partial<Database['public']['Tables']['leads']['Row']>;
+      };
+      deals: {
+        Row: {
+          id: string;
+          agency_id: string;
+          client_id: string;
+          unit_id: string | null;
+          assigned_to: string | null;
+          deal_type: string;
+          status: string | null;
+          amount: number;
+          discount_percentage: number | null;
+          agreed_price: number;
+          payment_model: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['deals']['Row']> & { agency_id: string; client_id: string; deal_type: string; amount: number; agreed_price: number };
+        Update: Partial<Database['public']['Tables']['deals']['Row']>;
+      };
+      invoices: {
+        Row: {
+          id: string;
+          agency_id: string;
+          deal_id: string | null;
+          client_id: string;
+          invoice_number: string;
+          amount: number;
+          tax_amount: number | null;
+          total_amount: number;
+          status: string | null;
+          issue_date: string;
+          due_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['invoices']['Row']> & { agency_id: string; client_id: string; invoice_number: string; amount: number; total_amount: number; issue_date: string };
+        Update: Partial<Database['public']['Tables']['invoices']['Row']>;
+      };
+      payments: {
+        Row: {
+          id: string;
+          agency_id: string;
+          deal_id: string | null;
+          invoice_id: string | null;
+          reference: string | null;
+          amount: number;
+          currency: string | null;
+          payment_method: string | null;
+          status: string | null;
+          due_date: string | null;
+          received_at: string | null;
+          verified_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['payments']['Row']> & { agency_id: string; amount: number };
+        Update: Partial<Database['public']['Tables']['payments']['Row']>;
+      };
+      commissions: {
+        Row: {
+          id: string;
+          agency_id: string;
+          deal_id: string;
+          agent_id: string;
+          amount: number;
+          status: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['commissions']['Row']> & { agency_id: string; deal_id: string; agent_id: string; amount: number };
+        Update: Partial<Database['public']['Tables']['commissions']['Row']>;
+      };
+      treasury_transactions: {
+        Row: {
+          id: string;
+          agency_id: string;
+          type: string;
+          amount: number;
+          category: string | null;
+          description: string | null;
+          reference_id: string | null;
+          recorded_at: string;
+          created_by: string | null;
+        };
+        Insert: Partial<Database['public']['Tables']['treasury_transactions']['Row']> & { agency_id: string; type: string; amount: number };
+        Update: Partial<Database['public']['Tables']['treasury_transactions']['Row']>;
+      };
+      construction_milestones: {
+        Row: {
+          id: string;
+          project_id: string;
+          name: string;
+          description: string | null;
+          start_date: string | null;
+          end_date: string | null;
+          status: string | null;
+          percentage_completion: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['construction_milestones']['Row']> & { project_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['construction_milestones']['Row']>;
+      };
+      site_daily_logs: {
+        Row: {
+          id: string;
+          project_id: string;
+          milestone_id: string | null;
+          log_date: string;
+          weather_conditions: string | null;
+          workers_count: number | null;
+          progress_notes: string | null;
+          issues_reported: string | null;
+          logged_by: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['site_daily_logs']['Row']> & { project_id: string; log_date: string };
+        Update: Partial<Database['public']['Tables']['site_daily_logs']['Row']>;
+      };
+      suppliers: {
+        Row: {
+          id: string;
+          agency_id: string;
+          name: string;
+          contact_email: string | null;
+          contact_phone: string | null;
+          tax_id: string | null;
+          status: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['suppliers']['Row']> & { agency_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['suppliers']['Row']>;
+      };
+      purchase_requests: {
+        Row: {
+          id: string;
+          project_id: string | null;
+          requested_by: string | null;
+          description: string;
+          estimated_amount: number | null;
+          status: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['purchase_requests']['Row']> & { description: string };
+        Update: Partial<Database['public']['Tables']['purchase_requests']['Row']>;
+      };
+      purchase_orders: {
+        Row: {
+          id: string;
+          purchase_request_id: string | null;
+          supplier_id: string;
+          total_amount: number;
+          status: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['purchase_orders']['Row']> & { supplier_id: string; total_amount: number };
+        Update: Partial<Database['public']['Tables']['purchase_orders']['Row']>;
+      };
+      inventory_items: {
+        Row: {
+          id: string;
+          agency_id: string;
+          project_id: string | null;
+          sku: string | null;
+          name: string;
+          category: string | null;
+          quantity_on_hand: number | null;
+          unit_of_measure: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['inventory_items']['Row']> & { agency_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['inventory_items']['Row']>;
+      };
+      legal_contracts: {
+        Row: {
+          id: string;
+          deal_id: string;
+          client_id: string;
+          contract_type: string;
+          status: string | null;
+          notary_name: string | null;
+          notary_appointment_date: string | null;
+          document_url: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['legal_contracts']['Row']> & { deal_id: string; client_id: string; contract_type: string };
+        Update: Partial<Database['public']['Tables']['legal_contracts']['Row']>;
+      };
+      employees: {
+        Row: {
+          id: string;
+          profile_id: string | null;
+          agency_id: string;
+          nss: string | null;
+          base_salary: number | null;
+          hire_date: string | null;
+          status: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['employees']['Row']> & { agency_id: string };
+        Update: Partial<Database['public']['Tables']['employees']['Row']>;
+      };
+      employee_attendance: {
+        Row: {
+          id: string;
+          employee_id: string;
+          date: string;
+          check_in: string | null;
+          check_out: string | null;
+          status: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['employee_attendance']['Row']> & { employee_id: string; date: string };
+        Update: Partial<Database['public']['Tables']['employee_attendance']['Row']>;
+      };
+      employee_leaves: {
+        Row: {
+          id: string;
+          employee_id: string;
+          type: string;
+          start_date: string;
+          end_date: string;
+          status: string | null;
+          approved_by: string | null;
+          reason: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['employee_leaves']['Row']> & { employee_id: string; type: string; start_date: string; end_date: string };
+        Update: Partial<Database['public']['Tables']['employee_leaves']['Row']>;
+      };
+      payroll: {
+        Row: {
+          id: string;
+          employee_id: string;
+          month: number;
+          year: number;
+          base_amount: number;
+          bonuses: number | null;
+          deductions: number | null;
+          net_payable: number;
+          status: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['payroll']['Row']> & { employee_id: string; month: number; year: number; base_amount: number; net_payable: number };
+        Update: Partial<Database['public']['Tables']['payroll']['Row']>;
       };
     };
     Views: {
-      vw_deal_pipeline: {
-        Row: {
-          id: string; agency_id: string; status: string; risk_level: string;
-          agreed_price: number; total_payments_received: number; total_payments_scheduled: number;
-          balance_remaining: number; payment_pct: number;
-          next_action: string | null; next_action_due: string | null;
-          at_risk_since: string | null; activated_at: string | null;
-          commission_generated: boolean; created_at: string; updated_at: string;
-          agent_id: string; client_id: string; property_id: string;
-          client_name: string; client_phone: string | null;
-          agent_name: string; property_type: string; reference_code: string | null;
-          project_name: string; project_city: string | null;
-          is_high_risk: boolean; is_overdue_action: boolean;
-          overdue_payment_count: number; pending_payment_count: number;
+      [_ in never]: never;
+    };
+    Functions: {
+      create_agency_and_link_owner: {
+        Args: {
+          _agency_name: string;
+          _agency_phone: string;
+          _user_id: string;
         };
+        Returns: string;
       };
-      vw_commission_balance: {
-        Row: {
-          agreement_id: string; agency_id: string; deal_id: string; agent_id: string;
-          agent_name: string; agreed_amount: number; total_paid: number;
-          outstanding_balance: number; payment_status: string; paid_pct: number;
+      accept_invite: {
+        Args: {
+          _token: string;
         };
-      };
-      vw_agent_performance: {
-        Row: {
-          agent_id: string; agent_name: string; agency_id: string;
-          total_deals: number; closed_deals: number; active_deals: number;
-          total_revenue: number; commission_earned: number; commission_outstanding: number;
-          total_leads: number; converted_leads: number; lead_conversion_rate: number;
-        };
+        Returns: string;
       };
     };
-    Functions: {};
+    Enums: {
+      [_ in never]: never;
+    };
   };
 }

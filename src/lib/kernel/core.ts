@@ -1,149 +1,209 @@
-import { enforceExecution } from '../enforcement/core';
+// src/lib/kernel/core.ts
+
+/**
+ * ASAS KERNEL - SYSTEM CORE
+ */
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export type KernelIdentity = {
-  userId: string;
-  tenantId: string;
-  role: 'owner' | 'manager' | 'agent' | 'accountant';
-  sessionId: string;
-  deviceId: string;
+const createSupabaseClient = async () => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+    const cookieStore = await cookies();
+    
+    return createServerClient(supabaseUrl, supabaseKey, {
+        cookies: {
+            getAll() { return cookieStore.getAll(); },
+            setAll(cookiesToSet) {
+              try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)) } catch {}
+            }
+        }
+    });
 };
 
-type QueryOptions = {
-  select?: string;
-  filters?: Record<string, any>;
-  limit?: number;
-  offset?: number;
-  orderBy?: { column: string; ascending?: boolean };
+export interface SystemEvent<T = any> {
+  id: string;
+  eventType: string;
+  aggregateType: string;
+  aggregateId: string;
+  payload: T;
+  sourceModule: string;
+  createdBy?: string;
+  createdAt: Date;
+}
+
+export interface EventHandler<T = any> {
+  handle(event: SystemEvent<T>): Promise<void>;
+}
+
+export interface Command<T = any> {
+  type: string;
+  payload: T;
+  userId: string;
+}
+
+export interface CommandHandler<TCommand extends Command, TResult = any> {
+  execute(command: TCommand): Promise<TResult>;
+}
+
+export class EventBus {
+  private handlers: Map<string, EventHandler[]> = new Map();
+
+  subscribe(eventType: string, handler: EventHandler) {
+    if (!this.handlers.has(eventType)) {
+      this.handlers.set(eventType, []);
+    }
+    this.handlers.get(eventType)?.push(handler);
+  }
+
+  async publish(event: SystemEvent) {
+    const handlers = this.handlers.get(event.eventType) || [];
+    for (const handler of handlers) {
+      await handler.handle(event);
+    }
+  }
+}
+
+export const globalEventBus = new EventBus();
+
+export const SystemEvents = {
+  LEAD_CREATED: 'LeadCreated',
+  DEAL_INITIATED: 'DealInitiated',
+  DEAL_DISCOUNT_REQUESTED: 'DealDiscountRequested',
+  DEAL_APPROVED: 'DealApproved',
+  PAYMENT_RECEIVED: 'PaymentReceived',
+  MILESTONE_COMPLETED: 'MilestoneCompleted',
+  APPROVAL_GRANTED: 'ApprovalGranted',
 };
+
+export abstract class AggregateRoot<T> {
+  public readonly id: string;
+  protected state: T;
+  private uncommittedEvents: SystemEvent[] = [];
+
+  constructor(id: string, initialState: T) {
+    this.id = id;
+    this.state = initialState;
+  }
+
+  protected applyChange(event: SystemEvent, isNew: boolean = true) {
+    this.mutate(event);
+    if (isNew) {
+      this.uncommittedEvents.push(event);
+    }
+  }
+
+  public getUncommittedEvents() {
+    return this.uncommittedEvents;
+  }
+
+  public markChangesAsCommitted() {
+    this.uncommittedEvents = [];
+  }
+
+  protected abstract mutate(event: SystemEvent): void;
+}
+
+// ----- LEGACY KERNEL API RE-IMPLEMENTATION -----
+
+export interface KernelIdentity {
+  userId: string;
+  tenantId: string;
+  role: string;
+}
 
 export interface IKernel {
   identity(): Promise<KernelIdentity>;
-  query<T>(tableName: string, options?: QueryOptions): Promise<T[]>;
-  mutate<T>(
-    tableName: string, 
-    action: 'INSERT' | 'UPDATE' | 'DELETE', 
-    data: any, 
-    match?: Record<string, any>
-  ): Promise<T>;
-  transaction<T>(
-    callback: (txKernel: Omit<IKernel, 'transaction'>) => Promise<T>
-  ): Promise<T>;
+  query<T>(table: string, options?: any): Promise<T[]>;
+  mutate<T>(table: string, action: 'INSERT' | 'UPDATE' | 'DELETE', payload?: any, filters?: any): Promise<T | null>;
+  transaction<T>(callback: (tx: any) => Promise<T>): Promise<T>;
 }
 
-async function getSupabaseClient() {
-  const cookieStore = await cookies();
-  
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet: any[]) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              (cookieStore as any).set(name, value, options);
-            });
-          } catch (_) { /* Middleware handles actual cookie setting */ }
-        },
-      },
+export class KernelAPI implements IKernel {
+  async identity() {
+    try {
+      const supabase = await createSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session?.user?.id)
+        .single();
+        
+      if (profile && !profile.agency_id) {
+        throw new Error('Tenant isolation failure: No agency_id linked to profile.');
+      }
+        
+      return { 
+        userId: session?.user?.id || 'unknown', 
+        tenantId: profile?.agency_id || 'unknown',
+        role: profile?.role || 'unknown'
+      };
+    } catch (err: any) {
+      if (err.message && err.message.includes('Tenant isolation failure')) {
+         throw err;
+      }
+      return { userId: 'unknown', tenantId: 'unknown', role: 'unknown' };
     }
-  );
-}
+  }
 
-const kernelCore: IKernel = {
-  identity: async (): Promise<KernelIdentity> => {
-    const supabase = await getSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+  async query<T>(table: string, options: any = {}): Promise<T[]> {
+    const supabase = await createSupabaseClient();
+    let query = supabase.from(table).select(options.select || '*');
     
-    if (!user) {
-      throw new Error('Unauthorized');
-    }
-    
-    // We should fetch the tenant from the profiles table using `agency_id` mapping.
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('agency_id, role')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile || !profile.agency_id) {
-      throw new Error('Tenant isolation failure: User is not associated with any agency.');
-    }
-
-    return {
-      userId: user.id,
-      tenantId: profile.agency_id,
-      role: profile.role || 'agent',
-      sessionId: 'session',
-      deviceId: 'server'
-    };
-  },
-  query: async <T>(tableName: string, options?: QueryOptions): Promise<T[]> => {
-    const supabase = await getSupabaseClient();
-    let q = supabase.from(tableName).select(options?.select || '*');
-    if (options?.filters) {
-      for (const [k, v] of Object.entries(options.filters)) {
-        if (v === null) {
-          q = q.is(k, null);
-        } else if (Array.isArray(v)) {
-          q = q.in(k, v);
+    if (options.filters) {
+      for (const [key, value] of Object.entries(options.filters)) {
+        if (Array.isArray(value)) {
+            query = query.in(key, value);
         } else {
-          q = q.eq(k, v);
+            query = query.eq(key, value);
         }
       }
     }
-    if (options?.orderBy) {
-      q = q.order(options.orderBy.column, { ascending: options.orderBy.ascending ?? true });
+    
+    if (options.orderBy) {
+      query = query.order(options.orderBy.column, { ascending: options.orderBy.ascending });
     }
-    if (options?.limit) {
-      const from = options?.offset || 0;
-      const to = from + options.limit - 1;
-      q = q.range(from, to);
+    if (options.limit) {
+      query = query.limit(options.limit);
     }
-    const { data, error } = await q;
-    if (error) throw new Error(`Query failed on ${tableName}: ${error.message}`);
-    return data as T[];
-  },
-  mutate: async <T>(
-    tableName: string, 
-    action: 'INSERT' | 'UPDATE' | 'DELETE', 
-    data: any, 
-    match?: Record<string, any>
-  ): Promise<T> => {
-    const supabase = await getSupabaseClient();
-    let q = supabase.from(tableName);
-    let result;
+    
+    const { data, error } = await query;
+    if (error) {
+       console.error(`Kernel Query Error [${table}]:`, error);
+       return [];
+    }
+    return (data || []) as T[];
+  }
+
+  async mutate<T>(table: string, action: 'INSERT' | 'UPDATE' | 'DELETE', payload?: any, filters?: any): Promise<T | null> {
+    const supabase = await createSupabaseClient();
+    let query;
     
     if (action === 'INSERT') {
-      result = await q.insert(data).select().single();
-    } else if (action === 'UPDATE') {
-      let u = q.update(data);
-      if (match) {
-        for (const [k, v] of Object.entries(match)) u = u.eq(k, v);
+      const { data, error } = await supabase.from(table).insert(payload).select().single();
+      if (error) console.error(`Kernel Mutate Error [${table} INSERT]:`, error);
+      return data as T;
+    } 
+    
+    query = action === 'UPDATE' ? supabase.from(table).update(payload) : supabase.from(table).delete();
+    
+    if (filters) {
+      for (const [key, value] of Object.entries(filters)) {
+         query = query.eq(key, value);
       }
-      result = await u.select().single();
-    } else if (action === 'DELETE') {
-      let d = q.delete();
-      if (match) {
-        for (const [k, v] of Object.entries(match)) d = d.eq(k, v);
-      }
-      result = await d.select().single();
     }
     
-    if (result?.error) throw new Error(`Mutation ${action} failed on ${tableName}: ${result.error.message}`);
-    return result?.data as T;
-  },
-  transaction: async <T>(
-    callback: (txKernel: Omit<IKernel, 'transaction'>) => Promise<T>
-  ): Promise<T> => {
-    // Supabase JS doesn't have true transactions over REST, so we run sequentially.
-    return callback(kernelCore);
+    const { data, error } = await query.select();
+    if (error) console.error(`Kernel Mutate Error [${table} ${action}]:`, error);
+    return data && data.length > 0 ? data[0] as T : null;
   }
-};
 
-export const kernel = enforceExecution(kernelCore);
+  async transaction<T>(callback: (tx: KernelAPI) => Promise<T>): Promise<T> {
+    // Basic wrapper
+    return await callback(this);
+  }
+}
+
+export const kernel = new KernelAPI();

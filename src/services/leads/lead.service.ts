@@ -41,7 +41,7 @@ export class LeadService {
   
   static async updateStatus(
     leadId: string, 
-    status: Database['public']['Enums']['lead_status'],
+    status: string,
     metadata?: { lostReason?: string }
   ): Promise<Lead> {
     const identity = await kernel.identity();
@@ -66,7 +66,7 @@ export class LeadService {
       // 3. State Machine Validation
       const stateMachine = new LeadStateMachine(currentLead.status);
       const opt = metadata?.lostReason ? { lost_reason: metadata.lostReason } : {};
-      const validation = stateMachine.validate(status, opt);
+      const validation = stateMachine.validate(status as any, opt);
       if (!validation.ok) {
         throw new Error(validation.error || `Invalid transition from ${currentLead.status} to ${status}`);
       }

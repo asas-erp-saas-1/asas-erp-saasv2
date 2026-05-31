@@ -16,7 +16,7 @@ export async function createDealAction(data: any) {
   }
 }
 
-export async function updateDealStageAction(id: string, stage: Database['public']['Enums']['deal_status'], currentVersion: number = 1, metadata?: { lostReason?: string }) {
+export async function updateDealStageAction(id: string, stage: string, currentVersion: number = 1, metadata?: { lostReason?: string }) {
   try {
     const deal = await DealService.changeDealStatus(id, stage, currentVersion, metadata);
     revalidatePath('/dashboard/deals');

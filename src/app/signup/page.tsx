@@ -1,10 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Building2, ArrowRight } from 'lucide-react';
 
-export default function SignupPage() {
+function SignupForm() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +13,8 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteCode = searchParams?.get('invite');
 
   const getSupabase = () => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
@@ -52,7 +54,11 @@ export default function SignupPage() {
     }
 
     if (authData.user && authData.session) {
-      router.push('/onboarding');
+      if (inviteCode) {
+        router.push(`/invite/${inviteCode}`);
+      } else {
+        router.push('/onboarding');
+      }
     } else {
       setSuccess(true);
       setLoading(false);
@@ -61,80 +67,88 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand px-4 py-12">
-        <div className="w-full max-w-md p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#141618] rounded-sm shadow-2xl text-center">
-            <h2 className="text-2xl font-bold mb-4">Vérifiez votre Email</h2>
-            <p className="text-asas-silver">Un lien de confirmation a été envoyé à <strong>{email}</strong>. Cliquez sur ce lien pour activer votre compte, puis connectez-vous.</p>
-            <button onClick={() => router.push('/login')} className="mt-8 px-6 py-3 bg-asas-navy text-white rounded-sm font-bold">Retour à la connexion</button>
-        </div>
+      <div className="text-center relative z-10">
+          <h2 className="text-2xl font-bold mb-4 font-display uppercase tracking-widest text-asas-charcoal dark:text-asas-sand">Vérifiez votre Email</h2>
+          <p className="text-asas-silver text-[10px] uppercase font-bold tracking-widest">Un lien de confirmation a été envoyé à <strong className="text-asas-charcoal dark:text-asas-sand">{email}</strong>. Cliquez sur ce lien pour activer votre compte.</p>
+          <button onClick={() => router.push('/login')} className="mt-8 px-6 w-full py-4 bg-asas-navy text-asas-sand font-bold text-[10px] uppercase tracking-widest rounded-sm cursor-pointer shadow-sm">Retour à la connexion</button>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-asas-sand/30 dark:bg-[#050505] text-gray-900 dark:text-white px-4 py-12 bg-dot-grid relative">
-      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-white dark:from-[#0A0A0A] to-transparent pointer-events-none z-0"></div>
-      <div className="w-full max-w-md p-6 sm:p-8 border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0A0A0A] rounded-3xl shadow-2xl z-10 relative">
+    <>
         <div className="flex items-center justify-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-bl from-blue-600 to-indigo-900 border border-blue-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-            <Building2 className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center shadow-sm">
+            <Building2 className="w-6 h-6 text-asas-gold" />
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-center mb-2 font-display tracking-tight text-gray-900 dark:text-white">Créer un compte</h2>
-        <p className="text-asas-charcoal/80 dark:text-asas-silver text-center text-sm mb-8">Rejoignez ASAS OS pour digitaliser votre agence</p>
+        <h2 className="text-2xl font-bold text-center mb-2 font-display uppercase tracking-widest text-asas-charcoal dark:text-asas-sand">ASAS OS</h2>
+        <p className="text-asas-charcoal/80 dark:text-asas-silver text-center text-[10px] uppercase font-bold tracking-widest mb-8">Créer un compte</p>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-4 rounded-xl mb-6 font-medium">
+          <div className="bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444] text-[10px] uppercase font-bold tracking-widest p-4 rounded-sm mb-6">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSignup} className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-asas-sand/90 mb-1.5 uppercase tracking-wide">Nom Complet</label>
+            <label className="block text-[10px] font-bold text-asas-silver tracking-widest uppercase mb-1.5">Nom Complet</label>
             <input
               type="text"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-[#141618] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-asas-gold focus:border-asas-gold/50 transition-all font-medium"
+              className="w-full bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 rounded-sm px-4 py-3 text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-all text-sm font-bold"
               placeholder="Jean Dupont"
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase tracking-wide">Email Professionnel</label>
+            <label className="block text-[10px] font-bold text-asas-silver tracking-widest uppercase mb-1.5">Email Professionnel</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+              className="w-full bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 rounded-sm px-4 py-3 text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-all text-sm font-bold"
               placeholder="jean@monagence.com"
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase tracking-wide">Mot de passe</label>
+            <label className="block text-[10px] font-bold text-asas-silver tracking-widest uppercase mb-1.5">Mot de passe</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+              className="w-full bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 rounded-sm px-4 py-3 text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-all text-sm font-bold"
               placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-asas-charcoal dark:hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all mt-4 disabled:opacity-50 relative overflow-hidden group flex items-center justify-center gap-2 shadow-lg"
+            className="w-full bg-asas-navy border border-asas-silver/20 hover:bg-asas-charcoal dark:hover:bg-black text-asas-sand font-bold text-[10px] uppercase tracking-widest py-3.5 rounded-sm transition-all mt-4 disabled:opacity-50 relative group flex items-center justify-center gap-2 shadow-sm cursor-pointer"
           >
-            {loading ? 'Création...' : 'Créer l\'agence'}
-            {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" strokeWidth={2} />}
+            {loading ? 'Création...' : 'S\'inscrire'}
+            {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" strokeWidth={2} />}
           </button>
         </form>
-        <div className="mt-6 text-center text-sm font-medium text-gray-500">
-           Déjà un compte ? <button onClick={() => router.push('/login')} className="text-asas-navy dark:text-asas-sand hover:text-blue-400">Connectez-vous</button>
+        <div className="mt-6 text-center text-[10px] uppercase font-bold tracking-widest text-asas-silver">
+           Déjà un compte ? <button onClick={() => router.push('/login')} className="text-asas-navy dark:text-asas-sand hover:text-asas-gold ml-2 cursor-pointer">Se connecter</button>
         </div>
+    </>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand px-4 py-12 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-asas-sand dark:from-black/10 to-transparent pointer-events-none z-0"></div>
+      <div className="w-full max-w-md p-6 sm:p-8 border border-asas-silver/20 bg-white dark:bg-[#141618] rounded-sm shadow-sm z-10 relative">
+        <Suspense fallback={<div className="flex justify-center p-8"><div className="w-6 h-6 border-2 border-asas-gold border-t-transparent rounded-full animate-spin"></div></div>}>
+          <SignupForm />
+        </Suspense>
       </div>
     </div>
   );
