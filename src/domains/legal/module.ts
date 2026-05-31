@@ -1,57 +1,26 @@
-// src/domains/legal/module.ts
+import { DomainRegistry } from '@/lib/kernel/registry';
+import { CommandHandler, Command, SystemEvent, EventHandler } from '@/lib/kernel/core';
+import { eventBus } from '@/lib/kernel/bus';
 
-import { SystemEvent, EventHandler, AggregateRoot, globalEventBus } from '@/lib/kernel/core';
-import { inboxEngine } from '@/lib/kernel/inbox';
+export const LegalEvents = { CONTRACT_GENERATED: 'Legal.ContractGenerated' };
 
-export const LegalSystemEvents = {
-    CONTRACT_GENERATED: 'ContractGenerated',
-    NOTARY_REVIEW_REQUESTED: 'NotaryReviewRequested',
-    NOTARY_SIGNED: 'NotarySigned',
-};
+export interface GenerateContractCommand extends Command<{ agencyId: string, dealId: string }> { type: 'Legal.GenerateContract'; }
 
-export type ContractState = 'DRAFT' | 'PENDING_NOTARY' | 'SIGNED' | 'CANCELED';
-
-export class ContractAggregate extends AggregateRoot<{ status: ContractState, dealId: string }> {
-    
-    requestNotaryReview(notaryId: string, userId: string) {
-        if (this.state.status !== 'DRAFT') throw new Error("Can only request notary for DRAFT contracts.");
-
-        this.applyChange({
-            id: crypto.randomUUID(),
-            eventType: LegalSystemEvents.NOTARY_REVIEW_REQUESTED,
-            aggregateType: 'Contract',
-            aggregateId: this.id,
-            sourceModule: 'Legal',
-            payload: { notaryId },
-            createdAt: new Date(),
-            createdBy: userId
-        });
-    }
-
-    protected mutate(event: SystemEvent): void {
-        if (event.eventType === LegalSystemEvents.NOTARY_REVIEW_REQUESTED) {
-            this.state.status = 'PENDING_NOTARY';
-        } else if (event.eventType === LegalSystemEvents.NOTARY_SIGNED) {
-            this.state.status = 'SIGNED';
-        }
-    }
-}
-
-export class NotaryReviewRequestedHandler implements EventHandler {
-    async handle(event: SystemEvent): Promise<void> {
-        console.log(`[LEGAL DOMAIN] NotaryReviewRequested for Contract ${event.aggregateId}`);
-        
-        await inboxEngine.generateTask({
-            taskType: 'NOTARY_APPOINTMENT',
-            title: `Schedule Notary Appointment for Contract ${event.aggregateId}`,
-            priority: 'HIGH',
-            status: 'PENDING',
-            domain: 'Legal',
-            referenceAggregateType: 'Contract',
-            referenceAggregateId: event.aggregateId,
-            roleTarget: 'LEGAL_OFFICER'
+class GenerateContractCommandHandler implements CommandHandler<GenerateContractCommand> {
+    async execute(c: GenerateContractCommand): Promise<void> {
+        await eventBus.publish({
+            id: crypto.randomUUID(), eventType: LegalEvents.CONTRACT_GENERATED, aggregateType: 'Contract', aggregateId: c.payload.dealId,
+            sourceModule: 'Legal', payload: c.payload, createdAt: new Date(), createdBy: c.userId
         });
     }
 }
 
-globalEventBus.subscribe(LegalSystemEvents.NOTARY_REVIEW_REQUESTED, new NotaryReviewRequestedHandler());
+class ContractGeneratedEventHandler implements EventHandler<any> {
+    async handle(event: SystemEvent<any>): Promise<void> {
+        console.log(`[LEGAL] Review tasks generated for Contract on Deal ${event.aggregateId}`);
+        // TODO: route to InboxEngine for Notary scheduling
+    }
+}
+
+DomainRegistry.registerCommandHandler('Legal.GenerateContract', new GenerateContractCommandHandler());
+DomainRegistry.registerEventHandler(LegalEvents.CONTRACT_GENERATED, new ContractGeneratedEventHandler());

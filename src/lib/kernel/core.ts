@@ -46,25 +46,7 @@ export interface CommandHandler<TCommand extends Command, TResult = any> {
   execute(command: TCommand): Promise<TResult>;
 }
 
-export class EventBus {
-  private handlers: Map<string, EventHandler[]> = new Map();
-
-  subscribe(eventType: string, handler: EventHandler) {
-    if (!this.handlers.has(eventType)) {
-      this.handlers.set(eventType, []);
-    }
-    this.handlers.get(eventType)?.push(handler);
-  }
-
-  async publish(event: SystemEvent) {
-    const handlers = this.handlers.get(event.eventType) || [];
-    for (const handler of handlers) {
-      await handler.handle(event);
-    }
-  }
-}
-
-export const globalEventBus = new EventBus();
+// Event bus removed, using persistent message queue via PersistentEventBus
 
 export const SystemEvents = {
   LEAD_CREATED: 'LeadCreated',
@@ -74,6 +56,8 @@ export const SystemEvents = {
   PAYMENT_RECEIVED: 'PaymentReceived',
   MILESTONE_COMPLETED: 'MilestoneCompleted',
   APPROVAL_GRANTED: 'ApprovalGranted',
+  APPROVAL_REQUESTED: 'ApprovalRequested',
+  APPROVAL_REJECTED: 'ApprovalRejected',
 };
 
 export abstract class AggregateRoot<T> {

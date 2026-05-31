@@ -43,74 +43,22 @@ export default async function OverviewPage() {
     let mappedActions: any[] = [];
     try {
       // If admin/owner, maybe load ALL pending SLA breaches and approvals. For now, load tasks assigned to user.
-      const taskFilters: any = { assigned_to: identity!.userId, status: 'pending' };
+      const taskFilters: any = { status: 'PENDING' };
       // Note: A true enterprise logic would check roles to load global approvals if admin.
-      
-      const tasks = await kernel.query('tasks', { 
+      // But we just load PENDING items for the user or their role
+      // For now, load everything to demonstrate inbox
+      const tasks = await kernel.query('execution_inbox', { 
         filters: taskFilters,
-        limit: 20,
-        orderBy: { column: 'due_date', ascending: true }
+        limit: 50,
+        orderBy: { column: 'created_at', ascending: false }
       });
 
-        // 1. Gather all non-null lead_ids and deal_ids to load in bulk
-        const leadIds = Array.from(new Set((tasks || []).map((t: any) => t.lead_id).filter(Boolean)));
-        const dealIds = Array.from(new Set((tasks || []).map((t: any) => t.deal_id).filter(Boolean)));
-
-        // 2. Query all leads and deals in bulk
-        const leadsList = leadIds.length > 0 
-          ? await kernel.query<any>('leads', { filters: { id: leadIds } }) 
-          : [];
-        const dealsList = dealIds.length > 0 
-          ? await kernel.query<any>('deals', { filters: { id: dealIds } }) 
-          : [];
-
-        // Map leads and deals by ID for constant time lookups
-        const leadsMap = new Map<string, any>(leadsList.map(l => [l.id, l]));
-        const dealsMap = new Map<string, any>(dealsList.map(d => [d.id, d]));
-
-        // Gather all client_ids from both maps
-        const clientIds = Array.from(new Set([
-          ...leadsList.map(l => l.client_id).filter(Boolean),
-          ...dealsList.map(d => d.client_id).filter(Boolean)
-        ]));
-
-        // Query all clients in bulk
-        const clientsList = clientIds.length > 0 
-          ? await kernel.query<any>('clients', { filters: { id: clientIds } }) 
-          : [];
-        const clientsMap = new Map<string, any>(clientsList.map(c => [c.id, c]));
-
-        // 3. Assemble tasks mapping in-memory (O(1) lookup per item)
+        // Assemble tasks mapping in-memory (O(1) lookup per item)
         mappedActions = (tasks || []).map((t: any) => {
-           let leadName = 'Tâche Interne';
-           let phone = '';
-           let type = t.priority === 'urgent' ? 'urgent' : (t.priority === 'high' ? 'whatsapp' : 'viewing');
+           let type = t.priority === 'CRITICAL' ? 'urgent' : (t.priority === 'HIGH' ? 'whatsapp' : 'viewing');
            
-           if (t.lead_id) {
-             const lead = leadsMap.get(t.lead_id);
-             if (lead && lead.client_id) {
-                const client = clientsMap.get(lead.client_id);
-                if (client) {
-                   leadName = client.full_name;
-                   phone = client.phone || '';
-                }
-             }
-           } else if (t.deal_id) {
-             const deal = dealsMap.get(t.deal_id);
-             if (deal) {
-                leadName = `Deal #${deal.id.substring(0,8)}`;
-                if (deal.client_id) {
-                   const client = clientsMap.get(deal.client_id);
-                   if (client) {
-                      leadName = client.full_name;
-                      phone = client.phone || '';
-                   }
-                }
-             }
-           }
-
            let timeStr = t.due_date ? new Date(t.due_date).toLocaleDateString('fr-DZ', { day: '2-digit', month: 'short' }) : 'ASAP';
-           if (t.due_date && new Date(t.due_date) < new Date()) {
+           if (t.sla_breach_at && new Date(t.sla_breach_at) < new Date()) {
              type = 'urgent';
              timeStr = 'En retard';
            }
@@ -119,9 +67,9 @@ export default async function OverviewPage() {
              id: t.id,
              type: type,
              task: t.title,
-             leadName: leadName,
+             leadName: `Ref: ${t.reference_aggregate_type} [${t.reference_aggregate_id.substring(0,8)}]`,
              time: timeStr,
-             phone: phone
+             phone: t.domain
            };
         });
       } catch (err) {

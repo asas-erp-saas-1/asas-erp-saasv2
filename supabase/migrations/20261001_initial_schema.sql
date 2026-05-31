@@ -37,7 +37,12 @@ CREATE TABLE public.branches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
+    code VARCHAR(50),
+    city VARCHAR(100),
+    address TEXT,
+    phone VARCHAR(50),
     location TEXT,
+    is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -65,18 +70,47 @@ CREATE TABLE public.invites (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+CREATE TABLE public.teams (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    manager_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE public.team_members (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id UUID NOT NULL REFERENCES public.teams(id) ON DELETE CASCADE,
+    profile_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    role_in_team VARCHAR(50) DEFAULT 'member',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    UNIQUE(team_id, profile_id)
+);
+
 -------------------------------------------------------------------------------
 -- 3. PRODUCTIVITY SYSTEM
 -------------------------------------------------------------------------------
 CREATE TABLE public.tasks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE SET NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
+    priority VARCHAR(50) DEFAULT 'medium',
+    task_status VARCHAR(50) DEFAULT 'pending',
     due_date TIMESTAMP WITH TIME ZONE,
-    status VARCHAR(50) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')),
-    priority VARCHAR(50) DEFAULT 'MEDIUM' CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH')),
     assigned_to UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    associated_entity_type VARCHAR(100),
+    associated_entity_id UUID,
+    sla_escalation_marker_hours INTEGER DEFAULT 48,
+    escalation_count INTEGER DEFAULT 0,
+    escalated_to UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    completed_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -84,11 +118,14 @@ CREATE TABLE public.tasks (
 CREATE TABLE public.activities (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
-    type VARCHAR(100) NOT NULL, -- e.g., CALL, MEETING, EMAIL, NOTE
-    description TEXT NOT NULL,
-    related_to_type VARCHAR(100), -- e.g., LEAD, DEAL, CLIENT, PROJECT
-    related_to_id UUID,
-    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE SET NULL,
+    channel VARCHAR(50) NOT NULL, -- e.g. email, whatsapp, linkedin
+    direction VARCHAR(50) NOT NULL, -- inbound, outbound
+    participant_id UUID, -- Contact/Lead ID
+    content TEXT,
+    sentiment_score REAL,
+    sent_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    status VARCHAR(50) DEFAULT 'dispatched',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -96,14 +133,88 @@ CREATE TABLE public.activities (
 CREATE TABLE public.documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE SET NULL,
     title VARCHAR(255) NOT NULL,
-    url TEXT NOT NULL,
-    type VARCHAR(100), -- CONTRAT, ATTESTATION, PLAN, CNI, OTHER
-    related_to_type VARCHAR(100), -- DEAL, PROJECT, CLIENT
-    related_to_id UUID,
+    category VARCHAR(100),
+    storage_path TEXT NOT NULL,
+    file_size BIGINT,
+    mime_type VARCHAR(100),
+    lifecycle_state VARCHAR(50) DEFAULT 'uploaded',
+    associated_entity_type VARCHAR(100),
+    associated_entity_id UUID,
     uploaded_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    hash_signature TEXT,
+    verified_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    verified_at TIMESTAMP WITH TIME ZONE,
+    rejection_reason TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE public.sys_audit_vault (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    correlation_id VARCHAR(100),
+    actor_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE SET NULL,
+    operation_type VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(100) NOT NULL,
+    entity_id VARCHAR(100) NOT NULL,
+    old_values JSONB,
+    new_values JSONB,
+    request_ip VARCHAR(50),
+    device_signature TEXT,
+    is_anomaly BOOLEAN DEFAULT false,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-------------------------------------------------------------------------------
+-- 4. ACCESS CONTROL AND RBAC
+-------------------------------------------------------------------------------
+CREATE TABLE public.permissions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    action VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE public.roles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE public.role_permissions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    role_id UUID NOT NULL REFERENCES public.roles(id) ON DELETE CASCADE,
+    permission_id UUID NOT NULL REFERENCES public.permissions(id) ON DELETE CASCADE,
+    scope_level VARCHAR(50) DEFAULT 'self',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    UNIQUE(role_id, permission_id)
+);
+
+CREATE TABLE public.staff_assignments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    profile_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE SET NULL,
+    role_id UUID REFERENCES public.roles(id) ON DELETE SET NULL,
+    is_primary BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE public.emergency_override_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    profile_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    permission_required VARCHAR(100) NOT NULL,
+    justification TEXT NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING',
+    approver_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    approved_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 CREATE TABLE public.tickets (
@@ -140,6 +251,7 @@ CREATE TABLE public.campaigns (
 -------------------------------------------------------------------------------
 CREATE TABLE public.system_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
     event_type VARCHAR(255) NOT NULL,
     aggregate_type VARCHAR(100) NOT NULL,
     aggregate_id UUID NOT NULL,
@@ -150,6 +262,7 @@ CREATE TABLE public.system_events (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+CREATE INDEX idx_system_events_agency ON public.system_events(agency_id);
 CREATE INDEX idx_system_events_aggregate ON public.system_events(aggregate_type, aggregate_id);
 CREATE INDEX idx_system_events_type ON public.system_events(event_type);
 
@@ -158,6 +271,8 @@ CREATE INDEX idx_system_events_type ON public.system_events(event_type);
 -------------------------------------------------------------------------------
 CREATE TABLE public.execution_inbox (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE SET NULL,
     task_type VARCHAR(100) NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -185,6 +300,7 @@ CREATE INDEX idx_execution_inbox_role ON public.execution_inbox(role_target) WHE
 -------------------------------------------------------------------------------
 CREATE TABLE public.approval_chains (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
     target_type VARCHAR(100) NOT NULL,
     target_id UUID NOT NULL,
     domain VARCHAR(100) NOT NULL,
@@ -576,6 +692,8 @@ CREATE TRIGGER set_agencies_updated_at BEFORE UPDATE ON public.agencies FOR EACH
 CREATE TRIGGER set_branches_updated_at BEFORE UPDATE ON public.branches FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER set_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER set_invites_updated_at BEFORE UPDATE ON public.invites FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+CREATE TRIGGER set_teams_updated_at BEFORE UPDATE ON public.teams FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+CREATE TRIGGER set_team_members_updated_at BEFORE UPDATE ON public.team_members FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER set_tasks_updated_at BEFORE UPDATE ON public.tasks FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER set_activities_updated_at BEFORE UPDATE ON public.activities FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER set_campaigns_updated_at BEFORE UPDATE ON public.campaigns FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
@@ -614,6 +732,16 @@ CREATE POLICY tenant_isolation_agencies ON public.agencies FOR ALL USING (id = a
 ALTER TABLE public.branches ENABLE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation_branches ON public.branches FOR ALL USING (agency_id = auth.user_agency_id());
 
+-- Teams
+ALTER TABLE public.teams ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_teams ON public.teams FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Team Members
+ALTER TABLE public.team_members ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_team_members ON public.team_members FOR ALL USING (
+  team_id IN (SELECT id FROM public.teams WHERE agency_id = auth.user_agency_id())
+);
+
 -- Profiles
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation_profiles ON public.profiles FOR ALL USING (agency_id = auth.user_agency_id());
@@ -637,5 +765,39 @@ CREATE POLICY tenant_isolation_invites ON public.invites FOR ALL USING (agency_i
 -- Projects
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation_projects ON public.projects FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Tasks
+ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_tasks ON public.tasks FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Activities
+ALTER TABLE public.activities ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_activities ON public.activities FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Documents
+ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_documents ON public.documents FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Sys Audit Vault
+ALTER TABLE public.sys_audit_vault ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_sys_audit_vault ON public.sys_audit_vault FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- System Events
+ALTER TABLE public.system_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_system_events ON public.system_events FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Execution Inbox
+ALTER TABLE public.execution_inbox ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_execution_inbox ON public.execution_inbox FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Approval Chains
+ALTER TABLE public.approval_chains ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_approval_chains ON public.approval_chains FOR ALL USING (agency_id = auth.user_agency_id());
+
+-- Approval Steps
+ALTER TABLE public.approval_steps ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_approval_steps ON public.approval_steps FOR ALL USING (
+  chain_id IN (SELECT id FROM public.approval_chains WHERE agency_id = auth.user_agency_id())
+);
 
 COMMIT;

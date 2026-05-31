@@ -44,12 +44,43 @@ export interface Database {
           id: string;
           agency_id: string;
           name: string;
+          code: string | null;
+          city: string | null;
+          address: string | null;
+          phone: string | null;
           location: string | null;
+          is_active: boolean | null;
           created_at: string;
           updated_at: string;
         };
         Insert: Partial<Database['public']['Tables']['branches']['Row']> & { agency_id: string; name: string };
         Update: Partial<Database['public']['Tables']['branches']['Row']>;
+      };
+      teams: {
+        Row: {
+          id: string;
+          agency_id: string;
+          branch_id: string | null;
+          name: string;
+          manager_id: string | null;
+          is_active: boolean | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['teams']['Row']> & { agency_id: string; name: string };
+        Update: Partial<Database['public']['Tables']['teams']['Row']>;
+      };
+      team_members: {
+        Row: {
+          id: string;
+          team_id: string;
+          profile_id: string;
+          role_in_team: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['team_members']['Row']> & { team_id: string; profile_id: string };
+        Update: Partial<Database['public']['Tables']['team_members']['Row']>;
       };
       profiles: {
         Row: {
@@ -65,31 +96,62 @@ export interface Database {
         Insert: Partial<Database['public']['Tables']['profiles']['Row']> & { id: string };
         Update: Partial<Database['public']['Tables']['profiles']['Row']>;
       };
+      sys_audit_vault: {
+        Row: {
+          id: string;
+          correlation_id: string | null;
+          actor_id: string | null;
+          agency_id: string;
+          branch_id: string | null;
+          operation_type: string;
+          entity_type: string;
+          entity_id: string;
+          old_values: any | null;
+          new_values: any | null;
+          request_ip: string | null;
+          device_signature: string | null;
+          is_anomaly: boolean | null;
+          timestamp: string;
+        };
+        Insert: Partial<Database['public']['Tables']['sys_audit_vault']['Row']> & { agency_id: string; operation_type: string; entity_type: string; entity_id: string };
+        Update: Partial<Database['public']['Tables']['sys_audit_vault']['Row']>;
+      };
       activities: {
         Row: {
           id: string;
           agency_id: string;
-          type: string;
-          description: string;
-          related_to_type: string | null;
-          related_to_id: string | null;
-          created_by: string | null;
+          branch_id: string | null;
+          channel: string;
+          direction: string;
+          participant_id: string | null;
+          content: string | null;
+          sentiment_score: number | null;
+          sent_by: string | null;
+          status: string | null;
           created_at: string;
           updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['activities']['Row']> & { agency_id: string; type: string; description: string };
+        Insert: Partial<Database['public']['Tables']['activities']['Row']> & { agency_id: string; channel: string; direction: string };
         Update: Partial<Database['public']['Tables']['activities']['Row']>;
       };
       tasks: {
         Row: {
           id: string;
           agency_id: string;
+          branch_id: string | null;
           title: string;
           description: string | null;
-          due_date: string | null;
-          status: string | null;
           priority: string | null;
+          task_status: string | null;
+          due_date: string | null;
           assigned_to: string | null;
+          created_by: string | null;
+          associated_entity_type: string | null;
+          associated_entity_id: string | null;
+          sla_escalation_marker_hours: number | null;
+          escalation_count: number | null;
+          escalated_to: string | null;
+          completed_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -100,16 +162,24 @@ export interface Database {
         Row: {
           id: string;
           agency_id: string;
+          branch_id: string | null;
           title: string;
-          url: string;
-          type: string | null;
-          related_to_type: string | null;
-          related_to_id: string | null;
+          category: string | null;
+          storage_path: string;
+          file_size: number | null;
+          mime_type: string | null;
+          lifecycle_state: string | null;
+          associated_entity_type: string | null;
+          associated_entity_id: string | null;
           uploaded_by: string | null;
+          hash_signature: string | null;
+          verified_by: string | null;
+          verified_at: string | null;
+          rejection_reason: string | null;
           created_at: string;
           updated_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['documents']['Row']> & { agency_id: string; title: string; url: string };
+        Insert: Partial<Database['public']['Tables']['documents']['Row']> & { agency_id: string; title: string; storage_path: string };
         Update: Partial<Database['public']['Tables']['documents']['Row']>;
       };
       tickets: {
@@ -150,6 +220,7 @@ export interface Database {
       system_events: {
         Row: {
           id: string;
+          agency_id: string;
           event_type: string;
           aggregate_type: string;
           aggregate_id: string;
@@ -159,12 +230,14 @@ export interface Database {
           created_by: string | null;
           created_at: string;
         };
-        Insert: Partial<Database['public']['Tables']['system_events']['Row']> & { event_type: string; aggregate_type: string; aggregate_id: string; source_module: string };
+        Insert: Partial<Database['public']['Tables']['system_events']['Row']> & { agency_id: string; event_type: string; aggregate_type: string; aggregate_id: string; source_module: string };
         Update: Partial<Database['public']['Tables']['system_events']['Row']>;
       };
       execution_inbox: {
         Row: {
           id: string;
+          agency_id: string;
+          branch_id: string | null;
           task_type: string;
           title: string;
           description: string | null;
@@ -183,12 +256,13 @@ export interface Database {
           completed_at: string | null;
           completed_by: string | null;
         };
-        Insert: Partial<Database['public']['Tables']['execution_inbox']['Row']> & { task_type: string; title: string; domain: string; reference_aggregate_type: string; reference_aggregate_id: string };
+        Insert: Partial<Database['public']['Tables']['execution_inbox']['Row']> & { agency_id: string; task_type: string; title: string; domain: string; reference_aggregate_type: string; reference_aggregate_id: string };
         Update: Partial<Database['public']['Tables']['execution_inbox']['Row']>;
       };
       approval_chains: {
         Row: {
           id: string;
+          agency_id: string;
           target_type: string;
           target_id: string;
           domain: string;
@@ -197,7 +271,7 @@ export interface Database {
           created_at: string;
           completed_at: string | null;
         };
-        Insert: Partial<Database['public']['Tables']['approval_chains']['Row']> & { target_type: string; target_id: string; domain: string; requested_by: string };
+        Insert: Partial<Database['public']['Tables']['approval_chains']['Row']> & { agency_id: string; target_type: string; target_id: string; domain: string; requested_by: string };
         Update: Partial<Database['public']['Tables']['approval_chains']['Row']>;
       };
       approval_steps: {

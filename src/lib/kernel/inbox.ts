@@ -1,80 +1,71 @@
-// src/lib/kernel/inbox.ts
-
-import { SystemEvent } from './core';
+import { kernel } from './core';
 
 export interface InboxTask {
   id?: string;
-  taskType: string;
+  agency_id: string;
+  branch_id?: string;
+  task_type: string;
   title: string;
   description?: string;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'ESCALATED';
-  assigneeId?: string;
-  roleTarget?: string;
+  assignee_id?: string;
+  role_target?: string;
   domain: string;
-  referenceAggregateType: string;
-  referenceAggregateId: string;
-  dueDate?: Date;
-  slaBreachAt?: Date;
+  reference_aggregate_type: string;
+  reference_aggregate_id: string;
+  due_date?: Date;
+  sla_breach_at?: Date;
   payload?: any;
 }
 
-/**
- * Inbox Generator Engine
- * Pushes tasks to operational actors based on events.
- */
 export class InboxEngine {
-  
-  /**
-   * Generates an inbox task and stores it.
-   */
   async generateTask(task: InboxTask): Promise<void> {
-    // Note: implementation connects to Supabase `execution_inbox` table.
-    console.log(`[INBOX ROUTER]: Routing Task '${task.title}' to role: ${task.roleTarget || 'UNASSIGNED'} (User: ${task.assigneeId || 'UNASSIGNED'})`);
-    // Example: await supabase.from('execution_inbox').insert(task)
+    console.log(`[INBOX GENERATOR] Creating task: ${task.title} for Role: ${task.role_target} / Assignee: ${task.assignee_id}`);
+    
+    // Ensure critical fields are set
+    const dataToInsert = {
+        ...task,
+        due_date: task.due_date?.toISOString(),
+        sla_breach_at: task.sla_breach_at?.toISOString()
+    };
+
+    await kernel.mutate('execution_inbox', 'INSERT', dataToInsert);
   }
 
-  /**
-   * Evaluates SLAs and triggers escalations.
-   * Typical chron-job run function.
-   */
-  async evaluateSLAs(): Promise<void> {
-     console.log('[INBOX SLA ENGINE]: Checking breached tasks implementation...');
-     // Find tasks where sla_breach_at < NOW() and status = 'PENDING'
-     // Emit event: TaskSLABreached
+  async resolveTask(taskId: string, actorId: string, resolutionNotes?: string): Promise<void> {
+     // Implement status change
+     await kernel.mutate('execution_inbox', 'UPDATE', {
+         status: 'COMPLETED',
+         resolved_by: actorId,
+         resolved_at: new Date().toISOString(),
+         resolution_notes: resolutionNotes
+     }, { id: taskId });
+  }
+
+  async escalateBreachedTasks(): Promise<void> {
+     console.log(`[INBOX ENGINE] Evaluating SLAs...`);
+     // Complex query handled by edge function or pg_cron directly on supabase,
+     // but kernel query can fetch breached:
+     const breached = await kernel.query<any>('execution_inbox', {
+         filters: {
+             status: 'PENDING'
+         }
+         // Note: further operator filtering like sla_breach_at < NOW() requires custom RPC or advanced filter
+     });
+     
+     const now = new Date();
+     for (const task of breached) {
+         if (task.sla_breach_at && new Date(task.sla_breach_at) < now) {
+             console.log(`[INBOX ENGINE] Escalating Task: ${task.id}`);
+             await kernel.mutate('execution_inbox', 'UPDATE', {
+                 status: 'ESCALATED',
+                 escalation_count: (task.escalation_count || 0) + 1
+             }, { id: task.id });
+             // Could trigger a new system event for escalation -> trigger webhook/SMS
+         }
+     }
   }
 }
 
 export const inboxEngine = new InboxEngine();
-
-/**
- * Common Task Generators
- */
-export const TaskGenerators = {
-    requireFinancialApproval: async (aggregateId: string, amount: number, requestedBy: string) => {
-        await inboxEngine.generateTask({
-            taskType: 'FINANCIAL_APPROVAL',
-            title: `Approve Financial Value: ${amount} DZD`,
-            priority: 'HIGH',
-            status: 'PENDING',
-            roleTarget: 'FINANCE_MANAGER',
-            domain: 'Finance',
-            referenceAggregateType: 'Deal',
-            referenceAggregateId: aggregateId,
-            payload: { amount, requestedBy }
-        });
-    },
-
-    requireLegalContractReview: async (dealId: string) => {
-        await inboxEngine.generateTask({
-            taskType: 'CONTRACT_REVIEW',
-            title: `Review Notary Contract for Deal ${dealId}`,
-            priority: 'MEDIUM',
-            status: 'PENDING',
-            roleTarget: 'LEGAL_OFFICER',
-            domain: 'Legal',
-            referenceAggregateType: 'Deal',
-            referenceAggregateId: dealId,
-        });
-    }
-};

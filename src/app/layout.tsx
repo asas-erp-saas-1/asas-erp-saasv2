@@ -1,6 +1,6 @@
 // src/app/layout.tsx
 import type { Metadata, Viewport } from 'next'
-import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
+import { Cinzel, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { env } from '@/lib/env'
 import { GlobalErrorTracker } from '@/components/GlobalErrorTracker'
@@ -13,7 +13,7 @@ const inter = Inter({
   display: 'swap',
 })
 
-const spaceGrotesk = Space_Grotesk({
+const cinzel = Cinzel({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
@@ -49,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
+    <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, cinzel.variable, jetbrainsMono.variable)}>
       <body className="bg-asas-sand dark:bg-asas-charcoal text-asas-charcoal dark:text-asas-sand antialiased font-sans flex flex-col min-h-screen selection:bg-asas-gold/30">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GlobalErrorTracker />

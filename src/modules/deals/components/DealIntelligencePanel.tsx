@@ -8,9 +8,9 @@ import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
 import { Clock, Send } from 'lucide-react';
 import type { Activity } from '@/types/app';
-import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
-import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
-import { SchedulePaymentModal } from '@/app/dashboard/deals/SchedulePaymentModal'
+import { CreateTaskModal } from '@/app/_old_dashboard/tasks/CreateTaskModal'
+import { LogDepositModal } from '@/app/_old_dashboard/deals/LogDepositModal'
+import { SchedulePaymentModal } from '@/app/_old_dashboard/deals/SchedulePaymentModal'
 import { WhatsAppTemplateModal } from './WhatsAppTemplateModal'
 
 function DealPortalChatSection({ dealId }: { dealId: string }) {
