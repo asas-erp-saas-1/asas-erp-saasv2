@@ -1,5 +1,5 @@
 'use client';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Building2, ArrowRight } from 'lucide-react';
@@ -15,6 +15,12 @@ function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteCode = searchParams?.get('invite');
+
+  useEffect(() => {
+    if (inviteCode) {
+      localStorage.setItem('asa_invite_code', inviteCode);
+    }
+  }, [inviteCode]);
 
   const getSupabase = () => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';

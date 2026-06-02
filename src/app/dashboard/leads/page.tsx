@@ -186,7 +186,7 @@ function LeadCard({
   onConvert: (id: string) => void;
   index: number;
 }) {
-  const hours = inactiveHours(lead.last_activity);
+  const hours = inactiveHours(lead.last_activity || "");
   const isHot = hours < 24;
   const isStale = hours > 48;
 
@@ -306,7 +306,7 @@ function LeadCard({
               onClick={(e) => e.stopPropagation()}
             >
               <select
-                value={lead.status}
+                value={lead.status || ""}
                 onChange={(e) => onStatusChange(lead.id, e.target.value)}
                 className="appearance-none block w-full bg-asas-sand/50 dark:bg-[#141618] border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand text-[9px] uppercase tracking-widest font-bold py-2 pl-2 pr-6 rounded-sm focus:outline-none focus:border-asas-gold/50 cursor-pointer"
               >

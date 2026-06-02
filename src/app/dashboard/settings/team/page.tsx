@@ -40,7 +40,7 @@ export default async function TeamSettingsPage() {
   // Normalize profiles into an expected format
   const mappedProfiles = profiles.map((p: any) => ({
     id: p.id,
-    full_name: p.full_name || 'Inconnu',
+    full_name: [p.first_name, p.last_name].filter(Boolean).join(' ') || p.full_name || 'Inconnu',
     email: p.email || '',
     role: p.role || 'agent',
     status: p.status || 'active',

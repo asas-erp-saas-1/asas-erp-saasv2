@@ -383,7 +383,7 @@ export default function CanvasRenderer({ properties, onReload }: CanvasRendererP
                     <div className="col-span-12 md:col-span-9 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                       {floor.properties.map((p) => {
                         const isSelected = selectedId === p.id
-                        const cfg = STATUS_CONFIG[p.status] || { 
+                        const cfg = STATUS_CONFIG[p.status || 'available'] || { 
                           label: 'Disponible', 
                           color: 'text-emerald-500', 
                           bg: 'bg-emerald-500/10', 

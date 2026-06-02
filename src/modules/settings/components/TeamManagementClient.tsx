@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Users, Shield, ShieldAlert, ShieldCheck, Mail, ArrowLeft, CheckCircle2, UserX } from 'lucide-react'
 import Link from 'next/link'
 import { clsx } from 'clsx'
+import { AppInviteWidget } from '@/app/dashboard/settings/AppInviteWidget'
 
 type Profile = {
   id: string
@@ -83,6 +84,8 @@ export function TeamManagementClient({ initialProfiles, currentUserRole }: { ini
           <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mt-2">Contrôle des rôles et autorisations d'équipe</p>
         </div>
       </div>
+
+      <AppInviteWidget />
 
       <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm overflow-hidden shadow-sm">
         <div className="overflow-x-auto custom-scrollbar">

@@ -22,6 +22,15 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     const checkStatus = async () => {
+      // Check for pending invite
+      const pendingInvite = localStorage.getItem('asa_invite_code');
+      if (pendingInvite) {
+        // Clear it so we don't infinitely loop if it's invalid
+        localStorage.removeItem('asa_invite_code');
+        router.push(`/invite/${pendingInvite}`);
+        return;
+      }
+
       const { supabase, isMock } = getSupabase();
       if (isMock) {
         setChecking(false);

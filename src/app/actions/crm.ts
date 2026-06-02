@@ -86,7 +86,7 @@ export async function updateDealStage(dealId: string, newStage: DealStage, agenc
       aggregateType: 'Deal',
       aggregateId: dealId,
       agencyId: agencyId, // Context/Agency ID
-      performedByUserId: user?.id,
+      performedByUserId: user?.id || "",
       payload: {
         aggregateId: dealId,
         agencyId: agencyId,
