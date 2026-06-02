@@ -8,7 +8,7 @@ import { createServerClient } from '@supabase/ssr';
 const ALLOWED_ENVIRONMENTS = ['development', 'staging', 'production'];
 const CURRENT_ENV = process.env.NEXT_PUBLIC_APP_ENV || 'development';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. Edge-based multi-region/tenant routing extraction
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || '';
