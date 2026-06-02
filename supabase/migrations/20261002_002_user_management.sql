@@ -8,12 +8,13 @@
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (id, first_name, last_name, role)
+    INSERT INTO public.profiles (id, first_name, last_name, role, email)
     VALUES (
         NEW.id,
         COALESCE(NEW.raw_user_meta_data->>'first_name', NEW.raw_user_meta_data->>'full_name', ''),
         COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
-        'agent'
+        'agent',
+        NEW.email
     )
     ON CONFLICT (id) DO NOTHING;
     RETURN NEW;
@@ -75,6 +76,32 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Allow authenticated users to call accept_invite
 GRANT EXECUTE ON FUNCTION public.accept_invite(VARCHAR) TO authenticated;
+
+
+-- 4. Add Status and Email columns to profiles if missing
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'active';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email VARCHAR(255);
+
+-- 5. Trigger to prevent Self-Escalation of Role
+CREATE OR REPLACE FUNCTION public.prevent_role_escalation()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- If the role is being changed
+    IF NEW.role IS DISTINCT FROM OLD.role THEN
+        -- Allow the change if the user changing it is an owner/manager applying it to SOMEONE ELSE
+        -- But prevent self-escalation (a user escalating their own role from agent to manager/owner)
+        IF auth.uid() = NEW.id AND OLD.role NOT IN ('owner', 'manager') AND NEW.role IN ('owner', 'manager') THEN
+            RAISE EXCEPTION 'You cannot escalate your own role.';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_profile_role_update ON public.profiles;
+CREATE TRIGGER on_profile_role_update
+    BEFORE UPDATE ON public.profiles
+    FOR EACH ROW EXECUTE FUNCTION public.prevent_role_escalation();
 
 
 -- 3. Atomic Agency Creation Function (Used in Onboarding)

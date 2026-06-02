@@ -11,7 +11,7 @@ type Profile = {
   id: string
   full_name: string
   email: string
-  role: 'owner' | 'manager' | 'agent'
+  role: 'owner' | 'manager' | 'agent' | 'accountant' | 'marketer' | 'promoter'
   status: 'active' | 'suspended'
   last_active: string | null
 }
@@ -20,12 +20,18 @@ const ROLE_LABELS: Record<string, string> = {
   owner: 'Administrateur',
   manager: 'Manager',
   agent: 'Agent Commercial',
+  accountant: 'Comptable',
+  marketer: 'Marketeur',
+  promoter: 'Promoteur'
 }
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
   owner: <ShieldAlert className="w-4 h-4 text-purple-500" />,
   manager: <ShieldCheck className="w-4 h-4 text-asas-navy dark:text-asas-sand" />,
-  agent: <Shield className="w-4 h-4 text-asas-silver" />
+  agent: <Shield className="w-4 h-4 text-asas-silver" />,
+  accountant: <Shield className="w-4 h-4 text-asas-copper" />,
+  marketer: <Shield className="w-4 h-4 text-pink-500" />,
+  promoter: <Shield className="w-4 h-4 text-blue-500" />
 }
 
 export function TeamManagementClient({ initialProfiles, currentUserRole }: { initialProfiles: Profile[], currentUserRole: string }) {

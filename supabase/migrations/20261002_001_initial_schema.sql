@@ -660,7 +660,15 @@ $$;
 
 -- Specific overrides/additions to preserve access during Onboarding and self-service
 CREATE POLICY "Users can view their own profile" ON public.profiles FOR SELECT USING (id = auth.uid() OR agency_id = public.get_current_agency_id());
-CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (id = auth.uid() OR agency_id = public.get_current_agency_id());
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
+
+CREATE POLICY "Secure profile update" ON public.profiles FOR UPDATE USING (
+    id = auth.uid() 
+    OR 
+    (agency_id = public.get_current_agency_id() AND EXISTS (
+        SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('owner', 'manager')
+    ))
+);
 CREATE POLICY "Anyone can insert their profile during creation" ON public.profiles FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Agencies are readable by their authenticated users" ON public.agencies FOR SELECT USING (id = public.get_current_agency_id());
 CREATE POLICY "New agencies can be created on signup" ON public.agencies FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);

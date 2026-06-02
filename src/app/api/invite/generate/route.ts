@@ -24,11 +24,14 @@ export async function POST(req: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: profile } = await supabase.from('profiles').select('agency_id').eq('id', user.id).single();
+    const { data: profile } = await supabase.from('profiles').select('agency_id, role').eq('id', user.id).single();
     if (!profile?.agency_id) return NextResponse.json({ error: 'No agency' }, { status: 403 });
+    if (profile.role !== 'owner' && profile.role !== 'manager') {
+      return NextResponse.json({ error: 'Unauthorized role' }, { status: 403 });
+    }
 
     const body = await req.json().catch(() => ({}));
-    const role = body.role || 'AGENT';
+    const role = body.role || 'agent';
     const email = body.email || 'agent@orcal-erp.com';
     const token = 'ag-' + randomBytes(8).toString('hex');
 
