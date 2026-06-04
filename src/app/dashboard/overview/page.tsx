@@ -126,24 +126,24 @@ export default async function OverviewPage() {
     <div className="flex flex-col gap-8 pb-10">
       
       {/* HEADER */}
-      <div className="flex flex-col gap-2 pb-4 border-b border-asas-charcoal/10 dark:border-white/5">
+      <div className="flex flex-col gap-2 pb-6 border-b border-gray-200 dark:border-white/5">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between w-full gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-               <div className="w-10 h-10 rounded-sm bg-asas-navy border border-asas-gold/20 flex items-center justify-center shadow-[0_0_20px_rgba(199,161,90,0.1)]">
-                   <LayoutDashboard className="h-5 w-5 text-asas-gold" strokeWidth={1.5} /> 
+            <h1 className="text-3xl sm:text-4xl font-display font-semibold text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+               <div className="w-12 h-12 rounded-xl bg-asas-navy border border-asas-gold/20 flex items-center justify-center shadow-lg">
+                   <LayoutDashboard className="h-6 w-6 text-asas-gold" />
                </div>
-               Hub Opérationnel <span className="text-asas-silver mx-2 opacity-50 font-sans font-light">|</span> الداشبورد الشامل
+               Hub Opérationnel <span className="text-gray-300 dark:text-gray-700 mx-2 font-sans font-light">|</span> الداشبورد الشامل
             </h1>
-            <p className="text-[10px] font-bold text-asas-silver uppercase tracking-widest pl-[52px] pt-1">
-              Vue {userRole} — Unified Global ERP / CRM Intelligence
+            <p className="text-sm font-medium text-gray-500 mt-3 pl-[60px]">
+              Vue {userRole} — Centralisation des opérations et KPI en temps réel.
             </p>
           </div>
           
-          <div className="flex items-center gap-2 pl-[52px] sm:pl-0">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-asas-silver/20 dark:border-white/10 rounded-sm">
-              <div className="w-1.5 h-1.5 rounded-full bg-asas-gold animate-pulse shadow-[0_0_10px_rgba(199,161,90,0.8)]"></div>
-              <span className="text-[9px] uppercase font-mono tracking-widest font-bold text-asas-charcoal/50 dark:text-asas-sand/50">Flux Synchronisé</span>
+          <div className="flex items-center gap-2 pl-[60px] sm:pl-0">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/50 rounded-lg">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse ring-4 ring-green-500/20"></div>
+              <span className="text-xs font-semibold text-green-700 dark:text-green-400">Flux Synchronisé</span>
             </div>
           </div>
         </div>

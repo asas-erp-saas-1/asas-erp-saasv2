@@ -8,59 +8,69 @@ import { clsx } from 'clsx';
 import Link from 'next/link';
 
 export function AgentDashboard({ metrics, events }: { metrics: any, events: any[] }) {
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 }).format(val);
+  };
+
   return (
-    <div className="space-y-6 animate-in">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 md:p-8 bg-asas-charcoal border border-asas-gold/20 rounded-sm relative overflow-hidden group">
-        <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay z-0" style={{ backgroundImage: 'radial-gradient(circle at center, #C7A15A 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+    <div className="space-y-8 animate-in">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 sm:p-8 bg-asas-navy rounded-2xl relative overflow-hidden group shadow-xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-asas-gold/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
         <div className="relative z-10">
-          <h2 className="text-xl font-display font-bold text-asas-sand mb-1 tracking-wider uppercase">Bonjour, Explorateur</h2>
-          <p className="text-xs text-asas-sand/60 font-mono tracking-wide">Voici ton pipeline actuel et tes objectifs du mois.</p>
+          <h2 className="text-2xl font-display font-medium text-white mb-2 tracking-tight">Bonjour, Explorateur</h2>
+          <p className="text-sm font-medium text-white/70">Voici ton pipeline actuel et tes objectifs du mois.</p>
         </div>
-        <div className="relative z-10 flex gap-4">
-          <div className="text-center">
-             <div className="text-3xl font-display font-bold text-asas-gold">{metrics.myDealsCount || 0}</div>
-             <div className="text-[10px] uppercase tracking-widest text-asas-sand/50">Dossiers Actifs</div>
+        <div className="relative z-10 flex gap-6 sm:gap-10">
+          <div className="flex flex-col">
+             <div className="text-3xl font-display font-medium text-asas-gold">{metrics.myDealsCount || 0}</div>
+             <div className="text-xs font-semibold text-white/50 uppercase tracking-wider mt-1">Dossiers Actifs</div>
           </div>
-          <div className="w-px bg-asas-silver/20 hidden sm:block"></div>
-          <div className="text-center">
-             <div className="text-3xl font-display font-bold text-asas-sand">{new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 }).format(metrics.myPipelineValue || 0)}</div>
-             <div className="text-[10px] uppercase tracking-widest text-asas-sand/50">Valeur Pipeline</div>
+          <div className="w-px bg-white/10 hidden sm:block"></div>
+          <div className="flex flex-col">
+             <div className="text-3xl font-display font-medium text-white">{formatCurrency(metrics.myPipelineValue || 0)}</div>
+             <div className="text-xs font-semibold text-white/50 uppercase tracking-wider mt-1">Valeur Pipeline</div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="p-6 border border-asas-charcoal/10 dark:border-white/5 rounded-sm bg-white/40 dark:bg-[#0F1113]/40 backdrop-blur-sm shadow-sm group">
-           <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-asas-charcoal/70 dark:text-asas-sand/70">Leads à contacter</h3>
-              <Users className="w-5 h-5 text-asas-gold" />
+        <div className="p-6 bg-white dark:bg-[#141618] border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm group hover:shadow-md transition-shadow">
+           <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Leads à contacter</h3>
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                 <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
            </div>
-           <div className="text-4xl font-display font-bold text-asas-charcoal dark:text-asas-sand">{metrics.myNewLeads || 0}</div>
-           <p className="text-[10px] text-asas-charcoal/50 dark:text-asas-sand/50 mt-2 font-mono uppercase">Nouveaux prospects assignés</p>
-           <Link href="/dashboard/leads" className="mt-4 inline-flex items-center text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-wider hover:text-asas-gold transition-colors">
-              Gérer les leads &rarr;
+           <div className="text-4xl font-display font-semibold text-gray-900 dark:text-white">{metrics.myNewLeads || 0}</div>
+           <p className="text-sm font-medium text-gray-500 mt-2">Nouveaux prospects assignés</p>
+           <Link href="/dashboard/leads" className="mt-6 flex items-center justify-between text-sm font-semibold text-asas-navy dark:text-blue-400 hover:text-asas-gold transition-colors">
+              Gérer les leads <ArrowUpRight className="w-4 h-4" />
            </Link>
         </div>
 
-        <div className="p-6 border border-asas-charcoal/10 dark:border-white/5 rounded-sm bg-white/40 dark:bg-[#0F1113]/40 backdrop-blur-sm shadow-sm group">
-           <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-asas-charcoal/70 dark:text-asas-sand/70">Visites & RDV</h3>
-              <Clock className="w-5 h-5 text-asas-copper" />
+        <div className="p-6 bg-white dark:bg-[#141618] border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm group hover:shadow-md transition-shadow">
+           <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Visites & RDV</h3>
+              <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
+                 <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              </div>
            </div>
-           <div className="text-4xl font-display font-bold text-asas-charcoal dark:text-asas-sand">{metrics.todayTasks || 0}</div>
-           <p className="text-[10px] text-asas-charcoal/50 dark:text-asas-sand/50 mt-2 font-mono uppercase">Tâches prévues aujourd'hui</p>
-           <Link href="/dashboard/tasks" className="mt-4 inline-flex items-center text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-wider hover:text-asas-copper transition-colors">
-              Voir mon agenda &rarr;
+           <div className="text-4xl font-display font-semibold text-gray-900 dark:text-white">{metrics.todayTasks || 0}</div>
+           <p className="text-sm font-medium text-gray-500 mt-2">Tâches prévues aujourd'hui</p>
+           <Link href="/dashboard/tasks" className="mt-6 flex items-center justify-between text-sm font-semibold text-asas-navy dark:text-orange-400 hover:text-asas-gold transition-colors">
+              Voir mon agenda <ArrowUpRight className="w-4 h-4" />
            </Link>
         </div>
 
-        <div className="p-6 border border-asas-gold/20 dark:border-asas-gold/20 rounded-sm bg-asas-gold/5 dark:bg-asas-gold/10 backdrop-blur-sm shadow-sm">
-           <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-asas-gold">Performance (Mois)</h3>
-              <TrendingUp className="w-5 h-5 text-asas-gold" />
+        <div className="p-6 bg-asas-gold/10 border border-asas-gold/20 rounded-2xl shadow-sm flex flex-col justify-between">
+           <div>
+             <div className="flex items-center justify-between mb-6">
+                <h3 className="text-sm font-semibold text-asas-gold">Performance (Mois)</h3>
+                <TrendingUp className="w-5 h-5 text-asas-gold" />
+             </div>
+             <div className="text-4xl font-display font-semibold text-gray-900 dark:text-white">{metrics.wonDealsThisMonth || 0}</div>
+             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">Promesses signées (VSP)</p>
            </div>
-           <div className="text-4xl font-display font-bold text-asas-charcoal dark:text-asas-sand">{metrics.wonDealsThisMonth || 0}</div>
-           <p className="text-[10px] text-asas-charcoal/50 dark:text-asas-sand/50 mt-2 font-mono uppercase">Promesses signées (VSP)</p>
         </div>
       </div>
     </div>
@@ -83,73 +93,78 @@ export function OwnerDashboard({ metrics, events }: { metrics: any, events: any[
   };
 
   return (
-    <div className="space-y-6 animate-in">
+    <div className="space-y-8 animate-in">
       {/* KPI WIDGETS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: 'Unités Disponibles', value: metrics.availableUnitsCount, icon: Building2, sub: 'Inventaire Actif' },
           { label: 'Valeur Totale Pipeline', value: formatCurrency(metrics.pipelineValue), icon: Briefcase, sub: 'Potentiel CA' },
           { label: 'Nouveaux Leads', value: metrics.newLeadsCount, icon: Users, sub: "File d'attente" },
           { label: 'Demandes VSP/Contrats', value: metrics.pendingContractsCount, icon: AlertCircle, sub: 'Signature requise' },
         ].map((kpi, idx) => (
-          <div key={idx} className="p-5 border border-asas-charcoal/10 dark:border-white/5 rounded-sm bg-white/40 dark:bg-[#0F1113]/40 backdrop-blur-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors cursor-default">
-            <div className="absolute top-4 right-4 text-asas-charcoal/5 dark:text-white/5 group-hover:text-asas-gold/10 transition-colors">
-              <kpi.icon size={56} />
+          <div key={idx} className="p-6 border border-gray-200 dark:border-white/5 rounded-2xl bg-white dark:bg-[#141618] shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow cursor-default flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-4">
+               <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{kpi.label}</span>
+               <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-asas-gold/10 transition-colors">
+                 <kpi.icon className="w-5 h-5 text-gray-400 group-hover:text-asas-gold transition-colors" />
+               </div>
             </div>
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-asas-charcoal/60 dark:text-asas-sand/60">{kpi.label}</span>
-              <div className="mt-6 flex flex-col">
-                <div className="text-2xl font-display font-bold text-asas-charcoal dark:text-asas-sand truncate">{kpi.value || 0}</div>
-                <div className="text-[10px] font-mono tracking-wide text-asas-charcoal/40 dark:text-asas-sand/40 mt-1 uppercase">{kpi.sub}</div>
-              </div>
+            <div className="mt-4 flex flex-col">
+              <div className="text-3xl font-display font-semibold text-gray-900 dark:text-white truncate">{kpi.value || 0}</div>
+              <div className="text-xs font-medium text-gray-500 mt-2">{kpi.sub}</div>
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="col-span-1 lg:col-span-2 p-6 border border-asas-charcoal/10 dark:border-white/5 rounded-sm bg-white/40 dark:bg-[#0F1113]/40 backdrop-blur-sm flex flex-col">
+        <div className="col-span-1 lg:col-span-2 p-8 border border-gray-200 dark:border-white/5 rounded-3xl bg-white dark:bg-[#141618] shadow-sm flex flex-col">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-asas-charcoal dark:text-asas-sand">Chiffre d'Affaires Global</h3>
-              <p className="text-[10px] font-mono text-asas-silver uppercase mt-1">Objectifs vs Réalisations</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Chiffre d'Affaires Global</h3>
+              <p className="text-sm font-medium text-gray-500 mt-1">Objectifs vs Réalisations</p>
             </div>
           </div>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'currentColor', opacity: 0.5 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${value/1000}k`} tick={{ fontSize: 10, fill: 'currentColor', opacity: 0.5 }} />
-                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#0F1113', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }} />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
-                <Bar dataKey="obj" name="Objectif" fill="#A7A9AC" fillOpacity={0.3} radius={[2, 2, 0, 0]} />
-                <Bar dataKey="reals" name="Réalisé" fill="#C7A15A" radius={[2, 2, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10 dark:opacity-5" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${value/1000}k`} tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} />
+                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#141618', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                <Bar dataKey="obj" name="Objectif" fill="#E5E7EB" dark={{ fill: '#374151' }} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="reals" name="Réalisé" fill="#C7A15A" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="p-6 border border-asas-charcoal/10 dark:border-white/5 rounded-sm bg-white/40 dark:bg-[#0F1113]/40 backdrop-blur-sm flex flex-col max-h-[400px]">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-asas-charcoal dark:text-asas-sand mb-6">Logs Télémesure (Temps Réel)</h3>
-          <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
+        <div className="p-8 border border-gray-200 dark:border-white/5 rounded-3xl bg-white dark:bg-[#141618] shadow-sm flex flex-col max-h-[420px]">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Audit & Historique</h3>
+            <div className="px-2.5 py-1 text-xs font-semibold rounded-md bg-asas-gold/10 text-asas-gold">En direct</div>
+          </div>
+          <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 relative">
             {events && events.length > 0 ? (
-              events.map((event) => (
-                <div key={event.id} className="flex gap-3 text-sm">
-                  <div className="w-1.5 h-1.5 mt-2 rounded-full shrink-0 bg-asas-gold" />
-                  <div>
-                    <p className="font-bold text-asas-charcoal dark:text-asas-sand text-xs">{event.event_type.replace(/_/g, ' ')}</p>
-                    <p className="text-[10px] text-asas-charcoal/60 dark:text-asas-sand/60 font-mono mt-0.5">{event.aggregate_type} - {event.aggregate_id.substring(0,8)}</p>
-                    <p className="text-[9px] font-mono text-asas-copper mt-1">
-                      {new Date(event.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
-                    </p>
+              <div className="relative border-l border-gray-200 dark:border-white/10 ml-2 space-y-6 pb-4">
+                {events.map((event) => (
+                  <div key={event.id} className="relative pl-6">
+                    <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-white dark:bg-[#141618] border-2 border-asas-gold" />
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white text-sm capitalize">{event.event_type.replace(/_/g, ' ')}</p>
+                      <p className="text-xs font-medium text-gray-500 mt-1">Sur l'entité <span className="font-medium text-gray-700 dark:text-gray-300">{event.aggregate_type}</span> ({event.aggregate_id.substring(0,8)})</p>
+                      <p className="text-xs font-medium text-gray-400 mt-2">
+                        {new Date(event.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
-              <div className="text-center opacity-50 pt-8">
-                <Clock className="w-8 h-8 mx-auto mb-3 text-asas-silver" />
-                <p className="text-[10px] uppercase font-mono tracking-widest">Aucun évènement récent</p>
+              <div className="text-center h-full flex flex-col items-center justify-center opacity-60">
+                <Clock className="w-8 h-8 mb-3 text-gray-400" />
+                <p className="text-sm font-medium text-gray-500">Aucune activité récente détectée</p>
               </div>
             )}
           </div>
