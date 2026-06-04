@@ -41,17 +41,17 @@ function PropertyCard({ property, onStatusChange }: { property: Property; onStat
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden shadow-sm hover:border-asas-gold/30 transition-all group flex flex-col h-full"
+      className="bg-[#051121] rounded-2xl border border-white/10 overflow-hidden shadow-sm hover:border-asas-gold/40 hover:shadow-[0_0_20px_rgba(212,166,79,0.15)] transition-all group flex flex-col h-full"
     >
       {/* Image placeholder */}
-      <div className="h-48 shrink-0 bg-asas-sand/30 dark:bg-black/10 flex items-center justify-center relative overflow-hidden">
+      <div className="h-48 shrink-0 bg-[#0A1629] flex items-center justify-center relative overflow-hidden">
         {property.images?.[0] ? (
           <Image src={property.images[0]} alt="Property image" fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         ) : (
-          <Building2 className="h-12 w-12 text-asas-silver/20" />
+          <Building2 className="h-12 w-12 text-white/10" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
-        <span className={clsx('absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1 rounded-sm border text-[9px] uppercase tracking-widest font-bold shadow-sm backdrop-blur-md', cfg.color)}>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#051121] via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
+        <span className={clsx('absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[9px] uppercase tracking-widest font-bold shadow-sm backdrop-blur-md', cfg.color)}>
            <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0 shadow-[0_0_10px_currentColor]" />
           {cfg.label}
         </span>
@@ -60,35 +60,35 @@ function PropertyCard({ property, onStatusChange }: { property: Property; onStat
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-3">
           <div>
-            <span className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">{TYPE_LABELS[property.type] ?? property.type}</span>
-            {property.reference_code && <span className="ml-2 text-[9px] font-mono text-asas-charcoal dark:text-asas-sand bg-black/5 dark:bg-white/5 border border-asas-silver/20 px-2 py-0.5 rounded-sm">#{property.reference_code}</span>}
+            <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">{TYPE_LABELS[property.type] ?? property.type}</span>
+            {property.reference_code && <span className="ml-2 text-[9px] font-mono text-white/80 bg-white/5 border border-white/10 px-2 py-1 rounded-md">#{property.reference_code}</span>}
           </div>
-          {property.rooms && <span className="text-[9px] bg-asas-navy/10 text-asas-navy dark:text-asas-sand px-2 py-0.5 rounded-sm font-bold border border-asas-navy/20">{property.rooms}</span>}
+          {property.rooms && <span className="text-[9px] bg-white/5 text-white/60 px-2 py-1 rounded-md font-bold border border-white/10">{property.rooms}</span>}
         </div>
 
-        <p className="font-mono text-xl font-bold tracking-tight text-asas-charcoal dark:text-asas-sand mb-4">{fmt(property.list_price)}</p>
+        <p className="font-mono text-xl font-bold tracking-tight text-asas-gold mb-4">{fmt(property.list_price)}</p>
 
         {property.projects && (
-          <p className="text-xs font-bold text-asas-charcoal dark:text-asas-sand truncate flex items-center gap-2 mb-4 bg-asas-sand/50 dark:bg-black/20 p-2 border border-asas-silver/20 rounded-sm">
-            <Building2 className="w-4 h-4 text-asas-gold shrink-0" />
+          <p className="text-[10px] uppercase tracking-widest font-bold text-white/80 truncate flex items-center gap-2 mb-4 bg-black/40 p-2.5 border border-white/5 rounded-xl">
+            <Building2 className="w-4 h-4 text-asas-gold/70 shrink-0" />
             <span className="truncate">{property.projects.name}</span>
-            {property.projects.city ? <span className="text-asas-silver shrink-0">· {property.projects.city}</span> : ''}
+            {property.projects.city ? <span className="text-white/40 shrink-0">· {property.projects.city}</span> : ''}
           </p>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-asas-silver/10 mt-auto">
-          <div className="flex items-center gap-4 text-[9px] uppercase tracking-widest font-bold text-asas-silver flex-1">
+        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
+          <div className="flex items-center gap-4 text-[9px] uppercase tracking-widest font-bold text-white/60 flex-1">
             <div className="relative isolate" onClick={(e) => e.stopPropagation()}>
               <select
                 value={property.status}
                 onChange={(e) => onStatusChange(property.id, e.target.value)}
-                className="appearance-none block w-full bg-asas-sand/50 dark:bg-[#141618] border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand text-[9px] uppercase tracking-widest font-bold py-2 pl-2 pr-6 rounded-sm focus:outline-none focus:border-asas-gold/50 cursor-pointer"
+                className="appearance-none block w-full bg-black/40 border border-white/10 text-white/80 text-[9px] uppercase tracking-widest font-bold py-2 pl-3 pr-8 rounded-lg focus:outline-none focus:border-asas-gold/50 cursor-pointer"
               >
                 {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                  <option key={k} value={k}>{v.label}</option>
+                  <option key={k} value={k} className="bg-[#0A1629]">{v.label}</option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-asas-silver">
+              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center px-1 text-white/50">
                 <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615l-4.695 4.502c-0.268 0.268-0.707 0.268-0.975 0l-4.695-4.502c-0.408-0.418-0.436-1.17 0-1.615z"/></svg>
               </div>
             </div>
@@ -99,7 +99,7 @@ function PropertyCard({ property, onStatusChange }: { property: Property; onStat
               const text = `Découvrez ce bien exceptionnel :\nType: ${TYPE_LABELS[property.type] ?? property.type}\nPièces: ${property.rooms || '-'}\nSuperficie: ${property.area_sqm ? property.area_sqm + 'm²' : '-'}\nPrix: ${fmt(property.list_price)}\nProjet: ${property.projects?.name || 'Indépendant'}\n\nEn savoir plus: ${window.location.origin}/p/${property.id}`;
               window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
             }}
-            className="flex items-center justify-center p-2 rounded-sm bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366]/20 transition-colors ml-2"
+            className="flex items-center justify-center p-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors ml-2"
             title="Partager via WhatsApp"
           >
             <MessageCircle className="w-4 h-4" />
@@ -147,27 +147,27 @@ export default function PropertiesPage() {
   }), {} as Record<string, number>)
 
   return (
-    <div className="flex-1 text-asas-charcoal dark:text-asas-sand flex flex-col">
+    <div className="flex-1 text-white flex flex-col pt-4">
       <div className="w-full space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-              <div className="w-14 h-14 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center p-3 shadow-sm">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
+              <div className="w-14 h-14 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center p-3 shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                  <Building2 className="h-full w-full text-asas-gold" /> 
               </div>
               Gestion des Actifs
             </h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-asas-silver mt-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-asas-emerald animate-pulse" />
+            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#D4A64F] mt-2 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-asas-gold animate-pulse shadow-[0_0_10px_rgba(212,166,79,0.6)]" />
               INVENTAIRE SYNCHRONISÉ
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-5 py-3 shrink-0 bg-white dark:bg-[#141618] border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand rounded-sm text-xs font-bold hover:border-asas-gold/40 transition-all shadow-sm">
+            <button className="flex items-center gap-2 px-6 py-3 shrink-0 bg-white/5 border border-white/10 text-white/80 rounded-xl text-[10px] uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all shadow-sm">
               Générer Rapport
             </button>
-            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-5 py-3 object-cover shrink-0 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal rounded-sm text-xs font-bold hover:bg-black dark:hover:bg-white shadow-sm transition-all transform hover:scale-[1.02] active:scale-95 border border-transparent">
+            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-6 py-3 shrink-0 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 border border-transparent outline-none">
               <Plus className="h-4 w-4" strokeWidth={2} /> Nouvel Actif
             </button>
           </div>
@@ -176,57 +176,57 @@ export default function PropertiesPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {[
-            { label: 'Unité Disponible', key: 'available', color: 'text-asas-emerald bg-white dark:bg-[#141618] border-asas-silver/20' },
-            { label: 'Processus de Réservation',    key: 'reserved',  color: 'text-asas-gold bg-white dark:bg-[#141618] border-asas-silver/20' },
-            { label: 'Acquisition Clôturée',  key: 'sold',       color: 'text-asas-navy dark:text-asas-sand bg-white dark:bg-[#141618] border-asas-silver/20' },
+            { label: 'Unité Disponible', key: 'available', color: 'text-green-400 bg-[#051121] border-white/10 hover:border-green-400/30' },
+            { label: 'Processus de Réservation',    key: 'reserved',  color: 'text-asas-gold bg-[#051121] border-white/10 hover:border-asas-gold/30' },
+            { label: 'Acquisition Clôturée',  key: 'sold',       color: 'text-white/80 bg-[#051121] border-white/10 hover:border-white/30' },
           ].map(s => (
-            <motion.div initial={{opacity: 0, scale: 0.95}} animate={{opacity: 1, scale: 1}} key={s.key} className={clsx('rounded-sm border p-6 relative overflow-hidden shadow-sm', s.color)}>
-              <div className="absolute top-0 right-0 p-4 opacity-10">
+            <motion.div initial={{opacity: 0, scale: 0.95}} animate={{opacity: 1, scale: 1}} key={s.key} className={clsx('rounded-2xl border p-6 relative overflow-hidden shadow-sm transition-colors', s.color)}>
+              <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
                 <Building2 className="w-16 h-16" />
               </div>
-              <p className="text-3xl sm:text-4xl font-bold tracking-tighter mb-2 relative z-10 font-mono">{statsByStatus[s.key] ?? 0}</p>
-              <p className="text-[9px] uppercase font-bold tracking-widest opacity-80 relative z-10 text-asas-charcoal dark:text-asas-sand">{s.label}</p>
+              <p className="text-3xl sm:text-4xl font-bold tracking-tighter mb-2 relative z-10 font-mono text-white">{statsByStatus[s.key] ?? 0}</p>
+              <p className={clsx("text-[9px] uppercase font-bold tracking-widest opacity-80 relative z-10", s.color.split(' ')[0])}>{s.label}</p>
             </motion.div>
           ))}
         </div>
 
         {/* Control Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-[#141618] p-4 rounded-sm border border-asas-silver/20 shadow-sm">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#051121] p-4 rounded-xl border border-white/10 shadow-sm">
            <div className="flex items-center gap-2 w-full md:w-auto">
              <div className="relative flex-1 md:w-72">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                 <input type="text" placeholder="Scanner matricule X-001..." value={search} onChange={e => setSearch(e.target.value)}
-                    className="w-full pl-11 pr-4 py-2.5 text-sm bg-transparent border border-asas-silver/40 rounded-sm focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold text-asas-charcoal dark:text-asas-sand transition-all font-medium placeholder:text-asas-silver" />
+                    className="w-full pl-11 pr-4 py-2.5 text-sm bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:border-asas-gold text-white transition-all font-medium placeholder:text-white/30" />
              </div>
            </div>
 
            <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto">
-               <div className="flex items-center p-1 bg-asas-sand/50 dark:bg-black/20 rounded-sm border border-asas-silver/20 shrink-0">
-                  <button onClick={() => setViewMode('grid')} className={clsx('p-2 rounded-sm transition-all', viewMode === 'grid' ? 'bg-white dark:bg-[#141618] shadow-sm text-asas-charcoal dark:text-white' : 'text-asas-silver')}>
+               <div className="flex items-center p-1 bg-black/40 rounded-lg border border-white/10 shrink-0">
+                  <button onClick={() => setViewMode('grid')} className={clsx('p-2 rounded-md transition-all', viewMode === 'grid' ? 'bg-white/10 shadow-sm text-white' : 'text-white/40 hover:text-white')}>
                      <LayoutGrid className="w-4 h-4" />
                   </button>
-                  <button onClick={() => setViewMode('map')} className={clsx('p-2 rounded-sm transition-all', viewMode === 'map' ? 'bg-white dark:bg-[#141618] shadow-sm text-asas-charcoal dark:text-white' : 'text-asas-silver')}>
+                  <button onClick={() => setViewMode('map')} className={clsx('p-2 rounded-md transition-all', viewMode === 'map' ? 'bg-white/10 shadow-sm text-white' : 'text-white/40 hover:text-white')}>
                      <Map className="w-4 h-4" />
                   </button>
                </div>
                
                <div className="relative flex-1 md:w-48 shrink-0">
-                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver z-10 pointer-events-none" />
+                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 z-10 pointer-events-none" />
                  <select value={statusFilter} onChange={e => setStatus(e.target.value)}
-                    className="w-full pl-11 pr-8 py-2.5 text-sm bg-transparent border border-asas-silver/40 rounded-sm focus:outline-none focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all font-medium appearance-none cursor-pointer">
-                    <option value="">Tous les statuts</option>
-                    <option value="available">Disponible</option>
-                    <option value="reserved">Réservé</option>
-                    <option value="sold">Vendu</option>
+                    className="w-full pl-11 pr-8 py-2.5 text-sm bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:border-asas-gold text-white transition-all font-medium appearance-none cursor-pointer">
+                    <option value="" className="bg-[#0A1629]">Tous les statuts</option>
+                    <option value="available" className="bg-[#0A1629]">Disponible</option>
+                    <option value="reserved" className="bg-[#0A1629]">Réservé</option>
+                    <option value="sold" className="bg-[#0A1629]">Vendu</option>
                 </select>
                </div>
                
                <div className="relative flex-1 md:w-48 shrink-0">
-                 <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver z-10 pointer-events-none" />
+                 <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 z-10 pointer-events-none" />
                  <select value={typeFilter} onChange={e => setType(e.target.value)}
-                    className="w-full pl-11 pr-8 py-2.5 text-sm bg-transparent border border-asas-silver/40 rounded-sm focus:outline-none focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all font-medium appearance-none cursor-pointer">
-                    <option value="">Tous les gabarits</option>
-                    {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                    className="w-full pl-11 pr-8 py-2.5 text-sm bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:border-asas-gold text-white transition-all font-medium appearance-none cursor-pointer">
+                    <option value="" className="bg-[#0A1629]">Tous les gabarits</option>
+                    {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k} className="bg-[#0A1629]">{v}</option>)}
                 </select>
                </div>
            </div>
@@ -235,18 +235,18 @@ export default function PropertiesPage() {
         {/* Content View */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => <div key={i} className="h-80 bg-asas-sand/50 dark:bg-black/10 rounded-sm border border-asas-silver/20 animate-pulse" />)}
+            {[...Array(8)].map((_, i) => <div key={i} className="h-80 bg-white/5 rounded-2xl border border-white/5 animate-pulse" />)}
           </div>
         ) : properties.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-asas-silver bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 border-dashed shadow-sm">
-            <div className="w-20 h-20 bg-black/5 dark:bg-white/5 rounded-sm flex items-center justify-center mb-6">
-               <Building2 className="h-8 w-8 text-asas-gold opacity-50" />
+          <div className="flex flex-col items-center justify-center py-32 text-white/50 bg-[#051121] rounded-2xl border border-white/10 shadow-2xl">
+            <div className="w-20 h-20 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+               <Building2 className="h-8 w-8 text-white/30" />
             </div>
-             <p className="text-lg font-bold text-asas-charcoal dark:text-asas-sand mb-2 font-display uppercase tracking-widest">Base de données vide</p>
+             <p className="text-lg font-bold text-white mb-2 font-display uppercase tracking-widest">Base de données vide</p>
              <p className="text-[9px] uppercase tracking-widest">Ajustez vos paramètres régionaux ou d'état.</p>
           </div>
         ) : viewMode === 'map' ? (
-          <div className="animate-in fade-in zoom-in-95 duration-500">
+          <div className="animate-in fade-in zoom-in-95 duration-500 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
             <InteractiveGridMap properties={properties as any} onSelect={(id) => console.log('Selected', id)} />
           </div>
         ) : (
@@ -278,10 +278,10 @@ export default function PropertiesPage() {
 
         {/* Pagination */}
         {total > LIMIT && (
-          <div className="flex items-center justify-center gap-4 pt-8">
-            <button disabled={page === 1} onClick={() => setPage(p => p-1)} className="px-5 py-2.5 text-xs font-bold text-asas-silver bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm disabled:opacity-40 hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 transition-colors shadow-sm">← Précédent</button>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-asas-silver bg-white dark:bg-[#141618] px-4 py-2.5 rounded-sm border border-asas-silver/20 shadow-sm">Page {page} / {Math.ceil(total/LIMIT)}</span>
-            <button disabled={page >= Math.ceil(total/LIMIT)} onClick={() => setPage(p => p+1)} className="px-5 py-2.5 text-xs font-bold text-asas-silver bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm disabled:opacity-40 hover:text-asas-charcoal dark:hover:text-asas-sand hover:border-asas-gold/40 transition-colors shadow-sm">Suivant →</button>
+          <div className="flex items-center justify-center gap-4 pt-8 pb-8">
+            <button disabled={page === 1} onClick={() => setPage(p => p-1)} className="px-6 py-3 text-[10px] uppercase tracking-widest font-bold text-white/60 bg-[#051121] border border-white/10 rounded-xl disabled:opacity-40 hover:text-white hover:border-asas-gold/40 transition-colors shadow-sm">← Précédent</button>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4A64F] bg-asas-gold/10 px-5 py-3 rounded-xl border border-asas-gold/20 shadow-[0_0_15px_rgba(212,166,79,0.1)]">Page {page} / {Math.ceil(total/LIMIT)}</span>
+            <button disabled={page >= Math.ceil(total/LIMIT)} onClick={() => setPage(p => p+1)} className="px-6 py-3 text-[10px] uppercase tracking-widest font-bold text-white/60 bg-[#051121] border border-white/10 rounded-xl disabled:opacity-40 hover:text-white hover:border-asas-gold/40 transition-colors shadow-sm">Suivant →</button>
           </div>
         )}
       </div>

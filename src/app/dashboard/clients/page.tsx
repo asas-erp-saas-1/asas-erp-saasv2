@@ -53,21 +53,21 @@ export default function ClientsPage() {
   }, [search, type])
 
   return (
-    <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col">
+    <div className="flex-1 font-sans text-white flex flex-col pt-4">
       <div className="w-full space-y-6">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-asas-silver/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/5">
           <div>
-            <h1 className="text-3xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-               <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center shadow-sm">
+            <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
+               <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                    <Users className="h-6 w-6 text-asas-gold" /> 
                </div>
                Base Clients
             </h1>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-asas-silver mt-2">{total} identités enregistrées</p>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-white/50 mt-2">{total} identités enregistrées</p>
           </div>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-5 py-3 bg-asas-charcoal text-asas-sand dark:bg-asas-sand dark:text-asas-charcoal hover:bg-black dark:hover:bg-white rounded-sm text-xs font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-sm border border-transparent">
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-asas-gold text-[#06152D] hover:bg-[#E0B96B] rounded-xl text-[10px] uppercase font-bold tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(212,166,79,0.3)]">
             <Plus className="h-4 w-4" strokeWidth={2} /> Nouveau Profil
           </button>
         </div>
@@ -75,54 +75,54 @@ export default function ClientsPage() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
             <input type="text" placeholder="Rechercher entité..." value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-asas-silver/40 rounded-sm bg-transparent text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-asas-silver shadow-sm" />
+              className="w-full pl-11 pr-4 py-3 text-sm font-medium border border-white/10 rounded-xl bg-black/40 text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-white/30 shadow-sm" />
           </div>
           <select value={type} onChange={e => setType(e.target.value)}
-            className="px-5 py-3 text-sm font-medium border border-asas-silver/40 rounded-sm bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all appearance-none pr-10 relative cursor-pointer min-w-[160px] shadow-sm">
-            <option value="">Tous les gabarits</option>
-            <option value="buyer">Acheteur</option>
-            <option value="seller">Vendeur</option>
-            <option value="investor">Investisseur</option>
-            <option value="tenant">Locataire</option>
+            className="px-5 py-3 text-sm font-medium border border-white/10 rounded-xl bg-black/40 text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all appearance-none pr-10 relative cursor-pointer min-w-[160px] shadow-sm">
+            <option value="" className="bg-[#0A1629]">Tous les gabarits</option>
+            <option value="buyer" className="bg-[#0A1629]">Acheteur</option>
+            <option value="seller" className="bg-[#0A1629]">Vendeur</option>
+            <option value="investor" className="bg-[#0A1629]">Investisseur</option>
+            <option value="tenant" className="bg-[#0A1629]">Locataire</option>
           </select>
         </div>
 
         {/* Data */}
-        <div className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 shadow-sm overflow-hidden">
+        <div className="bg-[#051121] rounded-2xl border border-white/5 shadow-2xl overflow-hidden">
         {loading ? (
           <div className="p-6 space-y-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-16 bg-asas-sand/50 dark:bg-[#0f1113] border border-asas-silver/10 rounded-sm animate-pulse" />
+              <div key={i} className="h-16 bg-white/5 border border-white/5 rounded-xl animate-pulse" />
             ))}
           </div>
         ) : clients.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-asas-silver">
-               <div className="w-20 h-20 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm flex items-center justify-center mb-6 shadow-sm">
+            <div className="flex flex-col items-center justify-center py-24 text-white/50">
+               <div className="w-20 h-20 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
                   <FileUser className="h-10 w-10 text-asas-gold" />
                </div>
-              <p className="font-bold text-asas-charcoal dark:text-asas-sand text-lg uppercase tracking-widest font-display">Base de données vide</p>
+              <p className="font-bold text-white text-lg uppercase tracking-widest font-display">Base de données vide</p>
               <p className="text-[10px] uppercase font-bold tracking-widest mt-2">Ajustez vos filtres d'investigation.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-asas-sand/30 dark:bg-black/10 border-b border-asas-silver/20">
+                <thead className="bg-[#0A1829] border-b border-white/5">
                   <tr>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Profil</th>
-                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Canal</th>
-                    <th className="hidden sm:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Type</th>
-                    <th className="hidden md:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Source</th>
-                    <th className="hidden lg:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-asas-silver">Localité</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-white/40">Profil</th>
+                    <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-white/40">Canal</th>
+                    <th className="hidden sm:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-white/40">Type</th>
+                    <th className="hidden md:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-white/40">Source</th>
+                    <th className="hidden lg:table-cell px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-white/40">Localité</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-asas-silver/10">
+                <tbody className="divide-y divide-white/5">
                   <AnimatePresence>
                   {clients.map((c, i) => {
-                     const cfg = TYPE_CONFIG[c.type] ?? { color: 'bg-black/5 dark:bg-white/5 border-asas-silver/20 text-asas-charcoal dark:text-asas-sand/80', label: c.type };
+                     const cfg = TYPE_CONFIG[c.type] ?? { color: 'bg-white/5 border-white/10 text-white/80', label: c.type };
                      return (
                         <motion.tr 
                         initial={{ opacity: 0, y: 10 }}
@@ -130,39 +130,39 @@ export default function ClientsPage() {
                         transition={{ delay: i * 0.05 }}
                         key={c.id} 
                         onClick={() => setSelectedClientId(c.id)}
-                        className="hover:bg-asas-sand/50 dark:hover:bg-black/10 group cursor-pointer transition-colors"
+                        className="hover:bg-white/[0.02] group cursor-pointer transition-colors"
                         >
                         {/* Name */}
                         <td className="px-6 py-5">
-                           <p className="text-sm font-bold text-asas-charcoal dark:text-asas-sand group-hover:text-asas-gold transition-colors">{c.full_name}</p>
-                           <p className="text-[9px] text-asas-silver font-bold uppercase tracking-widest mt-1.5 font-mono">ID: {c.id.slice(0, 8)}</p>
+                           <p className="text-sm font-bold text-white group-hover:text-asas-gold transition-colors">{c.full_name}</p>
+                           <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest mt-1.5 font-mono">ID: {c.id.slice(0, 8)}</p>
                         </td>
 
                         {/* Contact */}
                         <td className="px-6 py-5 space-y-2">
                            {c.phone && (
-                              <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand hover:text-[#25D366] transition-colors w-fit p-1 -m-1">
-                                <Phone className="h-3.5 w-3.5 text-asas-silver" />{c.phone}
+                              <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-3 text-xs font-bold text-white/80 hover:text-[#25D366] transition-colors w-fit p-1 -m-1">
+                                <Phone className="h-3.5 w-3.5 text-white/30" />{c.phone}
                               </a>
                            )}
                            {c.email && (
-                              <a href={`mailto:${c.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-3 text-xs font-bold text-asas-charcoal dark:text-asas-sand hover:text-asas-gold transition-colors w-fit p-1 -m-1">
-                                <Mail className="h-3.5 w-3.5 text-asas-silver" />{c.email}
+                              <a href={`mailto:${c.email}`} onClick={e => e.stopPropagation()} className="flex items-center gap-3 text-xs font-bold text-white/80 hover:text-asas-gold transition-colors w-fit p-1 -m-1">
+                                <Mail className="h-3.5 w-3.5 text-white/30" />{c.email}
                               </a>
                            )}
-                           {!c.phone && !c.email && <span className="text-xs text-asas-silver">—</span>}
+                           {!c.phone && !c.email && <span className="text-xs text-white/30">—</span>}
                         </td>
 
                         {/* Type */}
                         <td className="hidden sm:table-cell px-6 py-5 align-middle">
-                           <span className={clsx('px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold rounded-sm border', cfg.color)}>
+                           <span className={clsx('px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold rounded-lg border', cfg.color)}>
                               {cfg.label}
                            </span>
                         </td>
 
                         {/* Source */}
-                        <td className="hidden md:table-cell px-6 py-5 text-[9px] uppercase tracking-widest font-bold text-asas-silver align-middle">
-                           {c.source || <span className="text-asas-silver/50">—</span>}
+                        <td className="hidden md:table-cell px-6 py-5 text-[9px] uppercase tracking-widest font-bold text-white/50 align-middle">
+                           {c.source || <span className="text-white/20">—</span>}
                         </td>
 
                         {/* Nationality */}
@@ -170,15 +170,15 @@ export default function ClientsPage() {
                            <div className="flex items-center gap-3">
                               {c.nationality ? (
                                  <>
-                                    <Globe className="h-4 w-4 text-asas-silver" />
-                                    <span className="text-xs font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest">{c.nationality}</span>
+                                    <Globe className="h-4 w-4 text-white/30" />
+                                    <span className="text-xs font-bold text-white/80 uppercase tracking-widest">{c.nationality}</span>
                                  </>
-                              ) : <span className="text-asas-silver/50">—</span>}
+                              ) : <span className="text-white/20">—</span>}
                            </div>
                         </td>
 
                         <td className="pr-6 align-middle text-right">
-                           <ChevronRight className="h-5 w-5 text-asas-silver transition-transform group-hover:text-asas-gold group-hover:translate-x-1" />
+                           <ChevronRight className="h-5 w-5 text-white/20 transition-transform group-hover:text-asas-gold group-hover:translate-x-1" />
                         </td>
                         </motion.tr>
                      )

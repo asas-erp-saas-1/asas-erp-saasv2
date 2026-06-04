@@ -107,7 +107,7 @@ export default function TasksPage() {
   const overdueCount = tasks.filter(t => isOverdue(t.due_date) && t.status !== 'done').length
 
   return (
-    <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col">
+    <div className="flex-1 font-sans text-white flex flex-col pt-4">
       <div className="w-full space-y-8 max-w-4xl mx-auto">
         
         {isModalOpen && (
@@ -118,27 +118,33 @@ export default function TasksPage() {
         )}
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-asas-silver/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-white/5">
            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-                 <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-white/5 border border-asas-silver/20 flex items-center justify-center">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
+                 <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                     <CheckSquare className="h-6 w-6 text-asas-gold" /> 
                  </div>
                  Opérations
               </h1>
-              <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-2">{tasks.filter(t => t.status === 'pending').length} en file d'attente · <span className="text-red-500">{overdueCount} critiques</span></p>
+              <p className="text-[9px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2">
+			  <span className="relative flex h-2 w-2">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
+              </span>
+				{tasks.filter(t => t.status === 'pending').length} en file d'attente · <span className="text-red-400">{overdueCount} critiques</span>
+			  </p>
            </div>
            <div className="flex items-center gap-3">
              {urgentCount > 0 && (
-                <div className="hidden sm:flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-sm text-[9px] uppercase tracking-widest font-bold">
+                <div className="hidden sm:flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-[9px] uppercase tracking-widest font-bold">
                    <AlertTriangle className="h-3 w-3" /> {urgentCount} Urgentes
                 </div>
              )}
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 px-5 py-3 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal font-bold text-xs rounded-sm shadow-sm hover:translate-y-[-1px] active:translate-y-[1px] transition-all outline-none"
+                className="flex items-center gap-2 px-6 py-3 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] font-bold text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 outline-none"
               >
-                <Plus className="w-4 h-4" /> Nouvelle Tâche
+                <Plus className="w-4 h-4" strokeWidth={2} /> Nouvelle Tâche
               </button>
            </div>
         </div>
@@ -155,8 +161,8 @@ export default function TasksPage() {
               key={f.key}
               onClick={() => setFilter(f.key as typeof filter)}
               className={clsx(
-                'px-5 py-2.5 rounded-sm text-[9px] uppercase font-bold tracking-widest transition-all focus:outline-none focus:border-asas-gold border',
-                filter === f.key ? 'bg-asas-charcoal text-asas-sand dark:bg-asas-sand dark:text-asas-charcoal border-transparent' : 'bg-white dark:bg-[#141618] text-asas-silver hover:bg-asas-sand/50 dark:hover:bg-black/10 hover:text-asas-charcoal dark:hover:text-asas-sand border-asas-silver/20'
+                'px-5 py-2.5 rounded-lg text-[9px] uppercase font-bold tracking-widest transition-all focus:outline-none border',
+                filter === f.key ? 'bg-asas-gold/20 text-asas-gold border-asas-gold/40 shadow-[0_0_15px_rgba(212,166,79,0.2)]' : 'bg-white/5 text-white/40 hover:text-white hover:border-white/20 border-white/10'
               )}
             >
               {f.label}
@@ -165,17 +171,17 @@ export default function TasksPage() {
         </div>
 
         {/* Task list */}
-        <div className="space-y-4">
+        <div className="space-y-4 pb-8">
           {loading ? (
             [...Array(5)].map((_, i) => (
-              <div key={i} className="h-24 bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 animate-pulse" />
+              <div key={i} className="h-24 bg-white/5 rounded-2xl border border-white/5 animate-pulse" />
             ))
           ) : sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-asas-silver bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 border-dashed shadow-sm">
-               <div className="w-20 h-20 bg-asas-sand/50 dark:bg-black/10 rounded-sm flex items-center justify-center mb-6">
-                  <ListTodo className="h-8 w-8 text-asas-charcoal dark:text-asas-silver" />
+            <div className="flex flex-col items-center justify-center py-24 text-white/50 bg-[#051121] rounded-2xl border border-white/10 shadow-2xl">
+               <div className="w-20 h-20 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+                  <ListTodo className="h-8 w-8 text-white/30" />
                </div>
-              <p className="text-lg font-bold text-asas-charcoal dark:text-asas-sand mb-2 font-display uppercase tracking-widest">Protocoles achevés</p>
+              <p className="text-lg font-bold text-white mb-2 font-display uppercase tracking-widest">Protocoles achevés</p>
               <p className="text-[9px] uppercase tracking-widest mt-1 font-bold">Aucune opération en attente {filter !== 'all' ? `pour le filtre '${filter}'` : ''}.</p>
             </div>
           ) : (
@@ -188,48 +194,49 @@ export default function TasksPage() {
                 exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 key={task.id} 
-                className={clsx('bg-white dark:bg-[#141618] rounded-sm p-5 flex items-start gap-5 shadow-sm border-y border-r border-asas-silver/20 group hover:border-asas-gold/40 transition-all', PRIORITY_STYLE[task.priority])}
+                className={clsx('bg-[#051121] rounded-2xl p-6 flex items-start gap-5 shadow-sm border-y border-r border-white/10 group hover:border-asas-gold/40 hover:shadow-[0_0_20px_rgba(212,166,79,0.1)] transition-all', PRIORITY_STYLE[task.priority])}
               >
                 {/* Checkbox */}
                 <button
                   onClick={() => markDone(task.id)}
-                  className="mt-0.5 h-6 w-6 rounded-sm border border-asas-silver/40 bg-asas-sand/30 dark:bg-black/10 flex items-center justify-center shrink-0 hover:border-asas-emerald focus:outline-none focus:ring-1 focus:ring-asas-emerald/50 transition-all cursor-pointer"
+                  className="mt-0.5 h-6 w-6 rounded-lg border border-white/20 bg-black/40 flex items-center justify-center shrink-0 hover:border-asas-gold focus:outline-none focus:border-asas-gold transition-colors cursor-pointer group/checkbox"
                 >
-                  {task.status === 'done' && <Check className="h-4 w-4 text-asas-emerald shadow-sm" />}
+                  {task.status === 'done' && <Check className="h-4 w-4 text-asas-gold shadow-sm" />}
+				  {task.status !== 'done' && <Check className="h-4 w-4 text-asas-gold opacity-0 group-hover/checkbox:opacity-50 transition-opacity" />}
                 </button>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
-                     <div className="flex flex-col gap-2">
+                     <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-3 flex-wrap">
-                           <p className="text-sm font-bold text-asas-charcoal dark:text-asas-sand group-hover:text-asas-gold transition-colors tracking-wide">{task.title}</p>
+                           <p className="text-[15px] font-bold text-white group-hover:text-asas-gold transition-colors tracking-wide leading-tight">{task.title}</p>
                            {(() => {
                              const pConf = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium
                              if (!pConf) return null;
                              const Icon = pConf.icon
                              return (
-                               <span className={clsx('text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-sm font-bold shrink-0 border flex items-center gap-1.5', pConf.bg, pConf.border, pConf.color)}>
+                               <span className={clsx('text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-md font-bold shrink-0 border flex items-center gap-1.5', pConf.bg, pConf.border, pConf.color)}>
                                  <Icon className="w-3 h-3" />
                                  {pConf.label}
                                </span>
                              )
                            })()}
                            {task.is_automated && (
-                              <span className="text-[9px] uppercase tracking-widest px-2 py-0.5 rounded-sm border border-asas-navy/20 bg-asas-navy/10 text-asas-navy dark:text-asas-sand font-bold flex items-center gap-1 shrink-0">
-                                 <Zap className="h-3 w-3" /> Auto
+                              <span className="text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-md border border-white/10 bg-white/5 text-white/60 font-bold flex items-center gap-1 shrink-0">
+                                 <Zap className="h-3 w-3 text-asas-gold" /> Auto
                               </span>
                            )}
                         </div>
                         {task.description && (
-                           <p className="text-[10px] uppercase font-bold tracking-widest text-asas-silver leading-relaxed max-w-2xl">{task.description}</p>
+                           <p className="text-[10px] uppercase font-bold tracking-widest text-white/40 leading-relaxed max-w-2xl">{task.description}</p>
                         )}
                      </div>
 
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between border-t border-asas-silver/10 pt-4">
-                     <p className={clsx('text-[9px] uppercase tracking-widest font-bold flex items-center gap-1.5', isOverdue(task.due_date) ? 'text-red-500' : 'text-asas-silver')}>
+                  <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-4">
+                     <p className={clsx('text-[9px] uppercase tracking-widest font-bold flex items-center gap-1.5', isOverdue(task.due_date) ? 'text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md w-fit' : 'text-white/30')}>
                         <Clock className="h-3 w-3" />
                         {formatDue(task.due_date)}
                      </p>

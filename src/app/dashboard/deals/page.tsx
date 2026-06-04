@@ -153,61 +153,61 @@ function DealCard({
           {...provided.dragHandleProps}
           onClick={onSelect}
           className={clsx(
-            "bg-white dark:bg-[#141618] rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/40 relative",
+            "bg-[#051121] rounded-2xl border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/40 relative overflow-hidden group",
             isSelected
-              ? "border-asas-gold/50 ring-1 ring-asas-gold/50"
-              : "border-asas-silver/20",
+              ? "border-asas-gold/50 shadow-[0_0_15px_rgba(212,166,79,0.15)]"
+              : "border-white/10",
             snapshot.isDragging &&
-              "shadow-lg shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#1C1E20]"
+              "shadow-[0_0_30px_rgba(212,166,79,0.2)] ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-[#0A1629]"
           )}
         >
           {/* Execution Requirement Banner */}
           {mandatoryAction && (
               <div className={clsx(
-                  "absolute top-0 left-0 right-0 py-0.5 px-2 text-[8px] uppercase tracking-widest font-black text-center border-b",
+                  "absolute top-0 left-0 right-0 py-1 px-2 text-[8px] uppercase tracking-widest font-black text-center border-b",
                   mandatoryActionColor
               )}>
                   {mandatoryAction}
               </div>
           )}
 
-          <div className="flex items-start justify-between gap-2 mb-3 mt-3">
+          <div className={clsx("flex items-start justify-between gap-2 mb-3", mandatoryAction ? "mt-4" : "")}>
             <div className="flex-1 min-w-0">
               <p
                 className={clsx(
-                  "font-bold text-sm truncate",
+                  "font-bold text-sm truncate group-hover:text-asas-gold transition-colors",
                   isSelected
-                    ? "text-asas-charcoal dark:text-asas-sand"
-                    : "text-asas-charcoal dark:text-asas-sand/80",
+                    ? "text-white"
+                    : "text-white/80",
                 )}
               >
                 {(deal as any).clients?.full_name ?? "Client Inconnu"}
               </p>
               {(deal as any).properties?.projects?.name && (
-                <p className="text-xs text-asas-silver mt-1 truncate">
+                <p className="text-[10px] uppercase tracking-widest font-bold text-white/40 mt-1 truncate">
                   {(deal as any).properties.projects.name}
                 </p>
               )}
             </div>
             <div
               className={clsx(
-                "h-2.5 w-2.5 rounded-full shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-asas-silver/20 mt-1",
+                "h-2.5 w-2.5 rounded-full shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.3)] mt-1",
                 RISK_STYLE[deal.risk_level || "low"],
               )}
             />
           </div>
 
-          <div className="flex flex-col gap-2 mb-4">
-            <span className="text-sm font-bold text-asas-navy dark:text-asas-sand font-mono">
+          <div className="flex flex-col gap-2 mb-5">
+            <span className="text-sm font-bold text-asas-gold font-mono tracking-wide">
               {fmt(agreedPrice)}
             </span>
             {deal.next_action && (
               <span
                 className={clsx(
-                  "text-[9px] uppercase tracking-wider flex items-center gap-1.5 px-2 py-1 rounded-sm border w-fit font-bold",
+                  "text-[9px] uppercase tracking-widest flex items-center gap-1.5 px-2 py-1 rounded-md border w-fit font-bold",
                   isOverdue
-                    ? "bg-red-500/10 text-red-500 border-red-500/20"
-                    : "bg-black/5 dark:bg-white/5 text-asas-silver border-asas-silver/10",
+                    ? "bg-red-500/10 text-red-400 border-red-500/20"
+                    : "bg-white/5 text-white/50 border-white/10",
                 )}
               >
                 {isOverdue && <AlertTriangle className="h-3 w-3" />}
@@ -218,34 +218,34 @@ function DealCard({
           </div>
 
           <div className="flex flex-col w-full">
-            <div className="w-full flex justify-between text-[9px] uppercase font-bold tracking-wider mb-1.5">
+            <div className="w-full flex justify-between text-[9px] uppercase font-bold tracking-widest mb-1.5">
               <span
                 className={
-                  pct === 100 ? "text-asas-emerald" : "text-asas-silver"
+                  pct === 100 ? "text-green-400" : "text-white/40"
                 }
               >
                 Payé
               </span>
-              <span className="text-asas-charcoal dark:text-asas-sand font-mono">
+              <span className="text-white/80 font-mono tracking-wider">
                 {pct}%
               </span>
             </div>
-            <div className="w-full h-1 bg-asas-sand/50 dark:bg-black/20 rounded-full overflow-hidden mb-4">
+            <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-4">
               <div
                 style={{ width: `${pct}%` }}
                 className={clsx(
                   "h-full rounded-full transition-all duration-500",
                   pct === 100
-                    ? "bg-asas-emerald"
+                    ? "bg-green-400"
                     : pct > 0
                       ? "bg-asas-gold"
-                      : "bg-asas-silver/40",
+                      : "bg-white/30",
                 )}
               />
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 pt-3 border-t border-asas-silver/10 mt-2">
+            <div className="flex items-center gap-2 pt-3 border-t border-white/5 mt-2">
               <div
                 className="relative isolate"
                 onClick={(e) => e.stopPropagation()}
@@ -253,15 +253,15 @@ function DealCard({
                 <select
                   value={deal.status || ""}
                   onChange={(e) => onStatusChange(deal.id, e.target.value)}
-                  className="appearance-none block w-[110px] bg-asas-sand/50 dark:bg-[#141618] border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand text-[9px] uppercase tracking-widest font-bold py-2 pl-2 pr-6 rounded-sm focus:outline-none focus:border-asas-gold/50 cursor-pointer text-ellipsis"
+                  className="appearance-none block w-[120px] bg-black/40 border border-white/10 text-white/80 text-[9px] uppercase tracking-widest font-bold py-2 pl-3 pr-6 rounded-md focus:outline-none focus:border-asas-gold/40 cursor-pointer text-ellipsis"
                 >
                   {COLUMNS.map((c) => (
-                    <option key={c.key} value={c.key}>
+                    <option key={c.key} value={c.key} className="bg-[#0A1629]">
                       {c.label}
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-asas-silver">
+                <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-white/50">
                   <svg
                     className="fill-current h-3 w-3"
                     xmlns="http://www.w3.org/2000/svg"
@@ -277,10 +277,10 @@ function DealCard({
                   e.stopPropagation();
                   onWhatsApp(deal);
                 }}
-                className="flex items-center justify-center p-2 border border-asas-silver/20 bg-[#25D366]/5 dark:bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/10 rounded-sm transition-all shadow-sm"
+                className="flex items-center justify-center p-2 border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded-md transition-all shadow-sm"
                 title="Message WhatsApp"
               >
-                <MessageCircle className="h-3.5 w-3.5" />
+                <MessageCircle className="h-4 w-4" />
               </button>
 
               <button
@@ -288,7 +288,7 @@ function DealCard({
                   e.stopPropagation();
                   onSelect();
                 }}
-                className="ml-auto flex items-center justify-center min-w-[70px] gap-1.5 text-[9px] uppercase tracking-widest font-bold bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal px-3 py-2 rounded-sm hover:bg-black dark:hover:bg-white transition-all shadow-sm"
+                className="ml-auto flex items-center justify-center min-w-[70px] gap-1.5 text-[9px] uppercase tracking-widest font-bold bg-white/5 text-white/60 px-3 py-2 rounded-md hover:bg-white/10 hover:text-white transition-all"
               >
                 Ouvrir
               </button>
@@ -457,23 +457,27 @@ export default function DealsPage() {
   const byStatus = (status: string) => deals.filter((d) => d.status === status);
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand relative">
+    <div className="flex flex-1 h-full overflow-hidden bg-transparent text-white relative">
       {/* List / Kanban */}
-      <div className="flex flex-col bg-white dark:bg-[#141618] overflow-hidden transition-all duration-300 ease-in-out w-full">
+      <div className="flex flex-col bg-transparent overflow-hidden transition-all duration-300 ease-in-out w-full">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-asas-silver/20 bg-asas-sand/30 dark:bg-black/10 z-10 shrink-0">
+        <div className="px-6 py-5 z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
             <div>
-              <h1 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 tracking-tight font-display uppercase">
+              <h1 className="text-2xl font-bold text-white flex items-center gap-2 tracking-tight font-display uppercase">
                 Transactions
               </h1>
-              <p className="text-[10px] uppercase tracking-widest text-asas-silver font-bold mt-1.5 hidden sm:block">
+              <p className="text-[10px] uppercase tracking-widest text-[#D4A64F] font-bold mt-1.5 flex items-center gap-2 hidden sm:flex">
+                <span className="relative flex h-2 w-2">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
+                </span>
                 {total} actives sur le réseau
               </p>
             </div>
             <button
               onClick={() => router.push("/dashboard/deals/new")}
-              className="flex items-center gap-2 px-4 py-2.5 bg-asas-charcoal hover:bg-black dark:bg-asas-sand dark:hover:bg-white text-asas-sand dark:text-asas-charcoal rounded-sm text-xs font-bold transition-all border border-transparent shrink-0 shadow-sm"
+              className="flex items-center gap-2 px-5 py-2.5 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] shrink-0"
             >
               <Plus className="h-4 w-4" strokeWidth={2} /> Initier Deal
             </button>
@@ -481,13 +485,13 @@ export default function DealsPage() {
 
           {/* Search */}
           <div className="relative mb-5">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
             <input
               type="text"
               placeholder="Rechercher entité, projet..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-2 bg-transparent text-sm font-medium border border-asas-silver/40 rounded-sm focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all placeholder:text-asas-silver"
+              className="w-full pl-11 pr-4 py-2 bg-[#0A1629] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-white transition-all placeholder:text-white/30"
             />
           </div>
 
@@ -506,10 +510,10 @@ export default function DealsPage() {
                   setPage(1);
                 }}
                 className={clsx(
-                  "px-4 py-1.5 rounded-sm text-[9px] uppercase tracking-widest font-bold transition-all border",
+                  "px-4 py-1.5 rounded-lg text-[9px] uppercase tracking-widest font-bold transition-all border",
                   statusFilter === f.value
-                    ? "bg-asas-gold/10 text-asas-gold border-asas-gold/20"
-                    : "bg-transparent text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand border-asas-silver/20 hover:border-asas-gold/40",
+                    ? "bg-asas-gold/20 text-asas-gold border-asas-gold/40 shadow-[0_0_15px_rgba(212,166,79,0.2)]"
+                    : "bg-white/5 text-white/40 hover:text-white border-white/10 hover:border-white/20",
                 )}
               >
                 {f.label}
@@ -519,14 +523,14 @@ export default function DealsPage() {
         </div>
 
         {/* Kanban board */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent custom-scrollbar py-4">
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="flex h-full gap-4 p-6 min-w-max items-start">
+            <div className="flex h-full gap-4 px-6 min-w-max items-start">
               {loading
                 ? [...Array(5)].map((_, i) => (
                     <div
                       key={i}
-                      className="w-[300px] h-[80vh] bg-white dark:bg-[#141618] animate-pulse rounded-sm border border-asas-silver/20"
+                      className="w-[320px] h-[80vh] bg-white/5 animate-pulse rounded-2xl border border-white/5"
                     />
                   ))
                 : COLUMNS.map((col) => {
@@ -534,24 +538,24 @@ export default function DealsPage() {
                     return (
                       <div
                         key={col.key}
-                        className="w-[320px] flex flex-col bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden max-h-full"
+                        className="w-[320px] flex flex-col bg-[#0A1829]/60 backdrop-blur-md rounded-3xl border border-white/5 overflow-hidden max-h-full"
                       >
                         {/* Column header */}
-                        <div className="px-5 py-4 border-b border-asas-silver/10 bg-white dark:bg-[#141618] flex items-center justify-between shrink-0">
-                          <div className="flex items-center gap-2">
+                        <div className="px-5 py-4 border-b border-white/5 bg-black/20 flex items-center justify-between shrink-0">
+                          <div className="flex items-center gap-3">
                             <div
                               className={clsx(
-                                "h-2 w-2 rounded-full inline-block",
+                                "h-2 w-2 rounded-full inline-block shadow-[0_0_10px_currentColor]",
                                 col.dot,
                               )}
                             />
-                            <span className="text-sm font-bold text-asas-charcoal dark:text-asas-sand tracking-wide uppercase font-display">
+                            <span className="text-sm font-bold text-white tracking-widest uppercase">
                               {col.label}
                             </span>
                           </div>
                           <span
                             className={clsx(
-                              "text-[10px] font-bold px-2 py-0.5 rounded-sm border tracking-widest",
+                              "text-[10px] font-bold px-2 py-0.5 rounded-md border tracking-widest bg-black/40",
                               col.color,
                             )}
                           >
@@ -566,16 +570,16 @@ export default function DealsPage() {
                               ref={provided.innerRef}
                               {...provided.droppableProps}
                               className={clsx(
-                                "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-asas-silver/20",
+                                "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] custom-scrollbar",
                                 snapshot.isDraggingOver
-                                  ? "bg-asas-sand/50 dark:bg-black/10"
+                                  ? "bg-white/5"
                                   : "",
                               )}
                             >
                               {colDeals.length === 0 &&
                               !snapshot.isDraggingOver ? (
-                                <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-asas-silver/20 rounded-sm text-asas-silver bg-black/5 dark:bg-white/5">
-                                  <Handshake className="h-6 w-6 mb-3 opacity-30 text-asas-silver" />
+                                <div className="flex flex-col items-center justify-center p-8 mt-4 border border-dashed border-white/10 rounded-xl text-white/30 bg-black/10">
+                                  <Handshake className="h-6 w-6 mb-3 opacity-50 text-white/30" />
                                   <span className="text-[10px] uppercase tracking-widest font-bold">
                                     Zone Vide
                                   </span>
@@ -610,21 +614,21 @@ export default function DealsPage() {
 
         {/* Pagination - only show if needed */}
         {total > LIMIT && (
-          <div className="px-6 py-4 border-t border-asas-silver/20 bg-white dark:bg-[#141618] flex items-center justify-between shrink-0">
+          <div className="px-6 py-4 border-t border-white/5 bg-transparent flex items-center justify-between shrink-0">
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-asas-charcoal/80 dark:text-asas-silver bg-white dark:bg-[#141618] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-asas-charcoal dark:text-asas-sand"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-white/50 bg-black/40 border border-white/10 disabled:opacity-40 hover:text-white"
             >
               Précédent
             </button>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-asas-silver">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
               Page {page} / {Math.ceil(total / LIMIT)}
             </span>
             <button
               disabled={page >= Math.ceil(total / LIMIT)}
               onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-400 bg-asas-sand/30 dark:bg-[#050505] border border-black/5 dark:border-white/5 disabled:opacity-40 hover:text-gray-900 dark:text-white"
+              className="px-4 py-2 rounded-lg text-xs font-bold text-white/50 bg-black/40 border border-white/10 disabled:opacity-40 hover:text-white"
             >
               Suivant
             </button>

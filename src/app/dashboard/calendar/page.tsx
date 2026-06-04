@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Menu } from 'lucide-react'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Menu, Plus } from 'lucide-react'
 import { clsx } from 'clsx'
 import { CreateEventModal } from './CreateEventModal'
 import { initAuth, googleSignIn } from '@/lib/google-auth'
@@ -150,7 +150,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex-1 font-sans text-gray-900 dark:text-gray-100 flex flex-col h-full w-full bg-white dark:bg-[#1a1c1e]">
+    <div className="flex-1 font-sans text-white flex flex-col h-full w-full bg-[#051121]">
       {isModalOpen && (
         <CreateEventModal 
           selectedDate={selectedDate}
@@ -159,47 +159,49 @@ export default function CalendarPage() {
         />
       )}
 
-      {/* Top Navigation Bar - Google Calendar Style */}
-      <header className="h-[60px] border-b border-gray-200 dark:border-white/10 flex items-center justify-between px-4 shrink-0 bg-white dark:bg-[#141618]">
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors">
-            <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+      {/* Top Navigation Bar - App Style */}
+      <header className="h-[70px] border-b border-white/5 flex items-center justify-between px-6 shrink-0 bg-[#0A1829]/60 backdrop-blur-md">
+        <div className="flex items-center gap-6">
+          <button className="p-2 hover:bg-white/5 rounded-xl transition-colors">
+            <Menu className="w-5 h-5 text-white/60" />
           </button>
           
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="h-6 w-6 text-[#4285F4]" /> 
-            <span className="text-xl text-gray-600 dark:text-gray-200 hidden sm:block">Agenda</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <CalendarIcon className="h-5 w-5 text-asas-gold" /> 
+            </div>
+            <span className="text-[12px] font-bold text-white uppercase tracking-widest hidden sm:block">Agenda</span>
           </div>
 
-          <div className="flex items-center ml-2 sm:ml-6 gap-2">
+          <div className="flex items-center ml-2 sm:ml-6 gap-3">
             <button 
               onClick={gotoToday}
-              className="px-4 py-2 border border-gray-300 dark:border-white/20 rounded-md text-[13px] font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors hidden sm:block h-9"
+              className="px-4 py-2 border border-white/10 rounded-xl text-[10px] uppercase tracking-widest font-bold text-white hover:bg-white/5 transition-colors hidden sm:block h-9"
             >
               Aujourd'hui
             </button>
             <div className="flex items-center ml-1">
-              <button onClick={prevMonth} className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors text-gray-600 dark:text-gray-300">
-                <ChevronLeft className="w-5 h-5" />
+              <button onClick={prevMonth} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-white/60">
+                <ChevronLeft className="w-4 h-4" />
               </button>
-              <button onClick={nextMonth} className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors text-gray-600 dark:text-gray-300">
-                <ChevronRight className="w-5 h-5" />
+              <button onClick={nextMonth} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-white/60">
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
-            <h2 className="text-[22px] text-gray-700 dark:text-gray-200 ml-2 hidden sm:block capitalize leading-none pt-0.5">
+            <h2 className="text-lg font-bold text-white ml-2 hidden sm:block capitalize font-display min-w-[150px]">
               {monthName} {yearStr}
             </h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {needsAuth && (
             <div className="flex items-center gap-2">
-              {authError && <span className="text-[11px] text-red-500 max-w-[200px] truncate hidden xl:block font-medium" title={authError}>{authError}</span>}
+              {authError && <span className="text-[10px] uppercase font-bold tracking-widest text-[#EA4335] max-w-[200px] truncate hidden xl:block" title={authError}>{authError}</span>}
               <button 
                 onClick={handleGoogleLogin} 
                 disabled={isLoggingIn}
-                className="flex items-center gap-2 px-3 py-1.5 border border-[#4285F4] text-[#4285F4] hover:bg-[#4285F4]/10 rounded-md font-medium text-[13px] transition-colors h-9"
+                className="flex items-center gap-2 px-4 py-2 border border-[#4285F4] text-[#4285F4] hover:bg-[#4285F4]/10 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-colors h-9"
               >
                 {isLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-4 h-4">
@@ -215,16 +217,16 @@ export default function CalendarPage() {
             </div>
           )}
 
-          <div className="flex items-center gap-1 border border-gray-300 dark:border-white/20 p-1 rounded-md bg-white dark:bg-[#141618] h-9">
+          <div className="flex items-center gap-1 border border-white/10 p-1 rounded-xl bg-black/20 h-9">
             <button 
               onClick={() => setView('month')}
-              className={clsx("px-3 py-1 text-[13px] font-medium rounded transition-colors h-full", view === 'month' ? "bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200")}
+              className={clsx("px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-colors h-full", view === 'month' ? "bg-white/10 text-white" : "text-white/40 hover:text-white")}
             >
               Mois
             </button>
             <button 
               onClick={() => setView('day')}
-              className={clsx("px-3 py-1 text-[13px] font-medium rounded transition-colors h-full", view === 'day' ? "bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200")}
+              className={clsx("px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-colors h-full", view === 'day' ? "bg-white/10 text-white" : "text-white/40 hover:text-white")}
             >
               Jour
             </button>
@@ -234,30 +236,30 @@ export default function CalendarPage() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar */}
-        <div className="w-[256px] border-r border-gray-200 dark:border-white/10 flex flex-col bg-white dark:bg-[#141618] hidden lg:flex shrink-0 px-4 py-[14px]">
+        <div className="w-[256px] border-r border-white/5 flex flex-col bg-[#051121] hidden lg:flex shrink-0 px-4 py-6">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-3 bg-white dark:bg-[#1a1c1e] text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-white/5 hover:shadow-md shadow-sm transition-all rounded-full py-3 px-4 font-medium mb-6 w-[150px]"
+            className="flex items-center justify-center gap-3 bg-[#0A1829] text-white border border-white/10 hover:border-asas-gold/40 hover:bg-white/5 transition-all rounded-xl py-3 px-4 font-bold uppercase tracking-widest text-[10px] mb-8 w-[150px] shadow-lg"
           >
-            <div className="shrink-0">
-               <svg width="24" height="24" viewBox="0 0 36 36"><path fill="#34A853" d="M16 16v14h4V20z"></path><path fill="#4285F4" d="M30 16H20l-4 4h14z"></path><path fill="#FBBC05" d="M6 16v4h10l4-4z"></path><path fill="#EA4335" d="M20 16V6h-4v14z"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
+            <div className="shrink-0 bg-asas-gold rounded-full p-1">
+               <Plus className="w-3 h-3 text-[#06152D]" />
             </div>
             Créer
           </button>
 
           {/* Mini Calendar */}
-          <div className="mb-6 select-none pl-2">
+          <div className="mb-8 select-none pl-2">
             <div className="flex items-center justify-between mb-4 pr-1">
-              <span className="text-[13px] font-medium text-gray-700 dark:text-gray-200 capitalize">{monthName} {yearStr}</span>
-              <div className="flex">
-                <ChevronLeft className="w-4 h-4 text-gray-500 cursor-pointer" onClick={prevMonth}/>
-                <ChevronRight className="w-4 h-4 text-gray-500 cursor-pointer ml-3" onClick={nextMonth} />
+              <span className="text-[12px] font-bold text-white capitalize">{monthName} {yearStr}</span>
+              <div className="flex gap-1">
+                <div className="p-1 hover:bg-white/10 rounded-md transition-colors"><ChevronLeft className="w-4 h-4 text-white/50 cursor-pointer" onClick={prevMonth}/></div>
+                <div className="p-1 hover:bg-white/10 rounded-md transition-colors"><ChevronRight className="w-4 h-4 text-white/50 cursor-pointer" onClick={nextMonth} /></div>
               </div>
             </div>
-            <div className="grid grid-cols-7 gap-1 text-center mb-1">
-              {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => <div key={i} className="text-[11px] font-medium text-gray-500">{d}</div>)}
+            <div className="grid grid-cols-7 gap-1 text-center mb-2">
+              {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => <div key={i} className="text-[10px] uppercase font-bold text-white/30 tracking-widest">{d}</div>)}
             </div>
-            <div className="grid grid-cols-7 gap-y-1 gap-x-1 text-center">
+            <div className="grid grid-cols-7 gap-y-2 gap-x-1 text-center">
               {daysArray.map((date, i) => {
                 const dateStr = date.toISOString().slice(0, 10)
                 const isSelected = selectedDate.toISOString().slice(0, 10) === dateStr
@@ -272,12 +274,12 @@ export default function CalendarPage() {
                         if (!isCurrentMonth) setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1))
                     }}
                     className={clsx(
-                      "w-6 h-6 flex items-center justify-center text-[11px] rounded-full cursor-pointer mx-auto",
-                      isToday && !isSelected ? "text-[#4285F4] bg-[#4285F4]/10 font-bold" :
-                      isSelected && isToday ? "bg-[#4285F4] text-white font-bold" :
-                      isSelected ? "bg-[#4285F4]/20 text-[#4285F4] font-bold" :
-                      !isCurrentMonth ? "text-gray-400 dark:text-gray-600" :
-                      "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10"
+                      "w-6 h-6 flex items-center justify-center text-[10px] rounded-full cursor-pointer mx-auto transition-colors font-bold",
+                      isToday && !isSelected ? "text-asas-gold bg-asas-gold/20" :
+                      isSelected && isToday ? "bg-asas-gold text-[#06152D]" :
+                      isSelected ? "bg-white/20 text-white" :
+                      !isCurrentMonth ? "text-white/20" :
+                      "text-white/60 hover:bg-white/10"
                     )}
                   >
                     {date.getDate()}
@@ -288,34 +290,34 @@ export default function CalendarPage() {
           </div>
 
           <div>
-            <div className="flex items-center gap-2 mb-2 px-2 group cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 py-1 rounded">
-              <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-transform rotate-90" />
-              <h3 className="text-[13px] font-medium text-gray-700 dark:text-gray-200">Mes agendas</h3>
+            <div className="flex items-center gap-2 mb-3 px-2 group cursor-pointer hover:bg-white/5 py-2 rounded-xl transition-colors">
+              <ChevronRight className="w-4 h-4 text-asas-gold transition-transform rotate-90" />
+              <h3 className="text-[10px] font-bold text-white uppercase tracking-widest">Mes agendas</h3>
             </div>
             <div className="pl-6">
-              <label className="flex items-center gap-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-md cursor-pointer transition-colors -ml-2 px-2">
-                <input type="checkbox" checked readOnly className="w-4 h-4 accent-[#4285F4] rounded bg-white shadow-sm" />
-                <span className="text-[13px] text-gray-700 dark:text-gray-300">Agenda Principal (Google)</span>
+              <label className="flex items-center gap-3 py-2 hover:bg-white/5 rounded-xl cursor-pointer transition-colors -ml-2 px-2">
+                <input type="checkbox" checked readOnly className="w-4 h-4 accent-asas-gold rounded bg-black/50 border border-white/20 shadow-sm" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Agenda Principal (Google)</span>
               </label>
             </div>
           </div>
         </div>
 
         {/* Main Calendar View */}
-        <div className="flex-1 min-w-0 flex flex-col bg-white dark:bg-[#1a1c1e]">
+        <div className="flex-1 min-w-0 flex flex-col bg-[#051121]">
           {view === 'month' && (
             <div className="flex-1 flex flex-col pt-2">
               {/* Days Header */}
               <div className="grid grid-cols-7 shrink-0">
                 {['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'].map(d => (
-                  <div key={d} className="py-2 text-center text-[11px] font-medium text-gray-500 dark:text-gray-400 border-r border-transparent last:border-r-0">
+                  <div key={d} className="py-3 text-center text-[9px] uppercase tracking-[0.2em] font-bold text-white/30 border-r border-transparent last:border-r-0">
                     {d}
                   </div>
                 ))}
               </div>
               
               {/* Days Grid */}
-              <div className="flex-1 grid grid-cols-7 grid-rows-6 border-l border-t border-gray-200 dark:border-white/10">
+              <div className="flex-1 grid grid-cols-7 grid-rows-6 border-l border-t border-white/5">
                 {daysArray.map((date, i) => {
                   const dateStr = date.toISOString().slice(0, 10)
                   const isToday = dateStr === todayStr
@@ -330,16 +332,16 @@ export default function CalendarPage() {
                         setView('day')
                       }}
                       className={clsx(
-                        "border-b border-r border-gray-200 dark:border-white/10 flex flex-col transition-colors cursor-pointer group min-h-0", 
-                        !isCurrentMonth ? "bg-gray-50/50 dark:bg-black/20" : "bg-white dark:bg-[#1a1c1e]"
+                        "border-b border-r border-white/5 flex flex-col transition-colors cursor-pointer group min-h-0 relative", 
+                        !isCurrentMonth ? "bg-black/40" : "bg-transparent hover:bg-white/[0.02]"
                       )}
                     >
-                      <div className="flex justify-center mt-1 mb-0.5">
+                      <div className="flex justify-center mt-2 mb-1">
                         <span className={clsx(
-                          "text-[12px] font-medium w-6 h-6 flex flex-col justify-center text-center rounded-full transition-colors", 
-                          isToday ? "bg-[#4285F4] text-white shadow-sm" : 
-                          !isCurrentMonth ? "text-gray-400 dark:text-gray-600" :
-                          "text-gray-700 dark:text-gray-200 group-hover:bg-gray-100 dark:group-hover:bg-white/10"
+                          "text-[10px] font-bold w-6 h-6 flex flex-col justify-center text-center rounded-full transition-all", 
+                          isToday ? "bg-asas-gold text-[#06152D] shadow-[0_0_10px_rgba(212,166,79,0.5)]" : 
+                          !isCurrentMonth ? "text-white/20" :
+                          "text-white/60 group-hover:bg-white/10 group-hover:text-white"
                         )}>
                           {i < 7 && date.getDate() === 1 ? `${date.getDate()} ${date.toLocaleString('fr-FR', {month:'short'})}` : date.getDate()}
                         </span>
@@ -352,8 +354,8 @@ export default function CalendarPage() {
                             <div 
                               key={event.id}
                               className={clsx(
-                                "text-[11px] font-medium px-1.5 py-0.5 rounded-[3px] truncate flex items-center gap-1 cursor-pointer hover:opacity-90 leading-tight",
-                                hasTime ? "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10" : "bg-[#4285F4] text-white shadow-sm"
+                                "text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-[6px] truncate flex items-center gap-1.5 cursor-pointer leading-tight transition-all",
+                                hasTime ? "text-white/80 hover:bg-white/10" : "bg-[#4285F4] text-white shadow-lg border border-white/10"
                               )}
                               title={event.summary}
                               onClick={(e) => {
@@ -361,8 +363,8 @@ export default function CalendarPage() {
                                 if (event.htmlLink) window.open(event.htmlLink, '_blank')
                               }}
                             >
-                              {hasTime && <div className="w-2 h-2 rounded-[50%] shrink-0 bg-[#4285F4]"></div>}
-                              {hasTime && <span className="font-medium opacity-80 shrink-0">{formatEventTime(event.start.dateTime)}</span>}
+                              {hasTime && <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-asas-gold shadow-[0_0_8px_rgba(212,166,79,0.5)]"></div>}
+                              {hasTime && <span className="font-bold shrink-0">{formatEventTime(event.start.dateTime)}</span>}
                               <span className="truncate">{event.summary || '(Sans titre)'}</span>
                             </div>
                           )
@@ -376,25 +378,25 @@ export default function CalendarPage() {
           )}
 
           {view === 'day' && (
-            <div className="flex-1 flex flex-col h-full overflow-hidden relative border-t border-gray-200 dark:border-white/10">
-              <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-200 dark:border-white/10 shrink-0 bg-white dark:bg-[#1a1c1e]">
+            <div className="flex-1 flex flex-col h-full overflow-hidden relative border-t border-white/5 bg-[#051121]">
+              <div className="flex items-center gap-6 px-8 py-6 border-b border-white/5 shrink-0 bg-[#0A1829]/30">
                 <div className="flex flex-col items-center min-w-[50px]">
-                  <span className={clsx("text-[11px] font-medium uppercase", selectedDateStr === todayStr ? "text-[#4285F4]" : "text-gray-500")}>
+                  <span className={clsx("text-[10px] font-bold uppercase tracking-widest", selectedDateStr === todayStr ? "text-asas-gold" : "text-white/40")}>
                     {selectedDate.toLocaleString('fr-FR', { weekday: 'short' })}
                   </span>
                   <span className={clsx(
-                    "text-[26px] font-normal w-12 h-12 flex items-center justify-center rounded-full mt-0.5", 
-                    selectedDateStr === todayStr ? "bg-[#4285F4] text-white" : "text-gray-700 dark:text-gray-200"
+                    "text-[28px] font-display mt-1 w-14 h-14 flex items-center justify-center rounded-2xl transition-all", 
+                    selectedDateStr === todayStr ? "bg-asas-gold text-[#06152D] shadow-[0_0_15px_rgba(212,166,79,0.3)]" : "text-white"
                   )}>
                     {selectedDate.getDate()}
                   </span>
                 </div>
-                <div className="w-px h-12 bg-gray-200 dark:bg-white/10 ml-2"></div>
+                <div className="w-px h-16 bg-white/5 ml-2"></div>
                 
                 <div className="flex-1 pl-4">
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {!loading && getEventsForDate(selectedDateStr).filter(e => !e.start.dateTime).map(event => (
-                      <div key={event.id} onClick={() => event.htmlLink && window.open(event.htmlLink, '_blank')} className="cursor-pointer bg-[#4285F4] text-white text-[12px] px-3 py-1 rounded-[4px] font-medium w-full truncate shadow-sm">
+                      <div key={event.id} onClick={() => event.htmlLink && window.open(event.htmlLink, '_blank')} className="cursor-pointer bg-[#4285F4] border border-white/10 text-white text-[11px] uppercase tracking-widest px-4 py-2.5 rounded-lg font-bold w-full truncate shadow-md transition-transform hover:scale-[1.01]">
                         {event.summary || '(Sans titre)'}
                       </div>
                     ))}
@@ -403,22 +405,22 @@ export default function CalendarPage() {
               </div>
 
               {/* Time grid for Day view */}
-              <div className="flex-1 overflow-y-auto relative custom-scrollbar bg-white dark:bg-[#1a1c1e]">
+              <div className="flex-1 overflow-y-auto relative custom-scrollbar bg-transparent">
                 {/* Time labels */}
                 {Array.from({ length: 24 }).map((_, i) => (
-                  <div key={i} className="flex h-[60px] relative group border-b border-gray-100 dark:border-white/5 last:border-b-0">
-                    <div className="w-20 shrink-0 text-right pr-4 relative -top-3">
-                      <span className="text-[10px] text-gray-500 font-medium">
+                  <div key={i} className="flex h-[80px] relative group border-b border-white/5 last:border-b-0">
+                    <div className="w-24 shrink-0 text-right pr-6 relative -top-3">
+                      <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
                         {i === 0 ? '' : `${i}:00`}
                       </span>
                     </div>
-                    <div className="flex-1 border-l border-gray-200 dark:border-white/10 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors absolute inset-0 left-20" onClick={() => setIsModalOpen(true)}>
+                    <div className="flex-1 border-l border-white/5 cursor-pointer hover:bg-white/[0.02] transition-colors absolute inset-0 left-24" onClick={() => setIsModalOpen(true)}>
                     </div>
                   </div>
                 ))}
                 
                 {/* Events Absolute Layer */}
-                <div className="absolute top-0 left-20 right-0 bottom-0 pointer-events-none px-2 py-0 border-l border-transparent">
+                <div className="absolute top-0 left-24 right-0 bottom-0 pointer-events-none px-4 py-0 border-l border-transparent">
                   {!loading && getEventsForDate(selectedDateStr)
                     .filter(e => e.start.dateTime)
                     .map(event => {
@@ -429,18 +431,18 @@ export default function CalendarPage() {
                       const endMinutes = endDate.getHours() * 60 + endDate.getMinutes();
                       const duration = Math.max(20, endMinutes - startMinutes);
                       
-                      const top = (startMinutes / 60) * 60;
-                      const height = (duration / 60) * 60;
+                      const top = (startMinutes / 60) * 80;
+                      const height = (duration / 60) * 80;
                       
                       return (
                         <div 
                           key={event.id}
-                          className="absolute left-1 right-2 rounded-[4px] bg-[#4285F4] text-white p-2 text-xs shadow-sm overflow-hidden border border-white/20 pointer-events-auto cursor-pointer flex gap-1 flex-col"
-                          style={{ top: `${top}px`, height: `${height}px`, minHeight: '24px' }}
+                          className="absolute left-4 right-4 rounded-xl bg-[#4285F4]/90 backdrop-blur-sm text-white p-3 shadow-lg overflow-hidden border border-white/20 pointer-events-auto cursor-pointer flex gap-1 flex-col transition-all hover:scale-[1.01]"
+                          style={{ top: `${top}px`, height: `${height}px`, minHeight: '32px' }}
                           onClick={() => event.htmlLink && window.open(event.htmlLink, '_blank')}
                         >
-                          <div className="font-medium truncate leading-none">{event.summary || '(Sans titre)'}</div>
-                          {height >= 40 && <div className="text-[10px] leading-tight">{formatEventTime(event.start.dateTime)} - {formatEventTime(event.end?.dateTime)}</div>}
+                          <div className="font-bold text-[11px] uppercase tracking-wide truncate leading-tight">{event.summary || '(Sans titre)'}</div>
+                          {height >= 50 && <div className="text-[9px] uppercase tracking-widest leading-tight text-white/80 font-bold">{formatEventTime(event.start.dateTime)} - {formatEventTime(event.end?.dateTime)}</div>}
                         </div>
                       )
                     })}
@@ -449,15 +451,15 @@ export default function CalendarPage() {
                 {/* Current Time Indicator */}
                 {selectedDateStr === todayStr && (
                   <div 
-                    className="absolute left-0 right-0 border-t-2 border-[#EA4335] z-10 flex items-center pointer-events-none"
-                    style={{ top: `${(new Date().getHours() + new Date().getMinutes() / 60) * 60}px` }}
+                    className="absolute left-0 right-0 border-t-2 border-asas-gold z-10 flex items-center pointer-events-none"
+                    style={{ top: `${(new Date().getHours() + new Date().getMinutes() / 60) * 80}px` }}
                   >
-                    <div className="w-20 pr-2 -my-2 flex justify-end shrink-0">
-                      <span className="text-[#EA4335] text-[10px] font-bold">
+                    <div className="w-24 pr-4 -my-2 flex justify-end shrink-0">
+                      <span className="text-asas-gold text-[10px] font-bold uppercase tracking-widest bg-[#051121] px-1">
                         {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#EA4335] -ml-1"></div>
+                    <div className="w-3 h-3 rounded-full bg-asas-gold shadow-[0_0_10px_rgba(212,166,79,0.8)] -ml-1.5"></div>
                   </div>
                 )}
               </div>

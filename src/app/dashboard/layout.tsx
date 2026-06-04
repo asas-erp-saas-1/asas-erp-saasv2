@@ -100,39 +100,46 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const role = profile.role || 'agent';
 
     return (
-      <div className="flex bg-asas-sand dark:bg-asas-charcoal h-[100dvh] overflow-hidden selection:bg-asas-gold/30 selection:text-asas-charcoal dark:text-asas-sand font-sans text-asas-charcoal dark:text-asas-sand">
-        <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
-        {/* Sidebar - Desktop */}
-        <aside className="w-[280px] bg-[#F8F9FA] dark:bg-[#141618] border-r border-gray-200 dark:border-white/5 flex-col shrink-0 hidden md:flex z-10 relative group">
-          <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-asas-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+      <div className="flex bg-[#06152D] h-[100dvh] overflow-hidden selection:bg-asas-gold/30 selection:text-white text-white font-sans">
+        
+        {/* Global Background Ambient Effects for the Layout */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+           <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_top_right,_rgba(212,166,79,0.05),_transparent_70%)]"></div>
+           <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-[radial-gradient(circle_at_bottom_left,_rgba(12,38,77,0.5),_transparent_60%)]"></div>
+        </div>
 
+        <NextMobileMenu profile={profile} initial={initial} roleDisplay={roleDisplay} />
+        
+        {/* Sidebar - Desktop */}
+        <aside className="w-[280px] bg-[#0A1829]/60 backdrop-blur-2xl border-r border-white/5 flex-col shrink-0 hidden md:flex z-10 relative">
           <div className="px-6 py-8 flex items-center justify-between relative z-10">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-asas-navy shadow-[0_0_15px_rgba(10,25,47,0.1)] flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-asas-gold" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-white/10 to-transparent border border-asas-gold/30 flex items-center justify-center relative shadow-[0_0_15px_rgba(212,166,79,0.2)]">
+                <div className="absolute inset-0 bg-asas-gold/10 rounded-xl blur-md"></div>
+                <Building2 className="w-5 h-5 text-asas-gold relative z-10" />
               </div>
               <div>
-                <p className="font-display font-bold text-gray-900 dark:text-white tracking-tight leading-tight text-xl flex items-center gap-2">
-                  ASAS <span className="text-gray-300 dark:text-gray-700 font-light text-base">|</span> <span className="font-sans font-medium text-lg">أساس</span>
+                <p className="font-display font-bold text-white tracking-tight leading-none text-xl flex items-center gap-2">
+                  ASAS <span className="text-white/20 font-light text-base">|</span> <span className="font-sans font-medium text-lg text-asas-gold">أساس</span>
                 </p>
-                <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-asas-gold leading-tight mt-0.5">Real Estate ERP</p>
+                <p className="text-[9px] uppercase font-bold tracking-[0.2em] text-white/40 leading-tight mt-1">Enterprise OS</p>
               </div>
             </div>
           </div>
 
-          <div className="px-5 py-4 flex-1 overflow-y-auto custom-scrollbar relative z-10 space-y-8">
+          <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar relative z-10 space-y-8">
             {NAV_GROUPS.map((navGroup) => {
                if (navGroup.roles && !navGroup.roles.includes(role)) return null;
                return (
                  <div key={navGroup.group}>
-                   <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-3">{navGroup.group}</p>
+                   <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 px-4">{navGroup.group}</p>
                    <nav className="flex flex-col gap-1">
                      {navGroup.items.map(({ href, label, Icon }) => (
                        <Link key={href} href={href}
-                         className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all group relative">
-                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 rounded-r bg-asas-gold transition-all group-hover:h-1/2 opacity-0 group-hover:opacity-100"></div>
-                         <Icon className="h-4 w-4 text-gray-400 group-hover:text-asas-gold transition-colors" />
-                         <span className="group-hover:translate-x-1 transition-transform">{label}</span>
+                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-white/60 rounded-xl hover:bg-white/5 hover:text-white transition-all group relative overflow-hidden">
+                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 rounded-r-md bg-asas-gold transition-all duration-300 group-hover:h-1/2 opacity-0 group-hover:opacity-100 shadow-[0_0_10px_rgba(212,166,79,0.8)]"></div>
+                         <Icon className="h-4 w-4 text-white/40 group-hover:text-asas-gold transition-colors" />
+                         <span className="group-hover:translate-x-1 transition-transform tracking-wide">{label}</span>
                        </Link>
                      ))}
                    </nav>
@@ -141,19 +148,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
             })}
           </div>
 
-          <div className="mt-auto px-6 py-6 border-t border-gray-200 dark:border-white/5 shrink-0 relative z-10">
+          <div className="mt-auto px-6 py-6 border-t border-white/5 shrink-0 relative z-10 bg-black/10">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-asas-navy border border-asas-gold/20 flex items-center justify-center text-white font-medium shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#051121] border border-white/10 flex items-center justify-center text-asas-gold font-bold shrink-0 shadow-inner">
                  {initial}
               </div>
               <div className="overflow-hidden">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{(profile as any)?.full_name}</p>
-                <p className="text-xs text-gray-500 capitalize truncate font-medium">{roleDisplay}</p>
+                <p className="text-sm font-semibold text-white truncate">{(profile as any)?.full_name}</p>
+                <p className="text-xs text-white/40 capitalize truncate mt-0.5 tracking-wide">{roleDisplay}</p>
               </div>
             </div>
             
             <form action="/auth/signout" method="post">
-              <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-xl transition-all">
+              <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white/50 hover:text-white bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all hover:border-white/10">
                 <LogOut className="h-4 w-4" /> Déconnexion
               </button>
             </form>
@@ -161,13 +168,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </aside>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-white dark:bg-[#0B0C0E] border-l border-gray-200 dark:border-white/5 shadow-[0_0_30px_rgb(0,0,0,0.02)]">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10 bg-[#0A1629] border-l border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)] md:rounded-l-3xl my-0 md:my-2 mr-0 md:mr-2">
           {/* Top Header */}
-          <header className="h-[72px] bg-white/80 dark:bg-[#0B0C0E]/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
+          <header className="h-[72px] bg-[#0A1629]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
             <div className="flex items-center gap-4 w-full max-w-xl">
               <div className="md:hidden flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-asas-gold" />
-                <p className="font-extrabold text-gray-900 dark:text-white tracking-widest uppercase leading-tight text-lg font-display">ASAS</p>
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-white/10 to-transparent border border-asas-gold/30 flex items-center justify-center">
+                  <Building2 className="w-4 h-4 text-asas-gold" />
+                </div>
               </div>
               
               <DesktopOmnibarTrigger />
@@ -176,17 +184,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <div className="flex items-center gap-2 sm:gap-4">
               <MobileOmnibarTrigger />
               <ThemeToggle />
-              <button className="relative p-2.5 text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-all">
+              <button className="relative p-2.5 text-white/50 hover:text-white hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-asas-gold rounded-full border-2 border-white dark:border-[#0B0C0E]"></span>
+                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
               </button>
-              <div className="w-px h-6 bg-gray-200 dark:bg-gray-800 hidden sm:block"></div>
-              <div className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="w-px h-6 bg-white/10 hidden sm:block mx-1"></div>
+              <div className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group">
                 <div className="flex flex-col items-end">
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white leading-none">{(profile as any)?.full_name}</span>
-                  <span className="text-xs text-gray-500 font-medium mt-1">{roleDisplay}</span>
+                  <span className="text-sm font-semibold text-white leading-none group-hover:text-asas-gold transition-colors">{(profile as any)?.full_name}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/40 mt-1">{roleDisplay}</span>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-asas-navy border border-asas-gold/20 flex items-center justify-center text-white font-medium">
+                <div className="w-10 h-10 rounded-xl bg-[#051121] border border-white/10 flex items-center justify-center text-asas-gold font-bold shadow-inner group-hover:border-asas-gold/30 transition-colors">
                   {initial}
                 </div>
               </div>
@@ -194,9 +202,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </header>
 
           {/* Scrollable Main Area */}
-          <main className="flex-1 overflow-y-auto flex flex-col w-full text-gray-900 dark:text-white custom-scrollbar relative pb-28 md:pb-0">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-asas-gold/5 dark:bg-asas-gold/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
-            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-1 flex flex-col pt-8">
+          <main className="flex-1 overflow-y-auto flex flex-col w-full text-white custom-scrollbar relative pb-28 md:pb-0">
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-1 flex flex-col">
               {children}
             </div>
           </main>
