@@ -147,18 +147,19 @@ function DealCard({
   return (
     <Draggable draggableId={deal.id} index={index}>
       {(provided, snapshot) => (
-        <div
+        <motion.div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={onSelect}
+          layout
           className={clsx(
-            "bg-white dark:bg-[#141618] rounded-sm border p-4 shadow-sm transition-all cursor-pointer select-none hover:border-asas-gold/40 relative",
+            "bg-white dark:bg-[#1a1d1f] rounded-lg border p-4 shadow-md transition-all cursor-pointer select-none hover:shadow-lg hover:border-asas-gold/40 relative overflow-hidden group",
             isSelected
-              ? "border-asas-gold/50 ring-1 ring-asas-gold/50"
-              : "border-asas-silver/20",
+              ? "border-asas-gold/50 ring-2 ring-asas-gold/40 shadow-lg"
+              : "border-white/20 dark:border-white/10",
             snapshot.isDragging &&
-              "shadow-lg shadow-asas-gold/10 ring-1 ring-asas-gold/50 rotate-1 scale-105 z-50 cursor-grabbing bg-asas-sand/50 dark:bg-[#1C1E20]"
+              "shadow-xl shadow-asas-gold/20 ring-2 ring-asas-gold/50 scale-105 z-50 cursor-grabbing bg-asas-sand/40 dark:bg-[#202428]"
           )}
         >
           {/* Execution Requirement Banner */}
@@ -294,7 +295,7 @@ function DealCard({
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </Draggable>
   );
@@ -457,65 +458,73 @@ export default function DealsPage() {
   const byStatus = (status: string) => deals.filter((d) => d.status === status);
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand relative">
+    <div className="flex flex-1 h-full overflow-hidden bg-white dark:bg-[#141618] rounded-lg shadow-sm border border-white/10 text-asas-charcoal dark:text-asas-sand relative">
       {/* List / Kanban */}
       <div className="flex flex-col bg-white dark:bg-[#141618] overflow-hidden transition-all duration-300 ease-in-out w-full">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-asas-silver/20 bg-asas-sand/30 dark:bg-black/10 z-10 shrink-0">
-          <div className="flex w-full items-center justify-between mb-5">
+        <div className="px-6 py-6 border-b border-white/10 bg-gradient-to-r from-white/50 to-white/20 dark:from-white/5 dark:to-white/[0.02] z-10 shrink-0">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex w-full items-center justify-between mb-6">
             <div>
-              <h1 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 tracking-tight font-display uppercase">
+              <h1 className="text-2xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 tracking-tight font-display uppercase">
+                <Handshake className="w-6 h-6 text-asas-gold" />
                 Transactions
               </h1>
-              <p className="text-[10px] uppercase tracking-widest text-asas-silver font-bold mt-1.5 hidden sm:block">
-                {total} actives sur le réseau
+              <p className="text-xs uppercase tracking-widest text-asas-silver/70 font-semibold mt-2">
+                {total} actives · Pipeline en temps réel
               </p>
             </div>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => router.push("/dashboard/deals/new")}
-              className="flex items-center gap-2 px-4 py-2.5 bg-asas-charcoal hover:bg-black dark:bg-asas-sand dark:hover:bg-white text-asas-sand dark:text-asas-charcoal rounded-sm text-xs font-bold transition-all border border-transparent shrink-0 shadow-sm"
+              className="flex items-center gap-2 px-5 py-2.5 bg-asas-gold hover:bg-asas-gold/90 text-asas-charcoal font-bold rounded-lg text-sm transition-all border border-asas-gold/40 shadow-lg hover:shadow-xl"
             >
-              <Plus className="h-4 w-4" strokeWidth={2} /> Initier Deal
-            </button>
-          </div>
+              <Plus className="h-4 w-4" strokeWidth={3} /> Initier Transaction
+            </motion.button>
+          </motion.div>
 
-          {/* Search */}
-          <div className="relative mb-5">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
-            <input
-              type="text"
-              placeholder="Rechercher entité, projet..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-2 bg-transparent text-sm font-medium border border-asas-silver/40 rounded-sm focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all placeholder:text-asas-silver"
-            />
-          </div>
+          {/* Search & Filters Section */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-3">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver/60" />
+              <input
+                type="text"
+                placeholder="Rechercher entité, projet, client..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-11 pr-4 py-2.5 bg-white/50 dark:bg-white/5 text-sm font-medium border border-white/20 dark:border-white/10 rounded-lg focus:outline-none focus:border-asas-gold focus:ring-2 focus:ring-asas-gold/30 text-asas-charcoal dark:text-asas-sand transition-all placeholder:text-asas-silver/50"
+              />
+            </div>
 
-          {/* Status filter pills */}
-          <div className="flex gap-2 flex-wrap">
-            {[
-              { label: "En cours", value: "active,negotiation" },
-              { label: "Tous", value: "" },
-              { label: "Brouillon", value: "draft" },
-              { label: "Conclu", value: "closed" },
-            ].map((f) => (
-              <button
-                key={f.value}
-                onClick={() => {
-                  setStatus(f.value);
-                  setPage(1);
-                }}
-                className={clsx(
-                  "px-4 py-1.5 rounded-sm text-[9px] uppercase tracking-widest font-bold transition-all border",
-                  statusFilter === f.value
-                    ? "bg-asas-gold/10 text-asas-gold border-asas-gold/20"
-                    : "bg-transparent text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand border-asas-silver/20 hover:border-asas-gold/40",
-                )}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+            {/* Status filter pills */}
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { label: "En cours", value: "active,negotiation", icon: Clock },
+                { label: "Tous", value: "" },
+                { label: "Brouillon", value: "draft" },
+                { label: "Conclu", value: "closed" },
+              ].map((f) => (
+                <motion.button
+                  key={f.value}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setStatus(f.value);
+                    setPage(1);
+                  }}
+                  className={clsx(
+                    "px-4 py-2 rounded-lg text-xs uppercase tracking-wider font-bold transition-all border flex items-center gap-2",
+                    statusFilter === f.value
+                      ? "bg-asas-gold/15 text-asas-gold border-asas-gold/30 shadow-md"
+                      : "bg-white/50 dark:bg-white/5 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand border-white/20 dark:border-white/10 hover:border-asas-gold/30 hover:bg-white/80 dark:hover:bg-white/10",
+                  )}
+                >
+                  {f.label}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
         {/* Kanban board */}

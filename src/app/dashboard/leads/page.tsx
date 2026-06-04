@@ -14,6 +14,7 @@ import {
   Filter,
   X,
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { clsx } from "clsx";
 import type { Lead } from "@/types/app";
 import {
@@ -528,22 +529,36 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 h-full bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 overflow-hidden text-asas-charcoal dark:text-asas-sand">
+    <div className="flex flex-col flex-1 h-full bg-white dark:bg-[#141618] rounded-lg shadow-md border border-white/10 overflow-hidden text-asas-charcoal dark:text-asas-sand">
       {/* Header */}
-      <div className="bg-asas-sand/30 dark:bg-black/10 border-b border-asas-silver/20 px-6 py-5 shrink-0 z-10 w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
+      <div className="bg-gradient-to-r from-white/50 to-white/30 dark:from-white/5 dark:to-white/[0.02] border-b border-white/10 px-6 py-6 shrink-0 z-10 w-full">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-3 tracking-tight font-display uppercase">
-              <Users className="h-5 w-5 text-asas-gold" /> Pipeline
-              d'Acquisition
+            <h1 className="text-3xl font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-3 tracking-tight font-display uppercase">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-500/10 border border-blue-500/30 flex items-center justify-center">
+                <Users className="h-6 w-6 text-blue-500" />
+              </div>
+              Pipeline d'Acquisition
             </h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-asas-silver mt-2">
-              {total} entités actives détectées
+            <p className="text-xs uppercase font-semibold tracking-wider text-asas-silver/70 mt-3">
+              {total} prospects actifs · Suivi en temps réel
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center justify-center gap-2 px-6 py-3 shrink-0 bg-asas-gold hover:bg-asas-gold/90 text-asas-charcoal font-bold rounded-lg text-sm transition-all border border-asas-gold/40 shadow-lg hover:shadow-xl"
+          >
+            <Plus className="h-4 w-4" strokeWidth={3} /> Nouveau Prospect
+          </motion.button>
+        </motion.div>
+        
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-3">
+          {/* Filters and Search */}
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             {/* Filters */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <MultiSelect
                 label="Source"
                 options={sourceOptions}
@@ -559,50 +574,50 @@ export default function LeadsPage() {
             </div>
 
             {/* Search */}
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver" />
+            <div className="relative flex-1 lg:max-w-xs">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver/60" />
               <input
                 type="text"
-                placeholder="Scanner matricule ou identifiant..."
+                placeholder="Rechercher prospect, client..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-2 bg-transparent text-sm font-medium border border-asas-silver/40 rounded-sm focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all placeholder:text-asas-silver"
+                className="w-full pl-11 pr-4 py-2.5 bg-white/50 dark:bg-white/5 text-sm font-medium border border-white/20 dark:border-white/10 rounded-lg focus:outline-none focus:border-asas-gold focus:ring-2 focus:ring-asas-gold/30 text-asas-charcoal dark:text-asas-sand transition-all placeholder:text-asas-silver/50"
               />
             </div>
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 shrink-0 bg-asas-charcoal hover:bg-black dark:bg-asas-sand dark:hover:bg-white text-asas-sand dark:text-asas-charcoal rounded-sm text-xs font-bold transition-all border border-transparent"
-            >
-              <Plus className="h-4 w-4" strokeWidth={2} /> Ajouter Entité
-            </button>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Kanban board */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 overflow-x-auto overflow-y-hidden bg-gradient-to-br from-white/30 to-white/10 dark:from-white/[0.02] dark:to-black/20">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex h-full gap-4 p-6 min-w-max items-start">
+          <div className="flex h-full gap-5 p-6 min-w-max items-start">
             {loading
               ? [...Array(4)].map((_, i) => (
-                  <div
+                  <motion.div
                     key={i}
-                    className="w-[340px] bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 animate-pulse h-[80vh]"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="w-[360px] bg-white dark:bg-[#141618] rounded-lg border border-white/10 shadow-md animate-pulse h-[80vh]"
                   />
                 ))
-              : activeColumns.map((col) => {
+              : activeColumns.map((col, colIndex) => {
                   const colLeads = byStatus(col.key);
                   return (
-                    <div
+                    <motion.div
                       key={col.key}
-                      className="w-[340px] flex flex-col bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden max-h-full"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: colIndex * 0.05 }}
+                      className="w-[360px] flex flex-col bg-white dark:bg-[#141618] rounded-lg border border-white/10 shadow-md overflow-hidden max-h-full hover:shadow-lg transition-shadow"
                     >
                       {/* Column header */}
-                      <div className="px-5 py-4 border-b border-asas-silver/10 bg-white dark:bg-[#141618] flex items-center justify-between shrink-0">
-                        <div className="flex items-center gap-2">
+                      <div className="px-5 py-4 border-b border-white/10 bg-gradient-to-r from-white/50 to-white/30 dark:from-white/5 dark:to-white/[0.02] flex items-center justify-between shrink-0">
+                        <div className="flex items-center gap-3">
                           <div
                             className={clsx(
-                              "h-2.5 w-2.5 rounded-full inline-block",
+                              "h-3 w-3 rounded-full inline-block shadow-lg",
                               col.dot,
                             )}
                           />
@@ -612,7 +627,7 @@ export default function LeadsPage() {
                         </div>
                         <span
                           className={clsx(
-                            "text-[10px] font-bold px-2 py-0.5 rounded-sm border tracking-widest",
+                            "text-[10px] font-bold px-2.5 py-1 rounded-lg border tracking-widest",
                             col.color,
                           )}
                         >
@@ -658,14 +673,14 @@ export default function LeadsPage() {
                           </div>
                         )}
                       </Droppable>
-                    </div>
+                    </motion.div>
                   );
                 })}
 
             {/* End of Kanban */}
           </div>
         </DragDropContext>
-      </div>
+      </motion.div>
 
       <LeadDetailModal
         leadId={selectedLeadId}
