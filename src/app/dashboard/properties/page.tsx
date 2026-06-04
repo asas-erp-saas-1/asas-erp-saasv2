@@ -4,9 +4,11 @@
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
-import { Building2, Plus, Search, Filter, CheckCircle, XCircle, Clock, Tag, MessageCircle } from 'lucide-react'
+import { Building2, Plus, Search, Filter, CheckCircle, XCircle, Clock, Tag, MessageCircle, Map, LayoutGrid } from 'lucide-react'
 import { clsx } from 'clsx'
 import { PropertyCreateModal } from './PropertyCreateModal'
+
+import { InteractiveGridMap } from './InteractiveGridMap'
 
 interface Property {
   id: string; reference_code: string | null; type: string; rooms: string | null
@@ -116,6 +118,7 @@ export default function PropertiesPage() {
   const [statusFilter, setStatus]    = useState('')
   const [typeFilter,   setType]      = useState('')
   const [page,       setPage]        = useState(1)
+  const [viewMode,   setViewMode]    = useState<'grid' | 'map'>('grid')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const LIMIT = 24
 
@@ -197,8 +200,17 @@ export default function PropertiesPage() {
              </div>
            </div>
 
-           <div className="flex items-center gap-3 w-full md:w-auto">
-               <div className="relative flex-1 md:w-48">
+           <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto">
+               <div className="flex items-center p-1 bg-asas-sand/50 dark:bg-black/20 rounded-sm border border-asas-silver/20 shrink-0">
+                  <button onClick={() => setViewMode('grid')} className={clsx('p-2 rounded-sm transition-all', viewMode === 'grid' ? 'bg-white dark:bg-[#141618] shadow-sm text-asas-charcoal dark:text-white' : 'text-asas-silver')}>
+                     <LayoutGrid className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => setViewMode('map')} className={clsx('p-2 rounded-sm transition-all', viewMode === 'map' ? 'bg-white dark:bg-[#141618] shadow-sm text-asas-charcoal dark:text-white' : 'text-asas-silver')}>
+                     <Map className="w-4 h-4" />
+                  </button>
+               </div>
+               
+               <div className="relative flex-1 md:w-48 shrink-0">
                  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver z-10 pointer-events-none" />
                  <select value={statusFilter} onChange={e => setStatus(e.target.value)}
                     className="w-full pl-11 pr-8 py-2.5 text-sm bg-transparent border border-asas-silver/40 rounded-sm focus:outline-none focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all font-medium appearance-none cursor-pointer">
@@ -209,7 +221,7 @@ export default function PropertiesPage() {
                 </select>
                </div>
                
-               <div className="relative flex-1 md:w-48">
+               <div className="relative flex-1 md:w-48 shrink-0">
                  <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-asas-silver z-10 pointer-events-none" />
                  <select value={typeFilter} onChange={e => setType(e.target.value)}
                     className="w-full pl-11 pr-8 py-2.5 text-sm bg-transparent border border-asas-silver/40 rounded-sm focus:outline-none focus:ring-1 focus:ring-asas-gold text-asas-charcoal dark:text-asas-sand transition-all font-medium appearance-none cursor-pointer">
@@ -220,7 +232,7 @@ export default function PropertiesPage() {
            </div>
         </div>
 
-        {/* Grid */}
+        {/* Content View */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => <div key={i} className="h-80 bg-asas-sand/50 dark:bg-black/10 rounded-sm border border-asas-silver/20 animate-pulse" />)}
@@ -233,8 +245,12 @@ export default function PropertiesPage() {
              <p className="text-lg font-bold text-asas-charcoal dark:text-asas-sand mb-2 font-display uppercase tracking-widest">Base de données vide</p>
              <p className="text-[9px] uppercase tracking-widest">Ajustez vos paramètres régionaux ou d'état.</p>
           </div>
+        ) : viewMode === 'map' ? (
+          <div className="animate-in fade-in zoom-in-95 duration-500">
+            <InteractiveGridMap properties={properties as any} onSelect={(id) => console.log('Selected', id)} />
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500">
             {properties.map((p, i) => <PropertyCard key={p.id} property={p} onStatusChange={async (id, s) => {
               setProperties(curr => curr.map(prop => prop.id === id ? { ...prop, status: s } : prop))
               try {

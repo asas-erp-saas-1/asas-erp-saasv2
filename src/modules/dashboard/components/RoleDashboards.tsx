@@ -93,57 +93,111 @@ export function OwnerDashboard({ metrics, events }: { metrics: any, events: any[
   };
 
   return (
-    <div className="space-y-8 animate-in">
-      {/* KPI WIDGETS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Unités Disponibles', value: metrics.availableUnitsCount, icon: Building2, sub: 'Inventaire Actif' },
-          { label: 'Valeur Totale Pipeline', value: formatCurrency(metrics.pipelineValue), icon: Briefcase, sub: 'Potentiel CA' },
-          { label: 'Nouveaux Leads', value: metrics.newLeadsCount, icon: Users, sub: "File d'attente" },
-          { label: 'Demandes VSP/Contrats', value: metrics.pendingContractsCount, icon: AlertCircle, sub: 'Signature requise' },
-        ].map((kpi, idx) => (
-          <div key={idx} className="p-6 border border-gray-200 dark:border-white/5 rounded-2xl bg-white dark:bg-[#141618] shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow cursor-default flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-4">
-               <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{kpi.label}</span>
-               <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-asas-gold/10 transition-colors">
-                 <kpi.icon className="w-5 h-5 text-gray-400 group-hover:text-asas-gold transition-colors" />
-               </div>
+    <div className="space-y-12 animate-in">
+      
+      {/* 1. FINANCIAL INDICATORS */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 px-1">
+           <div className="w-10 h-10 rounded-xl bg-asas-gold/10 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-asas-gold" />
+           </div>
+           <h2 className="text-2xl font-display font-semibold text-gray-900 dark:text-white tracking-tight">Finance & Revenus</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Big Pipeline Card */}
+          <div className="col-span-1 flex flex-col">
+             <div className="p-8 rounded-3xl bg-[#081D33] dark:bg-[#0A1629] shadow-xl text-white flex flex-col justify-between h-full relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-asas-gold/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                <div className="relative z-10 flex items-center justify-between mb-8">
+                   <span className="text-sm font-semibold text-white/70 uppercase tracking-widest">Valeur Totale Pipeline</span>
+                   <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm">
+                     <Briefcase className="w-6 h-6 text-asas-gold" />
+                   </div>
+                </div>
+                <div className="relative z-10 mt-auto">
+                   <div className="text-4xl lg:text-5xl font-display font-light text-white tracking-tight truncate">{formatCurrency(metrics.pipelineValue)}</div>
+                   <div className="flex items-center gap-2 mt-4 text-sm font-medium text-green-400">
+                     <TrendingUp className="w-4 h-4" />
+                     <span>Potentiel CA prévisionnel</span>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+          {/* Chart */}
+          <div className="col-span-1 lg:col-span-2 p-8 border border-gray-200 dark:border-white/5 rounded-3xl bg-white dark:bg-[#141618] shadow-sm flex flex-col transition-shadow hover:shadow-md">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Chiffre d'Affaires Global</h3>
+                <p className="text-sm font-medium text-gray-500 mt-1">Comparatif Objectifs vs Réalisations</p>
+              </div>
             </div>
-            <div className="mt-4 flex flex-col">
-              <div className="text-3xl font-display font-semibold text-gray-900 dark:text-white truncate">{kpi.value || 0}</div>
-              <div className="text-xs font-medium text-gray-500 mt-2">{kpi.sub}</div>
+            <div className="h-[280px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10 dark:opacity-5" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${value/1000}k`} tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} />
+                  <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#141618', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                  {/* Note: Recharts 'dark' attribute is non-standard but we use Tailwind via CSS variables or standard fill if needed */}
+                  <Bar dataKey="obj" name="Objectif" fill="#E5E7EB" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="reals" name="Réalisé" fill="#C7A15A" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-        ))}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="col-span-1 lg:col-span-2 p-8 border border-gray-200 dark:border-white/5 rounded-3xl bg-white dark:bg-[#141618] shadow-sm flex flex-col">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Chiffre d'Affaires Global</h3>
-              <p className="text-sm font-medium text-gray-500 mt-1">Objectifs vs Réalisations</p>
+      {/* 2. TECHNICAL & OPERATIONAL DATA */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 px-1">
+           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+           </div>
+           <h2 className="text-2xl font-display font-semibold text-gray-900 dark:text-white tracking-tight">Données Techniques du Projet</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { label: 'Unités Disponibles', value: metrics.availableUnitsCount, icon: Building2, sub: 'Inventaire Actif' },
+            { label: 'Nouveaux Leads', value: metrics.newLeadsCount, icon: Users, sub: "File d'attente commerciale" },
+            { label: 'Demandes VSP', value: metrics.pendingContractsCount, icon: AlertCircle, sub: 'Signature requise' },
+          ].map((kpi, idx) => (
+            <div key={idx} className="p-6 border border-gray-200 dark:border-white/5 rounded-2xl bg-white dark:bg-[#141618] shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow cursor-default flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-4">
+                 <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{kpi.label}</span>
+                 <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-asas-gold/10 transition-colors">
+                   <kpi.icon className="w-5 h-5 text-gray-400 group-hover:text-asas-gold transition-colors" />
+                 </div>
+              </div>
+              <div className="mt-4 flex flex-col">
+                <div className="text-3xl font-display font-semibold text-gray-900 dark:text-white truncate">{kpi.value || 0}</div>
+                <div className="text-xs font-medium text-gray-500 mt-2">{kpi.sub}</div>
+              </div>
             </div>
-          </div>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10 dark:opacity-5" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${value/1000}k`} tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} />
-                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#141618', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
-                <Bar dataKey="obj" name="Objectif" fill="#E5E7EB" dark={{ fill: '#374151' }} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="reals" name="Réalisé" fill="#C7A15A" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. SYSTEM LOGS */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 px-1">
+           <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+           </div>
+           <h2 className="text-2xl font-display font-semibold text-gray-900 dark:text-white tracking-tight">Audit & Télémétrie</h2>
         </div>
 
         <div className="p-8 border border-gray-200 dark:border-white/5 rounded-3xl bg-white dark:bg-[#141618] shadow-sm flex flex-col max-h-[420px]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Audit & Historique</h3>
-            <div className="px-2.5 py-1 text-xs font-semibold rounded-md bg-asas-gold/10 text-asas-gold">En direct</div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Historique Récent</h3>
+            <div className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-asas-gold/10 text-asas-gold flex items-center gap-2">
+               <div className="w-1.5 h-1.5 rounded-full bg-asas-gold animate-pulse"></div>
+               En direct
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 relative">
             {events && events.length > 0 ? (
