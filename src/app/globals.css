@@ -2,8 +2,8 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Tajawal";
-  --font-display: var(--font-display), "Cinzel", serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), "Space Grotesk", sans-serif;
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* ASAS Brand Colors */
