@@ -38,19 +38,19 @@ function PropertyCard({ property, onStatusChange }: { property: Property; onStat
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 overflow-hidden shadow-sm hover:border-asas-gold/30 transition-all group flex flex-col h-full"
+      whileHover={{ y: -6, transition: { duration: 0.2 } }}
+      className="bg-white dark:bg-[#141618] rounded-lg border border-white/10 overflow-hidden shadow-md hover:shadow-lg hover:border-asas-gold/30 transition-all group flex flex-col h-full"
     >
       {/* Image placeholder */}
-      <div className="h-48 shrink-0 bg-asas-sand/30 dark:bg-black/10 flex items-center justify-center relative overflow-hidden">
+      <div className="h-56 shrink-0 bg-gradient-to-br from-asas-gold/10 to-asas-gold/5 flex items-center justify-center relative overflow-hidden">
         {property.images?.[0] ? (
-          <Image src={property.images[0]} alt="Property image" fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+          <Image src={property.images[0]} alt="Property image" fill className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out opacity-85 group-hover:opacity-100" referrerPolicy="no-referrer" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         ) : (
-          <Building2 className="h-12 w-12 text-asas-silver/20" />
+          <Building2 className="h-16 w-16 text-asas-gold/20" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
-        <span className={clsx('absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1 rounded-sm border text-[9px] uppercase tracking-widest font-bold shadow-sm backdrop-blur-md', cfg.color)}>
-           <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0 shadow-[0_0_10px_currentColor]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-300" />
+        <span className={clsx('absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[9px] uppercase tracking-widest font-bold shadow-lg backdrop-blur-sm', cfg.color)}>
+           <span className="w-2 h-2 rounded-full bg-current shrink-0 shadow-lg" />
           {cfg.label}
         </span>
       </div>

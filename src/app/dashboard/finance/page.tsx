@@ -83,19 +83,18 @@ export default function FinancePage() {
   return (
     <div className="flex-1 text-gray-900 dark:text-gray-100 flex flex-col">
       <div className="w-full space-y-8 max-w-6xl mx-auto">
-        <div className="relative z-10 w-full mb-10 pt-4">
-          <h1 className="text-3xl sm:text-4xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-4 font-display uppercase">
-             <div className="w-14 h-14 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center shadow-sm relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-asas-gold/10 group-hover:bg-asas-gold/20 transition-colors" />
-                 <DollarSign className="h-7 w-7 text-asas-gold relative z-10" /> 
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 w-full mb-10 pt-4">
+          <h1 className="text-4xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-4 font-display uppercase">
+             <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-asas-gold/20 to-asas-gold/10 border border-asas-gold/30 flex items-center justify-center shadow-lg">
+                 <DollarSign className="h-7 w-7 text-asas-gold" /> 
              </div>
              Analytique Financière
           </h1>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-asas-silver mt-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-asas-gold animate-[ping_2s_ease-in-out_infinite]" />
-            PRÉVISIONS & TRÉSORERIE SYSTÈME
+          <p className="text-xs uppercase tracking-wider font-semibold text-asas-silver/70 mt-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-asas-gold animate-pulse" />
+            Prévisions & Trésorerie Système
           </p>
-        </div>
+        </motion.div>
 
         {/* Liquidity warning */}
         {cash && cash.liquidityMode !== 'growth' && modeStyle?.banner && (
@@ -120,22 +119,22 @@ export default function FinancePage() {
         {cash && (
           <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { label: 'Solde Liquidité', value: cash.cashBalance,      icon: DollarSign, color: cash.cashBalance > 5_000_000 ? 'text-asas-emerald' : 'text-red-500', bg: 'bg-white dark:bg-[#141618]', iconBg: 'bg-asas-emerald/10', iconColor: 'text-asas-emerald' },
-              { label: 'Créances Clients',    value: cash.receivablesTotal, icon: Clock,      color: 'text-asas-navy dark:text-asas-sand', bg: 'bg-white dark:bg-[#141618]', iconBg: 'bg-asas-navy/10', iconColor: 'text-asas-navy dark:text-asas-sand/50' },
-              { label: 'Dettes & Commissions',    value: cash.payablesTotal,    icon: TrendingDown, color: 'text-asas-copper', bg: 'bg-white dark:bg-[#141618]', iconBg: 'bg-asas-copper/10', iconColor: 'text-asas-copper' },
-              { label: 'Position Nette',      value: cash.netPosition,      icon: CheckCircle, color: cash.netPosition >= 0 ? 'text-asas-emerald' : 'text-red-500', bg: 'bg-white dark:bg-[#141618]', iconBg: cash.netPosition >= 0 ? 'bg-asas-emerald/10' : 'bg-red-500/10', iconColor: cash.netPosition >= 0 ? 'text-asas-emerald' : 'text-red-500' },
-            ].map(({ label, value, icon: Icon, color, bg, iconBg, iconColor }, i) => (
-              <motion.div key={label} variants={item} className={clsx("rounded-sm border border-asas-silver/20 p-6 shadow-sm transition-all relative overflow-hidden group hover:border-asas-gold/40", bg)}>
+              { label: 'Solde Liquidité', value: cash.cashBalance, icon: DollarSign, color: cash.cashBalance > 5_000_000 ? 'text-asas-emerald' : 'text-red-500', gradient: 'from-asas-emerald/10 to-asas-emerald/5', iconBg: 'bg-asas-emerald/10', iconColor: 'text-asas-emerald' },
+              { label: 'Créances Clients', value: cash.receivablesTotal, icon: Clock, color: 'text-blue-500', gradient: 'from-blue-500/10 to-blue-500/5', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-500' },
+              { label: 'Dettes & Commissions', value: cash.payablesTotal, icon: TrendingDown, color: 'text-asas-copper', gradient: 'from-asas-copper/10 to-asas-copper/5', iconBg: 'bg-asas-copper/10', iconColor: 'text-asas-copper' },
+              { label: 'Position Nette', value: cash.netPosition, icon: CheckCircle, color: cash.netPosition >= 0 ? 'text-asas-emerald' : 'text-red-500', gradient: cash.netPosition >= 0 ? 'from-asas-emerald/10 to-asas-emerald/5' : 'from-red-500/10 to-red-500/5', iconBg: cash.netPosition >= 0 ? 'bg-asas-emerald/10' : 'bg-red-500/10', iconColor: cash.netPosition >= 0 ? 'text-asas-emerald' : 'text-red-500' },
+            ].map(({ label, value, icon: Icon, color, gradient, iconBg, iconColor }, i) => (
+              <motion.div key={label} variants={item} className={clsx("rounded-lg border border-white/10 p-6 shadow-md hover:shadow-lg transition-all relative overflow-hidden group bg-gradient-to-br", gradient)}>
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                    <Icon className="w-16 h-16 text-asas-silver" />
                 </div>
                 <div className="flex items-center gap-4 mb-4 relative z-10">
-                  <div className={clsx("w-10 h-10 rounded-sm flex items-center justify-center border border-asas-silver/10", iconBg, iconColor)}>
+                  <div className={clsx("w-10 h-10 rounded-lg flex items-center justify-center border border-white/10", iconBg, iconColor)}>
                       <Icon className="h-5 w-5" />
                   </div>
-                  <p className="text-[9px] uppercase tracking-widest font-bold text-asas-silver leading-tight">{label}</p>
+                  <p className="text-xs uppercase tracking-wider font-semibold text-asas-charcoal dark:text-asas-sand/80 leading-tight">{label}</p>
                 </div>
-                <p className={clsx('text-xl md:text-2xl font-bold tracking-tighter relative z-10 font-mono', color)}>{fmt(value)}</p>
+                <p className={clsx('text-2xl font-bold tracking-tighter relative z-10 font-mono', color)}>{fmt(value)}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -143,38 +142,38 @@ export default function FinancePage() {
 
         {/* Receivables aging */}
         {aging && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-asas-silver/20 gap-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white dark:bg-[#141618] rounded-lg border border-white/10 p-8 shadow-md">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-white/10 gap-6">
               <div>
-                  <h2 className="text-xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight font-display uppercase">Analyse d'Ancienneté</h2>
-                  <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-2">Détail de l'échéancier des flux entrants en attente de vérification.</p>
+                  <h2 className="text-2xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight font-display uppercase">Analyse d'Ancienneté</h2>
+                  <p className="text-xs uppercase font-semibold tracking-wider text-asas-silver/70 mt-2">Détail de l'échéancier des flux entrants</p>
               </div>
-              <div className="flex items-center gap-6 bg-asas-sand/30 dark:bg-black/10 rounded-sm p-4 shrink-0 border border-asas-silver/20">
+              <div className="flex items-center gap-6 bg-gradient-to-r from-white/50 to-white/30 dark:from-white/5 dark:to-white/[0.02] rounded-lg p-5 shrink-0 border border-white/10">
                  <div>
-                     <p className="text-[9px] uppercase tracking-widest text-asas-silver font-bold mb-1">Défauts critiques</p>
-                     <p className="text-xl font-bold text-asas-charcoal dark:text-asas-sand leading-none">{aging.overdueCount}</p>
+                     <p className="text-[9px] uppercase tracking-wider font-semibold text-asas-silver/70 mb-2">Défauts Critiques</p>
+                     <p className="text-2xl font-bold text-red-500 leading-none">{aging.overdueCount}</p>
                  </div>
-                 <div className="w-px h-10 bg-asas-silver/20" />
+                 <div className="w-px h-12 bg-white/10" />
                  <div>
-                     <p className="text-[9px] uppercase tracking-widest text-asas-silver font-bold mb-1">Efficience Encaissement</p>
-                     <p className="text-xl font-bold text-asas-emerald leading-none">{Math.round(aging.collectionEfficiency * 100)}%</p>
+                     <p className="text-[9px] uppercase tracking-wider font-semibold text-asas-silver/70 mb-2">Efficience Encaissement</p>
+                     <p className="text-2xl font-bold text-asas-emerald leading-none">{Math.round(aging.collectionEfficiency * 100)}%</p>
                  </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
               {aging.buckets.map(bucket => (
-                <div key={bucket.label} className={clsx('rounded-sm p-5 border relative overflow-hidden', bucket.label === '90+' ? 'border-red-500/20 bg-red-500/5' : bucket.label === '61-90' ? 'border-orange-500/20 bg-orange-500/5' : 'border-asas-silver/20 bg-asas-sand/10 dark:bg-white/5')}>
-                  {bucket.label === '90+' && <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-full blur-2xl" />}
-                  <p className="text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-2 relative z-10">{bucket.label} jours</p>
+                <motion.div key={bucket.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={clsx('rounded-lg p-6 border relative overflow-hidden shadow-md hover:shadow-lg transition-all', bucket.label === '90+' ? 'border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-500/5' : bucket.label === '61-90' ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-orange-500/5' : 'border-white/10 bg-gradient-to-br from-white/50 to-white/30 dark:from-white/5 dark:to-white/[0.02]')}>
+                  {bucket.label === '90+' && <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/15 rounded-full blur-2xl" />}
+                  <p className="text-xs uppercase tracking-wider font-semibold text-asas-silver/70 mb-3 relative z-10">{bucket.label} jours</p>
                   <p className={clsx('text-xl font-bold tracking-tight relative z-10 font-mono', bucket.label === '90+' ? 'text-red-500' : bucket.label === '61-90' ? 'text-orange-500' : 'text-asas-charcoal dark:text-asas-sand')}>
                     {fmt(bucket.amount.amount)}
                   </p>
-                  <div className="flex items-center justify-between mt-3 font-bold relative z-10">
-                    <span className="text-[10px] text-asas-silver">{bucket.count} flux</span>
-                    <span className="text-[10px] text-asas-silver bg-asas-silver/10 px-2 py-0.5 rounded-sm">{bucket.pct}%</span>
+                  <div className="flex items-center justify-between mt-3 font-semibold relative z-10">
+                    <span className="text-xs text-asas-silver/70">{bucket.count} flux</span>
+                    <span className="text-xs text-asas-silver/70 bg-white/10 px-2.5 py-1 rounded-lg">{bucket.pct}%</span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 

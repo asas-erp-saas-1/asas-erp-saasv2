@@ -63,26 +63,30 @@ export default function ProjectsPage() {
       {/* Decorative Blur - Removed to match ASAS aesthetic */}
 
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 relative z-10">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 relative z-10">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-            <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center p-3 shadow-sm">
-              <Building2 className="h-full w-full text-asas-gold" strokeWidth={1.5} />
+          <h1 className="text-4xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-4 font-display uppercase">
+            <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-asas-gold/20 to-asas-gold/10 border border-asas-gold/30 flex items-center justify-center shadow-lg">
+              <Building2 className="h-7 w-7 text-asas-gold" strokeWidth={1.5} />
             </div>
             Programmes
           </h1>
-          <p className="text-[10px] font-bold text-asas-silver uppercase tracking-widest pl-1 mt-2">
+          <p className="text-xs font-semibold text-asas-silver/70 uppercase tracking-wider mt-3">
             Module de Pilotage Chantiers & Projets
           </p>
         </div>
         
         <div className="flex items-center gap-3">
-           <Link href="/dashboard/projects/bordereaux" className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#141618] border border-asas-silver/20 hover:border-asas-gold/40 text-asas-charcoal dark:text-asas-sand rounded-sm text-xs font-bold transition-transform active:scale-95 shadow-sm">
+           <Link href="/dashboard/projects/bordereaux" className="flex items-center gap-2 px-6 py-3 bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 hover:border-asas-gold/30 hover:bg-white/80 dark:hover:bg-white/10 text-asas-charcoal dark:text-asas-sand rounded-lg text-xs font-bold transition-all active:scale-95 shadow-md hover:shadow-lg">
              <FileText className="w-4 h-4 text-asas-gold" /> Bordereaux Promoteurs
            </Link>
-           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-asas-charcoal text-asas-sand dark:bg-asas-sand dark:text-asas-charcoal border border-transparent rounded-sm text-xs font-bold shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-transform active:scale-95 disabled:opacity-50 hover:bg-black dark:hover:bg-white">
-             <Plus className="w-4 h-4" /> Nouveau Programme
-           </button>
+           <motion.button 
+             whileHover={{ scale: 1.05 }}
+             whileTap={{ scale: 0.98 }}
+             onClick={() => setIsModalOpen(true)} 
+             className="flex items-center gap-2 px-6 py-3 bg-asas-gold hover:bg-asas-gold/90 text-asas-charcoal font-bold rounded-lg text-xs shadow-lg hover:shadow-xl transition-all border border-asas-gold/40">
+             <Plus className="w-4 h-4" strokeWidth={3} /> Nouveau Programme
+           </motion.button>
         </div>
       </motion.div>
 
