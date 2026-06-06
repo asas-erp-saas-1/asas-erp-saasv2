@@ -37,10 +37,12 @@ export function InteractiveGridMap({ properties, onSelect }: { properties: Prope
     const distribution: Record<string, Property[]> = {
       'RDC': [], 'Étage 1': [], 'Étage 2': [], 'Étage 3': [], 'Attique': []
     };
-    const levels = Object.keys(distribution);
+    const levels = ['RDC', 'Étage 1', 'Étage 2', 'Étage 3', 'Attique'];
     properties.forEach((p, i) => {
-      const level = levels[i % levels.length];
-      distribution[level].push(p);
+      const level = levels[i % levels.length] as string;
+      if (distribution[level]) {
+         distribution[level].push(p);
+      }
     });
     return distribution;
   }, [properties]);
