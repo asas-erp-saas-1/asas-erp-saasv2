@@ -69,44 +69,44 @@ export function AppInviteWidget() {
   }
 
   return (
-    <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-8 shadow-sm relative overflow-hidden mb-8 group hover:border-asas-gold/40 transition-colors">
+    <div className="bg-[#051121]/50 border border-white/5 rounded-xl p-8 shadow-sm relative overflow-hidden mb-8 group hover:border-asas-gold/20 transition-colors">
       <div className="relative z-10 flex flex-col md:flex-row gap-8">
-        <div className="flex-1 text-asas-charcoal dark:text-asas-sand">
+        <div className="flex-1 text-white">
           <div className="flex items-center gap-3 mb-4">
-             <div className="w-10 h-10 rounded-sm bg-asas-navy/10 border border-asas-navy/20 flex items-center justify-center">
-               <Share2 className="w-4 h-4 text-asas-navy dark:text-asas-sand" />
+             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+               <Share2 className="w-4 h-4 text-blue-400" />
              </div>
-             <h2 className="text-sm font-bold uppercase tracking-widest font-display">Inviter un Collaborateur</h2>
+             <h2 className="text-sm font-bold uppercase tracking-widest font-display text-white">Inviter un Collaborateur</h2>
           </div>
-          <p className="text-[10px] font-bold text-asas-silver leading-relaxed mb-6 max-w-lg">
+          <p className="text-[10px] font-bold text-white/50 leading-relaxed mb-6 max-w-lg">
             Générez une invitation sécurisée pour un nouvel agent ou manager. Une fois générée, vous pouvez copier le lien ou l'envoyer par WhatsApp.
           </p>
 
           {!success ? (
             <form onSubmit={generateInvite} className="space-y-4 max-w-sm">
               <div>
-                <label className="block text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-2">Email du collaborateur</label>
+                <label className="block text-[9px] uppercase tracking-widest font-bold text-white/50 mb-2">Email du collaborateur</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-4 w-4 text-asas-silver" />
+                    <Mail className="h-4 w-4 text-white/40" />
                   </div>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand rounded-sm text-[11px] focus:outline-none focus:border-asas-gold/50 transition-colors"
+                    className="w-full pl-10 pr-3 py-2 bg-black/50 border border-white/10 text-white rounded-xl text-[11px] focus:outline-none focus:border-asas-gold/50 transition-colors shadow-inner"
                     placeholder="agent@agence.com"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-2">Rôle</label>
+                <label className="block text-[9px] uppercase tracking-widest font-bold text-white/50 mb-2">Rôle</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand rounded-sm text-[11px] focus:outline-none focus:border-asas-gold/50 transition-colors appearance-none cursor-pointer"
+                  className="w-full px-3 py-2 bg-black/50 border border-white/10 text-white rounded-xl text-[11px] focus:outline-none focus:border-asas-gold/50 transition-colors appearance-none cursor-pointer shadow-inner"
                 >
                   <option value="agent">Agent Commercial</option>
                   <option value="manager">Manager</option>
@@ -121,12 +121,12 @@ export function AppInviteWidget() {
                 type="submit"
                 disabled={loading}
                 className={clsx(
-                  "w-full flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase tracking-widest font-bold transition-all shadow-sm cursor-pointer",
-                  "bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal hover:bg-asas-charcoal/90 dark:hover:bg-asas-sand/90",
-                  loading && "opacity-50"
+                  "w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[9px] uppercase tracking-widest font-bold transition-all shadow-sm cursor-pointer border border-transparent shadow-[0_0_15px_rgba(212,166,79,0.2)] transform hover:scale-[1.02] active:scale-95",
+                  "bg-asas-gold text-[#06152D] hover:bg-[#E0B96B]",
+                  loading && "opacity-50 transform-none hover:bg-asas-gold"
                 )}
               >
-                {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {loading ? <RefreshCw className="w-4 h-4 animate-spin text-[#06152D]" /> : <Send className="w-4 h-4" />}
                 Générer l'invitation
               </button>
             </form>
@@ -136,8 +136,8 @@ export function AppInviteWidget() {
                 <button 
                   onClick={handleCopy}
                   className={clsx(
-                    "flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase tracking-widest font-bold transition-all shadow-sm cursor-pointer",
-                    copied ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20" : "bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal border border-transparent hover:bg-asas-charcoal/90 dark:hover:bg-asas-sand/90"
+                    "flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[9px] uppercase tracking-widest font-bold transition-all shadow-sm cursor-pointer",
+                    copied ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-white/5 text-white border border-white/10 hover:bg-white/10"
                   )}
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -145,7 +145,7 @@ export function AppInviteWidget() {
                 </button>
                 <button 
                   onClick={handleWhatsApp}
-                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase tracking-widest font-bold text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors shadow-sm cursor-pointer"
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[9px] uppercase tracking-widest font-bold text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors shadow-sm cursor-pointer"
                 >
                   <Smartphone className="w-4 h-4" />
                   Envoyer par WhatsApp
@@ -153,9 +153,9 @@ export function AppInviteWidget() {
               </div>
               <button 
                 onClick={resetForm}
-                className="text-[9px] uppercase tracking-widest font-bold text-asas-silver hover:text-asas-gold transition-colors flex items-center gap-2"
+                className="text-[9px] uppercase tracking-widest font-bold text-white/50 hover:text-asas-gold transition-colors flex items-center gap-2"
               >
-                <RefreshCw className="w-3 h-3" /> Nouvelle invitation
+                <RefreshCw className="w-3 h-3 text-white/50" /> Nouvelle invitation
               </button>
             </div>
           )}
@@ -165,13 +165,13 @@ export function AppInviteWidget() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="w-full md:w-auto p-4 bg-asas-sand/30 dark:bg-black/10 border border-asas-silver/20 rounded-sm self-start"
+            className="w-full md:w-auto p-4 bg-white/5 border border-white/10 rounded-xl self-start"
           >
-            <div className="bg-white dark:bg-[#141618] rounded-sm p-4 w-full md:w-72 shadow-sm border border-asas-silver/10">
-              <p className="text-[9px] text-asas-silver font-bold mb-2 uppercase tracking-widest flex items-center justify-between">
+            <div className="bg-black/50 rounded-xl p-4 w-full md:w-72 shadow-inner border border-white/5">
+              <p className="text-[9px] text-white/50 font-bold mb-2 uppercase tracking-widest flex items-center justify-between">
                 Aperçu du message
               </p>
-              <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand font-mono whitespace-pre-wrap">{welcomeMessage}</p>
+              <p className="text-[10px] font-bold text-white font-mono whitespace-pre-wrap">{welcomeMessage}</p>
             </div>
           </motion.div>
         )}

@@ -103,36 +103,36 @@ export function SecurityPanel() {
   };
 
   return (
-    <div className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors">
+    <div className="bg-[#051121]/50 rounded-xl border border-white/5 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/20 transition-colors">
       <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
-        <ShieldCheck className="w-24 h-24 text-asas-navy dark:text-asas-sand" />
+        <ShieldCheck className="w-24 h-24 text-asas-gold" />
       </div>
       <div className="flex items-center gap-4 mb-8 relative z-10">
-        <div className="w-12 h-12 rounded-sm bg-asas-navy/10 border border-asas-navy/20 text-asas-navy dark:text-asas-sand flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 text-asas-gold flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
           <ShieldCheck className="h-5 w-5" />
         </div>
-        <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">Sécurité du Compte (2FA)</h2>
+        <h2 className="text-sm font-bold text-white uppercase tracking-widest font-display">Sécurité du Compte (2FA)</h2>
       </div>
 
       <div className="space-y-6 relative z-10">
-        <p className="text-[10px] text-asas-charcoal dark:text-asas-sand font-bold">
+        <p className="text-[10px] text-white/50 font-bold">
           Protégez votre compte avec l'authentification à deux facteurs (TOTP/SMS). À chaque connexion, un code de sécurité sera exigé.
         </p>
 
         {error && (
-          <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-sm text-[9px] uppercase tracking-widest font-bold flex items-start gap-3">
+          <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[9px] uppercase tracking-widest font-bold flex items-start gap-3 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
             <X className="w-4 h-4 shrink-0" /> {error}
           </div>
         )}
         
         {successMsg && (
-          <div className="p-4 bg-asas-emerald/10 border border-asas-emerald/20 text-asas-emerald rounded-sm text-[9px] uppercase tracking-widest font-bold flex items-start gap-3">
+          <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-[9px] uppercase tracking-widest font-bold flex items-start gap-3 shadow-[0_0_15px_rgba(74,222,128,0.1)]">
             <CheckCircle2 className="w-4 h-4 shrink-0" /> {successMsg}
           </div>
         )}
 
         {loading && !factors.length ? (
-          <div className="flex items-center gap-3 text-asas-silver text-[9px] uppercase tracking-widest font-bold">
+          <div className="flex items-center gap-3 text-white/50 text-[9px] uppercase tracking-widest font-bold">
             <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
           </div>
         ) : (
@@ -140,18 +140,18 @@ export function SecurityPanel() {
             {factors.length > 0 ? (
               <div className="space-y-3">
                 {factors.map(f => (
-                  <div key={f.id} className="flex items-center justify-between p-4 border border-asas-silver/20 bg-asas-sand/50 dark:bg-black/10 rounded-sm shadow-sm">
+                  <div key={f.id} className="flex items-center justify-between p-4 border border-white/5 bg-white/5 rounded-xl shadow-inner">
                     <div className="flex items-center gap-3">
-                      {f.factor_type === 'totp' ? <QrCode className="w-4 h-4 text-asas-silver" /> : <Smartphone className="w-4 h-4 text-asas-silver" />}
+                      {f.factor_type === 'totp' ? <QrCode className="w-4 h-4 text-white/50" /> : <Smartphone className="w-4 h-4 text-white/50" />}
                       <div>
-                        <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest">App Authenticator</p>
-                        <p className="text-[9px] text-asas-silver tracking-widest uppercase font-mono">ID: {f.id.split('-')[0]}...</p>
+                        <p className="text-[10px] font-bold text-white uppercase tracking-widest">App Authenticator</p>
+                        <p className="text-[9px] text-white/50 tracking-widest uppercase font-mono">ID: {f.id.split('-')[0]}...</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => handleUnenroll(f.id)}
                       disabled={loading}
-                      className="px-4 py-2 text-[9px] font-bold text-red-500 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-sm transition-colors uppercase tracking-widest cursor-pointer"
+                      className="px-4 py-2 text-[9px] font-bold text-[#06152D] bg-[#EF4444] hover:bg-red-400 border border-transparent hover:border-transparent rounded-xl transition-all uppercase tracking-widest cursor-pointer shadow-[0_0_15px_rgba(239,68,68,0.3)] transform hover:scale-[1.02] active:scale-95 disabled:transform-none disabled:opacity-50"
                     >
                       Désactiver
                     </button>
@@ -159,7 +159,7 @@ export function SecurityPanel() {
                 ))}
               </div>
             ) : (
-              <p className="text-[9px] uppercase font-bold tracking-widest text-orange-500 bg-orange-500/10 border border-orange-500/20 p-2.5 rounded-sm inline-block">
+              <p className="text-[9px] uppercase font-bold tracking-widest text-[#D4A64F] bg-asas-gold/10 border border-asas-gold/20 p-3 rounded-xl inline-block shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                 ⚠️ 2FA Non Configuré
               </p>
             )}
@@ -168,9 +168,9 @@ export function SecurityPanel() {
               <button 
                 onClick={handleEnrollTOTP}
                 disabled={enrolling}
-                className="mt-4 flex items-center gap-2 px-5 py-3 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal font-bold text-[9px] uppercase tracking-widest rounded-sm shadow-sm hover:translate-y-[-1px] transition-all w-full sm:w-auto justify-center cursor-pointer"
+                className="mt-4 flex items-center gap-2 px-5 py-3 bg-asas-gold text-[#06152D] hover:bg-[#E0B96B] font-bold text-[9px] uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 transition-all w-full sm:w-auto justify-center cursor-pointer disabled:transform-none disabled:opacity-50"
               >
-                {enrolling ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
+                {enrolling ? <Loader2 className="w-4 h-4 animate-spin text-[#06152D]" /> : <QrCode className="w-4 h-4" />}
                 Ajouter une App d'Authentification
               </button>
             )}
@@ -178,12 +178,12 @@ export function SecurityPanel() {
             {qrCode && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className="mt-6 p-6 border border-asas-silver/20 bg-white dark:bg-[#141618] rounded-sm flex flex-col md:flex-row gap-6 items-start"
+                className="mt-6 p-6 border border-white/5 bg-white/5 rounded-xl flex flex-col md:flex-row gap-6 items-start shadow-inner"
               >
-                <div className="shrink-0 bg-white p-4 rounded-sm shadow-sm border border-asas-silver/20" dangerouslySetInnerHTML={{ __html: qrCode }} />
+                <div className="shrink-0 bg-white p-4 rounded-xl shadow-sm border border-transparent" dangerouslySetInnerHTML={{ __html: qrCode }} />
                 <div className="flex-1 w-full space-y-4">
-                  <h3 className="font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest text-[10px]">Scanner le QR Code</h3>
-                  <p className="text-[10px] text-asas-silver">
+                  <h3 className="font-bold text-white uppercase tracking-widest text-[10px]">Scanner le QR Code</h3>
+                  <p className="text-[10px] text-white/50">
                     Ouvrez votre application d'authentification (Google Authenticator, Authy, etc.) et scannez ce QR code.
                   </p>
                   <div>
@@ -193,21 +193,21 @@ export function SecurityPanel() {
                       onChange={(e) => setVerifyCode(e.target.value.replace(/[^0-9]/g, ''))}
                       maxLength={6}
                       placeholder="000 000"
-                      className="w-full max-w-[200px] text-center font-mono text-xl tracking-[0.3em] font-bold px-4 py-3 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm focus:outline-none focus:border-asas-gold text-asas-charcoal dark:text-asas-sand"
+                      className="w-full max-w-[200px] text-center font-mono text-xl tracking-[0.3em] font-bold px-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-asas-gold text-white shadow-inner"
                     />
                   </div>
                   <div className="flex gap-3">
                     <button 
                       onClick={handleVerifyEnrollment}
                       disabled={enrolling || verifyCode.length !== 6}
-                      className="flex-1 sm:flex-none justify-center flex items-center gap-2 px-5 py-3 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal font-bold text-[9px] uppercase tracking-widest rounded-sm shadow-sm transition-all disabled:opacity-50 hover:opacity-90 cursor-pointer"
+                      className="flex-1 sm:flex-none justify-center flex items-center gap-2 px-5 py-3 bg-asas-gold text-[#06152D] hover:bg-[#E0B96B] font-bold text-[9px] uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(212,166,79,0.3)] transition-all disabled:opacity-50 disabled:transform-none transform hover:scale-[1.02] active:scale-95 cursor-pointer"
                     >
-                      {enrolling ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />} Valider
+                      {enrolling ? <Loader2 className="w-4 h-4 animate-spin text-[#06152D]" /> : <CheckCircle2 className="w-4 h-4" />} Valider
                     </button>
                     <button 
                       onClick={() => { setQrCode(null); setFactorId(null); setVerifyCode(''); setError(null); }}
                       disabled={enrolling}
-                      className="flex-1 sm:flex-none justify-center px-5 py-3 bg-white dark:bg-[#141618] border border-asas-silver/20 hover:bg-asas-sand/50 dark:hover:bg-black/10 text-asas-charcoal dark:text-asas-sand font-bold text-[9px] uppercase tracking-widest rounded-sm transition-all cursor-pointer"
+                      className="flex-1 sm:flex-none justify-center px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-[9px] uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                     >
                       Annuler
                     </button>

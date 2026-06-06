@@ -6,36 +6,41 @@ import { motion } from 'motion/react';
 
 export function LandingContent() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand overflow-hidden relative">
+    <div className="min-h-screen bg-[#06152D] text-white overflow-hidden relative selection:bg-asas-gold/30 selection:text-white">
       {/* Background Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-asas-navy/20 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+         <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_top_right,_rgba(212,166,79,0.05),_transparent_70%)]"></div>
+         <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-[radial-gradient(circle_at_bottom_left,_rgba(12,38,77,0.5),_transparent_60%)]"></div>
+      </div>
 
       {/* Navigation */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-asas-sand/30 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-asas-silver/20">
+      <header className="fixed top-0 inset-x-0 z-50 bg-[#0A1629]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-sm bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-              <Building2 className="w-5 h-5 text-gray-900 dark:text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-white/10 to-transparent border border-asas-gold/30 flex items-center justify-center relative shadow-[0_0_15px_rgba(212,166,79,0.2)]">
+              <div className="absolute inset-0 bg-asas-gold/10 rounded-xl blur-md"></div>
+              <Building2 className="w-5 h-5 text-asas-gold relative z-10" />
             </div>
-            <span className="font-display font-extrabold text-xl tracking-tight">ASAS<span className="text-asas-navy dark:text-asas-sand">.</span></span>
+            <p className="font-display font-bold text-white tracking-tight leading-none text-xl flex items-center gap-2">
+              ASAS <span className="text-white/20 font-light text-base">|</span> <span className="font-sans font-medium text-lg text-asas-gold">أساس</span>
+            </p>
           </div>
-          <div className="flex items-center gap-6 text-sm font-bold">
-            <Link href="#features" className="text-asas-charcoal/80 dark:text-asas-silver hover:text-gray-900 dark:text-white transition-colors">Fonctionnalités</Link>
-            <Link href="/dashboard" className="hidden sm:flex px-5 py-2.5 bg-white text-black hover:bg-gray-200 rounded-full transition-all tracking-wide items-center gap-2 group">
-              Ouvrir l'OS <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <div className="flex items-center gap-6 text-[10px] uppercase tracking-widest font-bold text-white/50">
+            <Link href="#features" className="hover:text-white transition-colors">Fonctionnalités</Link>
+            <Link href="/login" className="hidden sm:flex px-6 py-3 bg-asas-gold text-[#06152D] hover:bg-[#E0B96B] rounded-xl transition-all items-center gap-2 group shadow-[0_0_20px_rgba(212,166,79,0.3)]">
+              Accès O.S <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" strokeWidth={2} />
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="pt-32 pb-20">
+      <main className="pt-32 pb-20 relative z-10">
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6 pt-20 pb-32 text-center flex flex-col items-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-asas-gold/10 border border-asas-gold/20 text-[#D4A64F] text-[10px] font-bold uppercase tracking-[0.2em] mb-8 shadow-[0_0_15px_rgba(212,166,79,0.15)]"
           >
             <Zap className="w-3.5 h-3.5" />
             Nouvelle génération d'ERP Immobilier
@@ -48,14 +53,14 @@ export function LandingContent() {
             className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-8 font-display max-w-4xl"
           >
             Le premier véritable <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-600">Système d'Exploitation</span> Immobilier.
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A64F] to-[#E0B96B]">Système d'Exploitation</span> Immobilier.
           </motion.h1>
           
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium max-w-2xl mb-12"
+            className="text-lg md:text-xl text-white/50 font-medium max-w-2xl mb-12 leading-relaxed"
           >
             ASAS unifie votre agence : CRM, gestion de pipeline, rapprochement bancaire, et génération de leads dans une interface d’une rapidité chirurgicale.
           </motion.p>
@@ -66,35 +71,36 @@ export function LandingContent() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center gap-4"
           >
-            <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-white text-black hover:bg-gray-200 rounded-full transition-all text-sm font-extrabold flex items-center justify-center gap-2 group shadow-[0_0_30px_rgba(255,255,255,0.15)]">
-              Initialiser ASAS <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl transition-all text-xs uppercase tracking-widest font-extrabold flex items-center justify-center gap-2 group shadow-[0_0_30px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95">
+              Initialiser ASAS <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" strokeWidth={2} />
             </Link>
-            <Link href="#features" className="w-full sm:w-auto px-8 py-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 text-gray-900 dark:text-white rounded-full transition-all text-sm font-extrabold flex items-center justify-center gap-2">
+            <Link href="#features" className="w-full sm:w-auto px-8 py-4 bg-[#0A1829]/60 backdrop-blur-xl border border-white/5 hover:border-white/10 hover:bg-white/5 text-white/80 rounded-xl transition-all text-xs uppercase tracking-widest font-extrabold flex items-center justify-center gap-2">
               Explorer l'architecture
             </Link>
           </motion.div>
         </section>
 
         {/* Feature Grid */}
-        <section id="features" className="max-w-7xl mx-auto px-6 py-24 border-t border-black/5 dark:border-white/5 relative">
+        <section id="features" className="max-w-7xl mx-auto px-6 py-24 relative">
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight font-display mb-4">Architecture modulaire.</h2>
-              <p className="text-gray-600 dark:text-gray-400 font-medium max-w-xl mx-auto">Chaque module est conçu pour fonctionner en parfaite synchronicité avec le reste du système.</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-display mb-4">Architecture modulaire.</h2>
+              <p className="text-white/50 font-medium max-w-xl mx-auto">Chaque module est conçu pour fonctionner en parfaite synchronicité avec le reste du système.</p>
            </div>
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FeatureCard 
-                icon={<Building2 className="w-6 h-6 text-blue-400" />}
+                icon={<Building2 className="w-6 h-6 text-[#D4A64F]" />}
                 title="Gestion de Propriétés"
                 description="Inventaire en temps réel, suivi de disponibilité et cycle de vie complet de chaque actif immobilier."
               />
               <FeatureCard 
-                icon={<Workflow className="w-6 h-6 text-emerald-400" />}
+                icon={<Workflow className="w-6 h-6 text-green-400" />}
                 title="CRM & Pipeline"
                 description="Acquisition, tracking et conversion des leads via un pipeline ultra-fluide et prédictif."
               />
               <FeatureCard 
-                icon={<BarChart3 className="w-6 h-6 text-indigo-400" />}
+                icon={<BarChart3 className="w-6 h-6 text-blue-400" />}
                 title="Analyses Financières"
                 description="Rapprochement direct, prévisions de trésorerie et tableaux de bord analytiques complexes."
               />
@@ -107,12 +113,16 @@ export function LandingContent() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <div className="bg-white dark:bg-[#141618] border border-black/5 dark:border-white/5 p-8 rounded-[2rem] hover:border-black/10 dark:border-white/10 transition-all hover:-translate-y-1 group">
-      <div className="w-14 h-14 rounded-sm bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+    <div className="bg-[#0A1829]/60 backdrop-blur-3xl border border-white/5 p-8 rounded-[2rem] hover:border-white/10 transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] group overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-4 opacity-[0.03] transform scale-150 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
         {icon}
       </div>
-      <h3 className="text-xl font-bold tracking-tight mb-3">{title}</h3>
-      <p className="text-sm text-asas-silver font-medium leading-relaxed">{description}</p>
+      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 relative z-10 shadow-inner">
+        {icon}
+      </div>
+      <h3 className="text-xl font-bold tracking-tight mb-3 text-white">{title}</h3>
+      <p className="text-sm text-white/50 font-medium leading-relaxed">{description}</p>
     </div>
   )
 }
+

@@ -20,7 +20,7 @@ interface Property {
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
   available: { label: 'Disponible', color: 'bg-asas-emerald/10 text-asas-emerald border-asas-emerald/20', icon: CheckCircle },
   reserved:  { label: 'Réservé',    color: 'bg-asas-gold/10 text-asas-gold border-asas-gold/20', icon: Clock },
-  sold:      { label: 'Vendu',      color: 'bg-asas-navy/10 text-asas-navy dark:text-asas-sand border-asas-navy/20',    icon: CheckCircle },
+  sold:      { label: 'Vendu',      color: 'bg-asas-navy/10 text-white/50 border-asas-navy/20',    icon: CheckCircle },
   off_market:{ label: 'Retiré',     color: 'bg-asas-copper/10 text-asas-copper border-asas-copper/20',      icon: XCircle },
 }
 

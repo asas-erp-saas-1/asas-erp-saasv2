@@ -145,7 +145,7 @@ export default function OrchestratorWorkspace() {
 
   if (loading && !data) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center py-24 text-asas-silver animate-pulse">
+      <div className="flex-1 flex flex-col items-center justify-center py-24 text-white/50 animate-pulse">
         <RefreshCw className="h-8 w-8 text-asas-gold animate-spin mb-4" />
         <p className="text-[10px] uppercase font-bold tracking-widest font-mono">Connexion au moteur d'orchestration...</p>
       </div>
@@ -164,7 +164,7 @@ export default function OrchestratorWorkspace() {
   return (
     <div className="flex-1 flex flex-col space-y-8 bg-transparent">
       {/* Banner */}
-      <div className="bg-asas-charcoal border-b border-asas-silver/20 px-6 py-6 pb-8 relative group rounded-sm shadow-xl overflow-hidden">
+      <div className="bg-[#051121] border border-white/5 px-6 py-6 pb-8 relative group rounded-2xl shadow-xl overflow-hidden">
         <div 
           className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
           style={{ 
@@ -175,23 +175,23 @@ export default function OrchestratorWorkspace() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[9px] uppercase tracking-widest bg-asas-gold/10 text-asas-gold px-2.5 py-1 rounded-sm border border-asas-gold/20 font-bold flex items-center gap-1.5">
+              <span className="text-[9px] uppercase tracking-widest bg-asas-gold/10 text-asas-gold px-2.5 py-1 rounded-[4px] border border-asas-gold/20 font-bold flex items-center gap-1.5">
                 <Activity className="h-3 w-3 animate-pulse" /> Layer 1-10 Orchestrator
               </span>
-              <span className="text-[9px] uppercase tracking-widest bg-[#141618] text-asas-sand border border-asas-silver/10 px-2 py-1 rounded-sm font-bold">
+              <span className="text-[9px] uppercase tracking-widest bg-white/5 text-white/60 border border-white/10 px-2 py-1 rounded-[4px] font-bold">
                  Algerian Operational Reality Enabled
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-white uppercase">
-              Chef d'Orchestre <span className="text-asas-silver/40 font-light mx-2">|</span> Autopilote Événementiel
+              Chef d'Orchestre <span className="text-white/20 font-light mx-2">|</span> Autopilote Événementiel
             </h1>
-            <p className="text-[10px] sm:text-xs text-asas-silver uppercase font-bold tracking-widest mt-1.5 leading-relaxed">
+            <p className="text-[10px] sm:text-xs text-white/50 uppercase font-bold tracking-widest mt-1.5 leading-relaxed">
               Moteur opérationnel, enforcement SLA, ordonnanceur comptable et workflows d'auto-remédiation
             </p>
           </div>
           <button 
             onClick={fetchData}
-            className="flex items-center gap-2 px-5 py-3 bg-white/5 border border-asas-gold/20 text-asas-gold font-bold text-[10px] uppercase tracking-widest hover:bg-asas-gold/10 active:scale-95 transition-all rounded-sm cursor-pointer shadow-inner"
+            className="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 text-asas-gold font-bold text-[10px] uppercase tracking-widest hover:bg-white/10 active:scale-95 transition-all rounded-xl cursor-pointer shadow-sm"
           >
             <RefreshCw className="h-4 w-4" /> Recalibrer les moteurs
           </button>
@@ -201,19 +201,19 @@ export default function OrchestratorWorkspace() {
       {/* Interactive Simulation Dashboard Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left column sidebar for Event Bus Simulation Control Panel */}
-        <div className="lg:col-span-1 bg-white dark:bg-[#141618] border border-asas-silver/20 p-5 rounded-sm flex flex-col space-y-6 shadow-sm">
+        <div className="lg:col-span-1 bg-[#051121] border border-white/5 p-6 rounded-2xl flex flex-col space-y-6 shadow-sm">
           <div>
-            <h2 className="text-xs uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand border-b border-asas-silver/10 pb-3 flex items-center gap-2 font-display">
+            <h2 className="text-xs uppercase font-extrabold tracking-widest text-white border-b border-white/5 pb-3 flex items-center gap-2 font-display">
               <Database className="h-4 w-4 text-asas-gold" /> Bus d'Événements
             </h2>
-            <p className="text-[10px] text-asas-silver font-bold uppercase tracking-wider mt-2">
+            <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider mt-2">
               Injecter un événement physique métier pour simuler le déclenchement en chaîne
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
             {/* Simulation Scenarios */}
-            <h3 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">Scénarios Algériens Types</h3>
+            <h3 className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-2">Scénarios Algériens Types</h3>
             
             <button
               onClick={() => handleTriggerEvent(
@@ -223,12 +223,12 @@ export default function OrchestratorWorkspace() {
                 'milestone'
               )}
               disabled={eventTriggering}
-              className="w-full text-left p-3.5 bg-asas-sand/50 dark:bg-black/20 hover:bg-asas-gold/5 border border-asas-silver/10 hover:border-asas-gold/40 rounded-sm text-xs font-medium text-asas-charcoal dark:text-asas-sand hover:translate-x-1 transition-all flex items-start gap-2.5 group cursor-pointer"
+              className="w-full text-left p-4 bg-white/5 hover:bg-asas-gold/5 border border-white/5 hover:border-asas-gold/30 rounded-xl text-xs font-medium text-white hover:translate-x-1 transition-all flex items-start gap-2.5 group cursor-pointer shadow-sm"
             >
               <Zap className="h-4.5 w-4.5 text-asas-gold shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold uppercase tracking-wider text-[9px] text-asas-gold group-hover:text-asas-copper transition-colors">Coulage Dalle Validé</p>
-                <p className="text-[9px] text-asas-silver/80 font-bold uppercase mt-1">Génère appel de fonds client · Débloque ciment</p>
+                <p className="font-bold uppercase tracking-wider text-[9px] text-asas-gold group-hover:text-[#E0B96B] transition-colors">Coulage Dalle Validé</p>
+                <p className="text-[9px] text-white/50 font-bold uppercase mt-1 leading-relaxed">Génère appel de fonds client · Débloque ciment</p>
               </div>
             </button>
 
@@ -240,12 +240,12 @@ export default function OrchestratorWorkspace() {
                 'financial'
               )}
               disabled={eventTriggering}
-              className="w-full text-left p-3.5 bg-asas-sand/50 dark:bg-black/20 hover:bg-asas-gold/5 border border-asas-silver/10 hover:border-asas-gold/40 rounded-sm text-xs font-medium text-asas-charcoal dark:text-asas-sand hover:translate-x-1 transition-all flex items-start gap-2.5 group cursor-pointer"
+              className="w-full text-left p-4 bg-white/5 hover:bg-asas-gold/5 border border-white/5 hover:border-asas-gold/30 rounded-xl text-xs font-medium text-white hover:translate-x-1 transition-all flex items-start gap-2.5 group cursor-pointer shadow-sm"
             >
               <Clock className="h-4.5 w-4.5 text-asas-gold shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold uppercase tracking-wider text-[9px] text-asas-gold group-hover:text-asas-copper transition-colors">Retard Versement Tranche</p>
-                <p className="text-[9px] text-asas-silver/80 font-bold uppercase mt-1">Vérifie l'échéance · Prépare alerte de recouvrement</p>
+                <p className="font-bold uppercase tracking-wider text-[9px] text-asas-gold group-hover:text-[#E0B96B] transition-colors">Retard Versement Tranche</p>
+                <p className="text-[9px] text-white/50 font-bold uppercase mt-1 leading-relaxed">Vérifie l'échéance · Prépare alerte de recouvrement</p>
               </div>
             </button>
 
@@ -257,19 +257,19 @@ export default function OrchestratorWorkspace() {
                 'approval'
               )}
               disabled={eventTriggering}
-              className="w-full text-left p-3.5 bg-asas-sand/50 dark:bg-black/20 hover:bg-asas-gold/5 border border-asas-silver/10 hover:border-asas-gold/40 rounded-sm text-xs font-medium text-asas-charcoal dark:text-asas-sand hover:translate-x-1 transition-all flex items-start gap-2.5 group cursor-pointer"
+              className="w-full text-left p-4 bg-white/5 hover:bg-asas-gold/5 border border-white/5 hover:border-asas-gold/30 rounded-xl text-xs font-medium text-white hover:translate-x-1 transition-all flex items-start gap-2.5 group cursor-pointer shadow-sm"
             >
               <FileSignature className="h-4.5 w-4.5 text-asas-gold shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold uppercase tracking-wider text-[9px] text-asas-gold group-hover:text-asas-copper transition-colors">EDD Notarié Approuvé</p>
-                <p className="text-[9px] text-asas-silver/80 font-bold uppercase mt-1">Signé Maître Bouaza Blida · Débloque dossier crédit</p>
+                <p className="font-bold uppercase tracking-wider text-[9px] text-asas-gold group-hover:text-[#E0B96B] transition-colors">EDD Notarié Approuvé</p>
+                <p className="text-[9px] text-white/50 font-bold uppercase mt-1 leading-relaxed">Signé Maître Bouaza Blida · Débloque dossier crédit</p>
               </div>
             </button>
           </div>
 
           {/* Active Acting Roles for Approvals */}
-          <div className="border-t border-asas-silver/10 pt-5">
-            <h3 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mb-3">Rôle Acteur Courant (Simulation)</h3>
+          <div className="border-t border-white/5 pt-6">
+            <h3 className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-4">Rôle Acteur Courant (Simulation)</h3>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { key: 'branch_manager', label: 'Dir. Agence' },
@@ -281,17 +281,17 @@ export default function OrchestratorWorkspace() {
                   key={role.key}
                   onClick={() => setActingRole(role.key as any)}
                   className={clsx(
-                    'p-2 text-[9px] uppercase font-bold tracking-widest rounded-sm border transition-all text-center cursor-pointer',
+                    'p-2.5 text-[9px] uppercase font-bold tracking-widest rounded-xl transition-all text-center cursor-pointer border',
                     actingRole === role.key 
-                      ? 'bg-asas-gold border-transparent text-white shadow-md' 
-                      : 'bg-asas-sand/35 dark:bg-black/10 text-asas-silver border-asas-silver/10 hover:text-asas-charcoal dark:hover:text-white'
+                      ? 'bg-asas-gold border-asas-gold text-[#051121] shadow-[0_0_15px_rgba(212,166,79,0.3)]' 
+                      : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white'
                   )}
                 >
                   {role.label}
                 </button>
               ))}
             </div>
-            <p className="text-[8px] uppercase tracking-widest text-asas-silver mt-2 text-center font-bold">
+            <p className="text-[8px] uppercase tracking-widest text-white/30 mt-3 text-center font-bold">
                Pour tester les approbations selon la hiérarchie.
             </p>
           </div>
@@ -300,7 +300,7 @@ export default function OrchestratorWorkspace() {
         {/* Right column: Tabbed detailed workspaces */}
         <div className="lg:col-span-3 flex flex-col space-y-6">
           {/* Tab Navigation selectors */}
-          <div className="flex gap-2 border-b border-asas-silver/20 pb-px flex-wrap overflow-x-auto">
+          <div className="flex gap-2 border-b border-white/5 pb-px flex-wrap overflow-x-auto">
             {[
               { id: 'workflows', label: 'Tâches & Graphes', count: tasks.length },
               { id: 'slas', label: 'SLA & Vigies', count: sla_violations.length },
@@ -315,15 +315,15 @@ export default function OrchestratorWorkspace() {
                 className={clsx(
                   'px-4 py-3 border-b-2 text-[9px] uppercase font-bold tracking-widest transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:border-asas-gold flex items-center gap-1.5',
                   activeTab === tab.id 
-                    ? 'border-asas-gold text-asas-charcoal dark:text-asas-sand' 
-                    : 'border-transparent text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand'
+                    ? 'border-asas-gold text-asas-gold' 
+                    : 'border-transparent text-white/50 hover:text-white'
                 )}
               >
                 {tab.label}
                 {tab.count > 0 && (
                   <span className={clsx(
                     'text-[8px] font-extrabold px-1.5 py-0.5 rounded-full min-w-4 text-center block leading-none',
-                    activeTab === tab.id ? 'bg-asas-gold text-white' : 'bg-asas-sand dark:bg-[#202325] text-asas-silver'
+                    activeTab === tab.id ? 'bg-asas-gold text-[#051121]' : 'bg-white/10 text-white/60'
                   )}>
                     {tab.count}
                   </span>
@@ -340,27 +340,27 @@ export default function OrchestratorWorkspace() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-6 rounded-sm space-y-6 shadow-sm flex flex-col"
+                className="bg-[#051121] border border-white/5 p-6 rounded-2xl space-y-8 shadow-sm flex flex-col"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-asas-silver/10 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-6">
                   <div>
-                    <h3 className="text-sm uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand font-display flex items-center gap-2">
+                    <h3 className="text-sm uppercase font-extrabold tracking-widest text-white font-display flex items-center gap-2">
                       <Lock className="h-4 w-4 text-asas-gold" /> Graphe d'ordonnancement (Layer 1)
                     </h3>
-                    <p className="text-[10px] text-asas-silver font-bold uppercase mt-1">
+                    <p className="text-[10px] text-white/50 font-bold uppercase mt-2 leading-relaxed">
                       Enforcement déterministe Finish-to-Start : Les tâches subsidiaires restent bloquées tant que les antécédents ne sont pas cochés.
                     </p>
                   </div>
                 </div>
 
                 {/* Create dependency form */}
-                <form onSubmit={handleCreateDependency} className="bg-asas-sand/20 dark:bg-black/10 border border-asas-silver/10 p-4 rounded-sm grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] uppercase tracking-widest text-asas-silver font-bold">Si cette tâche finit :</label>
+                <form onSubmit={handleCreateDependency} className="bg-white/5 border border-white/10 p-5 rounded-xl grid grid-cols-1 sm:grid-cols-3 gap-5 items-end">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[9px] uppercase tracking-widest text-white/50 font-bold">Si cette tâche finit :</label>
                     <select
                       value={newDepParent}
                       onChange={e => setNewDepParent(e.target.value)}
-                      className="bg-white dark:bg-[#202325] text-xs font-semibold px-3 py-2 border border-asas-silver/20 rounded-sm outline-none w-full"
+                      className="bg-[#0A1829] text-xs font-semibold px-4 py-2.5 border border-white/10 rounded-xl outline-none w-full text-white/80 focus:border-asas-gold/50"
                     >
                       <option value="">Sélectionner l'antécédent</option>
                       {tasks.map((t: any) => (
@@ -369,12 +369,12 @@ export default function OrchestratorWorkspace() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] uppercase tracking-widest text-asas-silver font-bold">Débloquer cette tâche :</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[9px] uppercase tracking-widest text-white/50 font-bold">Débloquer cette tâche :</label>
                     <select
                       value={newDepChild}
                       onChange={e => setNewDepChild(e.target.value)}
-                      className="bg-white dark:bg-[#202325] text-xs font-semibold px-3 py-2 border border-asas-silver/20 rounded-sm outline-none w-full"
+                      className="bg-[#0A1829] text-xs font-semibold px-4 py-2.5 border border-white/10 rounded-xl outline-none w-full text-white/80 focus:border-asas-gold/50"
                     >
                       <option value="">Sélectionner le sous-dépendant</option>
                       {tasks.map((t: any) => (
@@ -386,7 +386,7 @@ export default function OrchestratorWorkspace() {
                   <button
                     type="submit"
                     disabled={depAdding || !newDepParent || !newDepChild}
-                    className="h-9 px-4 py-2 bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal font-bold text-[10px] uppercase tracking-widest rounded-sm hover:translate-y-[-1px] transition-all cursor-pointer"
+                    className="h-[42px] px-6 py-2 bg-asas-gold text-[#051121] font-bold text-[10px] uppercase tracking-widest rounded-xl hover:bg-[#E0B96B] transition-all cursor-pointer shadow-[0_0_15px_rgba(212,166,79,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Lier les tâches (DEP)
                   </button>
@@ -394,16 +394,16 @@ export default function OrchestratorWorkspace() {
 
                 {/* List Active Dependencies */}
                 {dependencies.length > 0 && (
-                  <div className="space-y-3">
-                    <h4 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">Liens d'ordonnancement physiques</h4>
+                  <div className="space-y-4">
+                    <h4 className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Liens d'ordonnancement physiques</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {dependencies.map((dep: any) => (
-                        <div key={dep.id} className="p-3 bg-white dark:bg-[#202325] border border-asas-silver/20 rounded-sm flex items-center justify-between gap-4">
+                        <div key={dep.id} className="p-4 bg-[#0A1829] border border-white/5 rounded-xl flex items-center justify-between gap-4">
                           <div className="min-w-0">
-                            <span className="text-[8px] uppercase tracking-widest bg-asas-gold/10 text-asas-gold border border-asas-gold/20 px-1.5 py-0.5 rounded-sm font-bold">Finish-to-Start</span>
-                            <p className="text-[10px] font-bold text-asas-silver mt-1.5 uppercase truncate"><span className="text-asas-charcoal dark:text-asas-sand">{dep.parent_title || 'Tâche Antécédente'}</span></p>
-                            <div className="w-px h-3 bg-asas-silver/30 my-0.5 ml-2"></div>
-                            <p className="text-[10px] font-bold text-asas-sand uppercase truncate"><span className="text-red-500">🔒 Bloque :</span> {dep.child_title || 'Tâche Subséquente'}</p>
+                            <span className="text-[8px] uppercase tracking-widest bg-asas-gold/10 text-asas-gold border border-asas-gold/20 px-2 py-0.5 rounded-[4px] font-bold">Finish-to-Start</span>
+                            <p className="text-[10px] font-bold text-white/40 mt-3 uppercase truncate"><span className="text-white">{dep.parent_title || 'Tâche Antécédente'}</span></p>
+                            <div className="w-px h-4 bg-white/10 my-1 ml-2"></div>
+                            <p className="text-[10px] font-bold text-white uppercase truncate"><span className="text-red-400">🔒 Bloque :</span> {dep.child_title || 'Tâche Subséquente'}</p>
                           </div>
                         </div>
                       ))}
@@ -412,31 +412,31 @@ export default function OrchestratorWorkspace() {
                 )}
 
                 {/* Simulated list of Tasks locking */}
-                <div className="space-y-3 pt-4 border-t border-asas-silver/10">
-                  <h4 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">Statut de Verrouillage des opérations chantiers</h4>
-                  <div className="space-y-2">
+                <div className="space-y-4 pt-6 border-t border-white/5">
+                  <h4 className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Statut de Verrouillage des opérations chantiers</h4>
+                  <div className="space-y-3">
                     {tasks.map((t: any) => {
                       const isBlocked = dependencies.some((d: any) => d.task_id === t.id);
                       return (
-                        <div key={t.id} className="p-4 bg-asas-sand/15 dark:bg-black/10 border border-asas-silver/10 rounded-sm flex items-center justify-between gap-4">
+                        <div key={t.id} className="p-5 bg-[#0A1829] border border-white/5 rounded-xl flex items-center justify-between gap-4 shadow-sm">
                           <div>
-                            <p className="text-xs font-bold text-asas-charcoal dark:text-white flex items-center gap-2">
+                            <p className="text-xs font-bold text-white flex items-center gap-3">
                               {t.title}
                               {isBlocked && (
-                                <span className="text-[8px] uppercase tracking-widest bg-red-500/15 text-red-500 border border-red-500/20 px-2 py-0.5 rounded-sm font-bold flex items-center gap-1">
+                                <span className="text-[8px] uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] font-bold flex items-center gap-1.5">
                                   <Lock className="h-2.5 w-2.5" /> Verrouillé par antécédent
                                 </span>
                               )}
                             </p>
-                            <p className="text-[9px] uppercase tracking-widest font-bold text-asas-silver mt-2">Priorité: {t.priority} · Échéance: {t.due_date ? new Date(t.due_date).toLocaleDateString() : 'ASAP'}</p>
+                            <p className="text-[9px] uppercase tracking-widest font-bold text-white/40 mt-3">Priorité: {t.priority} · Échéance: {t.due_date ? new Date(t.due_date).toLocaleDateString() : 'ASAP'}</p>
                           </div>
                           <div>
                             {isBlocked ? (
-                              <button disabled className="px-3 py-1 bg-red-500/5 text-red-500/50 text-[9px] font-bold uppercase tracking-wider rounded-sm border border-red-500/10">
+                              <button disabled className="px-4 py-1.5 bg-red-500/5 text-red-400/50 text-[9px] font-bold uppercase tracking-wider rounded-lg border border-red-500/10">
                                 Bloqué
                               </button>
                             ) : (
-                              <button disabled className="px-3 py-1 bg-asas-emerald/20 text-asas-emerald text-[9px] font-bold uppercase tracking-wider rounded-sm border border-asas-emerald/30">
+                              <button disabled className="px-4 py-1.5 bg-[#4285F4]/10 text-[#4285F4] text-[9px] font-bold uppercase tracking-wider rounded-lg border border-[#4285F4]/20">
                                 Prêt
                               </button>
                             )}
@@ -456,56 +456,56 @@ export default function OrchestratorWorkspace() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-6 rounded-sm space-y-6 shadow-sm flex flex-col"
+                className="bg-[#051121] border border-white/5 p-6 rounded-2xl space-y-8 shadow-sm flex flex-col"
               >
                 <div>
-                  <h3 className="text-sm uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand font-display flex items-center gap-2">
+                  <h3 className="text-sm uppercase font-extrabold tracking-widest text-white font-display flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4 text-asas-gold" /> Vigie & SLAs Exécutifs (Layer 2)
                   </h3>
-                  <p className="text-[10px] text-asas-silver font-bold uppercase mt-1">
+                  <p className="text-[10px] text-white/50 font-bold uppercase mt-2 leading-relaxed">
                     Délais impératifs de traitement opérationnels (Enforcement de rappel commerical sous 4h ou appel virement de banque Algérie).
                   </p>
                 </div>
 
                 {/* Policies List */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   {sla_policies.map((p: any) => (
-                    <div key={p.id} className="p-4 bg-white dark:bg-[#202325] border border-asas-silver/20 rounded-sm">
+                    <div key={p.id} className="p-5 bg-[#0A1829] border border-white/5 rounded-xl">
                       <div className="flex items-center justify-between">
-                        <span className="text-[8px] uppercase tracking-widest bg-asas-gold/10 text-asas-gold border border-asas-gold/20 px-2.5 py-0.5 rounded-sm font-extrabold">{p.target_entity} policy</span>
-                        <span className="h-2 w-2 rounded-full bg-asas-emerald"></span>
+                        <span className="text-[8px] uppercase tracking-widest bg-asas-gold/10 text-asas-gold border border-asas-gold/20 px-2.5 py-1 rounded-[4px] font-extrabold">{p.target_entity} policy</span>
+                        <span className="h-2 w-2 rounded-full bg-[#34A853]"></span>
                       </div>
-                      <p className="text-xs font-bold text-asas-charcoal dark:text-white mt-3">{p.name}</p>
-                      <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-2">Délai Max : {p.max_duration_hours}h · Alerte à : {p.warning_threshold_hours}h</p>
+                      <p className="text-xs font-bold text-white mt-4">{p.name}</p>
+                      <p className="text-[9px] uppercase font-bold tracking-widest text-white/40 mt-2.5">Délai Max : {p.max_duration_hours}h · Alerte à : {p.warning_threshold_hours}h</p>
                     </div>
                   ))}
                 </div>
 
                 {/* Active Violations List */}
-                <div className="space-y-3 pt-4 border-t border-asas-silver/10">
-                  <h4 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">Infractions Active / Vigie de non-conformité</h4>
-                  <div className="space-y-3">
+                <div className="space-y-4 pt-6 border-t border-white/5">
+                  <h4 className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Infractions Active / Vigie de non-conformité</h4>
+                  <div className="space-y-4">
                     {sla_violations.map((v: any) => (
                       <div key={v.id} className={clsx(
-                        'p-4 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 border',
-                        v.status === 'resolved' ? 'bg-asas-emerald/5 border-asas-emerald/20 text-asas-emerald' : 'bg-red-500/5 border-red-500/20 text-red-500 animate-pulse'
+                        'p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 border',
+                        v.status === 'resolved' ? 'bg-[#34A853]/5 border-[#34A853]/20 text-[#34A853]' : 'bg-red-500/5 border-red-500/20 text-red-500 animate-pulse'
                       )}>
                         <div>
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-3 flex-wrap">
                             <span className={clsx(
-                              'text-[8px] uppercase tracking-widest border px-2 py-0.5 rounded-sm font-extrabold',
-                              v.status === 'resolved' ? 'bg-asas-emerald/10 border-asas-emerald/30' : 'bg-red-500/10 border-red-500/30'
+                              'text-[8px] uppercase tracking-widest border px-2 py-0.5 rounded-[4px] font-extrabold',
+                              v.status === 'resolved' ? 'bg-[#34A853]/10 border-[#34A853]/30 text-[#34A853]' : 'bg-red-500/10 border-red-500/30 text-red-500'
                             )}>
                               {v.status}
                             </span>
-                            <span className="text-[9px] uppercase tracking-widest text-asas-silver font-bold">{v.policy_name}</span>
+                            <span className="text-[9px] uppercase tracking-widest text-white/50 font-bold">{v.policy_name}</span>
                           </div>
-                          <p className="text-xs font-bold mt-2 text-asas-charcoal dark:text-white">{v.entity_name || 'Élément Sous Jalon'}</p>
-                          <p className="text-[10px] text-asas-silver uppercase tracking-wider font-bold mt-1 leading-relaxed">{v.notes}</p>
+                          <p className="text-xs font-bold mt-3 text-white">{v.entity_name || 'Élément Sous Jalon'}</p>
+                          <p className="text-[10px] text-white/50 uppercase tracking-wider font-bold mt-2 leading-relaxed">{v.notes}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-[9px] uppercase tracking-widest font-bold text-asas-silver mb-1.5">Échéance de traitement</p>
-                          <p className="text-xs font-mono font-bold text-asas-charcoal dark:text-asas-sand">{new Date(v.deadline).toLocaleTimeString()}</p>
+                        <div className="text-left sm:text-right">
+                          <p className="text-[9px] uppercase tracking-widest font-bold text-white/40 mb-1.5">Échéance de traitement</p>
+                          <p className="text-xs font-mono font-bold text-white">{new Date(v.deadline).toLocaleTimeString()}</p>
                         </div>
                       </div>
                     ))}
@@ -521,13 +521,13 @@ export default function OrchestratorWorkspace() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-6 rounded-sm space-y-6 shadow-sm flex flex-col"
+                className="bg-[#051121] border border-white/5 p-6 rounded-2xl space-y-8 shadow-sm flex flex-col"
               >
                 <div>
-                  <h3 className="text-sm uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand font-display flex items-center gap-2">
+                  <h3 className="text-sm uppercase font-extrabold tracking-widest text-white font-display flex items-center gap-2">
                     <FileSignature className="h-4 w-4 text-asas-gold" /> Ordonnancement des Approbations (Layer 4)
                   </h3>
-                  <p className="text-[10px] text-asas-silver font-bold uppercase mt-1">
+                  <p className="text-[10px] text-white/50 font-bold uppercase mt-2 leading-relaxed">
                     Gouvernance d'approbations de bons de commandes matériel ou dérogations financières chantiers.
                   </p>
                 </div>
@@ -536,29 +536,29 @@ export default function OrchestratorWorkspace() {
                   {approval_requests.map((req: any) => {
                     const steps = approval_steps.filter((s: any) => s.request_id === req.id);
                     return (
-                      <div key={req.id} className="p-5 bg-asas-sand/20 dark:bg-black/20 border border-asas-silver/10 rounded-sm">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-asas-silver/10">
+                      <div key={req.id} className="p-5 bg-white/5 border border-white/5 rounded-xl shadow-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/5">
                           <div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                               <span className={clsx(
-                                'text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-sm font-extrabold border',
-                                req.status === 'approved' ? 'bg-asas-emerald/10 border-asas-emerald/30 text-asas-emerald' : 'bg-asas-gold/10 border-asas-gold/30 text-asas-gold'
+                                'text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-[4px] font-extrabold border',
+                                req.status === 'approved' ? 'bg-[#34A853]/10 border-[#34A853]/30 text-[#34A853]' : 'bg-asas-gold/10 border-asas-gold/30 text-asas-gold'
                               )}>
                                 {req.status}
                               </span>
-                              <span className="text-[10px] uppercase tracking-widest text-asas-silver font-bold">{req.entity_type}</span>
+                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold">{req.entity_type}</span>
                             </div>
-                            <h4 className="text-sm font-bold text-asas-charcoal dark:text-white mt-1">{req.title}</h4>
-                            <p className="text-[9px] uppercase tracking-widest text-asas-silver mt-1.5 font-bold">Initié par: {req.created_by_name || 'Collaborateur'}</p>
+                            <h4 className="text-sm font-bold text-white mt-2">{req.title}</h4>
+                            <p className="text-[9px] uppercase tracking-widest text-white/40 mt-1.5 font-bold">Initié par: {req.created_by_name || 'Collaborateur'}</p>
                           </div>
-                          <div className="text-right">
+                          <div className="text-left sm:text-right">
                             <span className="text-xs font-mono font-bold text-asas-gold">{req.price || 'Paiement Unifié'}</span>
                           </div>
                         </div>
 
                         {/* Steps for this Request */}
-                        <div className="pt-4 space-y-4">
-                          <h5 className="text-[8px] uppercase tracking-widest text-asas-silver font-bold mb-2">Visas requisitionnés</h5>
+                        <div className="pt-5 space-y-4">
+                          <h5 className="text-[8px] uppercase tracking-widest text-white/40 font-bold mb-3">Visas requisitionnés</h5>
                           {steps.map((st: any) => {
                             const isCurrentStep = req.status === 'pending' && st.status === 'pending';
                             const keyString = st.id;
@@ -566,20 +566,20 @@ export default function OrchestratorWorkspace() {
                             
                             return (
                               <div key={st.id} className={clsx(
-                                'p-4 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 border transition-all',
-                                isCurrentStep ? 'bg-white dark:bg-[#1C1E20] border-asas-gold/40 shadow-md' : 'bg-transparent border-asas-silver/10'
+                                'p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border transition-all',
+                                isCurrentStep ? 'bg-[#0A1829] border-asas-gold/40 shadow-md' : 'bg-transparent border-white/5'
                               )}>
                                 <div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[9px] uppercase tracking-widest font-extrabold text-asas-charcoal dark:text-asas-sand">Étape {st.step_sequence + 1}</span>
-                                    <span className="text-[9px] uppercase tracking-widest bg-asas-navy/10 text-asas-navy dark:text-white px-2 py-0.5 rounded-sm font-bold border border-asas-navy/20">{st.role_required}</span>
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-[9px] uppercase tracking-widest font-extrabold text-white">Étape {st.step_sequence + 1}</span>
+                                    <span className="text-[9px] uppercase tracking-widest bg-white/10 text-white/80 px-2 py-0.5 rounded-[4px] font-bold border border-white/10">{st.role_required}</span>
                                   </div>
-                                  <p className="text-xs font-bold text-asas-charcoal dark:text-white mt-2">Assigné: {st.assigned_to_name}</p>
+                                  <p className="text-xs font-bold text-white mt-3">Assigné: {st.assigned_to_name}</p>
                                   {st.comment && (
-                                    <p className="text-[10px] uppercase tracking-wider font-bold text-asas-silver mt-1 leading-relaxed">❝ {st.comment} ❞</p>
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-white/60 mt-2 leading-relaxed">❝ {st.comment} ❞</p>
                                   )}
                                   {st.signed_checksum && (
-                                    <p className="text-[8px] font-mono text-asas-gold mt-2 flex items-center gap-1 leading-none">
+                                    <p className="text-[8px] font-mono text-asas-gold mt-3 flex items-center gap-1.5 leading-none">
                                       <FileSignature className="h-3 w-3" /> Clé signature : {st.signed_checksum}
                                     </p>
                                   )}
@@ -587,28 +587,28 @@ export default function OrchestratorWorkspace() {
 
                                 <div className="flex items-center gap-2">
                                   {st.status !== 'pending' ? (
-                                    <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-asas-emerald font-extrabold bg-asas-emerald/10 border border-asas-emerald/20 px-3 py-1.5 rounded-sm">
+                                    <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-widest text-[#34A853] font-extrabold bg-[#34A853]/10 border border-[#34A853]/20 px-3 py-1.5 rounded-lg">
                                       <Check className="h-3 w-3" /> {st.status}
                                     </div>
                                   ) : isCurrentStep ? (
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-3">
                                       <button
                                         onClick={() => handleApprovalDecision(req.id, st.id, 'approved', 'Matériel requis pour le gros œuvre validé.')}
                                         disabled={isCompleting}
-                                        className="h-9 px-4 py-2 bg-asas-emerald hover:bg-asas-emerald/95 text-white font-bold text-[9px] uppercase tracking-widest rounded-sm flex items-center gap-1.5 cursor-pointer"
+                                        className="h-9 px-4 py-2 bg-[#34A853] hover:bg-[#2e9549] text-[#051121] font-bold text-[9px] uppercase tracking-widest rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
                                       >
                                         Viser & Signer
                                       </button>
                                       <button
                                         onClick={() => handleApprovalDecision(req.id, st.id, 'rejected', 'Dérogation ou commande rejetée pour manque de justificatif.')}
                                         disabled={isCompleting}
-                                        className="h-9 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold text-[9px] uppercase tracking-widest rounded-sm cursor-pointer"
+                                        className="h-9 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold text-[9px] uppercase tracking-widest rounded-lg cursor-pointer shadow-sm disabled:opacity-50"
                                       >
                                         Rejeter
                                       </button>
                                     </div>
                                   ) : (
-                                    <span className="text-[8px] uppercase tracking-widest text-asas-silver font-bold">En attente</span>
+                                    <span className="text-[8px] uppercase tracking-widest text-white/30 font-bold">En attente</span>
                                   )}
                                 </div>
                               </div>
@@ -629,45 +629,45 @@ export default function OrchestratorWorkspace() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-6 rounded-sm space-y-6 shadow-sm flex flex-col"
+                className="bg-[#051121] border border-white/5 p-6 rounded-2xl space-y-8 shadow-sm flex flex-col"
               >
                 <div>
-                  <h3 className="text-sm uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand font-display flex items-center gap-2">
+                  <h3 className="text-sm uppercase font-extrabold tracking-widest text-white font-display flex items-center gap-2">
                     <Zap className="h-4 w-4 text-asas-gold" /> Automates exécutables (Layer 3)
                   </h3>
-                  <p className="text-[10px] text-asas-silver font-bold uppercase mt-1">
+                  <p className="text-[10px] text-white/50 font-bold uppercase mt-2 leading-relaxed">
                     Détection d'infraction, génération automatisée suite à jalon validé ou notifications en file d'attente.
                   </p>
                 </div>
 
                 {/* Automation Rules */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <h4 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">Règles actives configurées</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <h4 className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Règles actives configurées</h4>
                     {automation_rules.map((rule: any) => (
-                      <div key={rule.id} className="p-4 bg-white dark:bg-[#202325] border border-asas-silver/20 rounded-sm">
+                      <div key={rule.id} className="p-5 bg-white/5 border border-white/5 rounded-xl">
                         <div className="flex items-center justify-between">
-                          <span className="text-[8px] uppercase tracking-widest bg-asas-gold/15 text-asas-gold px-2.5 py-0.5 rounded-sm font-extrabold border border-asas-gold/20">Active rule</span>
-                          <span className="text-[8px] font-mono text-asas-silver">{rule.trigger_event}</span>
+                          <span className="text-[8px] uppercase tracking-widest bg-asas-gold/15 text-asas-gold px-2 py-0.5 rounded-[4px] font-extrabold border border-asas-gold/20">Active rule</span>
+                          <span className="text-[8px] font-mono text-white/50">{rule.trigger_event}</span>
                         </div>
-                        <p className="text-xs font-bold text-asas-charcoal dark:text-white mt-3">{rule.name}</p>
-                        <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-2">Action: {rule.action_type} · Filtre: {rule.condition_expression}</p>
+                        <p className="text-xs font-bold text-white mt-4">{rule.name}</p>
+                        <p className="text-[9px] uppercase font-bold tracking-widest text-white/50 mt-2">Action: {rule.action_type} · Filtre: {rule.condition_expression}</p>
                       </div>
                     ))}
                   </div>
 
                   {/* Executions log */}
-                  <div className="space-y-3">
-                    <h4 className="text-[9px] font-bold text-asas-silver uppercase tracking-widest">Registre de Déclenchement Automatisé</h4>
-                    <div className="space-y-3">
+                  <div className="space-y-4">
+                    <h4 className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Registre de Déclenchement Automatisé</h4>
+                    <div className="space-y-4">
                       {automation_executions.map((e: any) => (
-                        <div key={e.id} className="p-4 bg-asas-sand/15 dark:bg-black/25 border border-asas-silver/10 rounded-sm">
+                        <div key={e.id} className="p-5 bg-[#0A1829] border border-white/5 rounded-xl">
                           <div className="flex items-center justify-between">
-                            <span className="text-[8px] uppercase tracking-widest text-asas-emerald font-bold border border-asas-emerald/20 bg-asas-emerald/5 px-2 py-0.5 rounded-sm">Success</span>
-                            <span className="text-[8px] text-asas-silver font-mono">{new Date(e.completed_at).toLocaleTimeString()}</span>
+                            <span className="text-[8px] uppercase tracking-widest text-[#34A853] font-bold border border-[#34A853]/20 bg-[#34A853]/5 px-2 py-0.5 rounded-[4px]">Success</span>
+                            <span className="text-[8px] text-white/50 font-mono">{new Date(e.completed_at).toLocaleTimeString()}</span>
                           </div>
-                          <p className="text-xs font-bold text-asas-charcoal dark:text-white mt-2.5">{e.rule_name}</p>
-                          <p className="text-[9px] uppercase tracking-widest text-asas-silver/80 mt-1 font-bold leading-relaxed">{e.execution_log}</p>
+                          <p className="text-xs font-bold text-white mt-3">{e.rule_name}</p>
+                          <p className="text-[9px] uppercase tracking-widest text-white/50 mt-2 font-bold leading-relaxed">{e.execution_log}</p>
                         </div>
                       ))}
                     </div>
@@ -683,40 +683,40 @@ export default function OrchestratorWorkspace() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-6 rounded-sm space-y-6 shadow-sm flex flex-col"
+                className="bg-[#051121] border border-white/5 p-6 rounded-2xl space-y-8 shadow-sm flex flex-col"
               >
                 <div>
-                  <h3 className="text-sm uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand font-display flex items-center gap-2">
+                  <h3 className="text-sm uppercase font-extrabold tracking-widest text-white font-display flex items-center gap-2">
                     <Wrench className="h-4 w-4 text-asas-gold" /> Moteur d'Auto-Guérison (V1) (Layer 8)
                   </h3>
-                  <p className="text-[10px] text-asas-silver font-bold uppercase mt-1">
+                  <p className="text-[10px] text-white/50 font-bold uppercase mt-2 leading-relaxed">
                     Correction déterministe automatique des goulots logistiques ou approbations restées bloquées sans conducteur.
                   </p>
                 </div>
 
                 {/* Recovery incident lists */}
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {recovery_jobs.map((job: any) => {
                     const isHEALING = healingRunning[job.id] || false;
                     return (
-                      <div key={job.id} className="p-5 bg-white dark:bg-[#202325] border border-asas-silver/20 rounded-sm">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-asas-silver/10">
+                      <div key={job.id} className="p-6 bg-[#0A1829] border border-white/5 rounded-xl shadow-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-5 border-b border-white/5">
                           <div>
                             <span className={clsx(
-                              'text-[8px] uppercase tracking-widest px-2.5 py-0.5 border rounded-sm font-extrabold',
-                              job.status === 'recovered' ? 'bg-asas-emerald/10 border-asas-emerald/30 text-asas-emerald' : 'bg-red-500/10 border-red-500/30 text-red-500 animate-pulse'
+                              'text-[8px] uppercase tracking-widest px-2.5 py-0.5 border rounded-[4px] font-extrabold',
+                              job.status === 'recovered' ? 'bg-[#34A853]/10 border-[#34A853]/30 text-[#34A853]' : 'bg-red-500/10 border-red-500/30 text-red-500 animate-pulse'
                             )}>
                               {job.status}
                             </span>
-                            <h4 className="text-xs font-bold text-asas-charcoal dark:text-white mt-2">Incident: {job.incident_type}</h4>
-                            <p className="text-[10px] uppercase font-bold tracking-wider text-asas-silver mt-1">{job.incident_description}</p>
+                            <h4 className="text-xs font-bold text-white mt-3">Incident: {job.incident_type}</h4>
+                            <p className="text-[10px] uppercase font-bold tracking-wider text-white/50 mt-1.5">{job.incident_description}</p>
                           </div>
                           <div>
                             {job.status !== 'recovered' && (
                               <button
                                 onClick={() => handleSelfHealing(job.id)}
                                 disabled={isHEALING}
-                                className="h-9 px-4 py-2 bg-asas-gold hover:bg-asas-gold/95 text-white font-bold text-[9px] uppercase tracking-widest rounded-sm flex items-center gap-1.5 cursor-pointer animate-pulse"
+                                className="h-10 px-5 py-2 bg-[#4285F4] hover:bg-[#3367d6] text-white font-bold text-[9px] uppercase tracking-widest rounded-xl flex items-center gap-2 cursor-pointer shadow-sm animate-pulse disabled:opacity-50"
                               >
                                 {isHEALING ? 'Correction en cours...' : 'Forcer Auto-Guérison'}
                               </button>
@@ -724,10 +724,10 @@ export default function OrchestratorWorkspace() {
                           </div>
                         </div>
 
-                        <div className="pt-4 flex flex-col gap-2">
-                          <p className="text-[9px] uppercase tracking-widest text-asas-silver font-bold">Stratégie déployée : <span className="text-asas-charcoal dark:text-white">{job.remediation_strategy}</span></p>
-                          <div className="bg-asas-sand/30 dark:bg-black/25 border border-asas-silver/10 p-3 rounded-sm">
-                            <pre className="text-[9px] font-mono text-asas-charcoal dark:text-asas-sand whitespace-pre-wrap leading-relaxed">
+                        <div className="pt-5 flex flex-col gap-3">
+                          <p className="text-[9px] uppercase tracking-widest text-white/40 font-bold">Stratégie déployée : <span className="text-white">{job.remediation_strategy}</span></p>
+                          <div className="bg-black/40 border border-white/10 p-4 rounded-xl">
+                            <pre className="text-[9px] font-mono text-white/60 whitespace-pre-wrap leading-relaxed">
                               {job.output_logs}
                             </pre>
                           </div>
@@ -746,31 +746,31 @@ export default function OrchestratorWorkspace() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-white dark:bg-[#141618] border border-asas-silver/20 p-6 rounded-sm space-y-6 shadow-sm flex flex-col"
+                className="bg-[#051121] border border-white/5 p-6 rounded-2xl space-y-8 shadow-sm flex flex-col"
               >
                 <div>
-                  <h3 className="text-sm uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand font-display flex items-center gap-2">
+                  <h3 className="text-sm uppercase font-extrabold tracking-widest text-white font-display flex items-center gap-2">
                     <History className="h-4 w-4 text-asas-gold" /> Fil d'Exécution Unifié (Layer 10)
                   </h3>
-                  <p className="text-[10px] text-asas-silver font-bold uppercase mt-1">
+                  <p className="text-[10px] text-white/50 font-bold uppercase mt-2 leading-relaxed">
                     Historique chronologique auditable et impayés d'échéances consolidé du système d'exploitation de programmes.
                   </p>
                 </div>
 
                 {/* Timeline display */}
-                <div className="relative border-l border-asas-silver/20 pl-6 ml-2 space-y-6">
+                <div className="relative border-l border-white/10 pl-6 ml-3 space-y-8">
                   {timeline.map((item: any) => (
                     <div key={item.id} className="relative">
                       {/* Timeline dot */}
-                      <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full bg-asas-gold border border-white dark:border-[#141618] shadow"></span>
+                      <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full bg-asas-gold border-[3px] border-[#051121] shadow-sm"></span>
 
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[8px] uppercase tracking-widest bg-asas-sand dark:bg-[#202325] text-asas-silver border border-asas-silver/10 px-2.5 py-0.5 rounded-sm font-bold">{item.event_category}</span>
-                          <span className="text-[8px] font-mono text-asas-silver">{new Date(item.created_at).toLocaleTimeString()}</span>
+                      <div className="bg-[#0A1829] p-4 rounded-xl border border-white/5 w-full">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-[8px] uppercase tracking-widest bg-white/10 text-white/80 border border-white/5 px-2.5 py-0.5 rounded-[4px] font-bold">{item.event_category}</span>
+                          <span className="text-[8px] font-mono text-white/40">{new Date(item.created_at).toLocaleTimeString()}</span>
                         </div>
-                        <h4 className="text-xs font-bold text-asas-charcoal dark:text-white mt-1.5">{item.title}</h4>
-                        <p className="text-[10px] uppercase tracking-wider font-bold text-asas-silver/80 mt-1 leading-relaxed">{item.description}</p>
+                        <h4 className="text-xs font-bold text-white mt-2.5">{item.title}</h4>
+                        <p className="text-[10px] uppercase tracking-wider font-bold text-white/50 mt-1.5 leading-relaxed">{item.description}</p>
                       </div>
                     </div>
                   ))}

@@ -80,13 +80,13 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-lg bg-white dark:bg-[#141618] rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden flex flex-col"
+        className="relative w-full max-w-lg bg-[#051121] rounded-[2rem] shadow-2xl border border-white/10 overflow-hidden flex flex-col"
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-asas-silver/20 bg-white dark:bg-[#141618]">
-          <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex items-center gap-2">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-[#0A1829]">
+          <h2 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
             Acquisition Fluide (1-Minute)
           </h2>
-          <button onClick={onClose} className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors text-asas-silver">
+          <button onClick={onClose} className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-white/50">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -96,37 +96,37 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
              <button 
                 type="button"
                 onClick={simulateVoiceNote} 
-                className={`flex-1 overflow-hidden relative p-8 rounded-sm flex flex-col items-center justify-center gap-3 transition-all ${isRecording ? 'bg-red-500/10 border border-red-500 shadow-sm' : 'bg-asas-sand/30 dark:bg-[#141618] hover:bg-asas-sand/50 dark:hover:bg-white/5 border border-asas-silver/20'}`}
+                className={`flex-1 overflow-hidden relative p-8 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all ${isRecording ? 'bg-red-500/10 border border-red-500 shadow-sm' : 'bg-[#0A1829] hover:bg-white/5 border border-white/5'}`}
              >
                 {isRecording && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />}
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isRecording ? 'bg-red-500 text-white' : 'bg-white dark:bg-white/5 text-asas-silver border border-asas-silver/20'}`}>
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isRecording ? 'bg-red-500 text-white' : 'bg-white/5 text-white/50 border border-white/10'}`}>
                    <Mic className={`w-6 h-6 ${isRecording ? 'animate-bounce' : ''}`} />
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand">{isRecording ? 'Écoute...' : 'Note Vocale (IA)'}</p>
-                  <p className="text-[9px] font-medium text-asas-silver mt-1">Ex: "F4 à Cheraga..."</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-white">{isRecording ? 'Écoute...' : 'Note Vocale (IA)'}</p>
+                  <p className="text-[9px] font-medium text-white/50 mt-1">Ex: "F4 à Cheraga..."</p>
                 </div>
              </button>
              
-             <button type="button" className="flex-1 p-8 rounded-sm border border-asas-silver/20 flex flex-col items-center justify-center gap-3 bg-asas-sand/30 dark:bg-[#141618] hover:bg-asas-sand/50 dark:hover:bg-white/5 transition-all">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white dark:bg-white/5 text-asas-silver border border-asas-silver/20">
+             <button type="button" className="flex-1 p-8 rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-3 bg-[#0A1829] hover:bg-white/5 transition-all">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white/5 text-white/50 border border-white/10">
                    <Camera className="w-6 h-6" />
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand">Photos Express</p>
-                  <p className="text-[9px] font-medium text-asas-silver mt-1 border border-transparent">Saisie Automatique</p>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-white">Photos Express</p>
+                  <p className="text-[9px] font-medium text-white/50 mt-1 border border-transparent">Saisie Automatique</p>
                 </div>
              </button>
           </div>
 
           <form id="prop-form" onSubmit={handleSubmit} className="space-y-4">
-             {error && <div className="p-4 bg-red-500/10 text-red-500 text-sm font-bold rounded-sm border border-red-500/20">{error}</div>}
+             {error && <div className="p-4 bg-red-500/10 text-red-500 text-sm font-bold rounded-xl border border-red-500/20">{error}</div>}
 
              <div className="grid grid-cols-2 gap-4">
                 <div>
-                   <label className="block text-xs font-bold text-asas-silver uppercase tracking-widest mb-1.5">Gabarit</label>
+                   <label className="block text-xs font-bold text-white/50 uppercase tracking-widest mb-1.5">Gabarit</label>
                    <select 
-                     className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-[#111111] border border-asas-silver/20 rounded-sm text-sm font-medium text-asas-charcoal dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
+                     className="w-full px-4 py-3 bg-[#0A1829] border border-white/10 rounded-xl text-sm font-medium text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                      value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}
                    >
                      <option value="f2">F2</option>
@@ -137,22 +137,22 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
                    </select>
                 </div>
                 <div>
-                   <label className="block text-xs font-bold text-asas-silver uppercase tracking-widest mb-1.5">Prix (DZD)</label>
+                   <label className="block text-xs font-bold text-white/50 uppercase tracking-widest mb-1.5">Prix (DZD)</label>
                    <input 
                      type="number" required placeholder="45000000"
-                     className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-[#111111] border border-asas-silver/20 rounded-sm text-sm font-mono font-bold text-asas-charcoal dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
+                     className="w-full px-4 py-3 bg-[#0A1829] border border-white/10 rounded-xl text-sm font-mono font-bold text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                      value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
                    />
                 </div>
              </div>
              
              <div>
-                <label className="block text-xs font-bold text-asas-silver uppercase tracking-widest mb-1.5">Secteur Géo</label>
+                <label className="block text-xs font-bold text-white/50 uppercase tracking-widest mb-1.5">Secteur Géo</label>
                 <div className="relative">
-                   <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-asas-silver" />
+                   <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                    <input 
                      type="text" required placeholder="Ex: HYDRA, CHERAGA"
-                     className="w-full pl-10 pr-4 py-3 bg-asas-sand/30 dark:bg-[#111111] border border-asas-silver/20 rounded-sm text-sm font-medium text-asas-charcoal dark:text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
+                     className="w-full pl-10 pr-4 py-3 bg-[#0A1829] border border-white/10 rounded-xl text-sm font-medium text-white focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                      value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})}
                    />
                 </div>
@@ -160,16 +160,16 @@ export function PropertyCreateModal({ onClose, onSuccess }: PropertyCreateModalP
           </form>
         </div>
 
-        <div className="border-t border-asas-silver/20 p-6 bg-asas-sand/30 dark:bg-[#0A0A0A] flex justify-end gap-3 rounded-b-[2rem]">
+        <div className="border-t border-white/5 p-6 bg-[#0A1829] flex justify-end gap-3 rounded-b-[2rem]">
           <button
             type="button" onClick={onClose}
-            className="px-6 py-3 rounded-sm border border-asas-silver/20 text-[10px] uppercase tracking-widest font-bold text-asas-charcoal dark:text-asas-silver bg-white dark:bg-[#141618] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="px-6 py-3 rounded-xl border border-white/10 text-[10px] uppercase tracking-widest font-bold text-white/60 bg-[#051121] hover:bg-white/5 transition-colors"
           >
             Annuler
           </button>
           <button
             form="prop-form" type="submit" disabled={loading}
-            className="px-8 py-3 rounded-sm text-[10px] uppercase tracking-widest font-bold text-asas-sand bg-asas-navy hover:bg-asas-charcoal dark:hover:bg-black disabled:opacity-50 transition-colors shadow-sm active:scale-95 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl text-[10px] uppercase tracking-widest font-bold text-[#051121] bg-asas-gold hover:bg-[#E0B96B] disabled:opacity-50 transition-colors shadow-sm active:scale-95 flex items-center gap-2"
           >
             <Save className="w-4 h-4" /> {loading ? 'Création...' : 'Publier Actif'}
           </button>

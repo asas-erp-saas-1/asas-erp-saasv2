@@ -35,17 +35,17 @@ function Field({ label, type, value, onChange, min, max, step, hint }: {
   onChange: (v: number | string | boolean) => void
 }) {
   return (
-    <div className="py-5 border-b border-asas-silver/10 last:border-0 group">
+    <div className="py-5 border-b border-white/5 last:border-0 group">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand transition-colors uppercase tracking-widest">{label}</p>
-          {hint && <p className="text-[9px] uppercase tracking-widest font-bold text-asas-silver mt-1">{hint}</p>}
+          <p className="text-[10px] font-bold text-white transition-colors uppercase tracking-widest">{label}</p>
+          {hint && <p className="text-[9px] uppercase tracking-widest font-bold text-white/50 mt-1">{hint}</p>}
         </div>
         <div className="shrink-0 flex items-center">
           {type === 'boolean' ? (
             <button
               onClick={() => onChange(!value)}
-              className={clsx('relative h-6 w-12 rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-asas-gold/50 cursor-pointer', value ? 'bg-asas-gold' : 'bg-asas-sand/50 dark:bg-white/5 border border-asas-silver/20 hover:border-asas-silver/40')}
+              className={clsx('relative h-6 w-12 rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-asas-gold/50 cursor-pointer shadow-inner', value ? 'bg-asas-gold' : 'bg-white/5 border border-white/10 hover:border-white/20')}
             >
               <span className={clsx('absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform', value ? 'translate-x-[26px]' : 'translate-x-0.5')} />
             </button>
@@ -57,7 +57,7 @@ function Field({ label, type, value, onChange, min, max, step, hint }: {
               max={max}
               step={step ?? 1}
               onChange={e => onChange(Number(e.target.value))}
-              className="w-28 text-right font-bold text-xs border border-asas-silver/20 rounded-sm px-4 py-2.5 bg-white dark:bg-[#141618] text-asas-charcoal dark:text-asas-sand focus:outline-none focus:border-asas-gold transition-all font-mono"
+              className="w-28 text-right font-bold text-xs border border-white/10 rounded-xl px-4 py-2.5 bg-black/50 text-white focus:outline-none focus:border-asas-gold transition-all font-mono shadow-inner"
             />
           )}
         </div>
@@ -109,9 +109,9 @@ export default function SettingsPage() {
   }
 
   if (loading || !config) return (
-    <div className="flex-1 w-full max-w-4xl mx-auto space-y-6 bg-[#000000]">
-      <div className="h-16 w-1/3 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm animate-pulse mb-8" />
-      {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-white dark:bg-[#0A0A0A] border border-black/5 dark:border-white/5 rounded-sm animate-pulse" />)}
+    <div className="flex-1 w-full max-w-4xl mx-auto space-y-6 bg-transparent">
+      <div className="h-16 w-1/3 bg-white/5 border border-white/10 rounded-xl animate-pulse mb-8" />
+      {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-[#051121]/50 border border-white/5 rounded-xl animate-pulse" />)}
     </div>
   )
 
@@ -126,31 +126,31 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex-1 font-sans text-asas-charcoal dark:text-asas-sand flex flex-col">
+    <div className="flex-1 font-sans text-white flex flex-col">
         <div className="w-full max-w-5xl mx-auto space-y-10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-asas-silver/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-white/5">
             <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-                <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-white/5 border border-asas-silver/20 flex items-center justify-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
+                <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                     <Settings className="h-6 w-6 text-asas-gold" />
                 </div>
                 Configuration Système
             </h1>
-            <p className="text-[9px] uppercase font-bold tracking-widest text-asas-silver mt-3">Règles métier, seuils d'inactivité et alertes financières.</p>
+            <p className="text-[9px] uppercase font-bold tracking-widest text-white/50 mt-3 pl-[60px]">Règles métier, seuils d'inactivité et alertes financières.</p>
             </div>
             <div className="flex flex-wrap gap-4 items-center">
-              <Link href="/dashboard/settings/foundation" className="flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase font-bold tracking-widest bg-asas-navy border border-asas-gold/20 hover:border-asas-gold/40 text-asas-sand transition-all cursor-pointer">
+              <Link href="/dashboard/settings/foundation" className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[9px] uppercase font-bold tracking-widest bg-white/5 border border-asas-gold/20 hover:border-asas-gold/40 text-asas-gold transition-all cursor-pointer">
                   <Sliders className="w-4 h-4 text-asas-gold" /> Gérer les Fondations COEUR
               </Link>
-              <Link href="/dashboard/settings/team" className="flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase font-bold tracking-widest bg-asas-navy hover:bg-asas-navy/80 text-white transition-all cursor-pointer">
+              <Link href="/dashboard/settings/team" className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[9px] uppercase font-bold tracking-widest bg-white/5 border border-white/10 hover:bg-white/10 text-white transition-all cursor-pointer">
                   <Users className="w-4 h-4" /> Gérer l'Équipe (RBAC)
               </Link>
               <button
               onClick={save}
               disabled={saving}
               className={clsx(
-                  'flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-[9px] uppercase font-bold tracking-widest transition-all focus:outline-none focus:border-asas-gold cursor-pointer border',
-                  saved ? 'bg-asas-emerald/10 text-asas-emerald border-asas-emerald/20' : 'bg-asas-charcoal dark:bg-asas-sand text-asas-sand dark:text-asas-charcoal border-transparent hover:opacity-90'
+                  'flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[9px] uppercase font-bold tracking-widest transition-all focus:outline-none cursor-pointer border transform hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:transform-none',
+                  saved ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] border-transparent shadow-[0_0_15px_rgba(212,166,79,0.3)]'
               )}
               >
               {saved ? <><Check className="h-4 w-4" /> Profil Sauvegardé</> : saving ? 'Cryptage...' : <><Save className="h-4 w-4" /> Appliquer Modification</>}
@@ -169,15 +169,15 @@ export default function SettingsPage() {
         <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* Deal thresholds */}
-            <motion.div variants={item} className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors">
+            <motion.div variants={item} className="bg-[#051121]/50 rounded-xl border border-white/5 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/20 transition-colors">
             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                <AlertTriangle className="w-24 h-24 text-orange-500" />
+                <AlertTriangle className="w-24 h-24 text-red-500" />
             </div>
             <div className="flex items-center gap-4 mb-8 relative z-10">
-                <div className="w-12 h-12 rounded-sm bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.15)]">
                     <AlertTriangle className="h-5 w-5" />
                 </div>
-                <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">Protocoles d'Inactivité</h2>
+                <h2 className="text-sm font-bold text-white uppercase tracking-widest font-display">Protocoles d'Inactivité</h2>
             </div>
             <div className="space-y-2 relative z-10">
                 <Field label="Latence tolérée (Heures)"   type="number" value={config.inactivityYellowHours}   min={1}   max={72}  onChange={v => update('inactivityYellowHours',   v as number)} hint="Délai avant notification de niveau 1" />
@@ -187,15 +187,15 @@ export default function SettingsPage() {
             </motion.div>
 
             {/* Financial thresholds */}
-            <motion.div variants={item} className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors">
+            <motion.div variants={item} className="bg-[#051121]/50 rounded-xl border border-white/5 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/20 transition-colors">
             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                <CircleDollarSign className="w-24 h-24 text-asas-emerald" />
+                <CircleDollarSign className="w-24 h-24 text-green-500" />
             </div>
             <div className="flex items-center gap-4 mb-8 relative z-10">
-                <div className="w-12 h-12 rounded-sm bg-asas-emerald/10 border border-asas-emerald/20 text-asas-emerald flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center shadow-[0_0_15px_rgba(74,222,128,0.15)]">
                     <CircleDollarSign className="h-5 w-5" />
                 </div>
-                <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">Limites Financières</h2>
+                <h2 className="text-sm font-bold text-white uppercase tracking-widest font-display">Limites Financières</h2>
             </div>
             <div className="space-y-2 relative z-10">
                 <Field label="Fond de Roulement (Survie)"   type="number" value={config.survivalThresholdDZD}  min={500_000}   step={100_000} onChange={v => update('survivalThresholdDZD',  v as number)} hint="Déclenche le blocage préventif des décaissements." />
@@ -204,15 +204,15 @@ export default function SettingsPage() {
             </motion.div>
 
             {/* Commission */}
-            <motion.div variants={item} className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors">
+            <motion.div variants={item} className="bg-[#051121]/50 rounded-xl border border-white/5 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/20 transition-colors">
             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                <ShieldCheck className="w-24 h-24 text-asas-navy dark:text-asas-sand" />
+                <ShieldCheck className="w-24 h-24 text-blue-500" />
             </div>
             <div className="flex items-center gap-4 mb-8 relative z-10">
-                <div className="w-12 h-12 rounded-sm bg-asas-navy/10 border border-asas-navy/20 text-asas-navy dark:text-asas-sand flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.15)]">
                     <ShieldCheck className="h-5 w-5" />
                 </div>
-                <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">Modèle de Rémunération</h2>
+                <h2 className="text-sm font-bold text-white uppercase tracking-widest font-display">Modèle de Rémunération</h2>
             </div>
             <div className="space-y-2 relative z-10">
                 <Field label="Taux Par Défaut (%)"   type="number" value={config.defaultCommissionPct} min={0} max={20}  step={0.5} onChange={v => update('defaultCommissionPct', v as number)} />
@@ -223,15 +223,15 @@ export default function SettingsPage() {
 
             {/* Lead rules & Notifications */}
             <motion.div variants={item} className="space-y-8">
-                <div className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors">
+                <div className="bg-[#051121]/50 rounded-xl border border-white/5 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/20 transition-colors">
                     <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                         <Zap className="w-24 h-24 text-asas-gold" />
                     </div>
                     <div className="flex items-center gap-4 mb-8 relative z-10">
-                        <div className="w-12 h-12 rounded-sm bg-asas-gold/10 border border-asas-gold/20 text-asas-gold flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 text-asas-gold flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                             <Zap className="h-5 w-5" />
                         </div>
-                        <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">Acquisition & Distribution</h2>
+                        <h2 className="text-sm font-bold text-white uppercase tracking-widest font-display">Acquisition & Distribution</h2>
                     </div>
                     <div className="space-y-2 relative z-10">
                         <Field label="Obsolescence Lead (Jours)"     type="number"  value={config.leadExpiryDays}    min={7}   max={365} onChange={v => update('leadExpiryDays',    v as number)} hint="Rotation automatique vers la file d'attente." />
@@ -239,15 +239,15 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-[#141618] rounded-sm border border-asas-silver/20 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/40 transition-colors">
+                <div className="bg-[#051121]/50 rounded-xl border border-white/5 p-8 shadow-sm relative overflow-hidden group hover:border-asas-gold/20 transition-colors">
                     <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Bell className="w-24 h-24 text-asas-silver" />
+                        <Bell className="w-24 h-24 text-white/50" />
                     </div>
                     <div className="flex items-center gap-4 mb-8 relative z-10">
-                        <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-white/5 border border-asas-silver/20 text-asas-charcoal dark:text-asas-sand flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center">
                             <Bell className="h-5 w-5" />
                         </div>
-                        <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest font-display">Télémétrie d'Alerte</h2>
+                        <h2 className="text-sm font-bold text-white uppercase tracking-widest font-display">Télémétrie d'Alerte</h2>
                     </div>
                     <div className="space-y-2 relative z-10">
                         <Field label="Alerte Direction sur Escalade" type="boolean" value={config.notifyManagerOnEscalation} onChange={v => update('notifyManagerOnEscalation', v as boolean)} />

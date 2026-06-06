@@ -29,25 +29,25 @@ export function SystemValidationWidget() {
   }
 
   return (
-    <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm p-8 shadow-sm relative overflow-hidden group mb-8 hover:border-asas-gold/40 transition-colors">
+    <div className="bg-[#051121]/50 border border-white/5 rounded-xl p-8 shadow-sm relative overflow-hidden group mb-8 hover:border-asas-gold/20 transition-colors">
       <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
-        <Database className="w-24 h-24 text-asas-navy dark:text-asas-sand" />
+        <Database className="w-24 h-24 text-asas-gold" />
       </div>
       
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-sm font-bold text-asas-charcoal dark:text-asas-sand flex items-center gap-2 font-display mb-2 uppercase tracking-widest">
-            <div className="w-8 h-8 rounded-sm bg-asas-navy/10 border border-asas-navy/20 flex items-center justify-center text-asas-navy dark:text-asas-sand">
+          <h2 className="text-sm font-bold text-white flex items-center gap-2 font-display mb-2 uppercase tracking-widest">
+            <div className="w-8 h-8 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center text-asas-gold shadow-[0_0_15px_rgba(212,166,79,0.15)]">
               <Zap className="h-4 w-4" />
             </div>
             Validation Staging (Pre-Release)
           </h2>
-          <p className="text-[10px] font-bold text-asas-silver max-w-xl">
+          <p className="text-[10px] font-bold text-white/50 max-w-xl pl-[40px]">
             Générez un ensemble complet de données opérationnelles (Promoteurs, Projets, Biens, Clients, Leads) pour valider l'architecture et les pipelines. Recommandé uniquement pour l'environnement de staging.
           </p>
           
-          {error && <p className="mt-4 text-[9px] font-bold text-red-500 bg-red-500/10 px-3 py-2 rounded-sm inline-block border border-red-500/20 uppercase tracking-widest">{error}</p>}
-          {success && <p className="mt-4 text-[9px] font-bold text-asas-emerald bg-asas-emerald/10 px-3 py-2 rounded-sm inline-flex items-center gap-2 border border-asas-emerald/20 uppercase tracking-widest"><CheckCircle className="w-3 h-3"/> Environnement provisionné avec succès !</p>}
+          {error && <p className="mt-4 ml-[40px] text-[9px] font-bold text-red-400 bg-red-500/10 px-3 py-2 rounded-xl inline-block border border-red-500/20 uppercase tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.1)]">{error}</p>}
+          {success && <p className="mt-4 ml-[40px] text-[9px] font-bold text-green-400 bg-green-500/10 px-3 py-2 rounded-xl inline-flex items-center gap-2 border border-green-500/20 uppercase tracking-widest shadow-[0_0_15px_rgba(74,222,128,0.1)]"><CheckCircle className="w-3 h-3"/> Environnement provisionné avec succès !</p>}
         </div>
         
         <div className="shrink-0">
@@ -55,18 +55,18 @@ export function SystemValidationWidget() {
             onClick={handleSeed}
             disabled={loading || success}
             className={clsx(
-              "flex items-center gap-2 px-6 py-4 rounded-sm text-[9px] uppercase tracking-widest font-bold shadow-sm transition-all w-full md:w-auto justify-center cursor-pointer",
+              "flex items-center gap-2 px-6 py-4 rounded-xl text-[9px] uppercase tracking-widest font-bold shadow-sm transition-all w-full md:w-auto justify-center cursor-pointer transform hover:scale-[1.02] active:scale-95 disabled:transform-none",
               success 
-                ? "bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20"
-                : "bg-white dark:bg-[#141618] border border-asas-silver/20 hover:bg-asas-sand/50 dark:hover:bg-black/10 text-asas-charcoal dark:text-asas-sand hover:text-asas-gold"
+                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                : "bg-white/5 border border-white/10 hover:bg-white/10 text-white hover:text-white"
             )}
           >
             {loading ? (
-              <><RefreshCcw className="w-4 h-4 animate-spin" /> Provisionnement...</>
+              <><RefreshCcw className="w-4 h-4 animate-spin text-white/50" /> Provisionnement...</>
             ) : success ? (
               <><CheckCircle className="w-4 h-4" /> Terminé</>
             ) : (
-              <><Database className="w-4 h-4" /> Injecter Données de Test</>
+              <><Database className="w-4 h-4 text-white/50" /> Injecter Données de Test</>
             )}
           </button>
         </div>

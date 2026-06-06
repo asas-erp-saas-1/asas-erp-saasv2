@@ -75,37 +75,37 @@ export function TeamManagementClient({ initialProfiles, currentUserRole }: { ini
   }
 
   return (
-    <div className="flex-1 w-full max-w-5xl mx-auto space-y-8 font-sans text-asas-charcoal dark:text-asas-sand">
+    <div className="flex-1 w-full max-w-5xl mx-auto space-y-8 font-sans text-white">
       <div className="flex items-center gap-4 mb-4 shrink-0">
-        <Link href="/dashboard/settings" className="p-2 bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm hover:bg-asas-sand/50 dark:hover:bg-black/10 transition-colors shadow-sm">
-          <ArrowLeft className="w-5 h-5 text-asas-silver" />
+        <Link href="/dashboard/settings" className="p-2 bg-[#051121]/50 border border-white/5 rounded-xl hover:bg-[#0A1629] transition-colors shadow-sm">
+          <ArrowLeft className="w-5 h-5 text-white/50" />
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-asas-charcoal dark:text-asas-sand tracking-tight flex items-center gap-3 font-display uppercase">
-            <div className="w-10 h-10 rounded-sm bg-asas-navy/10 border border-asas-navy/20 flex items-center justify-center">
-              <Users className="h-5 w-5 text-asas-navy dark:text-asas-sand" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
+            <div className="w-10 h-10 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
+              <Users className="h-5 w-5 text-asas-gold" />
             </div>
             Gestion des Accès (RBAC)
           </h1>
-          <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mt-2">Contrôle des rôles et autorisations d'équipe</p>
+          <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-2 pl-[52px]">Contrôle des rôles et autorisations d'équipe</p>
         </div>
       </div>
 
       <AppInviteWidget />
 
-      <div className="bg-white dark:bg-[#141618] border border-asas-silver/20 rounded-sm overflow-hidden shadow-sm">
+      <div className="bg-[#051121]/50 border border-white/5 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-[600px]">
-             <thead className="bg-asas-sand/50 dark:bg-black/10 border-b border-asas-silver/20">
+             <thead className="bg-[#0A1629] border-b border-white/5">
                 <tr>
-                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-asas-silver">Utilisateur</th>
-                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-asas-silver">Contact</th>
-                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-asas-silver">Rôle RBAC</th>
-                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-asas-silver">Statut</th>
-                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-asas-silver text-right">Actions</th>
+                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-white/50">Utilisateur</th>
+                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-white/50">Contact</th>
+                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-white/50">Rôle RBAC</th>
+                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-white/50">Statut</th>
+                   <th className="px-6 py-4 text-[9px] uppercase font-bold tracking-widest text-white/50 text-right">Actions</th>
                 </tr>
              </thead>
-             <tbody className="divide-y divide-asas-silver/10">
+             <tbody className="divide-y divide-white/5">
                 <AnimatePresence>
                    {profiles.map((p) => {
                      const isProcessing = processing === p.id;
@@ -117,19 +117,19 @@ export function TeamManagementClient({ initialProfiles, currentUserRole }: { ini
                           exit={{ opacity: 0 }}
                           className={clsx(
                              "group transition-colors",
-                             isProcessing ? "opacity-50 pointer-events-none" : "hover:bg-asas-sand/30 dark:hover:bg-white/5"
+                             isProcessing ? "opacity-50 pointer-events-none" : "hover:bg-white/5"
                           )}
                         >
                            <td className="px-6 py-5">
                               <div className="flex items-center gap-3">
-                                 <div className="w-10 h-10 rounded-sm bg-asas-sand/50 dark:bg-black/10 border border-asas-silver/20 flex items-center justify-center text-asas-charcoal dark:text-asas-sand font-bold font-mono">
+                                 <div className="w-10 h-10 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center text-white font-bold font-mono shadow-inner">
                                     {p.full_name.charAt(0).toUpperCase() || 'U'}
                                  </div>
-                                 <span className="text-[10px] uppercase tracking-widest font-bold text-asas-charcoal dark:text-asas-sand">{p.full_name}</span>
+                                 <span className="text-[10px] uppercase tracking-widest font-bold text-white">{p.full_name}</span>
                               </div>
                            </td>
                            <td className="px-6 py-5">
-                              <div className="flex items-center gap-2 text-[10px] font-bold text-asas-silver">
+                              <div className="flex items-center gap-2 text-[10px] font-bold text-white/50">
                                  <Mail className="w-3 h-3" /> {p.email}
                               </div>
                            </td>
@@ -140,21 +140,21 @@ export function TeamManagementClient({ initialProfiles, currentUserRole }: { ini
                                    disabled={currentUserRole !== 'owner' || p.role === 'owner'}
                                    value={p.role}
                                    onChange={(e) => handleRoleChange(p.id, e.target.value)}
-                                   className="bg-transparent text-[10px] uppercase font-bold tracking-widest text-asas-charcoal dark:text-asas-sand outline-none cursor-pointer appearance-none disabled:opacity-50"
+                                   className="bg-transparent text-[10px] uppercase font-bold tracking-widest text-white outline-none cursor-pointer appearance-none disabled:opacity-50 hover:opacity-80 transition-opacity"
                                 >
-                                   <option value="owner" disabled>Administrateur</option>
-                                   <option value="manager">Manager</option>
-                                   <option value="agent">Agent Commercial</option>
+                                   <option value="owner" className="bg-[#051121] text-white" disabled>Administrateur</option>
+                                   <option value="manager" className="bg-[#051121] text-white">Manager</option>
+                                   <option value="agent" className="bg-[#051121] text-white">Agent Commercial</option>
                                 </select>
                               </div>
                            </td>
                            <td className="px-6 py-5">
                               {p.status === 'active' ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest bg-asas-emerald/10 text-asas-emerald border border-asas-emerald/20">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[9px] font-bold uppercase tracking-widest bg-green-500/10 text-green-400 border border-green-500/20 shadow-[0_0_15px_rgba(74,222,128,0.1)]">
                                   <CheckCircle2 className="w-3 h-3" /> Actif
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest bg-red-500/10 text-red-500 border border-red-500/20">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[9px] font-bold uppercase tracking-widest bg-red-500/10 text-red-500 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                                   <UserX className="w-3 h-3" /> Suspendu
                                 </span>
                               )}
@@ -164,8 +164,8 @@ export function TeamManagementClient({ initialProfiles, currentUserRole }: { ini
                                  <button
                                    onClick={() => handleStatusChange(p.id, p.status === 'active' ? 'suspended' : 'active')}
                                    className={clsx(
-                                      "text-[9px] font-bold transition-colors px-3 py-1.5 rounded-sm uppercase tracking-widest cursor-pointer",
-                                      p.status === 'active' ? "text-red-500 hover:bg-red-500/10" : "text-asas-emerald hover:bg-asas-emerald/10"
+                                      "text-[9px] font-bold transition-colors px-3 py-1.5 rounded-xl uppercase tracking-widest cursor-pointer",
+                                      p.status === 'active' ? "text-red-400 hover:bg-red-500/10" : "text-green-400 hover:bg-green-500/10"
                                    )}
                                  >
                                    {p.status === 'active' ? 'Suspendre' : 'Réactiver'}
