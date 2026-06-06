@@ -63,7 +63,7 @@ export default function ClientsPage() {
                <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                    <Users className="h-6 w-6 text-asas-gold" /> 
                </div>
-               Base Clients
+               Référentiel Clients
             </h1>
             <p className="text-[10px] uppercase tracking-widest font-bold text-white/50 mt-2">{total} identités enregistrées</p>
           </div>

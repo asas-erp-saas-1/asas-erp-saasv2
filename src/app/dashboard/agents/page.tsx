@@ -83,7 +83,7 @@ export default function AgentsPage() {
              <div className="w-10 h-10 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center">
                 <Users className="h-5 w-5 text-asas-gold" /> 
              </div>
-             Classement des Agents
+             Ressources Humaines
           </h1>
           <p className="text-[9px] uppercase font-bold tracking-widest text-white/50 mt-3">{agents.length} agents actifs au total</p>
         </div>

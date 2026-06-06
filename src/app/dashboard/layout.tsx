@@ -10,43 +10,54 @@ import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/Omniba
 
 const NAV_GROUPS = [
   {
-    group: "Command Center",
+    group: "Espace Global",
     items: [
-      { href: '/dashboard/overview',   label: 'Hub Opérationnel',   Icon: LayoutGrid },
-      { href: '/dashboard/tasks',      label: 'Tâches & Actions',   Icon: CheckSquare },
-      { href: '/dashboard/calendar',   label: 'Agenda',             Icon: CalendarIcon },
+      { href: '/dashboard/overview',   label: 'Tableau de Bord Global',   Icon: LayoutGrid },
+      { href: '/dashboard/tasks',      label: 'Tâches & Activités',   Icon: CheckSquare },
+      { href: '/dashboard/calendar',   label: 'Agenda Entreprise',             Icon: CalendarIcon },
     ]
   },
   {
-    group: "Commercial & CRM",
+    group: "CRM & Ventes (HubSpot Logic)",
     items: [
-      { href: '/dashboard/leads',      label: 'Pipeline Prospection',Icon: Users },
-      { href: '/dashboard/deals',      label: 'Dossiers Vente',      Icon: Handshake },
-      { href: '/dashboard/clients',    label: 'Base Profils',       Icon: UserSquare2 },
+      { href: '/dashboard/leads',      label: 'Acquisition & Leads', Icon: Users },
+      { href: '/dashboard/deals',      label: 'Pipeline des Ventes',      Icon: Handshake },
+      { href: '/dashboard/clients',    label: 'Référentiel Clients',       Icon: UserSquare2 },
     ]
   },
   {
-    group: "Construction & Projets",
+    group: "Portfolio Immobilier (Zillow)",
     items: [
-      { href: '/dashboard/projects',   label: 'Projets',            Icon: Building2 },
-      { href: '/dashboard/properties', label: 'Unités (Biens)',     Icon: Building2 },
-      { href: '/dashboard/sav',        label: 'Livraison & SAV',    Icon: CheckSquare },
+      { href: '/dashboard/properties', label: 'Catalogue des Biens',     Icon: Building2 },
+      { href: '/dashboard/sav',        label: 'Support & Tickets SAV',    Icon: CheckSquare },
     ]
   },
   {
-    group: "Finance & Comptabilité",
+    group: "Projets & Opérations (Odoo)",
     items: [
-      { href: '/dashboard/finance',    label: 'Trésorerie & Encaissements', Icon: DollarSign },
-      { href: '/dashboard/agents',     label: 'RH & Commerciaux',  Icon: Users },
+      { href: '/dashboard/projects',   label: 'Suivi de Chantiers',            Icon: Building2 },
+    ]
+  },
+  {
+    group: "Finance & Comptabilité (Oracle)",
+    items: [
+      { href: '/dashboard/finance',    label: 'Trésorerie & Grand Livre', Icon: DollarSign },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
-    group: "Gouvernance & Paramètres",
+    group: "Capital Humain GRH",
     items: [
-      { href: '/dashboard/intelligence', label: 'Dashboard Décisionnel', Icon: Award },
-      { href: '/dashboard/orchestration', label: 'Automatismes', Icon: Zap },
-      { href: '/dashboard/settings',   label: 'Structure & Organisation',         Icon: Settings },
+      { href: '/dashboard/agents',     label: 'Ressources Humaines',  Icon: Users },
+    ],
+    roles: ['owner', 'admin', 'finance']
+  },
+  {
+    group: "Gouvernance & Administration",
+    items: [
+      { href: '/dashboard/intelligence', label: 'Business Intelligence', Icon: Award },
+      { href: '/dashboard/orchestration', label: 'Orchestrateur & Règles', Icon: Zap },
+      { href: '/dashboard/settings',   label: 'Configuration & Sécurité',         Icon: Settings },
     ],
     roles: ['owner', 'admin']
   }

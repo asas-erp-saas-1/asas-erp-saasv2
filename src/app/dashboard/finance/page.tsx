@@ -89,7 +89,7 @@ export default function FinancePage() {
                  <div className="absolute inset-0 bg-asas-gold/10 group-hover:bg-asas-gold/20 transition-colors" />
                  <DollarSign className="h-7 w-7 text-asas-gold relative z-10" /> 
              </div>
-             Analytique Financière
+             Trésorerie & Grand Livre
           </h1>
           <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50 mt-4 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-asas-gold animate-[ping_2s_ease-in-out_infinite]" />

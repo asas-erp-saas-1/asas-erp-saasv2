@@ -9,7 +9,7 @@ import { RoleDashboards } from '@/modules/dashboard/components/RoleDashboards';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Hub Opérationnel — ASAS RE-OS',
+  title: 'Tableau de Bord Global — ASAS OS',
   description: 'Unified Global ERP & CRM Intelligence tracking operational metrics.',
 }
 
@@ -133,10 +133,10 @@ export default async function OverviewPage() {
                <div className="w-14 h-14 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                    <LayoutDashboard className="h-6 w-6 text-asas-gold" />
                </div>
-               Hub Opérationnel <span className="text-white/20 mx-2 font-sans font-light">|</span> <span className="text-asas-gold">الداشبورد الشامل</span>
+               Tableau de Bord Global <span className="text-white/20 mx-2 font-sans font-light">|</span> <span className="text-asas-gold">الداشبورد الشامل</span>
             </h1>
             <p className="text-[10px] font-bold text-white/50 mt-4 pl-[68px] uppercase tracking-widest">
-              Vue {userRole} — Centralisation des opérations et KPI en temps réel.
+              Vue {userRole} — Command Center des opérations, CRM et ERP.
             </p>
           </div>
           

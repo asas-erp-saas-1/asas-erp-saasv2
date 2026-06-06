@@ -15,7 +15,7 @@ export default function SAVPage() {
            <div className="w-12 h-12 rounded-sm bg-asas-sand/50 dark:bg-white/5 border border-asas-silver/20 flex items-center justify-center shadow-sm">
                <HardHat className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
            </div>
-           SAV & Livraisons
+           Support & Tickets SAV
         </h1>
         <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest pl-1">Remises de Clés & Levée des réserves technique</p>
       </div>

@@ -525,7 +525,7 @@ export default function LeadsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
           <div>
             <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display">
-               Extraction & Workflow Commercial
+               Acquisition & Lead Pipeline
             </h1>
             <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-1 flex items-center gap-2">
               <span className="relative flex h-2 w-2">
