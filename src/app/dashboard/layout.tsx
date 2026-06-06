@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Bot } from 'lucide-react';
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt } from 'lucide-react';
 import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
@@ -20,6 +20,7 @@ const NAV_GROUPS = [
   {
     group: "CRM & Ventes (HubSpot Logic)",
     items: [
+      { href: '/dashboard/marketing',  label: 'Campagnes & Marketing', Icon: Megaphone },
       { href: '/dashboard/leads',      label: 'Acquisition & Leads', Icon: Users },
       { href: '/dashboard/deals',      label: 'Pipeline des Ventes',      Icon: Handshake },
       { href: '/dashboard/clients',    label: 'Référentiel Clients',       Icon: UserSquare2 },
@@ -36,12 +37,14 @@ const NAV_GROUPS = [
     group: "Projets & Opérations (Odoo)",
     items: [
       { href: '/dashboard/projects',   label: 'Suivi de Chantiers',            Icon: Building2 },
+      { href: '/dashboard/procurement',label: 'Achats & Fournisseurs',         Icon: ShoppingCart },
     ]
   },
   {
     group: "Finance & Comptabilité (Oracle)",
     items: [
       { href: '/dashboard/finance',    label: 'Trésorerie & Grand Livre', Icon: DollarSign },
+      { href: '/dashboard/invoices',   label: 'Facturation & Devis',      Icon: Receipt },
     ],
     roles: ['owner', 'admin', 'finance']
   },
