@@ -50,7 +50,7 @@ const downSparkline = sparklineData.sort((a,b) => b.value - a.value);
 
 export function CommandCenterGlobal() {
   return (
-    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-[#06152D] text-white">
+    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
       
       {/* 1. Header Row */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2">

@@ -71,7 +71,7 @@ const NAV_GROUPS = [
   {
     group: "ADMIN OS",
     items: [
-      { href: '/dashboard/security', label: 'Security & RBAC', Icon: Settings },
+      { href: '/dashboard/settings', label: 'Security & RBAC', Icon: Settings },
       { href: '/dashboard/audit',    label: 'Audit Logs', Icon: LayoutGrid },
     ],
     roles: ['owner', 'admin']
