@@ -83,18 +83,27 @@ export default function FinancePage() {
   return (
     <div className="flex-1 text-white flex flex-col">
       <div className="w-full space-y-8 max-w-6xl mx-auto">
-        <div className="relative z-10 w-full mb-10 pt-4">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-4 font-display uppercase">
-             <div className="w-14 h-14 rounded-2xl bg-[#0A1829] border border-white/5 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.15)] relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-colors" />
-                 <DollarSign className="h-7 w-7 text-yellow-500 relative z-10" /> 
-             </div>
-             Trésorerie & Grand Livre
-          </h1>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-yellow-500 mt-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-[ping_2s_ease-in-out_infinite]" />
-            Oracle ERP Logic • PRÉVISIONS & TRÉSORERIE SYSTÈME
-          </p>
+        <div className="relative z-10 w-full mb-10 pt-4 pb-6 border-b border-white/5">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+                <div className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded text-[9px] text-yellow-500 uppercase font-bold tracking-widest flex items-center gap-1">
+                   <DollarSign className="w-3 h-3" />
+                   <span>Financial Command Active</span>
+                </div>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
+                Treasury Command
+              </h1>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
+                <span className="w-2 h-2 rounded-full bg-asas-gold animate-[ping_2s_ease-in-out_infinite] shadow-[0_0_10px_rgba(212,166,79,0.6)]" />
+                Oracle ERP Logic • PRÉVISIONS & TRÉSORERIE SYSTÈME
+              </p>
+            </div>
+            <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/40">
+               Live Oracle Sync enabled
+            </div>
+          </div>
         </div>
 
         {/* Liquidity warning */}

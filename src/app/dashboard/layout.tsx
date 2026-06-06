@@ -10,59 +10,71 @@ import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/Omniba
 
 const NAV_GROUPS = [
   {
-    group: "EXECUTIVE",
+    group: "EXECUTIVE OS",
     items: [
-      { href: '/dashboard/overview',   label: 'Intelligence Room',   Icon: LayoutGrid },
-      { href: '/dashboard/forecasting', label: 'Forecasting',   Icon: BarChart2 },
+      { href: '/dashboard/overview',   label: 'Command Center',   Icon: LayoutGrid },
+      { href: '/dashboard/intelligence', label: 'CEO Intelligence',   Icon: Zap },
       { href: '/dashboard/multi-company', label: 'Multi-Company',             Icon: Building2 },
     ]
   },
   {
-    group: "CRM & SALES",
+    group: "CRM & SALES OS",
     items: [
-      { href: '/dashboard/leads',      label: 'Leads Center', Icon: Users },
-      { href: '/dashboard/deals',      label: 'Pipeline',      Icon: Handshake },
-      { href: '/dashboard/clients',    label: 'Clients 360°',       Icon: UserSquare2 },
-      { href: '/dashboard/reservations', label: 'Réservations',    Icon: CalendarIcon },
+      { href: '/dashboard/leads',      label: 'Smart Leads', Icon: Users },
+      { href: '/dashboard/deals',      label: 'Sales Pipeline',      Icon: Handshake },
+      { href: '/dashboard/clients',    label: 'Customer 360°',       Icon: UserSquare2 },
+      { href: '/dashboard/reservations', label: 'Reservations',    Icon: CalendarIcon },
     ]
   },
   {
-    group: "IMMOBILIER",
+    group: "REAL ESTATE OS",
     items: [
-      { href: '/dashboard/properties', label: 'Biens',     Icon: Building2 },
-      { href: '/dashboard/projects',   label: 'Projets',            Icon: LayoutGrid },
-      { href: '/dashboard/unites',     label: 'Unités',    Icon: CheckSquare },
-      { href: '/dashboard/map',        label: 'Carte Interactive', Icon: Search },
-      { href: '/dashboard/pricing',    label: 'Pricing Engine', Icon: DollarSign },
+      { href: '/dashboard/properties', label: 'Property Universe',     Icon: Building2 },
+      { href: '/dashboard/projects',   label: 'Projects',            Icon: LayoutGrid },
+      { href: '/dashboard/unites',     label: 'Unit Management',    Icon: CheckSquare },
+      { href: '/dashboard/map',        label: 'Interactive Map', Icon: Search },
     ]
   },
   {
-    group: "FINANCE",
+    group: "FINANCE OS",
     items: [
-      { href: '/dashboard/finance',    label: 'Trésorerie', Icon: DollarSign },
-      { href: '/dashboard/accounting', label: 'Comptabilité', Icon: Receipt },
-      { href: '/dashboard/invoices',   label: 'Paiements',      Icon: ShoppingCart },
-      { href: '/dashboard/reports',    label: 'Rapports Financiers', Icon: BarChart2 },
+      { href: '/dashboard/finance',    label: 'Treasury Command', Icon: DollarSign },
+      { href: '/dashboard/accounting', label: 'Accounting', Icon: Receipt },
+      { href: '/dashboard/invoices',   label: 'Installments',      Icon: ShoppingCart },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
-    group: "OPERATIONS",
+    group: "OPERATIONS OS",
     items: [
-      { href: '/dashboard/chantiers', label: 'Chantiers', Icon: Building2 },
-      { href: '/dashboard/fournisseurs', label: 'Fournisseurs', Icon: Users },
-      { href: '/dashboard/qualite', label: 'Qualité & Contrôle', Icon: CheckSquare },
+      { href: '/dashboard/chantiers', label: 'Construction', Icon: Building2 },
+      { href: '/dashboard/fournisseurs', label: 'Procurement', Icon: Users },
+      { href: '/dashboard/qualite', label: 'Quality Control', Icon: CheckSquare },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
-    group: "RESSOURCES HUMAINES",
+    group: "HR & GOV OS",
     items: [
-      { href: '/dashboard/agents',     label: 'Employés',  Icon: Users },
-      { href: '/dashboard/payroll',    label: 'Paie & Congés', Icon: Receipt },
-      { href: '/dashboard/recruitment', label: 'Recrutement', Icon: Search },
+      { href: '/dashboard/agents',     label: 'Employee Hub',  Icon: Users },
+      { href: '/dashboard/payroll',    label: 'Payroll', Icon: Receipt },
     ],
     roles: ['owner', 'admin', 'finance']
+  },
+  {
+    group: "AI & AUTOMATION",
+    items: [
+      { href: '/dashboard/copilot', label: 'AI Copilot', Icon: Zap },
+      { href: '/dashboard/workflows',  label: 'Workflow Engine', Icon: Settings },
+    ],
+  },
+  {
+    group: "ADMIN OS",
+    items: [
+      { href: '/dashboard/security', label: 'Security & RBAC', Icon: Settings },
+      { href: '/dashboard/audit',    label: 'Audit Logs', Icon: LayoutGrid },
+    ],
+    roles: ['owner', 'admin']
   }
 ]
 

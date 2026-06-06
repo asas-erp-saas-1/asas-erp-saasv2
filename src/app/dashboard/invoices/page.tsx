@@ -6,19 +6,22 @@ import { Receipt, Search, Plus, FileText, CheckCircle, Clock, ArrowUpRight } fro
 export default function InvoicesPage() {
   return (
     <div className="w-full flex-1 flex flex-col h-full max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
-      <div className="px-2 py-4 shrink-0 z-10 w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
+      <div className="px-6 py-5 shrink-0 z-10 w-full">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5 pb-6 border-b border-white/5">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display uppercase">
-               <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.15)] hidden sm:flex">
-                   <Receipt className="h-6 w-6 text-yellow-500" /> 
-               </div>
-               Facturation & Devis
+            <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+              <div className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded text-[9px] text-[#D4A64F] uppercase font-bold tracking-widest flex items-center gap-1">
+                 <Receipt className="w-3 h-3" />
+                 <span>Billing Control Active</span>
+              </div>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+               Invoices & Billing
             </h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-yellow-500 mt-2 flex items-center gap-2">
+            <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
               <span className="relative flex h-2 w-2">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
               </span>
               Oracle ERP Logic • Flux Financiers Clients
             </p>
@@ -29,10 +32,10 @@ export default function InvoicesPage() {
                <input 
                  type="text" 
                  placeholder="N° Facture, client..." 
-                 className="w-full md:w-64 pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all font-mono shadow-inner"
+                 className="w-full md:w-64 pl-10 pr-4 py-2.5 bg-black/40 border border-white/5 rounded-xl text-xs text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all font-mono shadow-inner"
                />
             </div>
-            <button className="flex items-center justify-center gap-2 px-5 py-2 bg-yellow-500 text-[#051121] rounded-xl text-[10px] uppercase tracking-widest font-bold hover:bg-yellow-400 transition-colors shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] whitespace-nowrap">
+            <button className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs uppercase tracking-widest font-bold transition-colors shadow-[0_0_15px_rgba(212,166,79,0.3)] hover:shadow-[0_0_25px_rgba(212,166,79,0.5)] whitespace-nowrap border border-transparent outline-none">
                <Plus className="h-4 w-4" /> Créer Facture
             </button>
           </div>

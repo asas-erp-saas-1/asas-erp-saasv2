@@ -63,24 +63,28 @@ export default function ProjectsPage() {
       {/* Decorative Blur - Removed to match ASAS aesthetic */}
 
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 relative z-10">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 relative z-10">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
-            <div className="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center p-3 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-              <Building2 className="h-full w-full text-purple-400" strokeWidth={1.5} />
+          <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+            <div className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 rounded text-[9px] text-purple-400 uppercase font-bold tracking-widest flex items-center gap-1">
+               <Building2 className="w-3 h-3" />
+               <span>Project Operations Active</span>
             </div>
-            Suivi de Chantiers
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
+            Projects & Subdivisions
           </h1>
-          <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest pl-1 mt-2">
+          <p className="text-[10px] font-bold text-[#D4A64F] uppercase tracking-widest mt-2 flex items-center gap-2 hidden sm:flex">
+            <span className="w-2 h-2 rounded-full bg-asas-gold animate-pulse shadow-[0_0_10px_rgba(212,166,79,0.6)]" />
             Odoo Logic • Module de Pilotage Chantiers & Projets
           </p>
         </div>
         
         <div className="flex items-center gap-3">
-           <Link href="/dashboard/projects/bordereaux" className="flex items-center gap-2 px-6 py-3 bg-[#0A1829]/60 backdrop-blur-md border border-white/5 hover:border-white/20 text-white rounded-xl text-xs font-bold transition-transform active:scale-95 shadow-sm hover:bg-white/5">
-             <FileText className="w-4 h-4 text-asas-gold" /> Bordereaux Promoteurs
+           <Link href="/dashboard/projects/bordereaux" className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#0A1829]/60 backdrop-blur-md border border-white/5 hover:border-white/20 text-white rounded-xl text-[10px] uppercase tracking-widest font-bold transition-transform active:scale-95 shadow-sm hover:bg-white/5">
+             <FileText className="w-4 h-4 text-asas-gold" /> Bordereaux
            </Link>
-           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-asas-gold text-[#06152D] border border-transparent rounded-xl text-xs font-bold shadow-[0_0_20px_rgba(212,166,79,0.3)] transition-all active:scale-95 disabled:opacity-50 hover:bg-[#E0B96B]">
+           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-[10px] uppercase tracking-widest font-bold shadow-[0_0_20px_rgba(212,166,79,0.3)] transition-all active:scale-95 disabled:opacity-50 border border-transparent outline-none">
              <Plus className="w-4 h-4" /> Nouveau Programme
            </button>
         </div>

@@ -462,25 +462,28 @@ export default function DealsPage() {
       <div className="flex flex-col bg-transparent overflow-hidden transition-all duration-300 ease-in-out w-full">
         {/* Header */}
         <div className="px-6 py-5 z-10 shrink-0">
-          <div className="flex w-full items-center justify-between mb-5">
+          <div className="flex flex-col md:flex-row md:items-end w-full justify-between gap-4 mb-5">
             <div>
-              <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display uppercase">
-                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.15)] hidden sm:flex">
-                     <Handshake className="h-6 w-6 text-orange-400" />
+              <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+                 <div className="px-2 py-1 bg-orange-500/10 border border-orange-500/20 rounded text-[9px] text-orange-400 uppercase font-bold tracking-widest flex items-center gap-1">
+                    <Handshake className="w-3 h-3" />
+                    <span>Sales Operations Active</span>
                  </div>
-                 Pipeline des Ventes
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+                 Sales Pipeline
               </h1>
-              <p className="text-[10px] uppercase tracking-widest text-orange-400 font-bold mt-2 flex items-center gap-2 hidden sm:flex">
+              <p className="text-[10px] uppercase tracking-widest text-[#D4A64F] font-bold mt-2 flex items-center gap-2 hidden sm:flex">
                 <span className="relative flex h-2 w-2">
-                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                 <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-400"></span>
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
                 </span>
-                HubSpot Logic • {total} Transations Actives
+                HubSpot Sync • {total} Transactions Actives
               </p>
             </div>
             <button
               onClick={() => router.push("/dashboard/deals/new")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] shrink-0"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(212,166,79,0.3)] hover:shadow-[0_0_20px_rgba(212,166,79,0.5)] shrink-0"
             >
               <Plus className="h-4 w-4" strokeWidth={2} /> Initier Deal
             </button>

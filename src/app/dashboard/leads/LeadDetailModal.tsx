@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { X, Phone, MessageCircle, Clock, Calendar, Mail, FileText, User, Navigation } from 'lucide-react'
 import type { Lead, Activity } from '@/types/app'
-import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
+
 import {
   ActionPanel,
   ActionPanelContent,
@@ -301,14 +301,6 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
            )}
         </ActionPanelFooter>
       </ActionPanelContent>
-
-      {isTaskModalOpen && (
-        <CreateTaskModal
-          leadId={leadId}
-          onClose={() => setIsTaskModalOpen(false)}
-          onSuccess={() => setIsTaskModalOpen(false)}
-        />
-      )}
     </ActionPanel>
   )
 }

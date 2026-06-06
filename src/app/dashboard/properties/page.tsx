@@ -150,24 +150,27 @@ export default function PropertiesPage() {
     <div className="flex-1 text-white flex flex-col pt-4">
       <div className="w-full space-y-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10 border-b border-white/5 pb-6">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
-              <div className="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center p-3 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-                 <Building2 className="h-full w-full text-indigo-400" /> 
+            <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+              <div className="px-2 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded text-[9px] text-indigo-400 uppercase font-bold tracking-widest flex items-center gap-1">
+                 <Building2 className="w-3 h-3" />
+                 <span>Real Estate Catalog Active</span>
               </div>
-              Catalogue des Biens
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
+              Property Universe
             </h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-indigo-400 mt-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.6)]" />
-              Zillow Logic • INVENTAIRE SYNCHRONISÉ
+            <p className="text-[10px] uppercase tracking-widest font-bold text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
+              <span className="w-2 h-2 rounded-full bg-asas-gold animate-pulse shadow-[0_0_10px_rgba(212,166,79,0.6)]" />
+              Real Estate Engine • INVENTAIRE SYNCHRONISÉ
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-6 py-3 shrink-0 bg-white/5 border border-white/10 text-white/80 rounded-xl text-[10px] uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all shadow-sm">
+            <button className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-white/5 border border-white/10 text-white/80 rounded-xl text-xs uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all shadow-sm">
               Générer Rapport
             </button>
-            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-6 py-3 shrink-0 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 border border-transparent outline-none">
+            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 border border-transparent outline-none">
               <Plus className="h-4 w-4" strokeWidth={2} /> Nouvel Actif
             </button>
           </div>

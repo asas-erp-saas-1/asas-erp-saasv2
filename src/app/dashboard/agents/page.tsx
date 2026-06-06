@@ -78,14 +78,27 @@ export default function AgentsPage() {
       {/* Left: rankings */}
       <div className={clsx('flex flex-col bg-[#051121] border-r border-white/5 overflow-hidden transition-all duration-300 z-10', selectedId ? 'hidden lg:flex lg:w-1/2 xl:w-[45%]' : 'w-full')}>
         {/* Header */}
-        <div className="px-8 py-6 border-b border-white/5 shrink-0 bg-[#0A1829]">
-          <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display uppercase">
-             <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-                <Users className="h-5 w-5 text-yellow-500" /> 
-             </div>
-             Ressources Humaines
-          </h1>
-          <p className="text-[9px] uppercase font-bold tracking-widest text-yellow-500 mt-3">Oracle Logic GRH • {agents.length} agents actifs au total</p>
+        <div className="px-6 py-5 shrink-0 z-10 w-full border-b border-white/5 bg-[#0A1829]">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+                <div className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded text-[9px] text-[#D4A64F] uppercase font-bold tracking-widest flex items-center gap-1">
+                   <Users className="w-3 h-3" />
+                   <span>Employee Management Active</span>
+                </div>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+                 Employee Hub
+              </h1>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
+                <span className="relative flex h-2 w-2">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
+                </span>
+                Oracle Logic GRH • {agents.length || 0} agents actifs au total
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Rankings table */}

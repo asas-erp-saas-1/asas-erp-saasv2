@@ -8,7 +8,6 @@ import { ErrorTracker } from '@/lib/observability/errors'
 import { jsPDF } from 'jspdf'
 import { Clock, Send } from 'lucide-react';
 import type { Activity } from '@/types/app';
-import { CreateTaskModal } from '@/app/dashboard/tasks/CreateTaskModal'
 import { LogDepositModal } from '@/app/dashboard/deals/LogDepositModal'
 import { SchedulePaymentModal } from '@/app/dashboard/deals/SchedulePaymentModal'
 import { WhatsAppTemplateModal } from './WhatsAppTemplateModal'
@@ -1093,14 +1092,6 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
       <DealVaultSection dealId={dealId} />
       <DealPortalChatSection dealId={dealId} />
       <DealActivitiesSection dealId={dealId} />
-
-      {isTaskModalOpen && (
-        <CreateTaskModal
-          dealId={dealId}
-          onClose={() => setIsTaskModalOpen(false)}
-          onSuccess={() => setIsTaskModalOpen(false)}
-        />
-      )}
       
       {isDepositModalOpen && (
         <LogDepositModal 

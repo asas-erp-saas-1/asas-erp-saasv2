@@ -57,17 +57,26 @@ export default function ClientsPage() {
       <div className="w-full space-y-6">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-white/5">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
-               <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-                   <UserSquare2 className="h-6 w-6 text-purple-400" /> 
-               </div>
-               Référentiel Clients
+            <div className="flex items-center gap-2 mb-2 hidden sm:flex">
+              <div className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 rounded text-[9px] text-purple-400 uppercase font-bold tracking-widest flex items-center gap-1">
+                 <Users className="w-3 h-3" />
+                 <span>Customer 360 Active</span>
+              </div>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+               Customer 360°
             </h1>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-purple-400 mt-2">HubSpot Logic • {total} identités enregistrées</p>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
+              <span className="relative flex h-2 w-2">
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
+              </span>
+              HubSpot Sync • {total} identités enregistrées
+            </p>
           </div>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-asas-gold text-[#06152D] hover:bg-[#E0B96B] rounded-xl text-[10px] uppercase font-bold tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(212,166,79,0.3)]">
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(212,166,79,0.3)] hover:shadow-[0_0_20px_rgba(212,166,79,0.5)] shrink-0">
             <Plus className="h-4 w-4" strokeWidth={2} /> Nouveau Profil
           </button>
         </div>
