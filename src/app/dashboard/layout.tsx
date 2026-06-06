@@ -10,59 +10,59 @@ import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/Omniba
 
 const NAV_GROUPS = [
   {
-    group: "Espace Global",
+    group: "EXECUTIVE",
     items: [
-      { href: '/dashboard/overview',   label: 'Tableau de Bord Global',   Icon: LayoutGrid },
-      { href: '/dashboard/tasks',      label: 'Tâches & Activités',   Icon: CheckSquare },
-      { href: '/dashboard/calendar',   label: 'Agenda Entreprise',             Icon: CalendarIcon },
+      { href: '/dashboard/overview',   label: 'Intelligence Room',   Icon: LayoutGrid },
+      { href: '/dashboard/forecasting', label: 'Forecasting',   Icon: BarChart2 },
+      { href: '/dashboard/multi-company', label: 'Multi-Company',             Icon: Building2 },
     ]
   },
   {
-    group: "CRM & Ventes (HubSpot Logic)",
+    group: "CRM & SALES",
     items: [
-      { href: '/dashboard/marketing',  label: 'Campagnes & Marketing', Icon: Megaphone },
-      { href: '/dashboard/leads',      label: 'Acquisition & Leads', Icon: Users },
-      { href: '/dashboard/deals',      label: 'Pipeline des Ventes',      Icon: Handshake },
-      { href: '/dashboard/clients',    label: 'Référentiel Clients',       Icon: UserSquare2 },
+      { href: '/dashboard/leads',      label: 'Leads Center', Icon: Users },
+      { href: '/dashboard/deals',      label: 'Pipeline',      Icon: Handshake },
+      { href: '/dashboard/clients',    label: 'Clients 360°',       Icon: UserSquare2 },
+      { href: '/dashboard/reservations', label: 'Réservations',    Icon: CalendarIcon },
     ]
   },
   {
-    group: "Portfolio Immobilier (Zillow)",
+    group: "IMMOBILIER",
     items: [
-      { href: '/dashboard/properties', label: 'Catalogue des Biens',     Icon: Building2 },
-      { href: '/dashboard/sav',        label: 'Support & Tickets SAV',    Icon: CheckSquare },
+      { href: '/dashboard/properties', label: 'Biens',     Icon: Building2 },
+      { href: '/dashboard/projects',   label: 'Projets',            Icon: LayoutGrid },
+      { href: '/dashboard/unites',     label: 'Unités',    Icon: CheckSquare },
+      { href: '/dashboard/map',        label: 'Carte Interactive', Icon: Search },
+      { href: '/dashboard/pricing',    label: 'Pricing Engine', Icon: DollarSign },
     ]
   },
   {
-    group: "Projets & Opérations (Odoo)",
+    group: "FINANCE",
     items: [
-      { href: '/dashboard/projects',   label: 'Suivi de Chantiers',            Icon: Building2 },
-      { href: '/dashboard/procurement',label: 'Achats & Fournisseurs',         Icon: ShoppingCart },
-    ]
-  },
-  {
-    group: "Finance & Comptabilité (Oracle)",
-    items: [
-      { href: '/dashboard/finance',    label: 'Trésorerie & Grand Livre', Icon: DollarSign },
-      { href: '/dashboard/invoices',   label: 'Facturation & Devis',      Icon: Receipt },
+      { href: '/dashboard/finance',    label: 'Trésorerie', Icon: DollarSign },
+      { href: '/dashboard/accounting', label: 'Comptabilité', Icon: Receipt },
+      { href: '/dashboard/invoices',   label: 'Paiements',      Icon: ShoppingCart },
+      { href: '/dashboard/reports',    label: 'Rapports Financiers', Icon: BarChart2 },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
-    group: "Capital Humain GRH",
+    group: "OPERATIONS",
     items: [
-      { href: '/dashboard/agents',     label: 'Ressources Humaines',  Icon: Users },
+      { href: '/dashboard/chantiers', label: 'Chantiers', Icon: Building2 },
+      { href: '/dashboard/fournisseurs', label: 'Fournisseurs', Icon: Users },
+      { href: '/dashboard/qualite', label: 'Qualité & Contrôle', Icon: CheckSquare },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
-    group: "Gouvernance & Administration",
+    group: "RESSOURCES HUMAINES",
     items: [
-      { href: '/dashboard/intelligence', label: 'Business Intelligence', Icon: Award },
-      { href: '/dashboard/orchestration', label: 'Orchestrateur & Règles', Icon: Zap },
-      { href: '/dashboard/settings',   label: 'Configuration & Sécurité',         Icon: Settings },
+      { href: '/dashboard/agents',     label: 'Employés',  Icon: Users },
+      { href: '/dashboard/payroll',    label: 'Paie & Congés', Icon: Receipt },
+      { href: '/dashboard/recruitment', label: 'Recrutement', Icon: Search },
     ],
-    roles: ['owner', 'admin']
+    roles: ['owner', 'admin', 'finance']
   }
 ]
 
