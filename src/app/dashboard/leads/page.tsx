@@ -524,15 +524,18 @@ export default function LeadsPage() {
       <div className="px-2 py-4 shrink-0 z-10 w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-2">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display">
-               Acquisition & Lead Pipeline
+            <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display uppercase">
+               <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.15)] hidden sm:flex">
+                   <Users className="h-6 w-6 text-blue-400" /> 
+               </div>
+               Acquisition & Leads
             </h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-1 flex items-center gap-2">
+            <p className="text-[10px] uppercase font-bold tracking-widest text-blue-400 mt-2 flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
               </span>
-              {total} Profils Actifs Detectés
+              HubSpot Logic • {total} Profils Actifs Detectés
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">

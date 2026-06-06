@@ -16,7 +16,7 @@ export default function OrchestrationPage() {
            <div className="w-14 h-14 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                <LayoutGrid className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
            </div>
-           Moteur d'Orchestration <span className="text-white/20 mx-2 font-sans font-light">|</span> <span className="text-asas-gold">مركز التحكم الأساسي</span>
+           Orchestrateur & Règles <span className="text-white/20 mx-2 font-sans font-light">|</span> <span className="text-asas-gold">مركز التحكم الأساسي</span>
         </h1>
         <p className="text-[10px] sm:text-xs font-bold text-white/50 uppercase tracking-widest pl-[68px]">Autopilotage opérationnel & surveillance SLA</p>
       </div>

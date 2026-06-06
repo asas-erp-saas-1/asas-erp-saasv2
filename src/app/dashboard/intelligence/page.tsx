@@ -15,7 +15,7 @@ export default function IntelligencePage() {
           <div className="w-14 h-14 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
             <Award className="h-6 w-6 text-asas-gold" strokeWidth={1.5} /> 
           </div>
-          Décisions & Prévisions
+          Business Intelligence
         </h1>
         <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest pl-[68px]">
           Moteur Prévisionnel & Pilotage Financier de l'Entreprise de Promotion Immobilière

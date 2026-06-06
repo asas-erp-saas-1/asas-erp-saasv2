@@ -65,14 +65,14 @@ export default function ProjectsPage() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 relative z-10">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
-            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center p-3 shadow-sm backdrop-blur-md">
-              <Building2 className="h-full w-full text-asas-gold" strokeWidth={1.5} />
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
+            <div className="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center p-3 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+              <Building2 className="h-full w-full text-purple-400" strokeWidth={1.5} />
             </div>
-            Programmes
+            Suivi de Chantiers
           </h1>
-          <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest pl-1 mt-2">
-            Module de Pilotage Chantiers & Projets
+          <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest pl-1 mt-2">
+            Odoo Logic • Module de Pilotage Chantiers & Projets
           </p>
         </div>
         

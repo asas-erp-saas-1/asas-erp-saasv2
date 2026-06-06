@@ -464,15 +464,18 @@ export default function DealsPage() {
         <div className="px-6 py-5 z-10 shrink-0">
           <div className="flex w-full items-center justify-between mb-5">
             <div>
-              <h1 className="text-2xl font-bold text-white flex items-center gap-2 tracking-tight font-display uppercase">
-                Transactions
+              <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display uppercase">
+                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.15)] hidden sm:flex">
+                     <Handshake className="h-6 w-6 text-orange-400" />
+                 </div>
+                 Pipeline des Ventes
               </h1>
-              <p className="text-[10px] uppercase tracking-widest text-[#D4A64F] font-bold mt-1.5 flex items-center gap-2 hidden sm:flex">
+              <p className="text-[10px] uppercase tracking-widest text-orange-400 font-bold mt-2 flex items-center gap-2 hidden sm:flex">
                 <span className="relative flex h-2 w-2">
-                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
-                 <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-400"></span>
                 </span>
-                {total} actives sur le réseau
+                HubSpot Logic • {total} Transations Actives
               </p>
             </div>
             <button

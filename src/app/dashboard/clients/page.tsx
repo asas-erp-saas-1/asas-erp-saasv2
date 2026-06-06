@@ -1,7 +1,7 @@
 // src/app/dashboard/clients/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
-import { Users, Plus, Search, Phone, Mail, ChevronRight, Globe, FileUser } from 'lucide-react'
+import { Users, Plus, Search, Phone, Mail, ChevronRight, Globe, FileUser, UserSquare2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { clsx } from 'clsx'
 import { ErrorTracker } from '@/lib/observability/errors'
@@ -60,12 +60,12 @@ export default function ClientsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/5">
           <div>
             <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3 font-display uppercase">
-               <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
-                   <Users className="h-6 w-6 text-asas-gold" /> 
+               <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+                   <UserSquare2 className="h-6 w-6 text-purple-400" /> 
                </div>
                Référentiel Clients
             </h1>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-white/50 mt-2">{total} identités enregistrées</p>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-purple-400 mt-2">HubSpot Logic • {total} identités enregistrées</p>
           </div>
           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-asas-gold text-[#06152D] hover:bg-[#E0B96B] rounded-xl text-[10px] uppercase font-bold tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(212,166,79,0.3)]">
             <Plus className="h-4 w-4" strokeWidth={2} /> Nouveau Profil

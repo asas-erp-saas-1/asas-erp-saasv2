@@ -134,7 +134,7 @@ export default function SettingsPage() {
                 <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                     <Settings className="h-6 w-6 text-asas-gold" />
                 </div>
-                Configuration Système
+                Configuration & Sécurité
             </h1>
             <p className="text-[9px] uppercase font-bold tracking-widest text-white/50 mt-3 pl-[60px]">Règles métier, seuils d'inactivité et alertes financières.</p>
             </div>

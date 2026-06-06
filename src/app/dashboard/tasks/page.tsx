@@ -124,7 +124,7 @@ export default function TasksPage() {
                  <div className="w-12 h-12 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.15)]">
                     <CheckSquare className="h-6 w-6 text-asas-gold" /> 
                  </div>
-                 Opérations
+                 Tâches & Activités
               </h1>
               <p className="text-[9px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2">
 			  <span className="relative flex h-2 w-2">

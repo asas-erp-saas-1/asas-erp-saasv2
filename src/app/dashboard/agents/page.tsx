@@ -80,12 +80,12 @@ export default function AgentsPage() {
         {/* Header */}
         <div className="px-8 py-6 border-b border-white/5 shrink-0 bg-[#0A1829]">
           <h1 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight font-display uppercase">
-             <div className="w-10 h-10 rounded-xl bg-asas-gold/10 border border-asas-gold/20 flex items-center justify-center">
-                <Users className="h-5 w-5 text-asas-gold" /> 
+             <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                <Users className="h-5 w-5 text-yellow-500" /> 
              </div>
              Ressources Humaines
           </h1>
-          <p className="text-[9px] uppercase font-bold tracking-widest text-white/50 mt-3">{agents.length} agents actifs au total</p>
+          <p className="text-[9px] uppercase font-bold tracking-widest text-yellow-500 mt-3">Oracle Logic GRH • {agents.length} agents actifs au total</p>
         </div>
 
         {/* Rankings table */}

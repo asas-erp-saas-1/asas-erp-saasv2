@@ -96,24 +96,27 @@ export function OwnerDashboard({ metrics, events }: { metrics: any, events: any[
   return (
     <div className="space-y-12 animate-in font-sans">
       
-      {/* 1. FINANCIAL INDICATORS */}
+      {/* 1. FINANCIAL INDICATORS (ORACLE LOGIC) */}
       <div className="space-y-6">
         <div className="flex items-center gap-3 px-1">
            <div className="w-10 h-10 rounded-xl bg-asas-gold/10 flex items-center justify-center border border-asas-gold/20">
               <TrendingUp className="w-5 h-5 text-asas-gold" />
            </div>
-           <h2 className="text-2xl font-display font-bold text-white tracking-tight">Finance & Revenus</h2>
+           <div>
+             <h2 className="text-2xl font-display font-bold text-white tracking-tight">Finance & Comptabilité</h2>
+             <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-1">Oracle ERP Logic • Trésorerie & Opérations</p>
+           </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Big Pipeline Card */}
           <div className="col-span-1 flex flex-col">
-             <div className="p-8 rounded-3xl bg-[#051121] shadow-xl text-white flex flex-col justify-between h-full relative overflow-hidden group border border-white/5">
+             <div className="p-8 rounded-3xl bg-[#051121] shadow-xl text-white flex flex-col justify-between h-full relative overflow-hidden group border border-white/5 hover:border-asas-gold/30 transition-colors cursor-default">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse_at_top_right,_rgba(212,166,79,0.15),_transparent_70%)] pointer-events-none"></div>
                 <div className="relative z-10 flex items-center justify-between mb-8">
                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Valeur Totale Pipeline</span>
-                   <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm">
-                     <Briefcase className="w-6 h-6 text-asas-gold" />
+                   <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm group-hover:bg-asas-gold/10 transition-colors">
+                     <Briefcase className="w-6 h-6 text-white/40 group-hover:text-asas-gold transition-colors" />
                    </div>
                 </div>
                 <div className="relative z-10 mt-auto">
@@ -127,7 +130,7 @@ export function OwnerDashboard({ metrics, events }: { metrics: any, events: any[
           </div>
 
           {/* Chart */}
-          <div className="col-span-1 lg:col-span-2 p-8 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm flex flex-col transition-shadow hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+          <div className="col-span-1 lg:col-span-2 p-8 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm flex flex-col transition-shadow hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] cursor-default">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-lg font-bold text-white tracking-tight">Chiffre d'Affaires Global</h3>
@@ -151,78 +154,108 @@ export function OwnerDashboard({ metrics, events }: { metrics: any, events: any[
         </div>
       </div>
 
-      {/* 2. TECHNICAL & OPERATIONAL DATA */}
+      {/* 2. CRM & PORTFOLIO (HUBSPOT / ZILLOW LOGIC) */}
       <div className="space-y-6">
         <div className="flex items-center gap-3 px-1">
            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-              <Building2 className="w-5 h-5 text-blue-400" />
+              <Users className="w-5 h-5 text-blue-400" />
            </div>
-           <h2 className="text-2xl font-display font-bold text-white tracking-tight">Données Techniques du Projet</h2>
+           <div>
+             <h2 className="text-2xl font-display font-bold text-white tracking-tight">Acquisition & Catalogue Immobilier</h2>
+             <p className="text-[10px] uppercase font-bold tracking-widest text-[#3b82f6] mt-1">HubSpot & Zillow Logic • Leads & Inventaire</p>
+           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { label: 'Unités Disponibles', value: metrics.availableUnitsCount, icon: Building2, sub: 'Inventaire Actif' },
-            { label: 'Nouveaux Leads', value: metrics.newLeadsCount, icon: Users, sub: "File d'attente commerciale" },
-            { label: 'Demandes VSP', value: metrics.pendingContractsCount, icon: AlertCircle, sub: 'Signature requise' },
+            { label: 'Unités Disponibles', value: metrics.availableUnitsCount, icon: Building2, sub: 'Portfolio Zillow (Actif)', link: '/dashboard/properties', color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+            { label: 'Nouveaux Leads', value: metrics.newLeadsCount, icon: Users, sub: "Pipeline HubSpot", link: '/dashboard/leads', color: 'text-blue-400', bg: 'bg-blue-500/10' },
+            { label: 'Demandes VSP', value: metrics.pendingContractsCount, icon: AlertCircle, sub: 'Contrats en attente', link: '/dashboard/deals', color: 'text-orange-400', bg: 'bg-orange-500/10' },
           ].map((kpi, idx) => (
-            <div key={idx} className="p-6 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm relative overflow-hidden group hover:border-asas-gold/30 transition-all cursor-default flex flex-col justify-between">
+            <Link href={kpi.link} key={idx} className="p-6 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm relative overflow-hidden group hover:border-white/20 transition-all flex flex-col justify-between">
               <div className="flex items-center justify-between mb-4">
                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">{kpi.label}</span>
-                 <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-asas-gold/10 transition-colors">
-                   <kpi.icon className="w-5 h-5 text-white/40 group-hover:text-asas-gold transition-colors" />
+                 <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center transition-colors", kpi.bg)}>
+                   <kpi.icon className={clsx("w-5 h-5", kpi.color)} />
                  </div>
               </div>
               <div className="mt-4 flex flex-col">
                 <div className="text-3xl font-display font-bold text-white truncate group-hover:text-asas-gold transition-colors">{kpi.value || 0}</div>
-                <div className="text-[9px] uppercase font-bold tracking-widest text-white/30 mt-2">{kpi.sub}</div>
+                <div className="flex items-center gap-2 mt-2">
+                   <div className="text-[9px] uppercase font-bold tracking-widest text-white/30">{kpi.sub}</div>
+                   <ArrowUpRight className="w-3 h-3 text-white/20 group-hover:text-asas-gold transition-colors opacity-0 group-hover:opacity-100" />
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
 
-      {/* 3. SYSTEM LOGS */}
-      <div className="space-y-6">
-        <div className="flex items-center gap-3 px-1">
-           <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
-              <Clock className="w-5 h-5 text-white/60" />
-           </div>
-           <h2 className="text-2xl font-display font-bold text-white tracking-tight">Audit & Télémétrie</h2>
-        </div>
-
-        <div className="p-8 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm flex flex-col max-h-[420px]">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-bold text-white tracking-tight">Historique Récent</h3>
-            <div className="px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold rounded-lg bg-asas-gold/10 text-asas-gold flex items-center gap-2 border border-asas-gold/20">
-               <div className="w-1.5 h-1.5 rounded-full bg-asas-gold animate-ping"></div>
-               En direct
+      {/* 3. PROJECTS & OPERATIONS (ODOO LOGIC) */}
+      {/* 4. SYSTEM LOGS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="space-y-6">
+            <div className="flex items-center gap-3 px-1">
+               <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
+                  <LayoutDashboard className="w-5 h-5 text-purple-400" />
+               </div>
+               <div>
+                  <h2 className="text-2xl font-display font-bold text-white tracking-tight">Opérations & Chantiers</h2>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-[#a855f7] mt-1">Odoo Logic • Gestion de Projet</p>
+               </div>
             </div>
-          </div>
-          <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 relative">
-            {events && events.length > 0 ? (
-              <div className="relative border-l border-white/10 ml-2 space-y-6 pb-4">
-                {events.map((event) => (
-                  <div key={event.id} className="relative pl-6">
-                    <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-[#051121] border-2 border-asas-gold" />
-                    <div>
-                      <p className="font-bold text-white text-xs uppercase tracking-widest leading-loose">{event.event_type.replace(/_/g, ' ')}</p>
-                      <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mt-1">Sur l'entité <span className="font-bold text-white">{event.aggregate_type}</span> ({event.aggregate_id.substring(0,8)})</p>
-                      <p className="text-[9px] font-mono text-white/30 mt-2 tracking-widest">
-                        {new Date(event.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}
-                      </p>
-                    </div>
+            <div className="p-8 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm flex flex-col items-center justify-center text-center h-[320px] group hover:border-white/20 transition-colors">
+               <Building2 className="w-10 h-10 text-white/20 mb-4 group-hover:text-purple-400 transition-colors" />
+               <p className="text-sm font-bold text-white uppercase tracking-widest">Pilotage des Chantiers</p>
+               <p className="text-[10px] font-medium text-white/40 mt-2 max-w-[250px]">État d'avancement, bordereaux de prix, et livraisons SAV.</p>
+               <Link href="/dashboard/projects" className="mt-6 px-6 py-2.5 bg-white/5 hover:bg-white/10 text-[10px] uppercase tracking-widest font-bold text-white rounded-xl transition-colors border border-white/10">Ouvrir Odoo Module</Link>
+            </div>
+         </div>
+
+         <div className="space-y-6">
+            <div className="flex items-center gap-3 px-1">
+               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                  <Clock className="w-5 h-5 text-white/60" />
+               </div>
+               <div>
+                  <h2 className="text-2xl font-display font-bold text-white tracking-tight">Audit & Télémétrie</h2>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-white/50 mt-1">Event Sourcing • Logs</p>
+               </div>
+            </div>
+
+            <div className="p-8 border border-white/5 rounded-3xl bg-[#0A1829]/60 backdrop-blur-md shadow-sm flex flex-col h-[320px]">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-sm font-bold text-white/70 tracking-tight uppercase">Historique Récent</h3>
+                <div className="px-3 py-1.5 text-[9px] uppercase tracking-widest font-bold rounded-lg bg-green-500/10 text-green-400 flex items-center gap-2 border border-green-500/20">
+                   <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></div>
+                   En direct
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 relative">
+                {events && events.length > 0 ? (
+                  <div className="relative border-l border-white/10 ml-2 space-y-6 pb-4">
+                    {events.map((event) => (
+                      <div key={event.id} className="relative pl-6">
+                        <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-[#051121] border-2 border-asas-gold" />
+                        <div>
+                          <p className="font-bold text-white text-[10px] uppercase tracking-widest leading-loose">{event.event_type.replace(/_/g, ' ')}</p>
+                          <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-1"><span className="text-white">{event.aggregate_type}</span> ({event.aggregate_id.substring(0,6)})</p>
+                          <p className="text-[8px] font-mono text-white/30 mt-2 tracking-widest">
+                            {new Date(event.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="text-center h-full flex flex-col items-center justify-center opacity-40">
+                    <Clock className="w-8 h-8 mb-4 text-white/60" />
+                    <p className="text-[9px] uppercase tracking-widest font-bold text-white">Aucune activité</p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="text-center h-full flex flex-col items-center justify-center opacity-40">
-                <Clock className="w-8 h-8 mb-4 text-white/60" />
-                <p className="text-[10px] uppercase tracking-widest font-bold text-white">Aucune activité récente détectée</p>
-              </div>
-            )}
-          </div>
-        </div>
+            </div>
+         </div>
       </div>
     </div>
   );

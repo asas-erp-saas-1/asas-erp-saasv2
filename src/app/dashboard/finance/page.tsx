@@ -85,15 +85,15 @@ export default function FinancePage() {
       <div className="w-full space-y-8 max-w-6xl mx-auto">
         <div className="relative z-10 w-full mb-10 pt-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-4 font-display uppercase">
-             <div className="w-14 h-14 rounded-2xl bg-[#0A1829] border border-white/5 flex items-center justify-center shadow-sm relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-asas-gold/10 group-hover:bg-asas-gold/20 transition-colors" />
-                 <DollarSign className="h-7 w-7 text-asas-gold relative z-10" /> 
+             <div className="w-14 h-14 rounded-2xl bg-[#0A1829] border border-white/5 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.15)] relative overflow-hidden group">
+                 <div className="absolute inset-0 bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-colors" />
+                 <DollarSign className="h-7 w-7 text-yellow-500 relative z-10" /> 
              </div>
              Trésorerie & Grand Livre
           </h1>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50 mt-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-asas-gold animate-[ping_2s_ease-in-out_infinite]" />
-            PRÉVISIONS & TRÉSORERIE SYSTÈME
+          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-yellow-500 mt-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-[ping_2s_ease-in-out_infinite]" />
+            Oracle ERP Logic • PRÉVISIONS & TRÉSORERIE SYSTÈME
           </p>
         </div>
 

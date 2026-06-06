@@ -170,7 +170,7 @@ export default function CalendarPage() {
             <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
               <CalendarIcon className="h-5 w-5 text-asas-gold" /> 
             </div>
-            <span className="text-[12px] font-bold text-white uppercase tracking-widest hidden sm:block">Agenda</span>
+            <span className="text-[12px] font-bold text-white uppercase tracking-widest hidden sm:block">Agenda Entreprise</span>
           </div>
 
           <div className="flex items-center ml-2 sm:ml-6 gap-3">
