@@ -1,10 +1,62 @@
 import { pgTable, serial, text, varchar, timestamp, integer, boolean, numeric, jsonb } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }),
   role: varchar("role", { length: 50 }).default('user'),
+  department: varchar("department", { length: 100 }),
+  status: varchar("status", { length: 50 }).default('active'),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const attendance = pgTable("attendance", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  date: timestamp("date").notNull(),
+  timeIn: timestamp("time_in"),
+  timeOut: timestamp("time_out"),
+  status: varchar("status", { length: 50 }).notNull().default('present'), // present, absent, late, remote
+  location: varchar("location", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const performanceReviews = pgTable("performance_reviews", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  reviewerId: integer("reviewer_id").references(() => users.id).notNull(),
+  period: varchar("period", { length: 50 }).notNull(), // Q1 2026, Q2 2026
+  score: numeric("score", { precision: 3, scale: 2 }), // 1.00 to 5.00
+  status: varchar("status", { length: 50 }).notNull().default('pending'), // pending, completed
+  feedback: text("feedback"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const projects = pgTable("projects", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  location: varchar("location", { length: 255 }),
+  budget: numeric("budget", { precision: 15, scale: 2 }),
+  status: varchar("status", { length: 50 }).notNull().default('planning'), // planning, active, delayed, completed
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  managerId: integer("manager_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const projectTasks = pgTable("project_tasks", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  status: varchar("status", { length: 50 }).notNull().default('todo'), // todo, in_progress, done, blocked
+  priority: varchar("priority", { length: 50 }).default('medium'),
+  assigneeId: integer("assignee_id").references(() => users.id),
+  dueDate: timestamp("due_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -43,6 +95,7 @@ export const properties = pgTable("properties", {
   area: numeric("area", { precision: 10, scale: 2 }), // in sq meters
   location: varchar("location", { length: 255 }),
   specifications: jsonb("specifications"), // metadata like rooms, floors, etc.
+  projectId: integer("project_id").references(() => projects.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -71,3 +124,14 @@ export const invoices = pgTable("invoices", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const projectsRelations = relations(projects, ({ many }) => ({
+  properties: many(properties),
+}));
+
+export const propertiesRelations = relations(properties, ({ one }) => ({
+  project: one(projects, {
+    fields: [properties.projectId],
+    references: [projects.id],
+  }),
+}));

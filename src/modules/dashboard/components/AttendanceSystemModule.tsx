@@ -1,12 +1,12 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, Clock, Calendar, CheckSquare, XCircle, AlertTriangle, 
-  MapPin, Fingerprint, Activity, ChevronRight
+  MapPin, Fingerprint, Activity, ChevronRight, Loader2
 } from 'lucide-react';
 
-const EMPLOYEES = [
+const FALLBACK_EMPLOYEES = [
   { id: 'E-01', name: 'Karim Benali', role: 'Architecte Senior', status: 'Présent', timeIn: '08:14', location: 'Siège Social', type: 'Bureau' },
   { id: 'E-02', name: 'Sarah Mebarki', role: 'Ingénieur Structure', status: 'Présent', timeIn: '07:45', location: 'Chantier Résidence Bahia', type: 'Terrain' },
   { id: 'E-03', name: 'Mehdi Khaled', role: 'Agent Commercial', status: 'En retard', timeIn: '09:30', location: 'Siège Social', type: 'Bureau' },
@@ -14,6 +14,39 @@ const EMPLOYEES = [
 ];
 
 export function AttendanceSystemModule() {
+  const [employees, setEmployees] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAttendance() {
+      try {
+        const res = await fetch('/api/attendance?limit=10');
+        const json = await res.json();
+        if (json.data && json.data.length > 0) {
+          // Format specific to db
+          const formatted = json.data.map((record: any, idx: number) => ({
+            id: record.id.toString(),
+            name: `Employee ${record.userId}`,
+            role: 'Unknown',
+            status: record.status === 'present' ? 'Présent' : record.status === 'late' ? 'En retard' : 'Absent',
+            timeIn: record.timeIn ? new Date(record.timeIn).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--',
+            location: record.location || 'Unknown',
+            type: 'System'
+          }));
+          setEmployees(formatted);
+        } else {
+          setEmployees(FALLBACK_EMPLOYEES);
+        }
+      } catch (err) {
+        console.error('Failed to fetch attendance API', err);
+        setEmployees(FALLBACK_EMPLOYEES);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAttendance();
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2 border-b border-white/5 pb-6 px-6">
@@ -69,51 +102,57 @@ export function AttendanceSystemModule() {
             </div>
             
             <div className="flex-1 overflow-auto custom-scrollbar p-6">
-               <div className="flex flex-col gap-3">
-                  {EMPLOYEES.map(emp => (
-                     <div key={emp.id} className="flex items-center justify-between p-4 bg-[#051121] border border-white/5 rounded-xl hover:bg-white/[0.02] transition-colors group">
-                        <div className="flex items-center gap-4">
-                           <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                              <Fingerprint className="w-4 h-4 text-white/40" />
-                           </div>
-                           <div>
-                              <h4 className="text-sm font-bold text-white group-hover:text-asas-gold transition-colors">{emp.name}</h4>
-                              <div className="flex items-center gap-2 mt-1">
-                                 <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{emp.role}</span>
-                                 <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                                 <span className="text-[10px] text-white/40 font-mono tracking-widest">{emp.type}</span>
+               {loading ? (
+                  <div className="flex items-center justify-center h-full">
+                     <Loader2 className="w-8 h-8 text-white/20 animate-spin" />
+                  </div>
+               ) : (
+                  <div className="flex flex-col gap-3">
+                     {employees.map(emp => (
+                        <div key={emp.id} className="flex items-center justify-between p-4 bg-[#051121] border border-white/5 rounded-xl hover:bg-white/[0.02] transition-colors group">
+                           <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                 <Fingerprint className="w-4 h-4 text-white/40" />
                               </div>
-                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-8">
-                           <div className="flex flex-col items-end">
-                              <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold mb-1">Status</span>
-                              {emp.status === 'Présent' && <span className="text-xs font-bold text-green-400 bg-green-400/10 px-2 py-0.5 rounded border border-green-500/20">Présent</span>}
-                              {emp.status === 'Absent' && <span className="text-xs font-bold text-red-400 bg-red-400/10 px-2 py-0.5 rounded border border-red-500/20">Absent</span>}
-                              {emp.status === 'En retard' && <span className="text-xs font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded border border-yellow-500/20">Retard</span>}
-                           </div>
-
-                           <div className="flex flex-col items-end w-24">
-                              <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold mb-1">Pointage</span>
-                              <span className="text-xs font-mono text-white">{emp.timeIn}</span>
-                           </div>
-
-                           <div className="flex flex-col items-end w-40 hidden md:flex">
-                              <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold mb-1">Localisation</span>
-                              <div className="flex items-center gap-1 text-white/70">
-                                 <MapPin className="w-3 h-3 text-white/30" />
-                                 <span className="text-xs font-bold truncate max-w-[120px]">{emp.location}</span>
+                              <div>
+                                 <h4 className="text-sm font-bold text-white group-hover:text-asas-gold transition-colors">{emp.name}</h4>
+                                 <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{emp.role}</span>
+                                    <span className="w-1 h-1 rounded-full bg-white/20"></span>
+                                    <span className="text-[10px] text-white/40 font-mono tracking-widest">{emp.type}</span>
+                                 </div>
                               </div>
                            </div>
 
-                           <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-white/20 group-hover:text-white">
-                              <ChevronRight className="w-5 h-5" />
-                           </button>
+                           <div className="flex items-center gap-8">
+                              <div className="flex flex-col items-end">
+                                 <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold mb-1">Status</span>
+                                 {emp.status === 'Présent' && <span className="text-xs font-bold text-green-400 bg-green-400/10 px-2 py-0.5 rounded border border-green-500/20">Présent</span>}
+                                 {emp.status === 'Absent' && <span className="text-xs font-bold text-red-400 bg-red-400/10 px-2 py-0.5 rounded border border-red-500/20">Absent</span>}
+                                 {emp.status === 'En retard' && <span className="text-xs font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded border border-yellow-500/20">Retard</span>}
+                              </div>
+
+                              <div className="flex flex-col items-end w-24">
+                                 <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold mb-1">Pointage</span>
+                                 <span className="text-xs font-mono text-white">{emp.timeIn}</span>
+                              </div>
+
+                              <div className="flex flex-col items-end w-40 hidden md:flex">
+                                 <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold mb-1">Localisation</span>
+                                 <div className="flex items-center gap-1 text-white/70">
+                                    <MapPin className="w-3 h-3 text-white/30" />
+                                    <span className="text-xs font-bold truncate max-w-[120px]">{emp.location}</span>
+                                 </div>
+                              </div>
+
+                              <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-white/20 group-hover:text-white">
+                                 <ChevronRight className="w-5 h-5" />
+                              </button>
+                           </div>
                         </div>
-                     </div>
-                  ))}
-               </div>
+                     ))}
+                  </div>
+               )}
             </div>
          </div>
       </div>

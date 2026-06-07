@@ -1,60 +1,66 @@
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
+import { db } from '@/db';
+import { projects } from '@/db/schema';
+import { desc } from 'drizzle-orm';
+import { ErrorTracker } from '@/lib/observability/errors';
 
-export const dynamic = 'force-dynamic';
-
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   try {
-    const identity = await kernel.identity();
-    const data = await request.json();
-    const project = await kernel.mutate('projects', 'INSERT', {
-      agency_id: identity.tenantId,
-      name: data.name,
-      city: data.city || null,
-      status: data.status || 'active',
-      launch_date: data.launch_date || null,
-      completion_date: data.completion_date || null
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
+    const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
+    const offset = (page - 1) * limit;
+    const id = searchParams.get('id');
+
+    if (id) {
+       const project = await db.query.projects.findFirst({
+         where: (projects, { eq }) => eq(projects.id, Number(id)),
+         with: {
+           properties: true
+         }
+       });
+       if (!project) {
+          return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+       }
+       return NextResponse.json({ data: project });
+    }
+
+    const projectsResult = await db.query.projects.findMany({
+      orderBy: [desc(projects.createdAt)],
+      limit,
+      offset,
+      with: {
+        properties: true,
+      }
     });
-    return NextResponse.json({ success: true, data: project });
+
+    return NextResponse.json({ data: projectsResult, count: projectsResult.length });
   } catch (error: any) {
+    ErrorTracker.captureError(error, { context: 'GET /api/projects' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function GET(request: Request) {
-
+export async function POST(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const limit = Number(searchParams.get('limit')) || 24;
-    const page = Number(searchParams.get('page')) || 1;
-    const status = searchParams.get('status');
-    const q = searchParams.get('q');
-    const id = searchParams.get('id');
-
-    let query: any = {
-      select: '*, developers:developer_id(name), properties(*)',
-      limit,
-    };
-
-    let filters: Record<string, any> = {};
-    if (id) filters['id'] = id;
-    if (status) filters['status'] = status;
-    if (Object.keys(filters).length > 0) query.filters = filters;
-
-    const projects = await kernel.query('projects', query);
-
-    if (id) {
-       if (!projects || projects.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-       return NextResponse.json(projects[0]);
+    const body = await request.json();
+    const { name, location, budget, managerId, status } = body;
+    
+    if (!name) {
+      return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
     }
 
-    let finalData = projects;
-    if (q) {
-      finalData = (projects as any[]).filter(p => p.name?.toLowerCase().includes(q.toLowerCase()) || p.city?.toLowerCase().includes(q.toLowerCase()));
-    }
+    const newProject = await db.insert(projects).values({
+      name,
+      location,
+      budget,
+      managerId: managerId ? Number(managerId) : undefined,
+      status: status || 'planning',
+    }).returning();
 
-    return NextResponse.json({ data: finalData, count: finalData.length });
+    return NextResponse.json({ data: newProject[0] }, { status: 201 });
   } catch (error: any) {
+    ErrorTracker.captureError(error, { context: 'POST /api/projects' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -15,11 +15,18 @@ export async function GET(request: Request) {
       if (clientResult.length === 0) {
         return NextResponse.json({ error: 'Client not found' }, { status: 404 });
       }
-      return NextResponse.json({ data: clientResult[0] });
+      return NextResponse.json({ data: {
+         ...clientResult[0],
+         full_name: `${clientResult[0].firstName} ${clientResult[0].lastName}`
+      }});
     }
 
     const allClients = await db.select().from(clients).orderBy(desc(clients.createdAt)).limit(limit);
-    return NextResponse.json({ data: allClients, count: allClients.length });
+    const mappedClients = allClients.map(c => ({
+       ...c,
+       full_name: `${c.firstName} ${c.lastName}`
+    }));
+    return NextResponse.json({ data: mappedClients, count: mappedClients.length });
   } catch (error: any) {
     ErrorTracker.captureError(error, { context: 'GET /api/clients' });
     return NextResponse.json({ error: 'Internal Server Error', message: error.message }, { status: 500 });

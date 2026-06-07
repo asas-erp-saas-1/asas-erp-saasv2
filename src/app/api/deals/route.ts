@@ -11,15 +11,41 @@ export async function GET(request: Request) {
     const limit = Number(searchParams.get('limit')) || 25;
     const id = searchParams.get('id');
     
+    let query = db.select({
+      id: deals.id,
+      reference: deals.reference,
+      status: deals.status,
+      agreedPrice: deals.agreedPrice,
+      dealType: deals.dealType,
+      createdAt: deals.createdAt,
+      clients: {
+         id: clients.id,
+         full_name: clients.lastName, // fallback for full_name
+         firstName: clients.firstName,
+         lastName: clients.lastName,
+         phone: clients.phone,
+      },
+      properties: {
+         id: properties.id,
+         title: properties.title,
+         projects: {
+             name: properties.title // fallback projection
+         }
+      }
+    })
+    .from(deals)
+    .leftJoin(clients, eq(deals.clientId, clients.id))
+    .leftJoin(properties, eq(deals.propertyId, properties.id));
+    
     if (id) {
-       const dealResult = await db.select().from(deals).where(eq(deals.id, Number(id))).limit(1);
+       const dealResult = await query.where(eq(deals.id, Number(id))).limit(1);
        if (dealResult.length === 0) {
          return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
        }
        return NextResponse.json({ data: dealResult[0], count: 1 });
     }
     
-    const allDeals = await db.select().from(deals).orderBy(desc(deals.createdAt)).limit(limit);
+    const allDeals = await query.orderBy(desc(deals.createdAt)).limit(limit);
     return NextResponse.json({ data: allDeals, count: allDeals.length });
   } catch (error: any) {
     ErrorTracker.captureError(error, { context: 'GET /api/deals' });
