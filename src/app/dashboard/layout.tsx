@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator, Power } from 'lucide-react';
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator, Power, Clock, ShieldAlert, Cloud, Webhook, Star } from 'lucide-react';
 import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
@@ -24,6 +24,8 @@ const NAV_GROUPS = [
     items: [
       { href: '/dashboard/leads',      label: 'Smart Leads', Icon: Users },
       { href: '/dashboard/deals',      label: 'Sales Pipeline',      Icon: Handshake },
+      { href: '/dashboard/deals/workspace', label: 'Negotiation Room', Icon: Webhook },
+      { href: '/dashboard/deals/analytics', label: 'Sales Analytics', Icon: BarChart2 },
       { href: '/dashboard/clients',    label: 'Customer 360°',       Icon: UserSquare2 },
       { href: '/dashboard/reservations', label: 'Reservations',    Icon: CalendarIcon },
     ]
@@ -45,6 +47,7 @@ const NAV_GROUPS = [
       { href: '/dashboard/finance',    label: 'Treasury Command', Icon: DollarSign },
       { href: '/dashboard/accounting', label: 'Accounting', Icon: Receipt },
       { href: '/dashboard/invoices',   label: 'Installments',      Icon: ShoppingCart },
+      { href: '/dashboard/finance/reconciliation', label: 'Reconciliation', Icon: CheckSquare },
       { href: '/dashboard/finance/investors', label: 'Investor Reporting', Icon: Award },
     ],
     roles: ['owner', 'admin', 'finance']
@@ -53,6 +56,7 @@ const NAV_GROUPS = [
     group: "OPERATIONS OS",
     items: [
       { href: '/dashboard/chantiers', label: 'Construction', Icon: Building2 },
+      { href: '/dashboard/chantiers/risks', label: 'Delays & Risks', Icon: LayoutGrid },
       { href: '/dashboard/fournisseurs', label: 'Procurement', Icon: Users },
       { href: '/dashboard/qualite', label: 'Quality Control', Icon: CheckSquare },
     ],
@@ -62,7 +66,10 @@ const NAV_GROUPS = [
     group: "HR & GOV OS",
     items: [
       { href: '/dashboard/agents',     label: 'Employee Hub',  Icon: Users },
+      { href: '/dashboard/agents/attendance', label: 'Attendance System', Icon: Clock },
+      { href: '/dashboard/agents/performance', label: 'Performance Reviews', Icon: Star },
       { href: '/dashboard/payroll',    label: 'Payroll', Icon: Receipt },
+      { href: '/dashboard/recruitment', label: 'Recruitment', Icon: Megaphone },
     ],
     roles: ['owner', 'admin', 'finance']
   },
@@ -77,8 +84,11 @@ const NAV_GROUPS = [
   {
     group: "ADMIN OS",
     items: [
-      { href: '/dashboard/settings', label: 'Security & RBAC', Icon: Settings },
-      { href: '/dashboard/audit',    label: 'Audit Logs', Icon: LayoutGrid },
+      { href: '/dashboard/settings', label: 'Global Setup', Icon: Settings },
+      { href: '/dashboard/settings/security', label: 'Security & RBAC', Icon: ShieldAlert },
+      { href: '/dashboard/settings/tenants', label: 'Tenant Management', Icon: Cloud },
+      { href: '/dashboard/settings/api', label: 'API Integrations', Icon: Webhook },
+      { href: '/dashboard/audit',    label: 'Audit Logs', Icon: Search },
     ],
     roles: ['owner', 'admin']
   }
