@@ -1,25 +1,43 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CalendarIcon, Clock, CheckCircle2, XCircle, Search, 
-  MapPin, UserSquare2, ChevronRight, Filter, ChevronDown
+  MapPin, UserSquare2, ChevronRight, Filter, ChevronDown, Loader2
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
-const mockReservations = [
-  { id: 'RSV-001', client: 'Karim Benali', project: 'Bahia Resort', unit: 'B-402', status: 'pending', date: '2026-06-05', amount: '2,500,000 DA', risk: 'low' },
-  { id: 'RSV-002', client: 'Samira Touati', project: 'Nassim Heights', unit: 'A-105', status: 'confirmed', date: '2026-06-04', amount: '1,200,000 DA', risk: 'low' },
-  { id: 'RSV-003', client: 'Amine Djebbar', project: 'El Djazair Hub', unit: 'C-20', status: 'expired', date: '2026-05-20', amount: '3,000,000 DA', risk: 'high' }
-];
-
 const STATUS_STYLE: Record<string, string> = {
-  pending: "bg-asas-gold/10 text-asas-gold border-asas-gold/20",
-  confirmed: "bg-green-500/10 text-green-400 border-green-500/20",
-  expired: "bg-red-500/10 text-red-500 border-red-500/20",
+  negotiation: "bg-asas-gold/10 text-asas-gold border-asas-gold/20",
+  contract_sent: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  signed: "bg-green-500/10 text-green-400 border-green-500/20",
+  completed: "bg-green-600/10 text-green-500 border-green-600/20",
+  cancelled: "bg-red-500/10 text-red-500 border-red-500/20",
 };
 
 export function ReservationsGrid() {
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchReservations() {
+      try {
+        const res = await fetch('/api/deals?limit=50');
+        const json = await res.json();
+        if (json.data) {
+           // Treating all pending/negotiation deals as reservations
+           const filtered = json.data.filter((d: any) => d.status === 'negotiation' || d.status === 'contract_sent');
+           setReservations(filtered);
+        }
+      } catch (err) {
+        console.error('Failed to fetch reservations', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchReservations();
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col space-y-6 bg-transparent text-white animate-in fade-in duration-500 pt-4">
       
@@ -58,32 +76,40 @@ export function ReservationsGrid() {
 
       {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-         {mockReservations.map((res) => (
+         {loading ? (
+             <div className="col-span-full py-12 flex justify-center text-white/50">
+                <Loader2 className="w-8 h-8 animate-spin" />
+             </div>
+         ) : reservations.length === 0 ? (
+             <div className="col-span-full py-12 text-center text-white/50 text-sm">
+                No pending reservations found.
+             </div>
+         ) : reservations.map((res: any) => (
             <div key={res.id} className="p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group cursor-pointer flex flex-col justify-between h-48 relative overflow-hidden">
                <div className="flex justify-between items-start">
                   <div>
-                     <h3 className="text-sm font-bold text-white group-hover:text-asas-gold transition-colors">{res.client}</h3>
-                     <p className="text-[10px] text-white/50 font-mono tracking-widest uppercase mt-1">ID: {res.id}</p>
+                     <h3 className="text-sm font-bold text-white group-hover:text-asas-gold transition-colors">{res.clients?.full_name || 'Inconnu'}</h3>
+                     <p className="text-[10px] text-white/50 font-mono tracking-widest uppercase mt-1">REF: {res.reference}</p>
                   </div>
-                  <span className={clsx('px-2 py-1 text-[9px] font-bold uppercase tracking-widest rounded border', STATUS_STYLE[res.status])}>
-                     {res.status}
+                  <span className={clsx('px-2 py-1 text-[9px] font-bold uppercase tracking-widest rounded border', STATUS_STYLE[res.status] || STATUS_STYLE.negotiation)}>
+                     {res.status.replace('_', ' ')}
                   </span>
                </div>
 
                <div className="flex gap-4 items-center">
                   <div className="flex items-center gap-2 text-xs font-bold text-white/70">
                      <MapPin className="w-4 h-4 text-white/30" />
-                     {res.project} — Unit {res.unit}
+                     {res.properties?.projects?.name || 'Projet'} — Unité {res.properties?.title || 'Unknown'}
                   </div>
                </div>
 
                <div className="flex justify-between items-end pt-4 border-t border-white/5">
                   <div>
-                     <span className="text-[9px] uppercase tracking-widest font-bold text-white/40 block mb-1">Down Payment</span>
-                     <span className="text-asas-gold font-mono font-bold text-sm">{res.amount}</span>
+                     <span className="text-[9px] uppercase tracking-widest font-bold text-white/40 block mb-1">Prix Convenu</span>
+                     <span className="text-asas-gold font-mono font-bold text-sm">{Number(res.agreedPrice).toLocaleString()} DA</span>
                   </div>
                   
-                  {res.status === 'pending' && (
+                  {res.status === 'negotiation' && (
                      <div className="flex gap-2">
                         <button className="p-2 border border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors" title="Reject">
                            <XCircle className="w-4 h-4" />

@@ -61,6 +61,19 @@ export const projectTasks = pgTable("project_tasks", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const projectRisks = pgTable("project_risks", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id).notNull(),
+  type: varchar("type", { length: 100 }), // Supply Chain, Weather, Compliance, Financial
+  description: text("description").notNull(),
+  severity: varchar("severity", { length: 50 }).notNull().default('medium'), // low, medium, high, critical
+  status: varchar("status", { length: 50 }).notNull().default('monitoring'), // monitoring, active, mitigated
+  delayImpact: varchar("delay_impact", { length: 100 }), // e.g. +14 jours
+  reportedById: integer("reported_by_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
   firstName: varchar("first_name", { length: 255 }).notNull(),
@@ -113,6 +126,44 @@ export const deals = pgTable("deals", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const vendors = pgTable("vendors", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull().default('contractor'), // contractor, supplier, service
+  rating: numeric("rating", { precision: 3, scale: 2 }), // 1.00 to 5.00
+  status: varchar("status", { length: 50 }).notNull().default('active'), // active, inactive, blacklisted
+  contactEmail: varchar("contact_email", { length: 255 }),
+  contactPhone: varchar("contact_phone", { length: 50 }),
+  specialty: varchar("specialty", { length: 100 }), // e.g. plumbing, electrical, concrete
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const jobPostings = pgTable("job_postings", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  department: varchar("department", { length: 100 }),
+  status: varchar("status", { length: 50 }).notNull().default('open'), // open, closed
+  location: varchar("location", { length: 255 }),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const jobCandidates = pgTable("job_candidates", {
+  id: serial("id").primaryKey(),
+  jobPostingId: integer("job_posting_id").references(() => jobPostings.id).notNull(),
+  firstName: varchar("first_name", { length: 255 }).notNull(),
+  lastName: varchar("last_name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).unique(),
+  phone: varchar("phone", { length: 50 }),
+  status: varchar("status", { length: 50 }).notNull().default('Nouveau'), // Nouveau, En entretien, Offre envoyée, Refusé
+  score: numeric("score", { precision: 3, scale: 2 }), // 1.00 to 100.00
+  resumeUrl: varchar("resume_url", { length: 500 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const invoices = pgTable("invoices", {
   id: serial("id").primaryKey(),
   dealId: integer("deal_id").references(() => deals.id).notNull(),
@@ -127,11 +178,20 @@ export const invoices = pgTable("invoices", {
 
 export const projectsRelations = relations(projects, ({ many }) => ({
   properties: many(properties),
+  tasks: many(projectTasks),
+  risks: many(projectRisks),
 }));
 
 export const propertiesRelations = relations(properties, ({ one }) => ({
   project: one(projects, {
     fields: [properties.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export const projectRisksRelations = relations(projectRisks, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectRisks.projectId],
     references: [projects.id],
   }),
 }));

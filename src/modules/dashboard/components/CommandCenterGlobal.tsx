@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, DollarSign, Filter, RefreshCcw, CheckSquare, 
   Home, Activity, AlertCircle, ArrowUpRight, ArrowDownRight, 
-  Sun, Star, ChevronDown, Download, Users, Star as StarOutline
+  Sun, Star, ChevronDown, Download, Users, Star as StarOutline,
+  Loader2
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
@@ -49,6 +50,26 @@ const upSparkline = sparklineData.sort((a,b) => a.value - b.value);
 const downSparkline = sparklineData.sort((a,b) => b.value - a.value);
 
 export function CommandCenterGlobal() {
+  const [metrics, setMetrics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const res = await fetch('/api/metrics/board');
+        const json = await res.json();
+        if (json.data) {
+           setMetrics(json.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch board metrics', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMetrics();
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
       
@@ -82,7 +103,9 @@ export function CommandCenterGlobal() {
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-2xl font-display font-bold text-white">48.7 M DA</span>
+            <span className="text-2xl font-display font-bold text-white">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : `${(metrics?.revenue || 0).toLocaleString()} DA`}
+            </span>
             <div className="flex items-center gap-1 mt-1">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
               <span className="text-green-400 text-xs font-bold">18.6%</span>
@@ -101,13 +124,15 @@ export function CommandCenterGlobal() {
         {/* KPI 2: Pipeline */}
         <div className="p-5 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden group">
           <div className="flex justify-between items-start mb-2 relative z-10">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Pipeline Total</span>
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Total Clients</span>
             <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20">
-              <Filter className="w-4 h-4 text-green-400" />
+              <Users className="w-4 h-4 text-green-400" />
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-2xl font-display font-bold text-white">162.4 M DA</span>
+            <span className="text-2xl font-display font-bold text-white">
+               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : metrics?.totalClients || 0}
+            </span>
             <div className="flex items-center gap-1 mt-1">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
               <span className="text-green-400 text-xs font-bold">24.2%</span>
@@ -132,7 +157,9 @@ export function CommandCenterGlobal() {
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-2xl font-display font-bold text-white">342</span>
+            <span className="text-2xl font-display font-bold text-white">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : metrics?.availableProperties || 0}
+            </span>
             <div className="flex items-center gap-1 mt-1">
               <ArrowDownRight className="w-3 h-3 text-red-400" />
               <span className="text-red-400 text-xs font-bold">5.2%</span>
@@ -176,23 +203,23 @@ export function CommandCenterGlobal() {
         {/* KPI 5: Tâches */}
         <div className="p-5 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden group">
           <div className="flex justify-between items-start mb-2 relative z-10">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Tâches en Cours</span>
-            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
-              <CheckSquare className="w-4 h-4 text-orange-400" />
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Contrôle des Risques</span>
+            <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center border border-red-500/20">
+              <AlertCircle className="w-4 h-4 text-red-500" />
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-2xl font-display font-bold text-white">84</span>
+            <span className="text-2xl font-display font-bold text-white">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : metrics?.activeRisks || 0}
+            </span>
             <div className="flex items-center gap-1 mt-1">
-              <ArrowUpRight className="w-3 h-3 text-green-400" />
-              <span className="text-green-400 text-xs font-bold">8.1%</span>
-              <span className="text-white/40 text-[10px] uppercase tracking-widest ml-1">vs hier</span>
+              <span className="text-white/40 text-[10px] uppercase tracking-widest ml-1">Risques Actifs Globaux</span>
             </div>
           </div>
           <div className="h-16 mt-4 -mx-1 -mb-2 opacity-60">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={upSparkline}>
-                <Line type="monotone" dataKey="value" stroke="#f97316" strokeWidth={2} dot={false} isAnimationActive={false} />
+                <Line type="monotone" dataKey="value" stroke="#ef4444" strokeWidth={2} dot={false} isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
