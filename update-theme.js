@@ -26,7 +26,7 @@ files.forEach(file => {
     // text-white -> text-gray-900 dark:text-white
     // But be careful not to replace text-white/5 etc...
     // Let's use regex that ensures it's followed by a space, quote, or backtick
-    content = content.replace(/\btext-white(?=[\s"'\`])/g, 'text-gray-900 dark:text-white');
+    content = content.replace(/\btext-white(?=[\s"'`])/g, 'text-gray-900 dark:text-white');
 
     const replacers = [
         ['bg-[#0A0A0A]', 'bg-white dark:bg-[#0A0A0A]'],

@@ -1,47 +1,52 @@
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
-
-export const dynamic = 'force-dynamic';
+import { db } from '@/db';
+import { clients } from '@/db/schema';
+import { eq, desc } from 'drizzle-orm';
+import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
-    const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
-    const offset = (page - 1) * limit;
+    const limit = Number(searchParams.get('limit')) || 50;
+    const id = searchParams.get('id');
 
-    const clients = await kernel.query('clients', {
-      limit,
-      offset,
-      orderBy: { column: 'created_at', ascending: false }
-    });
-    return NextResponse.json({ data: clients, count: clients.length });
+    if (id) {
+      const clientResult = await db.select().from(clients).where(eq(clients.id, Number(id))).limit(1);
+      if (clientResult.length === 0) {
+        return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+      }
+      return NextResponse.json({ data: clientResult[0] });
+    }
+
+    const allClients = await db.select().from(clients).orderBy(desc(clients.createdAt)).limit(limit);
+    return NextResponse.json({ data: allClients, count: allClients.length });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    ErrorTracker.captureError(error, { context: 'GET /api/clients' });
+    return NextResponse.json({ error: 'Internal Server Error', message: error.message }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const identity = await kernel.identity();
-    
-    // Minimal validation
-    if (!body.full_name) {
-      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    const { firstName, lastName, email, phone, type, companyName } = body;
+
+    if (!firstName || !lastName) {
+      return NextResponse.json({ error: 'First name and last name are required' }, { status: 400 });
     }
 
-    const client = await kernel.mutate('clients', 'INSERT', {
-      agency_id: identity.tenantId,
-      full_name: body.full_name,
-      phone: body.phone || null,
-      email: body.email || null,
-      type: body.type || 'buyer',
-      source: body.source || null,
-    });
+    const newClient = await db.insert(clients).values({
+      firstName,
+      lastName,
+      email,
+      phone,
+      type: type || 'individual',
+      companyName,
+    }).returning();
 
-    return NextResponse.json({ data: client });
+    return NextResponse.json({ data: newClient[0] }, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    ErrorTracker.captureError(error, { context: 'POST /api/clients' });
+    return NextResponse.json({ error: 'Failed to create client', message: error.message }, { status: 500 });
   }
 }

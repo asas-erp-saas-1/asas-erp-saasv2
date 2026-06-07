@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
+import { db } from '@/db';
+import { properties } from '@/db/schema';
+import { eq, desc, ilike, and, or } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,31 +9,25 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = Number(searchParams.get('limit')) || 24;
-    const page = Number(searchParams.get('page')) || 1;
     const status = searchParams.get('status');
     const type = searchParams.get('type');
     const q = searchParams.get('q');
 
-    let query: any = {
-      select: '*, projects:project_id(id, name, city, developers:developer_id(name))',
-      limit,
-      // pagination skip logic would normally exist here
-    };
-
-    let filters: Record<string, any> = {};
-    if (status) filters['status'] = status;
-    if (type) filters['type'] = type;
-    if (Object.keys(filters).length > 0) query.filters = filters;
-
-    // Ideally 'q' search would use text search
-    const properties = await kernel.query('properties', query);
-
-    let finalData = properties;
+    let conditions = [];
+    if (status) conditions.push(eq(properties.status, status));
+    if (type) conditions.push(eq(properties.type, type));
     if (q) {
-      finalData = (properties as any[]).filter(p => p.reference_code?.includes(q) || p.type?.includes(q));
+      conditions.push(or(
+        ilike(properties.title, `%${q}%`),
+        ilike(properties.location, `%${q}%`)
+      ));
     }
 
-    return NextResponse.json({ data: finalData, count: finalData.length });
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const propertyResults = await db.select().from(properties).where(whereClause).orderBy(desc(properties.createdAt)).limit(limit);
+
+    return NextResponse.json({ data: propertyResults, count: propertyResults.length });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -40,21 +36,20 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
-    const identity = await kernel.identity();
     
     // Defaulting required fields if absent
     const data = {
-      agency_id: identity.tenantId,
-      project_id: payload.project_id || null,
+      title: payload.title || 'Untitled Property',
       type: payload.type || 'other',
-      list_price: payload.list_price || 0,
+      price: payload.price || payload.list_price || 0,
       status: payload.status || 'available',
-      area_sqm: payload.area_sqm || null,
-      notes: payload.notes || null,
+      area: payload.area || payload.area_sqm || null,
+      description: payload.description || payload.notes || null,
+      location: payload.location || null,
     };
 
-    const property = await kernel.mutate('properties', 'INSERT', data);
-    return NextResponse.json({ data: property });
+    const property = await db.insert(properties).values(data).returning();
+    return NextResponse.json({ data: property[0] }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

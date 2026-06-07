@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { LeadService } from '@/services/leads/lead.service';
+import { db } from '@/db';
+import { leads } from '@/db/schema';
+import { desc } from 'drizzle-orm';
+import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
@@ -8,9 +11,15 @@ export async function GET(request: Request) {
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
     const offset = (page - 1) * limit;
 
-    const leads = await LeadService.getLeads(limit, offset);
-    return NextResponse.json({ data: leads, count: leads.length });
+    const leadsResult = await db.select()
+      .from(leads)
+      .orderBy(desc(leads.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    return NextResponse.json({ data: leadsResult, count: leadsResult.length });
   } catch (error: any) {
+    ErrorTracker.captureError(error, { context: 'GET /api/leads' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -18,20 +27,22 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (!body.client_id) {
-      return NextResponse.json({ error: 'client_id is required' }, { status: 400 });
+    const clientId = body.clientId || body.client_id;
+    if (!clientId) {
+      return NextResponse.json({ error: 'clientId is required' }, { status: 400 });
     }
 
-    const lead = await LeadService.createLead({
-      clientId: body.client_id,
+    const newLead = await db.insert(leads).values({
+      clientId: Number(clientId),
       source: body.source,
-      budgetMin: body.budget_min,
-      budgetMax: body.budget_max,
-      assignedAgent: body.assigned_agent,
-    });
+      budgetMin: body.budgetMin || body.budget_min,
+      budgetMax: body.budgetMax || body.budget_max,
+      assignedAgent: body.assignedAgent || body.assigned_agent ? Number(body.assignedAgent || body.assigned_agent) : undefined,
+    }).returning();
 
-    return NextResponse.json({ data: lead });
+    return NextResponse.json({ data: newLead[0] }, { status: 201 });
   } catch (error: any) {
+    ErrorTracker.captureError(error, { context: 'POST /api/leads' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
