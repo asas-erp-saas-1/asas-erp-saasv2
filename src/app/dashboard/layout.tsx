@@ -34,6 +34,7 @@ const NAV_GROUPS = [
     group: "REAL ESTATE OS",
     items: [
       { href: '/dashboard/properties', label: 'Property Universe',     Icon: Building2 },
+      { href: '/dashboard/properties/analytics', label: 'Properties Analytics', Icon: BarChart2 },
       { href: '/dashboard/projects',   label: 'Projects',            Icon: LayoutGrid },
       { href: '/dashboard/unites',     label: 'Unit Management',    Icon: CheckSquare },
       { href: '/dashboard/unites/matrix', label: 'Availability Matrix', Icon: Grid },
