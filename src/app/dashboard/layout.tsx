@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt } from 'lucide-react';
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator, Power } from 'lucide-react';
 import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
@@ -14,6 +14,8 @@ const NAV_GROUPS = [
     items: [
       { href: '/dashboard/overview',   label: 'Command Center',   Icon: LayoutGrid },
       { href: '/dashboard/intelligence', label: 'CEO Intelligence',   Icon: Zap },
+      { href: '/dashboard/intelligence/forecasting', label: 'Forecasting',   Icon: BarChart2 },
+      { href: '/dashboard/intelligence/reporting', label: 'Executive Reporting',   Icon: Receipt },
       { href: '/dashboard/multi-company', label: 'Multi-Company',             Icon: Building2 },
     ]
   },
@@ -32,6 +34,8 @@ const NAV_GROUPS = [
       { href: '/dashboard/properties', label: 'Property Universe',     Icon: Building2 },
       { href: '/dashboard/projects',   label: 'Projects',            Icon: LayoutGrid },
       { href: '/dashboard/unites',     label: 'Unit Management',    Icon: CheckSquare },
+      { href: '/dashboard/unites/matrix', label: 'Availability Matrix', Icon: Grid },
+      { href: '/dashboard/unites/pricing', label: 'Pricing Engine', Icon: Calculator },
       { href: '/dashboard/map',        label: 'Interactive Map', Icon: Search },
     ]
   },
@@ -41,6 +45,7 @@ const NAV_GROUPS = [
       { href: '/dashboard/finance',    label: 'Treasury Command', Icon: DollarSign },
       { href: '/dashboard/accounting', label: 'Accounting', Icon: Receipt },
       { href: '/dashboard/invoices',   label: 'Installments',      Icon: ShoppingCart },
+      { href: '/dashboard/finance/investors', label: 'Investor Reporting', Icon: Award },
     ],
     roles: ['owner', 'admin', 'finance']
   },
@@ -66,6 +71,7 @@ const NAV_GROUPS = [
     items: [
       { href: '/dashboard/copilot', label: 'AI Copilot', Icon: Zap },
       { href: '/dashboard/workflows',  label: 'Workflow Engine', Icon: Settings },
+      { href: '/dashboard/automation', label: 'Automation Center', Icon: Power },
     ],
   },
   {
