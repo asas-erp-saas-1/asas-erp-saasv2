@@ -11,6 +11,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, AreaChart, Area, LineChart, Line
 } from 'recharts';
+import { EnterpriseAICopilot } from './EnterpriseAICopilot';
 
 const barData = [
   { name: 'Juin', ca: 20, enc: 15 },
@@ -558,6 +559,13 @@ export function CommandCenterGlobal() {
             </ResponsiveContainer>
           </div>
         </div>
+      </div>
+      
+      {/* 6. AI Operational Copilot */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pb-8">
+         <div className="lg:col-span-12 h-[400px]">
+             <EnterpriseAICopilot />
+         </div>
       </div>
       
     </div>

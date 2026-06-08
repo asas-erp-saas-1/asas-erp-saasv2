@@ -1,15 +1,49 @@
 import { pgTable, serial, text, varchar, timestamp, integer, boolean, numeric, jsonb } from "drizzle-orm/pg-core";
 import { relations } from 'drizzle-orm';
 
+export const organizations = pgTable("organizations", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 100 }).unique().notNull(),
+  plan: varchar("plan", { length: 50 }).default('enterprise'),
+  status: varchar("status", { length: 50 }).default('active'),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  name: varchar("name", { length: 100 }).notNull(),
+  permissions: jsonb("permissions").notNull().default([]), // e.g. ["deals:read", "deals:write"]
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id),
   email: varchar("email", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }),
-  role: varchar("role", { length: 50 }).default('user'),
+  roleId: integer("role_id").references(() => roles.id),
+  role: varchar("role", { length: 50 }).default('user'), // legacy
   department: varchar("department", { length: 100 }),
   status: varchar("status", { length: 50 }).default('active'),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const auditLogs = pgTable("audit_logs", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id).notNull(),
+  userId: integer("user_id").references(() => users.id),
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entity_type", { length: 100 }).notNull(),
+  entityId: varchar("entity_id", { length: 100 }).notNull(),
+  oldData: jsonb("old_data"),
+  newData: jsonb("new_data"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const attendance = pgTable("attendance", {
@@ -38,6 +72,7 @@ export const performanceReviews = pgTable("performance_reviews", {
 
 export const projects = pgTable("projects", {
   id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id),
   name: varchar("name", { length: 255 }).notNull(),
   location: varchar("location", { length: 255 }),
   budget: numeric("budget", { precision: 15, scale: 2 }),
@@ -76,6 +111,7 @@ export const projectRisks = pgTable("project_risks", {
 
 export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id),
   firstName: varchar("first_name", { length: 255 }).notNull(),
   lastName: varchar("last_name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique(),
@@ -100,6 +136,7 @@ export const leads = pgTable("leads", {
 
 export const properties = pgTable("properties", {
   id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   type: varchar("type", { length: 50 }).notNull(), // apartment, villa, commercial, land
@@ -115,6 +152,7 @@ export const properties = pgTable("properties", {
 
 export const deals = pgTable("deals", {
   id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id),
   reference: varchar("reference", { length: 100 }).unique().notNull(),
   clientId: integer("client_id").references(() => clients.id).notNull(),
   propertyId: integer("property_id").references(() => properties.id).notNull(),

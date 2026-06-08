@@ -6,40 +6,31 @@ import {
   MapPin, Fingerprint, Activity, ChevronRight, Loader2
 } from 'lucide-react';
 
-const FALLBACK_EMPLOYEES = [
-  { id: 'E-01', name: 'Karim Benali', role: 'Architecte Senior', status: 'Présent', timeIn: '08:14', location: 'Siège Social', type: 'Bureau' },
-  { id: 'E-02', name: 'Sarah Mebarki', role: 'Ingénieur Structure', status: 'Présent', timeIn: '07:45', location: 'Chantier Résidence Bahia', type: 'Terrain' },
-  { id: 'E-03', name: 'Mehdi Khaled', role: 'Agent Commercial', status: 'En retard', timeIn: '09:30', location: 'Siège Social', type: 'Bureau' },
-  { id: 'E-04', name: 'Yasmine L.', role: 'Directrice Financière', status: 'Absent', timeIn: '--:--', location: '--', type: 'Télétravail' },
-];
-
 export function AttendanceSystemModule() {
   const [employees, setEmployees] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>({ attendanceRate: "0.0", onSite: 0, late: 0, absent: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAttendance() {
       try {
-        const res = await fetch('/api/attendance?limit=10');
+        const res = await fetch('/api/attendance?limit=50');
         const json = await res.json();
-        if (json.data && json.data.length > 0) {
-          // Format specific to db
-          const formatted = json.data.map((record: any, idx: number) => ({
+        if (json.data) {
+          const formatted = json.data.map((record: any) => ({
             id: record.id.toString(),
-            name: `Employee ${record.userId}`,
-            role: 'Unknown',
+            name: record.user?.name || `Employee ${record.userId}`,
+            role: record.user?.role || 'Unknown Role',
             status: record.status === 'present' ? 'Présent' : record.status === 'late' ? 'En retard' : 'Absent',
             timeIn: record.timeIn ? new Date(record.timeIn).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--',
-            location: record.location || 'Unknown',
-            type: 'System'
+            location: record.location || 'Boutique / Bureau',
+            type: record.user?.department || 'System'
           }));
           setEmployees(formatted);
-        } else {
-          setEmployees(FALLBACK_EMPLOYEES);
+          if (json.stats) setStats(json.stats);
         }
       } catch (err) {
         console.error('Failed to fetch attendance API', err);
-        setEmployees(FALLBACK_EMPLOYEES);
       } finally {
         setLoading(false);
       }
@@ -72,19 +63,19 @@ export function AttendanceSystemModule() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-6">
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mb-4">Taux de Présence</h3>
-            <span className="text-3xl font-display font-bold text-white">92.4%</span>
+            <span className="text-3xl font-display font-bold text-white">{loading ? '-' : stats.attendanceRate}%</span>
          </div>
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-white/50 mb-4">Employés sur Site</h3>
-            <span className="text-3xl font-display font-bold text-white">124</span>
+            <span className="text-3xl font-display font-bold text-white">{loading ? '-' : stats.onSite}</span>
          </div>
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-yellow-400 mb-4">Retards Signalés</h3>
-            <span className="text-3xl font-display font-bold text-yellow-400">8</span>
+            <span className="text-3xl font-display font-bold text-yellow-400">{loading ? '-' : stats.late}</span>
          </div>
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-red-400 mb-4">Absences Injustifiées</h3>
-            <span className="text-3xl font-display font-bold text-red-400">2</span>
+            <span className="text-3xl font-display font-bold text-red-400">{loading ? '-' : stats.absent}</span>
          </div>
       </div>
 

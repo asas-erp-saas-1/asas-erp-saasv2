@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   CalendarIcon, Clock, CheckCircle2, XCircle, Search, 
-  MapPin, UserSquare2, ChevronRight, Filter, ChevronDown, Loader2
+  MapPin, UserSquare2, ChevronRight, Filter, ChevronDown, Loader2, Send
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { toast } from 'react-hot-toast';
 
 const STATUS_STYLE: Record<string, string> = {
   negotiation: "bg-asas-gold/10 text-asas-gold border-asas-gold/20",
@@ -18,14 +19,13 @@ const STATUS_STYLE: Record<string, string> = {
 export function ReservationsGrid() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchReservations() {
+  const fetchReservations = async () => {
       try {
         const res = await fetch('/api/deals?limit=50');
         const json = await res.json();
         if (json.data) {
-           // Treating all pending/negotiation deals as reservations
            const filtered = json.data.filter((d: any) => d.status === 'negotiation' || d.status === 'contract_sent');
            setReservations(filtered);
         }
@@ -34,9 +34,35 @@ export function ReservationsGrid() {
       } finally {
         setLoading(false);
       }
-    }
+  };
+
+  useEffect(() => {
     fetchReservations();
   }, []);
+
+  const handleSendContract = async (id: string, e: React.MouseEvent) => {
+     e.stopPropagation();
+     setProcessingId(id);
+     try {
+         const res = await fetch('/api/deals', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, status: 'contract_sent' })
+         });
+         
+         if (res.ok) {
+            toast.success('Contract sent successfully! Workflow advanced.');
+            await fetchReservations();
+         } else {
+            const data = await res.json();
+            toast.error(data.error || 'Failed to advance workflow');
+         }
+     } catch (err) {
+         toast.error('Network error');
+     } finally {
+         setProcessingId(null);
+     }
+  };
 
   return (
     <div className="w-full h-full flex flex-col space-y-6 bg-transparent text-white animate-in fade-in duration-500 pt-4">
@@ -114,9 +140,25 @@ export function ReservationsGrid() {
                         <button className="p-2 border border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors" title="Reject">
                            <XCircle className="w-4 h-4" />
                         </button>
-                        <button className="p-2 border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors" title="Approve">
-                           <CheckCircle2 className="w-4 h-4" />
+                        <button 
+                             onClick={(e) => handleSendContract(res.id, e)}
+                             disabled={processingId === res.id}
+                             className="px-4 py-2 bg-asas-gold hover:bg-[#E0B96B] disabled:opacity-50 text-[#051121] rounded-lg font-bold text-xs uppercase tracking-widest transition-colors flex items-center gap-2">
+                           {processingId === res.id ? (
+                               <Loader2 className="w-4 h-4 animate-spin" />
+                           ) : (
+                               <Send className="w-4 h-4" />
+                           )}
+                           Send Contract
                         </button>
+                     </div>
+                  )}
+                  {res.status === 'contract_sent' && (
+                     <div className="flex gap-2">
+                         <span className="px-4 py-2 bg-white/5 border border-white/10 text-white/50 rounded-lg font-bold text-xs uppercase tracking-widest flex items-center gap-2 cursor-wait">
+                           <Clock className="w-4 h-4" />
+                           Awaiting Signature
+                        </span>
                      </div>
                   )}
                </div>

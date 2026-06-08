@@ -1,44 +1,40 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, DollarSign, Target, TrendingUp, AlertOctagon, 
   BrainCircuit, Activity, ArrowUpRight, ArrowDownRight, 
-  Map, ShieldAlert, Download, Star, ChevronDown, Crosshair, Factory
+  Map, ShieldAlert, Download, Star, ChevronDown, Crosshair, Factory, Loader2
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
   BarChart, Bar, LineChart, Line, ScatterChart, Scatter, ZAxis, Cell
 } from 'recharts';
 
-const treasuryData = [
-  { name: 'Jan', val: 120 },
-  { name: 'Feb', val: 135 },
-  { name: 'Mar', val: 125 },
-  { name: 'Apr', val: 145 },
-  { name: 'May', val: 160 },
-  { name: 'Jun', val: 185 },
-  { name: 'Jul', val: 210 },
-];
-
-const riskData = [
-  { x: 80, y: 30, z: 200, name: 'Project Alpha (Delays)', color: '#ef4444' },
-  { x: 40, y: 70, z: 150, name: 'Vendor B (Supply)', color: '#f97316' },
-  { x: 20, y: 20, z: 100, name: 'Compliance (Local)', color: '#eab308' },
-  { x: 90, y: 80, z: 300, name: 'Market Rates', color: '#3b82f6' },
-];
-
-const departmentData = [
-  { name: 'Sales', target: 100, actual: 85 },
-  { name: 'Construction', target: 100, actual: 72 },
-  { name: 'Finance', target: 100, actual: 95 },
-  { name: 'HR', target: 100, actual: 88 },
-];
-
-const sparklineData = Array.from({length: 12}, () => ({ value: Math.random() * 100 }));
-const upSparkline = sparklineData.sort((a,b) => a.value - b.value);
-
 export function CEOIntelligenceRoom() {
+  const [metrics, setMetrics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const res = await fetch('/api/metrics/ceo');
+        const json = await res.json();
+        if (json.data) {
+           setMetrics(json.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch CEO metrics', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMetrics();
+  }, []);
+
+  const treasuryData = metrics?.treasuryData || [];
+  const riskData = metrics?.riskData || [];
+  const departmentData = metrics?.departmentData || [];
   return (
     <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
       
@@ -77,7 +73,9 @@ export function CEOIntelligenceRoom() {
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-4xl font-display font-bold text-white">92.4<span className="text-lg text-white/50">/100</span></span>
+            <span className="text-4xl font-display font-bold text-white">
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : metrics?.businessHealth}<span className="text-lg text-white/50">{loading ? '' : '/100'}</span>
+            </span>
             <div className="flex items-center gap-1 mt-2">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
               <span className="text-green-400 text-xs font-bold">+2.1 pts</span>
@@ -85,7 +83,7 @@ export function CEOIntelligenceRoom() {
             </div>
           </div>
           <div className="h-1 bg-white/5 mt-6 rounded-full overflow-hidden">
-             <div className="h-full bg-gradient-to-r from-asas-gold to-green-500 w-[92%] rounded-full shadow-[0_0_10px_rgba(212,166,79,0.5)]"></div>
+             <div className="h-full bg-gradient-to-r from-asas-gold to-green-500 rounded-full shadow-[0_0_10px_rgba(212,166,79,0.5)]" style={{ width: `${metrics?.businessHealth || 0}%` }}></div>
           </div>
         </div>
 
@@ -98,7 +96,9 @@ export function CEOIntelligenceRoom() {
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-3xl font-display font-bold text-white">1.84 B <span className="text-sm font-sans tracking-normal text-white/50">DA</span></span>
+            <span className="text-3xl font-display font-bold text-white">
+               {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (metrics?.portfolioAum / 1000000).toFixed(1)} <span className="text-sm font-sans tracking-normal text-white/50">{loading ? '' : 'M DA'}</span>
+            </span>
             <div className="flex items-center gap-1 mt-2">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
               <span className="text-green-400 text-xs font-bold">+14.2%</span>
@@ -116,7 +116,9 @@ export function CEOIntelligenceRoom() {
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-3xl font-display font-bold text-white">18 <span className="text-sm font-sans tracking-normal text-white/50">Months</span></span>
+            <span className="text-3xl font-display font-bold text-white">
+               {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : metrics?.treasuryRunway} <span className="text-sm font-sans tracking-normal text-white/50">{loading ? '' : 'Months'}</span>
+            </span>
             <div className="flex items-center gap-1 mt-2">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
               <span className="text-green-400 text-xs font-bold">+2 mo</span>
@@ -134,7 +136,9 @@ export function CEOIntelligenceRoom() {
             </div>
           </div>
           <div className="relative z-10">
-            <span className="text-3xl font-display font-bold text-white">24.2<span className="text-lg text-white/50">%</span></span>
+            <span className="text-3xl font-display font-bold text-white">
+               {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : metrics?.profitMargin}<span className="text-lg text-white/50">{loading ? '' : '%'}</span>
+            </span>
             <div className="flex items-center gap-1 mt-2">
               <ArrowDownRight className="w-3 h-3 text-red-500" />
               <span className="text-red-500 text-xs font-bold">-0.8%</span>

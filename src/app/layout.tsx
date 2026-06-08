@@ -6,6 +6,7 @@ import { env } from '@/lib/env'
 import { GlobalErrorTracker } from '@/components/GlobalErrorTracker'
 import { clsx } from 'clsx'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-asas-sand dark:bg-[#0B0C0E] text-asas-charcoal dark:text-asas-sand antialiased font-sans flex flex-col min-h-screen selection:bg-asas-gold/30">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GlobalErrorTracker />
+          <Toaster position="top-right" toastOptions={{ className: 'font-sans font-medium text-sm border border-white/10 dark:bg-[#0A1829] dark:text-white', style: { borderRadius: '12px', background: '#0A1829', color: '#fff' } }} />
           {children}
         </ThemeProvider>
       </body>

@@ -1,13 +1,33 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, Filter, Download, Activity, ShieldAlert,
-  Terminal, Database, Users, Server, Eye, FileText
+  Terminal, Database, Users, Server, Eye, FileText, Loader2
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export function AuditLogsModule() {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/api/system/audit?limit=100');
+        const json = await res.json();
+        if (json.data) {
+           setLogs(json.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch audit logs', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLogs();
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2 border-b border-white/5 pb-6 px-6">
@@ -41,61 +61,42 @@ export function AuditLogsModule() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-6">
-         <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden group">
-            <h3 className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mb-4">Total Logs (24h)</h3>
-            <span className="text-3xl font-display font-bold text-white">12,402</span>
-         </div>
-         <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden group">
-            <h3 className="text-[10px] uppercase font-bold tracking-widest text-red-400 mb-4">Security Events</h3>
-            <span className="text-3xl font-display font-bold text-red-500">14</span>
-         </div>
-         <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden group">
-            <h3 className="text-[10px] uppercase font-bold tracking-widest text-blue-400 mb-4">Data Exports</h3>
-            <span className="text-3xl font-display font-bold text-white">42</span>
-         </div>
-         <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden group">
-            <h3 className="text-[10px] uppercase font-bold tracking-widest text-green-400 mb-4">API Requests</h3>
-            <span className="text-3xl font-display font-bold text-green-400">8,102</span>
-         </div>
-      </div>
-
-      <div className="flex-1 w-full bg-[#0A1829] border-t border-white/5 flex flex-col font-mono text-sm overflow-hidden">
+      <div className="flex-1 w-full bg-[#0A1829] border-t border-white/5 flex flex-col font-mono text-sm overflow-hidden mt-6">
          <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 bg-[#051121] text-xs text-white/50 uppercase tracking-widest font-bold">
-            <div className="w-32">Timestamp</div>
-            <div className="w-24">Level</div>
-            <div className="w-48">Actor</div>
-            <div className="w-40">Action</div>
-            <div className="flex-1">Details</div>
-            <div className="w-24 text-right">IP Address</div>
+            <div className="w-48">Timestamp</div>
+            <div className="w-64">Actor</div>
+            <div className="w-32">Action</div>
+            <div className="w-32">Entity Type</div>
+            <div className="flex-1">Entity ID</div>
          </div>
          
          <div className="flex-1 overflow-auto custom-scrollbar px-6 py-2">
-            {[
-               { time: '14:22:10.432', level: 'INFO', actor: 'karim.b@asas.dz', action: 'LOGIN_SUCCESS', details: 'Authentication successful via SS0', ip: '105.101.42.12' },
-               { time: '14:20:05.112', level: 'WARN', actor: 'system_auth', action: 'LOGIN_FAILED', details: 'Invalid credentials. Attempt 3/5.', ip: '185.10.22.4' },
-               { time: '14:15:22.001', level: 'INFO', actor: 'sarah.m@asas.dz', action: 'DATA_EXPORT', details: 'Exported Leads Table (CSV, 452 rows).', ip: 'Office Secure' },
-               { time: '14:05:44.912', level: 'ERROR', actor: 'app_backend', action: 'DB_QUERY_FAILED', details: 'Timeout executing complex query on Chantiers DB', ip: 'Internal Cluster' },
-               { time: '13:58:12.333', level: 'INFO', actor: 'mehdi.k@asas.dz', action: 'RESOURCE_UPDATE', details: 'Updated deal state [DEAL-921] to "Negotiation".', ip: '105.101.42.15' },
-               { time: '13:45:00.000', level: 'CRITICAL', actor: 'unknown', action: 'UNAUTHORIZED_ACCESS', details: 'Attempted to access /api/v1/finance/payroll without proper scope.', ip: '192.168.1.1' },
-            ].map((log, i) => (
-               <div key={i} className="flex items-start py-2 border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors gap-4">
-                  <div className="w-32 text-white/40">{log.time}</div>
-                  <div className="w-24">
+            {loading ? (
+                <div className="flex justify-center items-center py-12">
+                   <Loader2 className="w-8 h-8 animate-spin text-white/50" />
+                </div>
+            ) : logs.length === 0 ? (
+                <div className="text-center py-12 text-white/50">No logs found for this tenant.</div>
+            ) : logs.map((log) => (
+               <div key={log.id} className="flex items-start py-3 border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors gap-4">
+                  <div className="w-48 text-white/40">{new Date(log.createdAt).toLocaleString()}</div>
+                  <div className="w-64 text-white flex items-center gap-2">
+                     <span className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center"><User className="w-2 h-2 text-blue-400"/></span>
+                     {log.user?.email || 'System'}
+                  </div>
+                  <div className="w-32">
                      <span className={clsx(
                         "px-2 py-0.5 rounded text-[10px] uppercase font-bold",
-                        log.level === 'INFO' ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
-                        log.level === 'WARN' ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20" :
-                        log.level === 'ERROR' ? "bg-red-500/10 text-red-400 border border-red-500/20" :
-                        "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20"
+                        log.action.includes('CREATE') ? "bg-green-500/10 text-green-400 border border-green-500/20" :
+                        log.action.includes('LIST') ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
+                        log.action.includes('VIEW') ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
+                        "bg-asas-gold/10 text-asas-gold border border-asas-gold/20"
                      )}>
-                        {log.level}
+                        {log.action}
                      </span>
                   </div>
-                  <div className="w-48 text-white">{log.actor}</div>
-                  <div className="w-40 text-asas-gold">{log.action}</div>
-                  <div className="flex-1 text-white/60 truncate">{log.details}</div>
-                  <div className="w-24 text-right text-white/30 truncate">{log.ip}</div>
+                  <div className="w-32 text-white/60">{log.entityType}</div>
+                  <div className="flex-1 text-white/60 truncate">{log.entityId}</div>
                </div>
             ))}
          </div>
