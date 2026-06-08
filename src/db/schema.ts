@@ -681,3 +681,63 @@ export const aiEmbeddings = pgTable("ai_embeddings", {
   createdBy: uuid("created_by").references(() => users.id),
   updatedBy: uuid("updated_by").references(() => users.id),
 });
+
+// ==========================================
+// BACKWARD COMPATIBILITY STUBS
+// To keep existing routes compiling during the transition
+// ==========================================
+
+export const clients = pgTable("old_clients", {
+  id: integer("id").primaryKey(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  email: varchar("email"),
+  phone: varchar("phone"),
+  type: varchar("type"),
+  companyName: varchar("company_name"),
+  createdAt: timestamp("created_at")
+});
+
+export const properties = pgTable("old_properties", {
+  id: integer("id").primaryKey(),
+  title: varchar("title")
+});
+
+export const deals = pgTable("old_deals", {
+  id: integer("id").primaryKey(),
+  reference: varchar("reference"),
+  clientId: integer("client_id"),
+  propertyId: integer("property_id"),
+  status: varchar("status"),
+  agreedPrice: numeric("agreed_price"),
+  dealType: varchar("deal_type"),
+  organizationId: uuid("organization_id"),
+  createdAt: timestamp("created_at")
+});
+
+export const projectRisks = pgTable("old_project_risks", {
+  id: integer("id").primaryKey(),
+  organizationId: uuid("organization_id"),
+  title: varchar("title"),
+  status: varchar("status")
+});
+
+export const jobCandidates = pgTable("old_job_candidates", {
+  id: integer("id").primaryKey(),
+  organizationId: uuid("organization_id")
+});
+
+export const jobPostings = pgTable("old_job_postings", {
+  id: integer("id").primaryKey(),
+  organizationId: uuid("organization_id")
+});
+
+export const vendors = pgTable("old_vendors", {
+  id: integer("id").primaryKey(),
+  organizationId: uuid("organization_id")
+});
+
+export const attendance = pgTable("old_attendance", {
+  id: integer("id").primaryKey(),
+  organizationId: uuid("organization_id")
+});
