@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { requireSession } from '@/lib/enterprise/auth';
 import { requirePermission } from '@/lib/enterprise/rbac';
-import { auditLogs, deals, projectRisks } from '@/db/schema';
+import { auditLogs, contracts, tickets } from '@/db/schema';
 import { db } from '@/db';
 import { eq, desc } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
@@ -21,16 +21,16 @@ export async function POST(req: Request) {
 
     // Attempt to gather context from the environment
     const recentDealsQuery = await db.select({
-       ref: deals.reference,
-       price: deals.agreedPrice,
-       status: deals.status
-    }).from(deals).where(eq(deals.organizationId, session.organizationId)).orderBy(desc(deals.createdAt)).limit(5);
+       ref: contracts.referenceCode,
+       price: contracts.agreedPrice,
+       status: contracts.status
+    }).from(contracts).where(eq(contracts.organizationId, session.organizationId)).orderBy(desc(contracts.createdAt)).limit(5);
 
     const recentRisksQuery = await db.select({
-       type: projectRisks.type,
-       severity: projectRisks.severity,
-       status: projectRisks.status
-    }).from(projectRisks).orderBy(desc(projectRisks.createdAt)).limit(5);
+       type: tickets.category,
+       severity: tickets.priority,
+       status: tickets.status
+    }).from(tickets).where(eq(tickets.organizationId, session.organizationId)).orderBy(desc(tickets.createdAt)).limit(5);
 
     const context = `
 Current Enterprise Context:

@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { RBACContext } from "./rbac";
 
 export interface SessionContext extends RBACContext {
-  organizationId: number;
+  organizationId: string;
 }
 
 // In a real application, this would parse a JWT or check a session cookie.
@@ -14,8 +14,8 @@ export async function getSession(): Promise<SessionContext | null> {
      
      // Mocking an Enterprise Admin
      return {
-        userId: 1,
-        organizationId: 1,
+        userId: '00000000-0000-0000-0000-000000000001',
+        organizationId: '00000000-0000-0000-0000-000000000001',
         role: 'admin',
         permissions: ['*:*']
      };

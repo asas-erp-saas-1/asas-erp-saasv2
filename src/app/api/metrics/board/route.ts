@@ -1,29 +1,38 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { deals, properties, clients, projectRisks } from '@/db/schema';
-import { sql, eq, sum } from 'drizzle-orm';
+import { contracts, units, contacts, tickets } from '@/db/schema';
+import { sql, eq, sum, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 
 export async function GET(request: Request) {
   try {
+    const session = await requireSession();
+    requirePermission(session, 'deals', 'read'); // Proxy permission
+
     const dealsStats = await db.select({
-       totalSales: sum(deals.agreedPrice).mapWith(Number),
-       dealCount: sql`count(${deals.id})`.mapWith(Number)
-    }).from(deals).where(eq(deals.status, 'completed'));
+       totalSales: sum(contracts.agreedPrice).mapWith(Number),
+       dealCount: sql`count(${contracts.id})`.mapWith(Number)
+    }).from(contracts)
+      .where(and(eq(contracts.status, 'completed'), eq(contracts.organizationId, session.organizationId)));
 
     const propertiesStats = await db.select({
-       totalProperties: sql`count(${properties.id})`.mapWith(Number),
-       availableProperties: sql`count(*) filter (where ${properties.status} = 'available')`.mapWith(Number)
-    }).from(properties);
+       totalProperties: sql`count(${units.id})`.mapWith(Number),
+       availableProperties: sql`count(*) filter (where ${units.status} = 'available')`.mapWith(Number)
+    }).from(units)
+      .where(eq(units.organizationId, session.organizationId));
 
     const clientsStats = await db.select({
-       totalClients: sql`count(${clients.id})`.mapWith(Number)
-    }).from(clients);
+       totalClients: sql`count(${contacts.id})`.mapWith(Number)
+    }).from(contacts)
+      .where(eq(contacts.organizationId, session.organizationId));
 
     const risksStats = await db.select({
-       activeRisks: sql`count(*) filter (where ${projectRisks.status} = 'active')`.mapWith(Number),
-       totalRisks: sql`count(${projectRisks.id})`.mapWith(Number)
-    }).from(projectRisks);
+       activeRisks: sql`count(*) filter (where ${tickets.status} = 'open')`.mapWith(Number),
+       totalRisks: sql`count(${tickets.id})`.mapWith(Number)
+    }).from(tickets)
+      .where(eq(tickets.organizationId, session.organizationId));
 
     return NextResponse.json({
        data: {
@@ -37,6 +46,9 @@ export async function GET(request: Request) {
     });
 
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
+       return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     ErrorTracker.captureError(error, { context: 'GET /api/metrics/board' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

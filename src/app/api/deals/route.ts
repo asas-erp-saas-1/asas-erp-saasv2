@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { deals, properties, clients } from '@/db/schema';
+import { contracts, units, contacts } from '@/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 import { requireSession } from '@/lib/enterprise/auth';
@@ -17,34 +17,34 @@ export async function GET(request: Request) {
     const id = searchParams.get('id');
     
     let query = db.select({
-      id: deals.id,
-      reference: deals.reference,
-      status: deals.status,
-      agreedPrice: deals.agreedPrice,
-      dealType: deals.dealType,
-      createdAt: deals.createdAt,
+      id: contracts.id,
+      reference: contracts.referenceCode,
+      status: contracts.status,
+      agreedPrice: contracts.agreedPrice,
+      dealType: contracts.status, // Proxy dealType to status for now
+      createdAt: contracts.createdAt,
       clients: {
-         id: clients.id,
-         full_name: clients.lastName, // fallback for full_name
-         firstName: clients.firstName,
-         lastName: clients.lastName,
-         phone: clients.phone,
+         id: contacts.id,
+         full_name: contacts.lastName, // fallback for full_name
+         firstName: contacts.firstName,
+         lastName: contacts.lastName,
+         phone: contacts.phone,
       },
       properties: {
-         id: properties.id,
-         title: properties.title,
+         id: units.id,
+         title: units.referenceCode,
          projects: {
-             name: properties.title // fallback projection
+             name: units.referenceCode // fallback projection
          }
       }
     })
-    .from(deals)
-    .leftJoin(clients, eq(deals.clientId, clients.id))
-    .leftJoin(properties, eq(deals.propertyId, properties.id))
-    .where(eq(deals.organizationId, session.organizationId)); // TANANT ISOLATION
+    .from(contracts)
+    .leftJoin(contacts, eq(contracts.contactId, contacts.id))
+    .leftJoin(units, eq(contracts.unitId, units.id))
+    .where(eq(contracts.organizationId, session.organizationId));
     
     if (id) {
-       const dealResult = await query.where(and(eq(deals.id, Number(id)), eq(deals.organizationId, session.organizationId))).limit(1);
+       const dealResult = await query.where(and(eq(contracts.id, id), eq(contracts.organizationId, session.organizationId))).limit(1);
        if (dealResult.length === 0) {
          return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
        }
@@ -53,20 +53,20 @@ export async function GET(request: Request) {
           organizationId: session.organizationId,
           userId: session.userId,
           action: 'VIEW_DEAL',
-          entityType: 'deals',
+          entityType: 'contracts',
           entityId: String(dealResult[0].id)
        });
 
        return NextResponse.json({ data: dealResult[0], count: 1 });
     }
     
-    const allDeals = await query.orderBy(desc(deals.createdAt)).limit(limit);
+    const allDeals = await query.orderBy(desc(contracts.createdAt)).limit(limit);
     
     await logAudit({
         organizationId: session.organizationId,
         userId: session.userId,
         action: 'LIST_DEALS',
-        entityType: 'deals',
+        entityType: 'contracts',
         entityId: 'ALL'
     });
 
@@ -91,7 +91,6 @@ export async function POST(request: Request) {
     const clientId = body.clientId || body.client_id;
     const propertyId = body.propertyId || body.property_id;
     const agreedPrice = body.agreedPrice || body.agreed_price;
-    const dealType = body.dealType || body.deal_type || 'sale';
 
     if (!clientId || !propertyId || !agreedPrice) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -99,26 +98,33 @@ export async function POST(request: Request) {
 
     const reference = `DL-${Date.now().toString().slice(-6)}`;
 
-    const newDeal = await db.insert(deals).values({
-      organizationId: session.organizationId, // TENANT ISOLATION
-      reference,
-      clientId: Number(clientId),
-      propertyId: Number(propertyId),
-      agreedPrice: agreedPrice,
-      dealType: dealType,
-      status: 'negotiation'
+    const newDeal = await db.insert(contracts).values({
+      organizationId: session.organizationId,
+      referenceCode: reference,
+      contactId: clientId,
+      unitId: propertyId,
+      agreedPrice: String(agreedPrice),
+      status: 'draft'
     }).returning();
 
     await logAudit({
         organizationId: session.organizationId,
         userId: session.userId,
         action: 'CREATE_DEAL',
-        entityType: 'deals',
+        entityType: 'contracts',
         entityId: String(newDeal[0].id),
         newData: newDeal[0]
     });
 
-    return NextResponse.json({ data: newDeal[0] }, { status: 201 });
+    // Make old response shape locally
+    const dealFormat = {
+      ...newDeal[0],
+      reference: newDeal[0].referenceCode,
+      propertyId: newDeal[0].unitId,
+      clientId: newDeal[0].contactId
+    };
+
+    return NextResponse.json({ data: dealFormat }, { status: 201 });
   } catch (error: any) {
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });
@@ -142,9 +148,9 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Missing required fields id, status' }, { status: 400 });
     }
 
-    const updatedDeal = await db.update(deals).set({
+    const updatedDeal = await db.update(contracts).set({
       status: status
-    }).where(and(eq(deals.id, Number(id)), eq(deals.organizationId, session.organizationId))).returning();
+    }).where(and(eq(contracts.id, id), eq(contracts.organizationId, session.organizationId))).returning();
 
     if (updatedDeal.length === 0) {
       return NextResponse.json({ error: 'Not found or permission denied' }, { status: 404 });
@@ -154,12 +160,19 @@ export async function PUT(request: Request) {
         organizationId: session.organizationId,
         userId: session.userId,
         action: 'WORKFLOW_TRANSITION',
-        entityType: 'deals',
+        entityType: 'contracts',
         entityId: String(updatedDeal[0].id),
         newData: { status: status }
     });
 
-    return NextResponse.json({ data: updatedDeal[0] }, { status: 200 });
+    const dealFormat = {
+      ...updatedDeal[0],
+      reference: updatedDeal[0].referenceCode,
+      propertyId: updatedDeal[0].unitId,
+      clientId: updatedDeal[0].contactId
+    };
+
+    return NextResponse.json({ data: dealFormat }, { status: 200 });
   } catch (error: any) {
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });

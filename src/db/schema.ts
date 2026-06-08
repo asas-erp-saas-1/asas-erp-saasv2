@@ -268,7 +268,7 @@ export const floorplans = pgTable("floorplans", {
 export const units = pgTable("units", {
   id: uuid("id").primaryKey().defaultRandom(),
   organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
-  buildingId: uuid("building_id").notNull().references(() => buildings.id, { onDelete: "cascade" }),
+  buildingId: uuid("building_id").references(() => buildings.id, { onDelete: "cascade" }),
   floorplanId: uuid("floorplan_id").references(() => floorplans.id, { onDelete: "set null" }),
   referenceCode: varchar("reference_code", { length: 100 }).notNull(),
   status: varchar("status", { length: 50 }).default("available"),

@@ -1,22 +1,24 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { deals, projectRisks, invoices } from '@/db/schema';
-import { sql, eq } from 'drizzle-orm';
+import { contracts, tickets, invoices } from '@/db/schema';
+import { sql, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 
 export async function GET(request: Request) {
   try {
-    // 1. Treasury / Financial data (mocked slightly based on invoice/deal trends if needed, but since we don't have historical months easily queryable without group by month, let's just create a dynamic summary based on current invoices)
-    
-    // For now we'll send a structured response that the CEO dashboard expects, 
-    // populated with some real aggregations where possible.
+    const session = await requireSession();
+    // Proxy permission check for dashboard level
+    requirePermission(session, 'deals', 'read'); 
 
     // Calculate real business health score based on deals completed vs total
     const dealsStats = await db.select({
        total: sql`count(*)`.mapWith(Number),
-       completed: sql`count(*) filter (where ${deals.status} = 'completed')`.mapWith(Number),
-       revenue: sql`sum(${deals.agreedPrice})`.mapWith(Number)
-    }).from(deals);
+       completed: sql`count(*) filter (where ${contracts.status} = 'completed')`.mapWith(Number),
+       revenue: sql`sum(${contracts.agreedPrice})`.mapWith(Number)
+    }).from(contracts)
+      .where(eq(contracts.organizationId, session.organizationId));
 
     const totalDeals = dealsStats[0]?.total || 0;
     const completedDeals = dealsStats[0]?.completed || 0;
@@ -25,14 +27,14 @@ export async function GET(request: Request) {
 
     const portfolioAum = dealsStats[0]?.revenue || 0;
 
-    // Risks extracted for scatter plot
-    const risks = await db.select().from(projectRisks).limit(10);
+    // Risks extracted mapped from tickets
+    const risks = await db.select().from(tickets).where(eq(tickets.organizationId, session.organizationId)).limit(10);
     const riskData = risks.map(r => ({
-       x: r.severity === 'critical' ? 90 : r.severity === 'high' ? 70 : r.severity === 'medium' ? 40 : 20,
-       y: r.status === 'active' ? 80 : r.status === 'monitoring' ? 40 : 10,
+       x: r.priority === 'urgent' ? 90 : r.priority === 'high' ? 70 : r.priority === 'medium' ? 40 : 20,
+       y: r.status === 'open' ? 80 : r.status === 'in_progress' ? 40 : 10,
        z: 150,
-       name: r.type || 'General Risk',
-       color: r.severity === 'critical' ? '#ef4444' : r.severity === 'high' ? '#f97316' : '#eab308'
+       name: r.category || 'General Risk',
+       color: r.priority === 'urgent' ? '#ef4444' : r.priority === 'high' ? '#f97316' : '#eab308'
     }));
 
     // If no risks in DB, provide fallback
@@ -69,6 +71,9 @@ export async function GET(request: Request) {
     });
 
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
+       return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     ErrorTracker.captureError(error, { context: 'GET /api/metrics/ceo' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

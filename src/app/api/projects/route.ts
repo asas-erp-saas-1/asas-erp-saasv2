@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { projects } from '@/db/schema';
-import { desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 
 export async function GET(request: Request) {
   try {
+    const session = await requireSession();
+    requirePermission(session, 'projects', 'read');
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
@@ -13,29 +18,29 @@ export async function GET(request: Request) {
     const id = searchParams.get('id');
 
     if (id) {
-       const project = await db.query.projects.findFirst({
-         where: (projects, { eq }) => eq(projects.id, Number(id)),
-         with: {
-           properties: true
-         }
-       });
-       if (!project) {
+       const projectResult = await db.select()
+          .from(projects)
+          .where(and(eq(projects.id, id), eq(projects.organizationId, session.organizationId)))
+          .limit(1);
+          
+       if (projectResult.length === 0) {
           return NextResponse.json({ error: 'Project not found' }, { status: 404 });
        }
-       return NextResponse.json({ data: project });
+       return NextResponse.json({ data: projectResult[0] });
     }
 
-    const projectsResult = await db.query.projects.findMany({
-      orderBy: [desc(projects.createdAt)],
-      limit,
-      offset,
-      with: {
-        properties: true,
-      }
-    });
+    const projectsResult = await db.select()
+      .from(projects)
+      .where(eq(projects.organizationId, session.organizationId))
+      .orderBy(desc(projects.createdAt))
+      .limit(limit)
+      .offset(offset);
 
     return NextResponse.json({ data: projectsResult, count: projectsResult.length });
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.startsWith('Forbidden')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     ErrorTracker.captureError(error, { context: 'GET /api/projects' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -43,6 +48,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await requireSession();
+    requirePermission(session, 'projects', 'write');
+    
     const body = await request.json();
     const { name, location, budget, managerId, status } = body;
     
@@ -51,15 +59,19 @@ export async function POST(request: Request) {
     }
 
     const newProject = await db.insert(projects).values({
+      organizationId: session.organizationId,
       name,
       location,
       budget,
-      managerId: managerId ? Number(managerId) : undefined,
+      managerId,
       status: status || 'planning',
     }).returning();
 
     return NextResponse.json({ data: newProject[0] }, { status: 201 });
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.startsWith('Forbidden')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     ErrorTracker.captureError(error, { context: 'POST /api/projects' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

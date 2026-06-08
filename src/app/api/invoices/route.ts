@@ -1,39 +1,44 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { invoices, deals, clients } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { invoices, contracts, contacts } from '@/db/schema';
+import { desc, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 
 export async function GET(request: Request) {
   try {
+    const session = await requireSession();
+    requirePermission(session, 'deals', 'read');
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const dealId = searchParams.get('dealId');
 
     let query = db.select({
       id: invoices.id,
-      dealId: invoices.dealId,
-      reference: invoices.reference,
+      dealId: invoices.contractId,
+      reference: invoices.referenceCode,
       amount: invoices.amount,
       status: invoices.status,
       dueDate: invoices.dueDate,
-      paidAt: invoices.paidAt,
       createdAt: invoices.createdAt,
       deals: {
-         id: deals.id,
-         reference: deals.reference,
+         id: contracts.id,
+         reference: contracts.referenceCode,
          clients: {
-             firstName: clients.firstName,
-             lastName: clients.lastName,
+             firstName: contacts.firstName,
+             lastName: contacts.lastName,
          }
       }
     })
     .from(invoices)
-    .leftJoin(deals, eq(invoices.dealId, deals.id))
-    .leftJoin(clients, eq(deals.clientId, clients.id));
+    .leftJoin(contracts, eq(invoices.contractId, contracts.id))
+    .leftJoin(contacts, eq(invoices.contactId, contacts.id))
+    .where(eq(invoices.organizationId, session.organizationId));
 
     if (dealId) {
-       query = query.where(eq(invoices.dealId, Number(dealId))) as any;
+       query = query.where(and(eq(invoices.contractId, dealId), eq(invoices.organizationId, session.organizationId))) as any;
     }
 
     const results = await query.orderBy(desc(invoices.createdAt)).limit(limit);
@@ -46,6 +51,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data: formatted, count: formatted.length });
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
+       return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     ErrorTracker.captureError(error, { context: 'GET /api/invoices' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -53,8 +61,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await requireSession();
+    requirePermission(session, 'deals', 'write');
+
     const body = await request.json();
-    const { dealId, amount, dueDate, status } = body;
+    const { dealId, amount, dueDate, status, contactId } = body;
     
     if (!dealId || !amount || !dueDate) {
       return NextResponse.json({ error: 'dealId, amount, and dueDate are required' }, { status: 400 });
@@ -62,16 +73,43 @@ export async function POST(request: Request) {
 
     const reference = `INV-${Date.now().toString().slice(-6)}`;
 
+    // Need a contactId. If not provided, fetch the deal to get contactId.
+    let targetContactId = contactId;
+    if (!targetContactId) {
+       const contractRecord = await db.select().from(contracts).where(eq(contracts.id, dealId)).limit(1);
+       if (contractRecord.length > 0) {
+         targetContactId = contractRecord[0].contactId;
+       }
+    }
+
+    if (!targetContactId) {
+      return NextResponse.json({ error: 'contactId is required' }, { status: 400 });
+    }
+
+    // Due Date mapping
+    const due = new Date(dueDate);
+    const dateStr = due.toISOString().split('T')[0];
+
+    // Issue Date
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
     const newInvoice = await db.insert(invoices).values({
-      dealId: Number(dealId),
-      reference,
-      amount,
-      dueDate: new Date(dueDate),
-      status: status || 'pending'
+      organizationId: session.organizationId,
+      contactId: targetContactId,
+      contractId: dealId,
+      referenceCode: reference,
+      amount: String(amount),
+      issueDate: todayStr,
+      dueDate: dateStr,
+      status: status || 'unpaid'
     }).returning();
 
     return NextResponse.json({ data: newInvoice[0] }, { status: 201 });
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
+       return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     ErrorTracker.captureError(error, { context: 'POST /api/invoices' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
