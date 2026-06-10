@@ -1,31 +1,31 @@
 import { NextResponse } from 'next/server';
 import { requireSession } from '@/lib/enterprise/auth';
 import { requirePermission } from '@/lib/enterprise/rbac';
-import { OpportunityService } from '@/domains/crm/services/opportunity.service';
+import { LeadService } from '@/domains/crm/services/lead.service';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ opportunityId: string }> }
+  { params }: { params: Promise<{ leadId: string }> }
 ) {
   try {
     const session = await requireSession();
     requirePermission(session, 'crm', 'write');
 
-    const { opportunityId } = await params;
+    const { leadId } = await params;
     const body = await request.json();
-    const { stage } = body;
+    const { status } = body;
 
-    if (!stage) {
-      return NextResponse.json({ error: 'Missing stage' }, { status: 400 });
+    if (!status) {
+      return NextResponse.json({ error: 'Missing status' }, { status: 400 });
     }
 
-    const updated = await OpportunityService.updateOpportunityStage(
+    const updated = await LeadService.updateLeadStatus(
       session.organizationId,
-      opportunityId,
-      stage,
+      leadId,
+      status,
       session.userId
     );
 
@@ -34,7 +34,7 @@ export async function PATCH(
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });
     }
-    ErrorTracker.captureError(error, { context: 'PATCH /api/crm/opportunities/[id]/stage' });
+    ErrorTracker.captureError(error, { context: 'PATCH /api/crm/leads/[id]/status' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

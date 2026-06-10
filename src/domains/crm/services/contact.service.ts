@@ -5,73 +5,71 @@ import { logAudit } from '@/lib/enterprise/audit';
 
 export class ContactService {
   static async createContact(
-    organizationId: string, 
-    data: { firstName?: string; lastName?: string; companyName?: string; email?: string; phone?: string; type?: string; nationalId?: string; address?: string }, 
+    organizationId: string,
+    data: {
+      type?: string;
+      firstName?: string;
+      lastName?: string;
+      companyName?: string;
+      email?: string;
+      phone?: string;
+      nationalId?: string;
+      address?: string;
+    },
     createdBy: string
   ) {
     return await db.transaction(async (tx) => {
-       const [newContact] = await tx.insert(contacts).values({
-         organizationId,
-         ...data,
-         createdBy
-       }).returning();
+      const [newContact] = await tx.insert(contacts).values({
+        organizationId,
+        ...data,
+        createdBy
+      }).returning();
 
-       await logAudit({
-         organizationId,
-         userId: createdBy,
-         action: 'CREATE_CONTACT',
-         entityType: 'contacts',
-         entityId: newContact.id,
-         newData: data
-       });
+      await logAudit({
+        organizationId,
+        userId: createdBy,
+        action: 'CREATE_CONTACT',
+        entityType: 'contacts',
+        entityId: newContact.id,
+        newData: data
+      });
 
-       return newContact;
+      return newContact;
     });
   }
 
-  static async listContacts(organizationId: string) {
+  static async listContacts(organizationId: string, type?: string) {
+    let baseWhere = and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt));
+    if (type) {
+      baseWhere = and(baseWhere, eq(contacts.type, type));
+    }
+
     return await db.select()
       .from(contacts)
-      .where(and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt)));
+      .where(baseWhere);
   }
 
   static async updateContact(organizationId: string, contactId: string, data: Partial<typeof contacts.$inferInsert>, updatedBy: string) {
     return await db.transaction(async (tx) => {
-       const [updated] = await tx.update(contacts)
-         .set({ ...data, updatedAt: new Date(), updatedBy })
-         .where(and(eq(contacts.id, contactId), eq(contacts.organizationId, organizationId)))
-         .returning();
-
-       await logAudit({
-         organizationId,
-         userId: updatedBy,
-         action: 'UPDATE_CONTACT',
-         entityType: 'contacts',
-         entityId: contactId,
-         newData: data
-       });
-
-       return updated;
-    });
-  }
-
-  static async deleteContact(organizationId: string, contactId: string, deletedBy: string) {
-    return await db.transaction(async (tx) => {
-      const [deleted] = await tx.update(contacts)
-        .set({ deletedAt: new Date(), updatedBy: deletedBy })
+      const [updated] = await tx.update(contacts)
+        .set({ ...data, updatedAt: new Date(), updatedBy })
         .where(and(eq(contacts.id, contactId), eq(contacts.organizationId, organizationId)))
         .returning();
 
+      if (!updated) {
+        throw new Error('Contact not found');
+      }
+
       await logAudit({
-         organizationId,
-         userId: deletedBy,
-         action: 'DELETE_CONTACT',
-         entityType: 'contacts',
-         entityId: contactId,
-         newData: { deletedAt: true }
+        organizationId,
+        userId: updatedBy,
+        action: 'UPDATE_CONTACT',
+        entityType: 'contacts',
+        entityId: contactId,
+        newData: data
       });
 
-      return deleted;
+      return updated;
     });
   }
 }

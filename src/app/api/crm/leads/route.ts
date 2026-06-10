@@ -11,8 +11,12 @@ export async function GET(request: Request) {
     const session = await requireSession();
     requirePermission(session, 'crm', 'read');
 
-    const leads = await LeadService.listLeads(session.organizationId);
-    return NextResponse.json({ data: leads }, { status: 200 });
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status') || undefined;
+
+    const list = await LeadService.listLeads(session.organizationId, status);
+
+    return NextResponse.json({ data: list }, { status: 200 });
   } catch (error: any) {
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });
