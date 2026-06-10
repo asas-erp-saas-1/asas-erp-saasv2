@@ -1,17 +1,56 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { payments, contracts, contacts, invoices } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { requireSession } from '@/lib/enterprise/auth';
 import { requirePermission } from '@/lib/enterprise/rbac';
 import { logAudit } from '@/lib/enterprise/audit';
 import { LedgerEngine } from '@/lib/enterprise/ledger';
 import { ErrorTracker } from '@/lib/observability/errors';
 
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+  try {
+    const session = await requireSession();
+    requirePermission(session, 'finance', 'read');
+
+    const list = await db.select({
+      id: payments.id,
+      amount: payments.amount,
+      currency: payments.currency,
+      paymentDate: payments.paymentDate,
+      status: payments.status,
+      method: payments.method,
+      referenceCode: payments.referenceCode,
+      contact: {
+        firstName: contacts.firstName,
+        lastName: contacts.lastName,
+        companyName: contacts.companyName
+      },
+      contract: {
+        referenceCode: contracts.referenceCode
+      }
+    })
+    .from(payments)
+    .leftJoin(contacts, eq(payments.contactId, contacts.id))
+    .leftJoin(contracts, eq(payments.contractId, contracts.id))
+    .where(and(eq(payments.organizationId, session.organizationId), isNull(payments.deletedAt)));
+
+    return NextResponse.json({ data: list }, { status: 200 });
+  } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
+       return NextResponse.json({ error: error.message }, { status: 403 });
+    }
+    ErrorTracker.captureError(error, { context: 'GET /api/finance/payments' });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const session = await requireSession();
-    requirePermission(session, 'deals', 'write');
+    requirePermission(session, 'finance', 'write');
 
     const body = await request.json();
     const { contractId, invoiceId, amount, method, referenceCode, notes } = body;
@@ -68,7 +107,7 @@ export async function POST(request: Request) {
     await logAudit({
       organizationId: session.organizationId,
       userId: session.userId,
-      action: 'PROCESS_DEAL_PAYMENT',
+      action: 'PROCESS_PAYMENT',
       entityType: 'payments',
       entityId: newPayment.id,
       newData: { amount, contractId }
@@ -79,7 +118,7 @@ export async function POST(request: Request) {
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });
     }
-    ErrorTracker.captureError(error, { context: 'POST /api/deals/payments' });
+    ErrorTracker.captureError(error, { context: 'POST /api/finance/payments' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
