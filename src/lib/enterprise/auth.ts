@@ -1,33 +1,66 @@
 import { headers } from "next/headers";
 import { RBACContext } from "./rbac";
+import { createClient } from "@/lib/supabase/server";
 
 export interface SessionContext extends RBACContext {
   organizationId: string;
 }
 
-// In a real application, this would parse a JWT or check a session cookie.
-// For the current phase, we simulate an active enterprise admin session.
 export async function getSession(): Promise<SessionContext | null> {
   try {
-     // const reqHeaders = await headers();
-     // Extract bearer token, decode JWT, fetch user...
-     
-     // Mocking an Enterprise Admin
-     return {
-        userId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000001',
-        role: 'admin',
-        permissions: ['*:*']
-     };
+    const supabase = await createClient();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (error || !session) {
+      return null;
+    }
+
+    // Attempt to get user properties from auth metadata or profile
+    // Note: since the legacy system mixes agency_id and organization_id, we align with the new schema (organization_id)
+    // but fallback to checking the user's profile if metadata isn't sufficient.
+    const { data: userRecord } = await supabase
+      .from("users")
+      .select("organization_id, roles(name)")
+      .eq("id", session.user.id)
+      .single();
+
+    // Fallback to legacy profiles if new users table isn't populated
+    let orgId = userRecord?.organization_id;
+    let role = (Array.isArray(userRecord?.roles) ? userRecord?.roles[0]?.name : (userRecord?.roles as any)?.name) || "user";
+
+    if (!orgId) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("agency_id, role")
+        .eq("id", session.user.id)
+        .single();
+
+      orgId = profile?.agency_id;
+      role = profile?.role || "user";
+    }
+
+    if (!orgId) {
+      return null;
+    }
+
+    return {
+      userId: session.user.id,
+      organizationId: orgId,
+      role: role,
+      permissions: ["*:*"], // Temporary: pending full RBAC evaluation
+    };
   } catch (error) {
-     return null;
+    return null;
   }
 }
 
 export async function requireSession(): Promise<SessionContext> {
-   const session = await getSession();
-   if (!session) {
-      throw new Error("Unauthorized");
-   }
-   return session;
+  const session = await getSession();
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+  return session;
 }

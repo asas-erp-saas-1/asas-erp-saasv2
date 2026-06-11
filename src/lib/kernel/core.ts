@@ -106,23 +106,16 @@ export interface IKernel {
 export class KernelAPI implements IKernel {
   async identity() {
     try {
-      const supabase = await createSupabaseClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session?.user?.id)
-        .single();
-        
-      if (profile && !profile.agency_id) {
-        throw new Error('Tenant isolation failure: No agency_id linked to profile.');
+      // Defer to the single source of truth for auth
+      const { getSession } = await import('@/lib/enterprise/auth');
+      const session = await getSession();
+      if (!session) {
+         return { userId: 'unknown', tenantId: 'unknown', role: 'unknown' };
       }
-        
       return { 
-        userId: session?.user?.id || 'unknown', 
-        tenantId: profile?.agency_id || 'unknown',
-        role: profile?.role || 'unknown'
+        userId: session.userId || 'unknown', 
+        tenantId: session.organizationId || 'unknown',
+        role: session.role || 'unknown'
       };
     } catch (err: any) {
       if (err.message && err.message.includes('Tenant isolation failure')) {

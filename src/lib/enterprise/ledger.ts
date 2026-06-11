@@ -42,7 +42,7 @@ export class LedgerEngine {
         organizationId,
         referenceCode,
         description,
-        entryDate: date.toISOString().split('T')[0],
+        entryDate: date,
         status: 'posted',
         createdBy: userId,
       }).returning();
@@ -62,14 +62,14 @@ export class LedgerEngine {
                name: `Account ${code}`,
                type: code.startsWith('4') || code.startsWith('5') ? 'asset' : 'expense'
             }).returning();
-            accsMap.set(code, newAcc.id);
+            if (newAcc) accsMap.set(code, newAcc.id);
          }
       }
 
       // 3. Post lines
       const linesToInsert = lines.map(l => ({
         organizationId,
-        journalEntryId: entry.id,
+        journalEntryId: entry?.id || 'error',
         accountId: accsMap.get(l.accountCode)!,
         direction: l.direction,
         amount: String(l.amount),
@@ -81,11 +81,11 @@ export class LedgerEngine {
 
       // 4. Audit
       await logAudit({
-        organizationId,
-        userId,
+        organizationId: organizationId as string,
+        userId: userId as string,
         action: 'POST_JOURNAL_ENTRY',
         entityType: 'journalEntries',
-        entityId: entry.id,
+        entityId: entry?.id || '',
         newData: { referenceCode, totalAmount: debits }
       });
 
@@ -107,7 +107,7 @@ export class LedgerEngine {
       .from(ledgerLines)
       .innerJoin(accounts, eq(ledgerLines.accountId, accounts.id))
       .where(
-         sql`${ledgerLines.organization_id} = ${organizationId} AND ${accounts.code} LIKE ${accountCodePrefix + '%'}`
+         sql`${ledgerLines.organizationId} = ${organizationId} AND ${accounts.code} LIKE ${accountCodePrefix + '%'}`
       );
 
     let balance = 0;

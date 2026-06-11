@@ -1,18 +1,32 @@
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
+import { db } from '@/db';
+import { tasks } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
+import { requireSession } from '@/lib/enterprise/auth';
 import { parseAndValidate, taskSchema, ValidationError } from '@/lib/validators';
 
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const session = await requireSession();
     const params = await props.params;
     const body = await request.json();
     
     // Server-side validation using Zod
     const validatedData = parseAndValidate(taskSchema, body, 'Task Update');
     
-    const task = await kernel.mutate('tasks', 'UPDATE', validatedData, { id: params.id });
+    const updates: any = {};
+    if (validatedData.status) updates.status = validatedData.status;
+    if (validatedData.priority) updates.priority = validatedData.priority;
+    if (validatedData.title) updates.title = validatedData.title;
+    if (validatedData.description) updates.description = validatedData.description;
+    
+    const [task] = await db.update(tasks)
+       .set(updates)
+       .where(and(eq(tasks.id, params.id), eq(tasks.organizationId, session.organizationId)))
+       .returning();
+       
     return NextResponse.json({ data: task });
   } catch (error: any) {
     if (error instanceof ValidationError) {

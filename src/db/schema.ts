@@ -212,6 +212,71 @@ export const projects = pgTable("projects", {
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
+export const projectPhases = pgTable("project_phases", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  status: varchar("status", { length: 50 }).default("pending"),
+  startDate: date("start_date"),
+  endDate: date("end_date"),
+  progressPercentage: numeric("progress_percentage", { precision: 5, scale: 2 }).default("0"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const purchaseOrders = pgTable("purchase_orders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
+  vendorName: varchar("vendor_name", { length: 255 }).notNull(),
+  referenceCode: varchar("reference_code", { length: 100 }),
+  totalAmount: numeric("total_amount", { precision: 15, scale: 2 }).notNull(),
+  status: varchar("status", { length: 50 }).default("draft"),
+  orderDate: date("order_date").notNull(),
+  expectedDelivery: date("expected_delivery"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  createdBy: uuid("created_by").references(() => users.id),
+});
+
+export const chantiers = pgTable("chantiers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  status: varchar("status", { length: 50 }).default("active"),
+  startDate: date("start_date"),
+  endDate: date("end_date"),
+  budget: numeric("budget", { precision: 15, scale: 2 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const contractors = pgTable("contractors", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  trade: varchar("trade", { length: 100 }),
+  contactEmail: varchar("contact_email", { length: 255 }),
+  contactPhone: varchar("contact_phone", { length: 50 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const dailyLogs = pgTable("daily_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  chantierId: uuid("chantier_id").notNull().references(() => chantiers.id, { onDelete: "cascade" }),
+  logDate: date("log_date").notNull(),
+  workerCount: integer("worker_count").default(0),
+  workCompleted: text("work_completed"),
+  incidentsNoted: text("incidents_noted"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  createdBy: uuid("created_by").references(() => users.id),
+});
+
 export const projectMilestones = pgTable("project_milestones", {
   id: uuid("id").primaryKey().defaultRandom(),
   organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
@@ -514,9 +579,10 @@ export const workflowRules = pgTable("workflow_rules", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   triggerEvent: varchar("trigger_event", { length: 100 }).notNull(),
+  actionType: varchar("action_type", { length: 100 }).notNull(),
+  status: varchar("status", { length: 50 }).default("active"),
   conditions: jsonb("conditions"),
-  actions: jsonb("actions").notNull(),
-  isActive: boolean("is_active").default(true),
+  actionPayload: jsonb("action_payload"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   createdBy: uuid("created_by").references(() => users.id),

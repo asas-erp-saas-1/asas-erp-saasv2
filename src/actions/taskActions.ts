@@ -1,7 +1,9 @@
 'use server'
 
-import { kernel } from '@/lib/kernel/core'
+import { db } from '@/db'
+import { tasks } from '@/db/schema'
 import { revalidatePath } from 'next/cache'
+import { getSession } from '@/lib/enterprise/auth'
 
 interface CreateTaskInput {
   title: string
@@ -15,34 +17,44 @@ interface CreateTaskInput {
 
 export async function createTaskAction(data: CreateTaskInput) {
   try {
-    const identity = await kernel.identity()
+    const session = await getSession()
 
-    if (!identity.userId) {
+    if (!session || !session.userId) {
       throw new Error('Non authentifié')
     }
 
     // Assign to the user creating the task if not explicitly assigned
-    const assignee = data.assigned_to || identity.userId
+    const assignee = data.assigned_to || session.userId
 
-    const task = await kernel.mutate<any>('tasks', 'INSERT', {
-      agency_id: identity.tenantId, // Assuming tasks have agency_id like leads do
+    let entityType = null;
+    let entityId = null;
+    
+    if (data.deal_id) {
+       entityType = 'deal';
+       entityId = data.deal_id;
+    } else if (data.lead_id) {
+       entityType = 'lead';
+       entityId = data.lead_id;
+    }
+
+    const [task] = await db.insert(tasks).values({
+      organizationId: session.organizationId,
       title: data.title,
       description: data.description || null,
       priority: data.priority,
-      due_date: data.due_date || null,
-      assigned_to: assignee,
-      created_by: identity.userId,
-      lead_id: data.lead_id || null,
-      deal_id: data.deal_id || null,
-      status: 'pending', // default status
-      is_automated: false
-    })
+      dueDate: data.due_date ? new Date(data.due_date) : null,
+      assignedTo: assignee,
+      createdBy: session.userId,
+      entityType: entityType,
+      entityId: entityId,
+      status: 'open',
+    }).returning()
 
     revalidatePath('/dashboard/tasks')
     if (data.lead_id) revalidatePath(`/dashboard/leads`)
     if (data.deal_id) revalidatePath(`/dashboard/deals`)
 
-    return { data: task, error: null }
+    return { data: { ...task, assigned_to: task.assignedTo }, error: null }
   } catch (error: any) {
     console.error('Create task error:', error)
     return { data: null, error: error.message }
