@@ -59,7 +59,7 @@ export class OrganizationService {
          userId: updatedBy,
          action: 'UPDATE_SETTING',
          entityType: 'settings',
-         entityId: result.id,
+         entityId: result?.id || '',
          newData: { groupName, key, value }
        });
 

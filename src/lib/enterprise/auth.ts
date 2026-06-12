@@ -46,11 +46,47 @@ export async function getSession(): Promise<SessionContext | null> {
       return null;
     }
 
+    // Gather concrete permissions based on roles
+    let permissions = ["*:*"]; // Default placeholder if everything fails but orgId succeeds
+    if (userRecord?.roles) {
+      try {
+         const roleArr = Array.isArray(userRecord.roles) ? userRecord.roles : [userRecord.roles];
+         const roleName = roleArr[0]?.name?.toLowerCase();
+         if (roleName === 'admin' || roleName === 'super_admin') {
+           permissions = ["*:*"];
+         } else {
+           // We would fetch permissions from rolePermissions here, but since rolePermissions might not be populated,
+           // we assign a base set based on role string.
+           if (roleName === 'agent') {
+             permissions = [
+               "deals:read", "deals:write", "properties:read", "clients:read", "clients:write", "reservations:read", "reservations:write", "crm:read", "crm:write"
+             ];
+           } else if (roleName === 'manager') {
+              permissions = ["deals:read", "deals:write", "deals:delete", "properties:read", "properties:write", "clients:read", "clients:write", "reservations:read", "reservations:write", "crm:read", "crm:write", "finance:read"];
+           } else {
+              permissions = ["crm:read"];
+           }
+         }
+      } catch(e) {}
+    } else {
+       // Legacy fallback
+       const roleName = role.toLowerCase();
+       if (roleName === 'admin' || roleName === 'super_admin') {
+          permissions = ["*:*"];
+       } else if (roleName === 'agent') {
+          permissions = ["deals:read", "deals:write", "properties:read", "clients:read", "clients:write", "reservations:read", "reservations:write", "crm:read", "crm:write"];
+       } else if (roleName === 'manager') {
+          permissions = ["deals:read", "deals:write", "deals:delete", "properties:read", "properties:write", "clients:read", "clients:write", "reservations:read", "reservations:write", "crm:read", "crm:write", "finance:read"];
+       } else {
+          permissions = ["crm:read"];
+       }
+    }
+
     return {
       userId: session.user.id,
       organizationId: orgId,
       role: role,
-      permissions: ["*:*"], // Temporary: pending full RBAC evaluation
+      permissions: permissions,
     };
   } catch (error) {
     return null;

@@ -21,7 +21,7 @@ export class BuildingService {
         userId: createdBy,
         action: 'CREATE_BUILDING',
         entityType: 'buildings',
-        entityId: newBuilding.id,
+        entityId: newBuilding?.id || '',
         newData: data
       });
 
@@ -30,7 +30,12 @@ export class BuildingService {
   }
 
   static async listBuildings(organizationId: string, projectId?: string) {
-    let query = db.select({
+    let baseWhere = and(eq(buildings.organizationId, organizationId), isNull(buildings.deletedAt));
+    if (projectId) {
+      baseWhere = and(baseWhere, eq(buildings.projectId, projectId));
+    }
+
+    return await db.select({
         id: buildings.id,
         projectId: buildings.projectId,
         name: buildings.name,
@@ -45,12 +50,6 @@ export class BuildingService {
     })
     .from(buildings)
     .leftJoin(projects, eq(buildings.projectId, projects.id))
-    .where(and(eq(buildings.organizationId, organizationId), isNull(buildings.deletedAt)));
-
-    if (projectId) {
-         return await query.where(and(eq(buildings.organizationId, organizationId), isNull(buildings.deletedAt), eq(buildings.projectId, projectId)));
-    }
-
-     return await query;
+    .where(baseWhere);
   }
 }

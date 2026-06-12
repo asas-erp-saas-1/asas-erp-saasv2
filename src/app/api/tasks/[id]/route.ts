@@ -18,7 +18,6 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
     
     const updates: any = {};
     if (validatedData.status) updates.status = validatedData.status;
-    if (validatedData.priority) updates.priority = validatedData.priority;
     if (validatedData.title) updates.title = validatedData.title;
     if (validatedData.description) updates.description = validatedData.description;
     

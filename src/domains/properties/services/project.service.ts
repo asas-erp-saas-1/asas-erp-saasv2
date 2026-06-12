@@ -22,7 +22,7 @@ export class ProjectService {
         userId: createdBy,
         action: 'CREATE_PROJECT',
         entityType: 'projects',
-        entityId: newProject.id,
+        entityId: newProject?.id || '',
         newData: data
       });
 

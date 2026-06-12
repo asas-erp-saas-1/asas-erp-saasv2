@@ -21,7 +21,7 @@ export class DocumentService {
         userId: createdBy,
         action: 'CREATE_DOCUMENT_TEMPLATE',
         entityType: 'documentTemplates',
-        entityId: newTemplate.id,
+        entityId: newTemplate?.id || '',
         newData: data
       });
 
@@ -52,7 +52,7 @@ export class DocumentService {
         userId: createdBy,
         action: 'CREATE_DOCUMENT',
         entityType: 'documents',
-        entityId: newDocument.id,
+        entityId: newDocument?.id || '',
         newData: data
       });
 
@@ -88,7 +88,7 @@ export class DocumentService {
         userId: signedByUserId,
         action: 'SIGN_DOCUMENT',
         entityType: 'signatures',
-        entityId: sig.id,
+        entityId: sig?.id || '',
         newData: { status: 'signed' }
       });
 

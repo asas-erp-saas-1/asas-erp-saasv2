@@ -24,7 +24,7 @@ export class FloorplanService {
         userId: createdBy,
         action: 'CREATE_FLOORPLAN',
         entityType: 'floorplans',
-        entityId: newFloorplan.id,
+        entityId: newFloorplan?.id || '',
         newData: data
       });
 

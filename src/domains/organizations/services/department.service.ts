@@ -18,7 +18,7 @@ export class DepartmentService {
          userId: createdBy,
          action: 'CREATE_DEPARTMENT',
          entityType: 'departments',
-         entityId: newDept.id,
+         entityId: newDept?.id || '',
          newData: { name, parentId, managerId }
        });
 

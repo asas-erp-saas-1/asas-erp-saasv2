@@ -42,10 +42,10 @@ export class LedgerEngine {
         organizationId,
         referenceCode,
         description,
-        entryDate: date,
+        entryDate: date.toISOString().split('T')[0],
         status: 'posted',
         createdBy: userId,
-      }).returning();
+      } as any).returning();
 
       // 2. Fetch required accounts
       const accountCodes = lines.map(l => l.accountCode);

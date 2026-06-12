@@ -33,7 +33,7 @@ export async function POST(request: Request) {
           type: type || "buyer",
           source: source || "other",
           createdBy: session.userId,
-        })
+        } as any)
         .returning();
       return NextResponse.json({ success: true, data: client });
     }
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
           amount: String(amount),
           status: "pending",
           dueDate: new Date().toISOString(),
-        })
+        } as any)
         .returning();
       return NextResponse.json({ success: true, data: payment });
     }
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
           amount: String(amount),
           dueDate: due_date,
           status: "pending",
-        })
+        } as any)
         .returning();
       return NextResponse.json({ success: true, data: payment });
     }
@@ -146,7 +146,7 @@ export async function POST(request: Request) {
           type: "note",
           createdBy: session.userId,
           notes: `Appel de fonds émis : ${trancheLabel} (${tranchePct}% = ${amountToCall.toLocaleString()} DZD)`,
-        });
+        } as any);
       }
 
       return NextResponse.json({
@@ -171,7 +171,7 @@ export async function POST(request: Request) {
         type: "status_change",
         createdBy: session.userId,
         notes: `Paiement / Appel de fonds validé: ${(amount / 1000000).toFixed(2)}M DZD - Validé via espace Intelligence`,
-      });
+      } as any);
 
       return NextResponse.json({ success: true, data: payment });
     }
@@ -202,7 +202,7 @@ export async function POST(request: Request) {
           agentId: agentId,
           amount: String(amount),
           status: "paid",
-        })
+        } as any)
         .returning();
       return NextResponse.json({ success: true, data: payment });
     }
@@ -218,7 +218,7 @@ export async function POST(request: Request) {
           description: description || category,
           status: "posted",
           createdBy: session.userId,
-        })
+        } as any)
         .returning();
       return NextResponse.json({ success: true, data: expense });
     }

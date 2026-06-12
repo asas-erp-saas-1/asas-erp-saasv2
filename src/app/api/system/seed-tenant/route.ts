@@ -14,10 +14,10 @@ export async function POST(request: Request) {
          name: 'ASAS Holdings',
          slug: 'asas_holdings',
          plan: 'enterprise'
-       }).returning();
+       } as any).returning();
     }
 
-    const orgId = org[0].id;
+    const orgId = org[0]!.id;
 
     // 2. Create Roles
     let adminRole = await db.select().from(roles).where(eq(roles.name, 'Super Admin')).limit(1);
@@ -27,10 +27,10 @@ export async function POST(request: Request) {
          organizationId: orgId,
          name: 'Super Admin',
          permissions: ['*:*']
-       }).returning();
+       } as any).returning();
     }
 
-    const roleId = adminRole[0].id;
+    const roleId = adminRole[0]!.id;
 
     // 3. Create initial Admin User
     let adminUser = await db.select().from(users).where(eq(users.email, 'admin@asas.dz')).limit(1);
@@ -39,11 +39,12 @@ export async function POST(request: Request) {
        adminUser = await db.insert(users).values({
          organizationId: orgId,
          email: 'admin@asas.dz',
-         name: 'Karim System Admin',
+         firstName: 'Karim',
+         lastName: 'System Admin',
          roleId: roleId,
          role: 'admin',
          department: 'IT & Security'
-       }).returning();
+       } as any).returning();
     }
 
     // 4. Fallback updating old unassigned data to this organization

@@ -30,7 +30,7 @@ export class ContactService {
         userId: createdBy,
         action: 'CREATE_CONTACT',
         entityType: 'contacts',
-        entityId: newContact.id,
+        entityId: newContact?.id || '',
         newData: data
       });
 

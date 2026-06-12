@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       }
       return NextResponse.json({ data: {
          ...clientResult[0],
-         full_name: `${clientResult[0].firstName} ${clientResult[0].lastName}`
+         full_name: `${clientResult[0]?.firstName || ''} ${clientResult[0]?.lastName || ''}`
       }});
     }
 

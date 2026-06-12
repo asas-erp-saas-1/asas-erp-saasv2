@@ -29,7 +29,7 @@ export class LeadService {
         userId: createdBy,
         action: 'CREATE_LEAD',
         entityType: 'leads',
-        entityId: newLead.id,
+        entityId: newLead?.id || '',
         newData: data
       });
 

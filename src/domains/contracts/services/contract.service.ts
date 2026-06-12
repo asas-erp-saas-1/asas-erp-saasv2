@@ -22,8 +22,8 @@ export class ContractService {
          if (!resList.length) throw new Error('Reservation not found');
          // mark reservation as fulfilled/contracted
          await tx.update(reservations).set({ status: 'contracted', updatedAt: new Date(), updatedBy: createdBy }).where(eq(reservations.id, data.reservationId));
-      } else if (unitList[0].status !== 'available' && unitList[0].status !== 'reserved') {
-          throw new Error(`Cannot create contract for unit with status: ${unitList[0].status}`);
+      } else if (unitList[0]!.status !== 'available' && unitList[0]!.status !== 'reserved') {
+          throw new Error(`Cannot create contract for unit with status: ${unitList[0]!.status}`);
       }
 
       // 2. Insert Contract
@@ -48,13 +48,13 @@ export class ContractService {
       if (data.installmentsData && data.installmentsData.length > 0) {
         const installmentsToInsert = data.installmentsData.map(inst => ({
             organizationId,
-            contractId: newContract.id,
+            contractId: newContract?.id || '',
             name: inst.name,
             amount: String(inst.amount),
-            dueDate: new Date(inst.dueDate),
+            dueDate: new Date(inst.dueDate).toISOString().split('T')[0],
             status: 'pending'
         }));
-        await tx.insert(installments).values(installmentsToInsert);
+        await tx.insert(installments).values(installmentsToInsert as any);
       }
 
       // 5. Audit
@@ -63,7 +63,7 @@ export class ContractService {
         userId: createdBy,
         action: 'CREATE_CONTRACT',
         entityType: 'contracts',
-        entityId: newContract.id,
+        entityId: newContract?.id || '',
         newData: data
       });
 

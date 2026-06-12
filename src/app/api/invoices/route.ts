@@ -15,7 +15,12 @@ export async function GET(request: Request) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const dealId = searchParams.get('dealId');
 
-    let query = db.select({
+    let baseWhere = eq(invoices.organizationId, session.organizationId);
+    if (dealId) {
+       baseWhere = and(baseWhere, eq(invoices.contractId, dealId)) as any;
+    }
+
+    const query = db.select({
       id: invoices.id,
       dealId: invoices.contractId,
       reference: invoices.referenceCode,
@@ -23,30 +28,26 @@ export async function GET(request: Request) {
       status: invoices.status,
       dueDate: invoices.dueDate,
       createdAt: invoices.createdAt,
-      deals: {
-         id: contracts.id,
-         reference: contracts.referenceCode,
-         clients: {
-             firstName: contacts.firstName,
-             lastName: contacts.lastName,
-         }
-      }
+      deal_id: contracts.id,
+      deal_reference: contracts.referenceCode,
+      client_firstName: contacts.firstName,
+      client_lastName: contacts.lastName,
     })
     .from(invoices)
     .leftJoin(contracts, eq(invoices.contractId, contracts.id))
     .leftJoin(contacts, eq(invoices.contactId, contacts.id))
-    .where(eq(invoices.organizationId, session.organizationId));
-
-    if (dealId) {
-       query = query.where(and(eq(invoices.contractId, dealId), eq(invoices.organizationId, session.organizationId))) as any;
-    }
+    .where(baseWhere);
 
     const results = await query.orderBy(desc(invoices.createdAt)).limit(limit);
     
     // Map data for front-end
     const formatted = results.map(inv => ({
        ...inv,
-       customer_name: inv.deals?.clients ? `${inv.deals.clients.firstName} ${inv.deals.clients.lastName}` : 'Unknown Customer'
+       deals: {
+          id: inv.deal_id,
+          reference: inv.deal_reference,
+       },
+       customer_name: (inv.client_firstName || inv.client_lastName) ? `${inv.client_firstName || ''} ${inv.client_lastName || ''}`.trim() : 'Unknown Customer'
     }))
 
     return NextResponse.json({ data: formatted, count: formatted.length });
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
     if (!targetContactId) {
        const contractRecord = await db.select().from(contracts).where(eq(contracts.id, dealId)).limit(1);
        if (contractRecord.length > 0) {
-         targetContactId = contractRecord[0].contactId;
+         targetContactId = contractRecord[0]?.contactId;
        }
     }
 
@@ -103,7 +104,7 @@ export async function POST(request: Request) {
       issueDate: todayStr,
       dueDate: dateStr,
       status: status || 'unpaid'
-    }).returning();
+    } as any).returning();
 
     return NextResponse.json({ data: newInvoice[0] }, { status: 201 });
   } catch (error: any) {

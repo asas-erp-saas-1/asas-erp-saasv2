@@ -23,7 +23,7 @@ export class EmployeeService {
         userId: createdBy,
         action: 'CREATE_EMPLOYEE',
         entityType: 'employees',
-        entityId: newEmployee.id,
+        entityId: newEmployee?.id || '',
         newData: data
       });
 

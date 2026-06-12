@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       session.organizationId,
       session.userId,
       referenceCode || `REC-${Date.now().toString().slice(-6)}`,
-      `Paiement pour contrat ${contract.referenceCode} - ${notes || ''}`,
+      `Paiement pour contrat ${contract?.referenceCode} - ${notes || ''}`,
       [
          { accountCode: '512', direction: 'debit', amount: Number(amount), description: 'Encaissement Banque' },
          { accountCode: '411', direction: 'credit', amount: Number(amount), description: 'Diminution Créance Client' },
@@ -84,10 +84,10 @@ export async function POST(request: Request) {
     // 3. Register standard Payment record linked to Ledger
     const [newPayment] = await db.insert(payments).values({
       organizationId: session.organizationId,
-      contactId: contract.contactId,
+      contactId: contract?.contactId,
       contractId: contractId,
       invoiceId: invoiceId || null,
-      journalEntryId: ledgerEntry.id,
+      journalEntryId: ledgerEntry?.id || '',
       referenceCode: referenceCode || `REC-${Date.now().toString().slice(-6)}`,
       method: method || 'bank_transfer',
       amount: String(amount),
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
       status: 'completed',
       notes: notes,
       createdBy: session.userId,
-    }).returning();
+    } as any).returning();
 
     // 4. Optionally Update Invoice Status if provided
     if (invoiceId) {
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       userId: session.userId,
       action: 'PROCESS_PAYMENT',
       entityType: 'payments',
-      entityId: newPayment.id,
+      entityId: newPayment?.id || '',
       newData: { amount, contractId }
     });
 

@@ -27,7 +27,7 @@ export class InteractionService {
         userId,
         action: 'CREATE_INTERACTION',
         entityType: 'interactions',
-        entityId: newInteraction.id,
+        entityId: newInteraction?.id || '',
         newData: data
       });
 

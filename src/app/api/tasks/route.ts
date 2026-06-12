@@ -77,16 +77,15 @@ export async function POST(request: Request) {
       description: data.description || null,
       assignedTo: data.assigned_to || session.userId,
       createdBy: session.userId,
-      priority: data.priority || 'medium',
       status: data.status || 'open',
-      dueDate: data.due_date ? new Date(data.due_date) : null,
+      dueDate: data.due_date ? new Date(data.due_date).toISOString().split('T')[0] : null,
       entityType: entityType,
       entityId: entityId
-    }).returning();
+    } as any).returning();
     
     return NextResponse.json({ data: {
       ...task,
-      assigned_to: task.assignedTo
+      assigned_to: task?.assignedTo
     } });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -101,7 +100,6 @@ export async function PUT(request: Request) {
     
     const updates: any = {};
     if (data.status) updates.status = data.status;
-    if (data.priority) updates.priority = data.priority;
     if (data.title) updates.title = data.title;
     if (data.description) updates.description = data.description;
     

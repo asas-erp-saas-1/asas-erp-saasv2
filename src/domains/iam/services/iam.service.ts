@@ -24,7 +24,7 @@ export class IAMService {
          userId: createdBy,
          action: 'CREATE_USER',
          entityType: 'users',
-         entityId: newUser.id,
+         entityId: newUser?.id || '',
          newData: { email, firstName, lastName }
        });
 
@@ -72,7 +72,7 @@ export class IAMService {
 
        if (permissions.length > 0) {
          const permsToInsert = permissions.map(p => ({
-           roleId: newRole.id,
+           roleId: newRole!.id,
            permissionContext: p.context,
            action: p.action
          }));
@@ -84,7 +84,7 @@ export class IAMService {
          userId: createdBy,
          action: 'CREATE_ROLE',
          entityType: 'roles',
-         entityId: newRole.id,
+         entityId: newRole?.id || '',
          newData: { name, permissions }
        });
 

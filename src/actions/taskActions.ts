@@ -41,20 +41,19 @@ export async function createTaskAction(data: CreateTaskInput) {
       organizationId: session.organizationId,
       title: data.title,
       description: data.description || null,
-      priority: data.priority,
-      dueDate: data.due_date ? new Date(data.due_date) : null,
+      dueDate: data.due_date ? new Date(data.due_date).toISOString().split('T')[0] : null,
       assignedTo: assignee,
       createdBy: session.userId,
       entityType: entityType,
       entityId: entityId,
       status: 'open',
-    }).returning()
+    } as any).returning()
 
     revalidatePath('/dashboard/tasks')
     if (data.lead_id) revalidatePath(`/dashboard/leads`)
     if (data.deal_id) revalidatePath(`/dashboard/deals`)
 
-    return { data: { ...task, assigned_to: task.assignedTo }, error: null }
+    return { data: { ...task, assigned_to: task?.assignedTo }, error: null }
   } catch (error: any) {
     console.error('Create task error:', error)
     return { data: null, error: error.message }

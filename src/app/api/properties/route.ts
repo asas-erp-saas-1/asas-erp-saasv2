@@ -70,13 +70,13 @@ export async function POST(request: Request) {
       }
     };
 
-    const insertedUnit = await db.insert(units).values(data).returning();
+    const [insertedUnit] = await db.insert(units).values(data).returning();
     
     const mapped = {
-      ...insertedUnit[0],
-      title: insertedUnit[0].referenceCode,
-      price: insertedUnit[0].basePrice,
-      area: insertedUnit[0].areaSqm
+      ...insertedUnit,
+      title: insertedUnit?.referenceCode,
+      price: insertedUnit?.basePrice,
+      area: insertedUnit?.areaSqm
     };
     
     return NextResponse.json({ data: mapped }, { status: 201 });

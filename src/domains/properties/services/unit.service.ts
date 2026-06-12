@@ -23,7 +23,7 @@ export class UnitService {
         userId: createdBy,
         action: 'CREATE_UNIT',
         entityType: 'units',
-        entityId: newUnit.id,
+        entityId: newUnit?.id || '',
         newData: data
       });
 

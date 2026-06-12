@@ -23,7 +23,7 @@ export class TicketService {
         userId: reportedById,
         action: 'CREATE_TICKET',
         entityType: 'tickets',
-        entityId: newTicket.id,
+        entityId: newTicket?.id || '',
         newData: data
       });
 

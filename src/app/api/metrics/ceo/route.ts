@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
+import { getTenantDb } from "@/db";
 import { contracts, tickets, invoices, journalEntries } from "@/db/schema";
 import { sql, eq, and } from "drizzle-orm";
 import { ErrorTracker } from "@/lib/observability/errors";
 import { requireSession } from "@/lib/enterprise/auth";
 import { requirePermission } from "@/lib/enterprise/rbac";
+import { CacheService } from "@/lib/cache/cache.service";
 
 export async function GET(request: Request) {
   try {
@@ -12,8 +13,16 @@ export async function GET(request: Request) {
     // Proxy permission check for dashboard level
     requirePermission(session, "deals", "read");
 
+    const cacheKey = "ceo_metrics_dashboard";
+    const cachedData = await CacheService.get(session.organizationId, cacheKey);
+    if (cachedData) {
+      return NextResponse.json({ data: cachedData });
+    }
+
+    const tenantDb = getTenantDb(session.organizationId);
+
     // Calculate real business health score based on deals completed vs total
-    const dealsStats = await db
+    const dealsStats = await tenantDb
       .select({
         total: sql`count(*)`.mapWith(Number),
         completed:
@@ -32,7 +41,7 @@ export async function GET(request: Request) {
       totalDeals > 0 ? (completedDeals / totalDeals) * 100 : 0;
 
     // Risks extracted mapped from tickets
-    const risks = await db
+    const risks = await tenantDb
       .select()
       .from(tickets)
       .where(eq(tickets.organizationId, session.organizationId))
@@ -58,7 +67,7 @@ export async function GET(request: Request) {
     }));
 
     // Treasury / Expenses from journal entries
-    const treasury = await db
+    const treasury = await tenantDb
       .select({
         month: sql`EXTRACT(MONTH FROM ${journalEntries.entryDate})`.mapWith(
           Number,
@@ -76,21 +85,26 @@ export async function GET(request: Request) {
       val: t.net,
     }));
 
+    const resultData = {
+      businessHealth: actualScore.toFixed(1),
+      portfolioAum: portfolioAum,
+      treasuryRunway: 0, // Needs full runway model, sending 0 for transparency
+      profitMargin: 0, // Needs full finance calc
+      treasuryData: treasuryData.length > 0 ? treasuryData : [],
+      riskData: riskData,
+      departmentData: [
+        { name: "Sales", target: 100, actual: actualScore },
+        { name: "Construction", target: 100, actual: 0 },
+        { name: "Finance", target: 100, actual: 0 },
+        { name: "HR", target: 100, actual: 0 },
+      ],
+    };
+
+    // Cache the comprehensive analytics for 5 minutes (300 seconds)
+    await CacheService.set(session.organizationId, cacheKey, resultData, 300);
+
     return NextResponse.json({
-      data: {
-        businessHealth: actualScore.toFixed(1),
-        portfolioAum: portfolioAum,
-        treasuryRunway: 0, // Needs full runway model, sending 0 for transparency
-        profitMargin: 0, // Needs full finance calc
-        treasuryData: treasuryData.length > 0 ? treasuryData : [],
-        riskData: riskData,
-        departmentData: [
-          { name: "Sales", target: 100, actual: actualScore },
-          { name: "Construction", target: 100, actual: 0 },
-          { name: "Finance", target: 100, actual: 0 },
-          { name: "HR", target: 100, actual: 0 },
-        ],
-      },
+      data: resultData,
     });
   } catch (error: any) {
     if (

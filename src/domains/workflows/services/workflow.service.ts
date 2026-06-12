@@ -22,7 +22,7 @@ export class WorkflowService {
         userId: createdBy,
         action: 'CREATE_TASK',
         entityType: 'tasks',
-        entityId: newTask.id,
+        entityId: newTask?.id || '',
         newData: data
       });
 

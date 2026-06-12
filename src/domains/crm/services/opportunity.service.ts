@@ -31,7 +31,7 @@ export class OpportunityService {
         userId: createdBy,
         action: 'CREATE_OPPORTUNITY',
         entityType: 'opportunities',
-        entityId: newOpportunity.id,
+        entityId: newOpportunity?.id || '',
         newData: data
       });
 

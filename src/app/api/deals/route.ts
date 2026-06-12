@@ -16,35 +16,35 @@ export async function GET(request: Request) {
     const limit = Number(searchParams.get('limit')) || 25;
     const id = searchParams.get('id');
     
+    let baseWhere = eq(contracts.organizationId, session.organizationId);
+
+    if (id) {
+       baseWhere = and(baseWhere, eq(contracts.id, id)) as any;
+    }
+    
     let query = db.select({
       id: contracts.id,
       reference: contracts.referenceCode,
       status: contracts.status,
       agreedPrice: contracts.agreedPrice,
-      dealType: contracts.status, // Proxy dealType to status for now
+      dealType: contracts.status,
       createdAt: contracts.createdAt,
-      clients: {
-         id: contacts.id,
-         full_name: contacts.lastName, // fallback for full_name
-         firstName: contacts.firstName,
-         lastName: contacts.lastName,
-         phone: contacts.phone,
-      },
-      properties: {
-         id: units.id,
-         title: units.referenceCode,
-         projects: {
-             name: units.referenceCode // fallback projection
-         }
-      }
+      client_id: contacts.id,
+      client_full_name: contacts.lastName,
+      client_firstName: contacts.firstName,
+      client_lastName: contacts.lastName,
+      client_phone: contacts.phone,
+      property_id: units.id,
+      property_title: units.referenceCode,
+      property_projectName: units.referenceCode,
     })
     .from(contracts)
     .leftJoin(contacts, eq(contracts.contactId, contacts.id))
     .leftJoin(units, eq(contracts.unitId, units.id))
-    .where(eq(contracts.organizationId, session.organizationId));
+    .where(baseWhere);
     
     if (id) {
-       const dealResult = await query.where(and(eq(contracts.id, id), eq(contracts.organizationId, session.organizationId))).limit(1);
+       const dealResult = await query.limit(1);
        if (dealResult.length === 0) {
          return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
        }
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
           userId: session.userId,
           action: 'VIEW_DEAL',
           entityType: 'contracts',
-          entityId: String(dealResult[0].id)
+          entityId: String(dealResult[0]?.id || '')
        });
 
        return NextResponse.json({ data: dealResult[0], count: 1 });
@@ -112,16 +112,16 @@ export async function POST(request: Request) {
         userId: session.userId,
         action: 'CREATE_DEAL',
         entityType: 'contracts',
-        entityId: String(newDeal[0].id),
+        entityId: String(newDeal[0]?.id || ''),
         newData: newDeal[0]
     });
 
     // Make old response shape locally
     const dealFormat = {
       ...newDeal[0],
-      reference: newDeal[0].referenceCode,
-      propertyId: newDeal[0].unitId,
-      clientId: newDeal[0].contactId
+      reference: newDeal[0]?.referenceCode,
+      propertyId: newDeal[0]?.unitId,
+      clientId: newDeal[0]?.contactId
     };
 
     return NextResponse.json({ data: dealFormat }, { status: 201 });
@@ -161,15 +161,15 @@ export async function PUT(request: Request) {
         userId: session.userId,
         action: 'WORKFLOW_TRANSITION',
         entityType: 'contracts',
-        entityId: String(updatedDeal[0].id),
+        entityId: String(updatedDeal[0]?.id || ''),
         newData: { status: status }
     });
 
     const dealFormat = {
       ...updatedDeal[0],
-      reference: updatedDeal[0].referenceCode,
-      propertyId: updatedDeal[0].unitId,
-      clientId: updatedDeal[0].contactId
+      reference: updatedDeal[0]?.referenceCode,
+      propertyId: updatedDeal[0]?.unitId,
+      clientId: updatedDeal[0]?.contactId
     };
 
     return NextResponse.json({ data: dealFormat }, { status: 200 });
