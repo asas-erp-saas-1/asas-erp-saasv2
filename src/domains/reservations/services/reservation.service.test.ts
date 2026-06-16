@@ -19,7 +19,7 @@ vi.mock('@/db', () => {
   const mockDb = {
     transaction: vi.fn(async (cb) => {
       // Mock the transaction callback
-      return cb(mockTx);
+      return cb(mockTx as any);
     }),
     select: vi.fn().mockReturnThis(),
     from: vi.fn().mockReturnThis(),
@@ -63,7 +63,7 @@ describe('ReservationService', () => {
         limit: vi.fn().mockReturnThis(),
         for: vi.fn().mockResolvedValue([{ status: 'reserved' }]) // Unit is already reserved
       };
-      return cb(mockTx);
+      return cb(mockTx as any);
     });
 
     await expect(ReservationService.createReservation(mockOrgId, data, mockUserId))
@@ -93,7 +93,7 @@ describe('ReservationService', () => {
         update: vi.fn().mockReturnThis(),
         set: vi.fn().mockReturnThis(),
       };
-      return cb(mockTx);
+      return cb(mockTx as any);
     });
 
     const result = await ReservationService.createReservation(mockOrgId, data, mockUserId);

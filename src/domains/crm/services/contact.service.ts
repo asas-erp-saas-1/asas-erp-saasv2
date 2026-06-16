@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { getTenantDb } from '@/db';
 import { contacts } from '@/db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { logAudit } from '@/lib/enterprise/audit';
@@ -18,7 +18,7 @@ export class ContactService {
     },
     createdBy: string
   ) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [newContact] = await tx.insert(contacts).values({
         organizationId,
         ...data,
@@ -44,13 +44,13 @@ export class ContactService {
       baseWhere = and(baseWhere, eq(contacts.type, type));
     }
 
-    return await db.select()
+    return await getTenantDb(organizationId).select()
       .from(contacts)
       .where(baseWhere);
   }
 
   static async updateContact(organizationId: string, contactId: string, data: Partial<typeof contacts.$inferInsert>, updatedBy: string) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [updated] = await tx.update(contacts)
         .set({ ...data, updatedAt: new Date(), updatedBy })
         .where(and(eq(contacts.id, contactId), eq(contacts.organizationId, organizationId)))

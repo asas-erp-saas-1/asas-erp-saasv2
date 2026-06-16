@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { getTenantDb } from '@/db';
 import { opportunities, contacts, leads, users } from '@/db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { logAudit } from '@/lib/enterprise/audit';
@@ -17,7 +17,7 @@ export class OpportunityService {
     },
     createdBy: string
   ) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [newOpportunity] = await tx.insert(opportunities).values({
         organizationId,
         ...data,
@@ -45,7 +45,7 @@ export class OpportunityService {
       baseWhere = and(baseWhere, eq(opportunities.stage, stage));
     }
 
-    return await db.select({
+    return await getTenantDb(organizationId).select({
       id: opportunities.id,
       stage: opportunities.stage,
       estimatedValue: opportunities.estimatedValue,
@@ -71,7 +71,7 @@ export class OpportunityService {
   }
 
   static async updateOpportunityStage(organizationId: string, opportunityId: string, stage: string, updatedBy: string) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [updated] = await tx.update(opportunities)
         .set({ stage, updatedAt: new Date(), updatedBy })
         .where(and(eq(opportunities.id, opportunityId), eq(opportunities.organizationId, organizationId)))

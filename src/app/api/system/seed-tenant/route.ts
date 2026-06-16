@@ -3,9 +3,19 @@ import { db } from '@/db';
 import { organizations, roles, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { getSession } from '@/lib/enterprise/auth';
 
 export async function POST(request: Request) {
   try {
+    // 1. Safety Check: If users already exist, require a super_admin/admin session to proceed
+    const existingUsers = await db.select().from(users).limit(1);
+    if (existingUsers.length > 0) {
+      const session = await getSession();
+      if (!session || (session.role !== 'admin' && session.role !== 'super_admin')) {
+         return NextResponse.json({ error: 'Unauthorized: Seeding is locked once a system user exists. Only admins can perform this action.' }, { status: 403 });
+      }
+    }
+
     // 1. Create Organization
     let org = await db.select().from(organizations).where(eq(organizations.slug, 'asas_holdings')).limit(1);
     

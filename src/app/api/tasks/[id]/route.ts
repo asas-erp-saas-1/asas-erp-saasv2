@@ -3,6 +3,7 @@ import { db } from '@/db';
 import { tasks } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 import { parseAndValidate, taskSchema, ValidationError } from '@/lib/validators';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
     const session = await requireSession();
+    requirePermission(session, 'tasks', 'write');
     const params = await props.params;
     const body = await request.json();
     

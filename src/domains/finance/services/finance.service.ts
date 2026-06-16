@@ -66,13 +66,13 @@ export class FinanceService {
 
   static async markInvoicePaid(organizationId: string, invoiceId: string, updatedBy: string) {
     return await getTenantDb(organizationId).transaction(async (tx) => {
-      const existing = await tx.select().from(invoices).where(and(eq(invoices.id, invoiceId), eq(invoices.organizationId, organizationId))).limit(1);
+      const existing = await tx.select().from(invoices).where(and(eq(invoices.id, invoiceId), eq(invoices.organizationId, organizationId))).limit(1).for('update');
       
       if (!existing.length) {
          throw new Error('Invoice not found');
       }
 
-      if (existing[0].status === 'paid') {
+      if (existing[0]?.status === 'paid') {
           throw new Error('Invoice is already paid');
       }
 
@@ -81,23 +81,25 @@ export class FinanceService {
         .where(and(eq(invoices.id, invoiceId), eq(invoices.organizationId, organizationId)))
         .returning();
 
-      if (updated.installmentId) {
+      if (updated?.installmentId) {
         await tx.update(installments)
            .set({ status: 'paid', updatedAt: new Date(), updatedBy })
            .where(eq(installments.id, updated.installmentId));
       }
 
-      // Ledger Post: Payment received (Debit Treasury (512), Credit Accounts Receivable (411))
-      await LedgerEngine.postEntry(
-         organizationId,
-         updatedBy,
-         `PAY-${updated.referenceCode}`,
-         `Règlement facture - ${updated.referenceCode}`,
-         [
-            { accountCode: '512', direction: 'debit', amount: Number(updated.amount), description: 'Banque - Encaissement' },
-            { accountCode: '411', direction: 'credit', amount: Number(updated.amount), description: 'Soldes Créance Client' },
-         ]
-      );
+      if (updated) {
+        // Ledger Post: Payment received (Debit Treasury (512), Credit Accounts Receivable (411))
+        await LedgerEngine.postEntry(
+           organizationId,
+           updatedBy,
+           `PAY-${updated.referenceCode}`,
+           `Règlement facture - ${updated.referenceCode}`,
+           [
+              { accountCode: '512', direction: 'debit', amount: Number(updated.amount), description: 'Banque - Encaissement' },
+              { accountCode: '411', direction: 'credit', amount: Number(updated.amount), description: 'Soldes Créance Client' },
+           ]
+        );
+      }
 
       await logAudit({
         organizationId,

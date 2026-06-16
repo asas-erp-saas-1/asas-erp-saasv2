@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { eq, and } from 'drizzle-orm';
 import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 import { projects, chantiers, units, contractors, projectMilestones, projectPhases, purchaseOrders, dailyLogs } from '@/db/schema';
 
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     const session = await requireSession();
+    requirePermission(session, 'chantiers', 'read');
     const { searchParams } = new URL(request.url);
     const view = searchParams.get('view');
     const projectId = searchParams.get('projectId');
@@ -91,6 +93,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await requireSession();
+    requirePermission(session, 'chantiers', 'write');
     const data = await request.json();
     const orgId = session.organizationId;
     const { action, payload } = data;

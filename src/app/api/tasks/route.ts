@@ -3,12 +3,14 @@ import { db } from '@/db';
 import { tasks } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { requireSession } from '@/lib/enterprise/auth';
+import { requirePermission } from '@/lib/enterprise/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
     const session = await requireSession();
+    requirePermission(session, 'tasks', 'read');
     
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
@@ -58,6 +60,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await requireSession();
+    requirePermission(session, 'tasks', 'write');
     const data = await request.json();
     
     let entityType = null;
@@ -95,6 +98,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const session = await requireSession();
+    requirePermission(session, 'tasks', 'write');
     const { id, ...data } = await request.json();
     if (!id) throw new Error('ID is required');
     

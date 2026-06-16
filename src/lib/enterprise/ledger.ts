@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { getTenantDb } from '@/db';
 import { accounts, journalEntries, ledgerLines } from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { logAudit } from '@/lib/enterprise/audit';
@@ -35,8 +35,10 @@ export class LedgerEngine {
       throw new Error(`Double-entry balance failed: Debits (${debits}) do not equal Credits (${credits}).`);
     }
 
+    const tenantDb = getTenantDb(organizationId);
+
     // Process inside a transaction
-    return await db.transaction(async (tx) => {
+    return await tenantDb.transaction(async (tx) => {
       // 1. Create Journal Entry
       const [entry] = await tx.insert(journalEntries).values({
         organizationId,
@@ -97,7 +99,8 @@ export class LedgerEngine {
    * Retrieves the current balance of an account or account group.
    */
   static async getAccountBalance(organizationId: string, accountCodePrefix: string): Promise<number> {
-    const rows = await db
+    const tenantDb = getTenantDb(organizationId);
+    const rows = await tenantDb
       .select({
         code: accounts.code,
         type: accounts.type,

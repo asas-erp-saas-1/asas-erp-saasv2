@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { getTenantDb } from '@/db';
 import { units, buildings, floorplans } from '@/db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { logAudit } from '@/lib/enterprise/audit';
@@ -9,7 +9,7 @@ export class UnitService {
     data: { buildingId?: string; floorplanId?: string; referenceCode: string; status?: string; floor?: number; areaSqm?: number | string; basePrice?: number | string; metadata?: any },
     createdBy: string
   ) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [newUnit] = await tx.insert(units).values({
         organizationId,
         ...data,
@@ -37,7 +37,7 @@ export class UnitService {
       baseWhere = and(baseWhere, eq(units.buildingId, buildingId));
     }
 
-    return await db.select({
+    return await getTenantDb(organizationId).select({
       id: units.id,
       buildingId: units.buildingId,
       floorplanId: units.floorplanId,
@@ -61,7 +61,7 @@ export class UnitService {
   }
 
   static async updateUnitStatus(organizationId: string, unitId: string, status: string, updatedBy: string) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [updated] = await tx.update(units)
         .set({ status, updatedAt: new Date(), updatedBy })
         .where(and(eq(units.id, unitId), eq(units.organizationId, organizationId)))

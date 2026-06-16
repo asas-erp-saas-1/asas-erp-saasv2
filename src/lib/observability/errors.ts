@@ -8,11 +8,11 @@ export class ErrorTracker {
     Logger.error('Application Error Captured', normalizedError, metadata);
     
     // Push the error to Sentry with context metadata
-    Sentry.captureException(normalizedError, { extra: metadata });
+    Sentry.captureException(normalizedError, { extra: metadata || {} });
   }
 
   static captureRejection(reason: string, metadata?: Record<string, any>) {
     Logger.warn('Enforcement Rejection', { reason, ...metadata });
-    Sentry.captureMessage(`Enforcement Rejection: ${reason}`, { level: 'warning', extra: metadata });
+    Sentry.captureMessage(`Enforcement Rejection: ${reason}`, { level: 'warning', extra: metadata || {} });
   }
 }

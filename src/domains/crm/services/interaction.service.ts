@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { getTenantDb } from '@/db';
 import { interactions } from '@/db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { logAudit } from '@/lib/enterprise/audit';
@@ -9,7 +9,7 @@ export class InteractionService {
     data: { contactId: string; opportunityId?: string; type: string; interactionDate: string; summary?: string; outcome?: string },
     userId: string
   ) {
-    return await db.transaction(async (tx) => {
+    return await getTenantDb(organizationId).transaction(async (tx) => {
       const [newInteraction] = await tx.insert(interactions).values({
         organizationId,
         userId,
@@ -36,7 +36,7 @@ export class InteractionService {
   }
 
   static async listInteractionsByContact(organizationId: string, contactId: string) {
-    return await db.select()
+    return await getTenantDb(organizationId).select()
       .from(interactions)
       .where(and(eq(interactions.organizationId, organizationId), eq(interactions.contactId, contactId), isNull(interactions.deletedAt)));
   }

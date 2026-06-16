@@ -3,7 +3,8 @@
 import { db } from '@/db'
 import { tasks } from '@/db/schema'
 import { revalidatePath } from 'next/cache'
-import { getSession } from '@/lib/enterprise/auth'
+import { requireSession } from '@/lib/enterprise/auth'
+import { requirePermission } from '@/lib/enterprise/rbac'
 
 interface CreateTaskInput {
   title: string
@@ -17,11 +18,8 @@ interface CreateTaskInput {
 
 export async function createTaskAction(data: CreateTaskInput) {
   try {
-    const session = await getSession()
-
-    if (!session || !session.userId) {
-      throw new Error('Non authentifié')
-    }
+    const session = await requireSession()
+    requirePermission(session, 'tasks', 'write')
 
     // Assign to the user creating the task if not explicitly assigned
     const assignee = data.assigned_to || session.userId
