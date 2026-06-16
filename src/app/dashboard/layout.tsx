@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator, Power, Clock, ShieldAlert, Cloud, Webhook, Star, Target } from 'lucide-react';
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Bell, Search, Menu, UserSquare2, Calendar as CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator, Power, Clock, ShieldAlert, Cloud, Webhook, Star } from 'lucide-react';
 import Link from 'next/link'
 import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
@@ -23,7 +23,6 @@ const NAV_GROUPS = [
     group: "CRM & SALES OS",
     items: [
       { href: '/dashboard/leads',      label: 'Smart Leads', Icon: Users },
-      { href: '/dashboard/opportunities', label: 'Opportunities', Icon: Target },
       { href: '/dashboard/deals',      label: 'Sales Pipeline',      Icon: Handshake },
       { href: '/dashboard/deals/workspace', label: 'Negotiation Room', Icon: Webhook },
       { href: '/dashboard/deals/analytics', label: 'Sales Analytics', Icon: BarChart2 },

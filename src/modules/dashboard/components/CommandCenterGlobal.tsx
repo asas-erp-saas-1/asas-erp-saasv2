@@ -12,6 +12,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area, LineChart, Line
 } from 'recharts';
 import { EnterpriseAICopilot } from './EnterpriseAICopilot';
+import { ExecutionInboxWidget } from './ExecutionInboxWidget';
 
 const barData = [
   { name: 'Juin', ca: 20, enc: 15 },
@@ -292,32 +293,9 @@ export function CommandCenterGlobal() {
           </div>
         </div>
 
-        {/* Activités Récentes */}
-        <div className="lg:col-span-3 p-6 rounded-2xl bg-[#0A1829] border border-white/5 flex flex-col h-[320px] overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-sm font-bold text-white tracking-tight">Activités Récentes</h3>
-            <span className="text-[10px] text-[#D4A64F] uppercase tracking-widest font-bold cursor-pointer hover:underline">Voir tout</span>
-          </div>
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5">
-            {[ 
-              { title: "Nouveau lead ajouté", desc: "Karim Benali - Appartement T3", time: "10:24", icon: Home, bg: "bg-blue-500/10", col: "text-blue-400" },
-              { title: "Paiement reçu", desc: "12,450,000 DA de Nour Immo", time: "09:15", icon: DollarSign, bg: "bg-green-500/10", col: "text-green-400" },
-              { title: "Contrat signé", desc: "Résidence EL YASMINE - Bloc B", time: "Hier, 16:45", icon: CheckSquare, bg: "bg-purple-500/10", col: "text-purple-400" },
-              { title: "Tâche assignée", desc: "Suivi client - Ahmed Benkhaled", time: "Hier, 14:20", icon: AlertCircle, bg: "bg-orange-500/10", col: "text-orange-400" },
-              { title: "Unité réservée", desc: "A-34 - 3ème étage", time: "Hier, 11:10", icon: Home, bg: "bg-blue-500/10", col: "text-blue-400" }
-            ].map((activity, i) => (
-              <div key={i} className="flex gap-4">
-                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${activity.bg}`}>
-                    <activity.icon className={`w-4 h-4 ${activity.col}`} />
-                 </div>
-                 <div className="flex-1">
-                    <p className="text-[11px] font-bold text-white">{activity.title}</p>
-                    <p className="text-[10px] text-white/50">{activity.desc}</p>
-                 </div>
-                 <span className="text-[9px] text-white/40">{activity.time}</span>
-              </div>
-            ))}
-          </div>
+        {/* Execution Inbox */}
+        <div className="lg:col-span-3 h-[320px]">
+          <ExecutionInboxWidget />
         </div>
       </div>
 

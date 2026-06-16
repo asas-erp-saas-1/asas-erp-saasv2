@@ -3,8 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { initializeEventKernel } from '@/lib/db/eventKernel'
 import { revalidatePath } from 'next/cache'
-import { requireSession } from '@/lib/enterprise/auth'
-import { requirePermission } from '@/lib/enterprise/rbac'
 
 // Define our types
 export type DealStage = 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'CONTRACT_PENDING' | 'CLOSED_WON' | 'CANCELLED';
@@ -20,9 +18,6 @@ export interface DealWithClient {
 }
 
 export async function fetchActiveDeals(context?: string): Promise<DealWithClient[]> {
-  const session = await requireSession();
-  requirePermission(session, 'crm', 'read');
-
   const supabase = await createClient()
 
   // RLS inherently filters by the user's agency. 
@@ -39,7 +34,6 @@ export async function fetchActiveDeals(context?: string): Promise<DealWithClient
         last_name
       )
     `)
-    .eq('agency_id', session.organizationId)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -61,9 +55,6 @@ export async function fetchActiveDeals(context?: string): Promise<DealWithClient
 }
 
 export async function updateDealStage(dealId: string, newStage: DealStage, agencyId: string) {
-  const session = await requireSession();
-  requirePermission(session, 'crm', 'write');
-
   const supabase = await createClient()
   
   // 1. Get the current user to attribute the action
@@ -80,8 +71,7 @@ export async function updateDealStage(dealId: string, newStage: DealStage, agenc
   const { error: updateError } = await supabase
     .from('deals')
     .update({ stage: newStage })
-    .eq('id', dealId)
-    .eq('agency_id', session.organizationId);
+    .eq('id', dealId);
 
   if (updateError) {
     console.error('Failed to update deal stage:', updateError);
@@ -95,11 +85,11 @@ export async function updateDealStage(dealId: string, newStage: DealStage, agenc
       eventType: 'Sales.DealStageAdvanced',
       aggregateType: 'Deal',
       aggregateId: dealId,
-      agencyId: session.organizationId, // Context/Agency ID
+      agencyId: agencyId, // Context/Agency ID
       performedByUserId: user?.id || "",
       payload: {
         aggregateId: dealId,
-        agencyId: session.organizationId,
+        agencyId: agencyId,
         oldState: { stage: oldDeal?.stage },
         newState: { stage: newStage },
         metadata: {
@@ -119,4 +109,3 @@ export async function updateDealStage(dealId: string, newStage: DealStage, agenc
 
   return { success: true, newStage };
 }
-

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Search, Filter, Download, Activity, ShieldAlert,
-  Terminal, Database, Users, Server, Eye, FileText, Loader2, User
+  Terminal, Database, Users, Server, Eye, FileText, Loader2
 } from 'lucide-react';
 import { clsx } from 'clsx';
 

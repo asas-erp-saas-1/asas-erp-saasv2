@@ -1,33 +1,24 @@
 import { NextResponse } from 'next/server';
-import { requireSession } from '@/lib/enterprise/auth';
-import { requirePermission } from '@/lib/enterprise/rbac';
+import { db } from '@/db';
+import { vendors } from '@/db/schema';
+import { desc } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
-    const session = await requireSession();
-    // Proxy permission for vendors via deals or general read
-    requirePermission(session, 'deals', 'read');
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
+    const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
+    const offset = (page - 1) * limit;
 
-    // Mock response since vendors isn't currently in enterprise schema
-    const vendorsResult = [
-       {
-           id: 1,
-           name: "Acme Logistics",
-           type: 'contractor',
-           specialty: 'Transport',
-           contactEmail: 'contact@acme.com',
-           contactPhone: '555-0102',
-           status: 'active',
-           createdAt: new Date().toISOString()
-       }
-    ];
+    const vendorsResult = await db.select()
+      .from(vendors)
+      .orderBy(desc(vendors.createdAt))
+      .limit(limit)
+      .offset(offset);
 
     return NextResponse.json({ data: vendorsResult, count: vendorsResult.length });
   } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
-       return NextResponse.json({ error: error.message }, { status: 403 });
-    }
     ErrorTracker.captureError(error, { context: 'GET /api/vendors' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -35,9 +26,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const session = await requireSession();
-    requirePermission(session, 'deals', 'write');
-
     const body = await request.json();
     const { name, type, specialty, contactEmail, contactPhone, status } = body;
     
@@ -45,22 +33,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Vendor name is required' }, { status: 400 });
     }
 
-    const newVendor = {
-      id: Date.now(),
+    const newVendor = await db.insert(vendors).values({
       name,
       type: type || 'contractor',
       specialty,
       contactEmail,
       contactPhone,
-      status: status || 'active',
-      createdAt: new Date().toISOString()
-    };
+      status: status || 'active'
+    }).returning();
 
-    return NextResponse.json({ data: newVendor }, { status: 201 });
+    return NextResponse.json({ data: newVendor[0] }, { status: 201 });
   } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
-       return NextResponse.json({ error: error.message }, { status: 403 });
-    }
     ErrorTracker.captureError(error, { context: 'POST /api/vendors' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

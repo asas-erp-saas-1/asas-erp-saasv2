@@ -1,10 +1,10 @@
 import { ErrorTracker } from "@/lib/observability/errors";
 
 export type Action = 'read' | 'write' | 'delete' | 'admin';
-export type Resource = 'deals' | 'projects' | 'clients' | 'properties' | 'users' | 'settings' | 'roles' | 'attendance' | 'vendors' | 'workflows' | 'contracts' | 'invoices' | 'reservations' | 'chantiers' | 'opportunities' | 'leads' | 'organizations' | 'support' | 'system' | 'tasks' | 'crm' | 'departments' | 'documents' | 'finance' | 'hr';
+export type Resource = 'deals' | 'projects' | 'clients' | 'properties' | 'users' | 'settings' | 'roles' | 'attendance' | 'vendors';
 
 export interface RBACContext {
-  userId: string;
+  userId: number;
   role: string;
   permissions: string[]; // Formatted as "resource:action", e.g., "deals:read"
 }

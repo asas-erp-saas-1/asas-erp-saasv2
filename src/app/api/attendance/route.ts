@@ -1,47 +1,58 @@
 import { NextResponse } from 'next/server';
-import { requireSession } from '@/lib/enterprise/auth';
-import { requirePermission } from '@/lib/enterprise/rbac';
+import { db } from '@/db';
+import { attendance, users } from '@/db/schema';
+import { desc, eq, sql } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
-    const session = await requireSession();
-    // Proxy permission for HR/attendance
-    requirePermission(session, 'users', 'read'); 
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
+    const userId = searchParams.get('userId');
 
-    // Mocking response due to missing attendance table in enterprise schema
-    const mockData = [
-       {
-         id: "mock1",
-         userId: session.userId,
-         date: new Date(),
-         timeIn: new Date(),
-         status: 'present',
-         location: 'Office',
-         user: {
-           id: session.userId,
-           name: "Current User",
-           role: session.role
-         }
-       }
-    ];
+    let query = db.select({
+      id: attendance.id,
+      userId: attendance.userId,
+      date: attendance.date,
+      timeIn: attendance.timeIn,
+      timeOut: attendance.timeOut,
+      status: attendance.status,
+      location: attendance.location,
+      user: {
+         id: users.id,
+         name: users.name,
+         role: users.role,
+         department: users.department,
+      }
+    }).from(attendance).leftJoin(users, eq(attendance.userId, users.id)).orderBy(desc(attendance.date));
+    
+    if (userId) {
+       query = query.where(eq(attendance.userId, Number(userId))) as any;
+    }
+
+    const results = await query.limit(limit);
+
+    // Calculate stats
+    const statsQuery = await db.select({
+       totalEmployees: sql`count(distinct ${attendance.userId})`.mapWith(Number),
+       present: sql`count(*) filter (where ${attendance.status} = 'present' or ${attendance.status} = 'remote')`.mapWith(Number),
+       onSite: sql`count(*) filter (where ${attendance.status} = 'present' and ${attendance.location} is not null)`.mapWith(Number),
+       late: sql`count(*) filter (where ${attendance.status} = 'late')`.mapWith(Number),
+       absent: sql`count(*) filter (where ${attendance.status} = 'absent')`.mapWith(Number),
+    }).from(attendance);
+
+    const stats = statsQuery[0] || { totalEmployees: 0, present: 0, onSite: 0, late: 0, absent: 0 };
+    const rate = stats.totalEmployees > 0 ? ((stats.present + stats.late) / stats.totalEmployees) * 100 : 0;
 
     return NextResponse.json({ 
-       data: mockData, 
+       data: results, 
        stats: {
-           totalEmployees: 1,
-           present: 1,
-           onSite: 1,
-           late: 0,
-           absent: 0,
-           attendanceRate: "100.0"
+           ...stats,
+           attendanceRate: rate.toFixed(1)
        },
-       count: mockData.length 
+       count: results.length 
     });
   } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
-       return NextResponse.json({ error: error.message }, { status: 403 });
-    }
     ErrorTracker.captureError(error, { context: 'GET /api/attendance' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -49,9 +60,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const session = await requireSession();
-    requirePermission(session, 'users', 'write');
-
     const body = await request.json();
     const { userId, status, location } = body;
     
@@ -59,20 +67,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
     }
 
-    const mockRecord = {
-      id: "mock_" + Date.now(),
-      userId: userId,
+    const record = await db.insert(attendance).values({
+      userId: Number(userId),
       date: new Date(),
       timeIn: new Date(),
       status: status || 'present',
       location: location,
-    };
+    }).returning();
 
-    return NextResponse.json({ data: mockRecord }, { status: 201 });
+    return NextResponse.json({ data: record[0] }, { status: 201 });
   } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
-       return NextResponse.json({ error: error.message }, { status: 403 });
-    }
     ErrorTracker.captureError(error, { context: 'POST /api/attendance' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

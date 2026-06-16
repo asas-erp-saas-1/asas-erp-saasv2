@@ -1,16 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { leads, contacts } from '@/db/schema';
-import { desc, eq, and } from 'drizzle-orm';
+import { leads, clients } from '@/db/schema';
+import { desc, eq } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
-import { requireSession } from '@/lib/enterprise/auth';
-import { requirePermission } from '@/lib/enterprise/rbac';
 
 export async function GET(request: Request) {
   try {
-    const session = await requireSession();
-    requirePermission(session, 'clients', 'read'); // usually leads fall under clients/CRM permissions
-
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
@@ -18,22 +13,23 @@ export async function GET(request: Request) {
 
     const leadsResult = await db.select({
       id: leads.id,
-      clientId: leads.contactId,
+      clientId: leads.clientId,
       source: leads.source,
       status: leads.status,
-      assignedAgent: leads.assignedTo,
+      budgetMin: leads.budgetMin,
+      budgetMax: leads.budgetMax,
+      assignedAgent: leads.assignedAgent,
       createdAt: leads.createdAt,
       clients: {
-        id: contacts.id,
-        phone: contacts.phone,
-        full_name: contacts.lastName, // fallback
-        firstName: contacts.firstName,
-        lastName: contacts.lastName,
+        id: clients.id,
+        phone: clients.phone,
+        full_name: clients.lastName, // fallback
+        firstName: clients.firstName,
+        lastName: clients.lastName,
       }
     })
       .from(leads)
-      .leftJoin(contacts, eq(leads.contactId, contacts.id))
-      .where(eq(leads.organizationId, session.organizationId))
+      .leftJoin(clients, eq(leads.clientId, clients.id))
       .orderBy(desc(leads.createdAt))
       .limit(limit)
       .offset(offset);
@@ -48,9 +44,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data: formatted, count: formatted.length });
   } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
-       return NextResponse.json({ error: error.message }, { status: 403 });
-    }
     ErrorTracker.captureError(error, { context: 'GET /api/leads' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -58,9 +51,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const session = await requireSession();
-    requirePermission(session, 'clients', 'write');
-
     const body = await request.json();
     const clientId = body.clientId || body.client_id;
     if (!clientId) {
@@ -68,18 +58,15 @@ export async function POST(request: Request) {
     }
 
     const newLead = await db.insert(leads).values({
-      organizationId: session.organizationId,
-      contactId: clientId,
+      clientId: Number(clientId),
       source: body.source,
-      notes: `Budget Min: ${body.budgetMin || body.budget_min || 'N/A'}, Budget Max: ${body.budgetMax || body.budget_max || 'N/A'}`,
-      assignedTo: body.assignedAgent || body.assigned_agent || undefined,
+      budgetMin: body.budgetMin || body.budget_min,
+      budgetMax: body.budgetMax || body.budget_max,
+      assignedAgent: body.assignedAgent || body.assigned_agent ? Number(body.assignedAgent || body.assigned_agent) : undefined,
     }).returning();
 
     return NextResponse.json({ data: newLead[0] }, { status: 201 });
   } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
-       return NextResponse.json({ error: error.message }, { status: 403 });
-    }
     ErrorTracker.captureError(error, { context: 'POST /api/leads' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

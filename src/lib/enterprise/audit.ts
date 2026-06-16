@@ -3,8 +3,8 @@ import { auditLogs } from "@/db/schema";
 import { ErrorTracker } from "@/lib/observability/errors";
 
 interface AuditLogPayload {
-  organizationId: string;
-  userId?: string;
+  organizationId: number;
+  userId?: number;
   action: string;
   entityType: string;
   entityId: string;
@@ -22,12 +22,12 @@ export async function logAudit(payload: AuditLogPayload) {
     // unless strict sequential transactional logging is required by compliance.
     await db.insert(auditLogs).values({
       organizationId: payload.organizationId,
-      actorId: payload.userId,
+      userId: payload.userId,
       action: payload.action,
       entityType: payload.entityType,
       entityId: payload.entityId,
-      oldPayload: payload.oldData ? JSON.parse(JSON.stringify(payload.oldData)) : null,
-      newPayload: payload.newData ? JSON.parse(JSON.stringify(payload.newData)) : null,
+      oldData: payload.oldData ? JSON.parse(JSON.stringify(payload.oldData)) : null,
+      newData: payload.newData ? JSON.parse(JSON.stringify(payload.newData)) : null,
       ipAddress: payload.ipAddress,
     });
   } catch (error: any) {

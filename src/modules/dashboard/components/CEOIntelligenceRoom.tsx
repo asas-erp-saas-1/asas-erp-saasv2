@@ -263,7 +263,7 @@ export function CEOIntelligenceRoom() {
                 <ZAxis type="number" dataKey="z" range={[100, 500]} name="Value" />
                 <Tooltip cursor={{strokeDasharray: '3 3'}} contentStyle={{backgroundColor: '#051121', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '10px'}} />
                 <Scatter name="Risks" data={riskData} fill="#8884d8">
-                  {riskData.map((entry: any, index: number) => (
+                  {riskData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Scatter>
@@ -283,7 +283,7 @@ export function CEOIntelligenceRoom() {
             <Crosshair className="w-5 h-5 text-white/20" />
           </div>
           <div className="flex-1 flex flex-col justify-center gap-6">
-             {departmentData.map((dept: any, i: number) => (
+             {departmentData.map((dept, i) => (
                <div key={i}>
                  <div className="flex justify-between items-center mb-2">
                    <span className="text-[11px] font-bold text-white">{dept.name}</span>
