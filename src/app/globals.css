@@ -109,5 +109,14 @@ body {
   .dark .bg-dot-grid {
     background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
+
 

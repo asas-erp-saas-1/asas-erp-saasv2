@@ -487,7 +487,7 @@ export default function LeadsPage() {
   return (
     <div className="flex flex-col flex-1 h-full font-sans text-white relative">
       {/* Header */}
-      <div className="px-6 py-5 shrink-0 z-10 w-full">
+      <div className="px-4 md:px-6 py-5 shrink-0 z-10 w-full">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5">
           <div>
             <div className="flex items-center gap-2 mb-2 hidden sm:flex">
@@ -496,11 +496,11 @@ export default function LeadsPage() {
                  <span>Lead Acquisition Active</span>
               </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+            <h1 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
                Smart Leads
             </h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
-              <span className="relative flex h-2 w-2">
+            <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2">
+              <span className="relative flex h-2 w-2 hidden sm:flex">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-asas-gold opacity-75"></span>
                <span className="relative inline-flex rounded-full h-2 w-2 bg-asas-gold"></span>
               </span>
@@ -532,12 +532,12 @@ export default function LeadsPage() {
                 placeholder="Scanner identifiant..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-2 bg-[#0A1629] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-white transition-all placeholder:text-white/30"
+                className="w-full pl-11 pr-4 py-3 md:py-2 bg-[#0A1629] text-sm font-medium border border-white/10 rounded-xl focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold text-white transition-all placeholder:text-white/30"
               />
             </div>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 shrink-0 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)]"
+              className="flex items-center justify-center gap-2 px-5 py-3 md:py-2.5 shrink-0 bg-asas-gold hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-sm font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)]"
             >
               <Plus className="h-4 w-4" strokeWidth={2} /> Ajouter Lead
             </button>
@@ -546,9 +546,9 @@ export default function LeadsPage() {
       </div>
 
       {/* Kanban board */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent custom-scrollbar py-4">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent custom-scrollbar py-2 md:py-4">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex h-full gap-4 min-w-max items-start">
+          <div className="flex h-full gap-4 px-4 md:px-6 min-w-max items-start">
             {loading
               ? [...Array(5)].map((_, i) => (
                   <div

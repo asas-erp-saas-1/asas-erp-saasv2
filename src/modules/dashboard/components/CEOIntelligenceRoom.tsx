@@ -36,10 +36,10 @@ export function CEOIntelligenceRoom() {
   const riskData = metrics?.riskData || [];
   const departmentData = metrics?.departmentData || [];
   return (
-    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
+    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-0 md:pt-4 px-4 md:px-0">
       
       {/* 1. Header Row */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2 mt-4 md:mt-0">
         <div>
           <div className="flex items-center gap-2 mb-2">
              <div className="px-2 py-1 bg-asas-gold/10 border border-asas-gold/20 rounded text-[9px] text-asas-gold uppercase font-bold tracking-widest flex items-center gap-1">
@@ -47,16 +47,16 @@ export function CEOIntelligenceRoom() {
                 <span>Executive Intelligence AI Active</span>
              </div>
           </div>
-          <h1 className="text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
              CEO Intelligence Room
           </h1>
-          <p className="text-white/50 text-[11px] uppercase tracking-widest font-bold mt-2">Vue stratégique globale et aide à la décision</p>
+          <p className="text-white/50 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold mt-2">Vue stratégique globale et aide à la décision</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#0A1829] border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+          <button className="flex items-center justify-center gap-2 px-4 py-3 md:py-2 bg-[#0A1829] border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors">
             Q2 2026 Forecast <ChevronDown className="w-3 h-3 text-white/50" />
           </button>
-          <button className="flex items-center gap-2 px-5 py-2 bg-[#22c55e] hover:bg-[#16a34a] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]">
+          <button className="flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-[#22c55e] hover:bg-[#16a34a] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]">
             <Download className="w-4 h-4" /> Board Report
           </button>
         </div>

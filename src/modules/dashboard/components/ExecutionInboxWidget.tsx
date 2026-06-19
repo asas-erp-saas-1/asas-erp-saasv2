@@ -79,7 +79,7 @@ export function ExecutionInboxWidget() {
           </div>
         ) : (
           tasks.map((task: any) => (
-            <div key={task.id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition flex flex-col gap-2 cursor-pointer relative overflow-hidden group/task">
+            <div key={task.id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 active:scale-[0.98] transition flex flex-col gap-2 cursor-pointer relative overflow-hidden group/task">
               {/* Importance strip */}
               <div className={`absolute left-0 top-0 bottom-0 w-1 ${task.taskType === 'approval_request' ? 'bg-red-500' : 'bg-[#D4A64F]'}`} />
               

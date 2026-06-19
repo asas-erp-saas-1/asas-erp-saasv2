@@ -81,7 +81,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
   return (
     <>
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9000] bg-white dark:bg-[#141618]/95 backdrop-blur-3xl border-t border-asas-silver/20 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300">
-        <nav className="flex items-center justify-around px-2 h-[68px]">
+        <nav className="flex items-center justify-around px-2 h-[calc(68px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
           {BOTTOM_NAV.map(({ href, label, Icon }) => {
             const isActive = pathname.startsWith(href)
             return (
@@ -138,7 +138,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
         )}
         style={{ 
           top: '12%',
-          paddingBottom: 'env(safe-area-inset-bottom)' 
+          paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)' 
         }}
       >
         {/* iOS Sheet Drag Handle Indicator */}

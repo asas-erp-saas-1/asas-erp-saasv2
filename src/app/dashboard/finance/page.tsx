@@ -82,8 +82,8 @@ export default function FinancePage() {
 
   return (
     <div className="flex-1 text-white flex flex-col">
-      <div className="w-full space-y-8 max-w-6xl mx-auto">
-        <div className="relative z-10 w-full mb-10 pt-4 pb-6 border-b border-white/5">
+      <div className="w-full space-y-6 md:space-y-8 max-w-6xl mx-auto px-4 md:px-6 2xl:px-0">
+        <div className="relative z-10 w-full mb-6 md:mb-10 pt-4 pb-4 md:pb-6 border-b border-white/5">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2 hidden sm:flex">
@@ -92,7 +92,7 @@ export default function FinancePage() {
                    <span>Financial Command Active</span>
                 </div>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
+              <h1 className="text-2xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
                 Treasury Command
               </h1>
               <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
@@ -100,7 +100,7 @@ export default function FinancePage() {
                 Oracle ERP Logic • PRÉVISIONS & TRÉSORERIE SYSTÈME
               </p>
             </div>
-            <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/40">
+            <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/40">
                Live Oracle Sync enabled
             </div>
           </div>
@@ -108,15 +108,15 @@ export default function FinancePage() {
 
         {/* Liquidity warning */}
         {cash && cash.liquidityMode !== 'growth' && modeStyle?.banner && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className={clsx('rounded-2xl px-6 py-4 flex items-start gap-4 shadow-[0_0_20px_rgba(0,0,0,0.5)]', modeStyle.banner)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className={clsx('rounded-2xl px-4 md:px-6 py-4 flex flex-col md:flex-row items-start md:items-center gap-4 shadow-[0_0_20px_rgba(0,0,0,0.5)]', modeStyle.banner)}>
             <div className={clsx("w-10 h-10 rounded-full flex items-center justify-center shrink-0 border", cash.liquidityMode === 'survival' ? 'bg-red-500/20 border-red-500/30 text-red-400' : 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400')}>
                <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <span className="font-extrabold text-xs uppercase tracking-widest block mb-2">
+              <span className="font-extrabold text-xs uppercase tracking-widest block mb-1 md:mb-2">
                 {cash.liquidityMode === 'survival' ? '🚨 PROTOCOLE SURVIE ACTIF' : '⚠️ ATTENTION REQUISE'}
               </span>
-               <p className="text-sm font-bold opacity-80">
+               <p className="text-xs md:text-sm font-bold opacity-80">
                   {cash.liquidityMode === 'survival'
                   ? `${cash.survivalDaysLeft ?? '?'} jours de trésorerie restants au rythme actuel de dépense.`
                   : 'La trésorerie est en dessous du niveau de confort. Surveillez les encaissements de près.'}
@@ -127,7 +127,7 @@ export default function FinancePage() {
 
         {/* Cash position cards */}
         {cash && (
-          <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
               { label: 'Solde Liquidité', value: cash.cashBalance,      icon: DollarSign, color: cash.cashBalance > 5_000_000 ? 'text-[#34A853]' : 'text-red-500', bg: 'bg-[#051121]', iconBg: 'bg-[#34A853]/10', iconColor: 'text-[#34A853]' },
               { label: 'Créances Clients',    value: cash.receivablesTotal, icon: Clock,      color: 'text-white', bg: 'bg-[#051121]', iconBg: 'bg-white/10', iconColor: 'text-white' },

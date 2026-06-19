@@ -21,9 +21,9 @@ const timelineData = [
 
 export function StrategicForecastingModule() {
   return (
-    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
+    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-0 md:pt-4 px-4 md:px-0">
       {/* 1. Header Row */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2 mt-4 md:mt-0">
         <div>
           <div className="flex items-center gap-2 mb-2">
              <div className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 rounded text-[9px] text-purple-400 uppercase font-bold tracking-widest flex items-center gap-1">
@@ -31,16 +31,16 @@ export function StrategicForecastingModule() {
                 <span>AI Predictive Engine</span>
              </div>
           </div>
-          <h1 className="text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight flex items-center gap-3">
              Strategic Forecasting
           </h1>
-          <p className="text-white/50 text-[11px] uppercase tracking-widest font-bold mt-2">Projection financière à 24 mois par intelligence artificielle</p>
+          <p className="text-white/50 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold mt-2">Projection financière à 24 mois par intelligence artificielle</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#0A1829] border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+          <button className="flex items-center justify-center gap-2 px-4 py-3 md:py-2 bg-[#0A1829] border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors">
             <Calendar className="w-4 h-4 text-white/50" /> 24 Months
           </button>
-          <button className="flex items-center gap-2 px-5 py-2 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(212,166,79,0.3)] hover:shadow-[0_0_20px_rgba(212,166,79,0.5)]">
+          <button className="flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(212,166,79,0.3)] hover:shadow-[0_0_20px_rgba(212,166,79,0.5)]">
             <RefreshCcw className="w-4 h-4" /> Run Simulation
           </button>
         </div>

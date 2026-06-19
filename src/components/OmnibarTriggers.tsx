@@ -28,7 +28,7 @@ export function MobileOmnibarTrigger() {
       onClick={() => {
         if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('asas-omnibar-open'))
       }}
-      className="sm:hidden p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-all"
+      className="sm:hidden p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-all active:scale-95 cursor-pointer"
     >
       <Search className="w-5 h-5" strokeWidth={1.5} />
     </button>

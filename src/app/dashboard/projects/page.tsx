@@ -63,7 +63,7 @@ export default function ProjectsPage() {
       {/* Decorative Blur - Removed to match ASAS aesthetic */}
 
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 relative z-10">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 relative z-10 px-4 md:px-0">
         <div>
           <div className="flex items-center gap-2 mb-2 hidden sm:flex">
             <div className="px-2 py-1 bg-purple-500/10 border border-purple-500/20 rounded text-[9px] text-purple-400 uppercase font-bold tracking-widest flex items-center gap-1">
@@ -80,11 +80,11 @@ export default function ProjectsPage() {
           </p>
         </div>
         
-        <div className="flex items-center gap-3">
-           <Link href="/dashboard/projects/bordereaux" className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#0A1829]/60 backdrop-blur-md border border-white/5 hover:border-white/20 text-white rounded-xl text-[10px] uppercase tracking-widest font-bold transition-transform active:scale-95 shadow-sm hover:bg-white/5">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
+           <Link href="/dashboard/projects/bordereaux" className="flex items-center justify-center gap-2 px-6 py-3 md:py-2.5 shrink-0 bg-[#0A1829]/60 backdrop-blur-md border border-white/5 hover:border-white/20 text-white rounded-xl text-xs md:text-[10px] uppercase tracking-widest font-bold transition-transform active:scale-95 shadow-sm hover:bg-white/5">
              <FileText className="w-4 h-4 text-asas-gold" /> Bordereaux
            </Link>
-           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-[10px] uppercase tracking-widest font-bold shadow-[0_0_20px_rgba(212,166,79,0.3)] transition-all active:scale-95 disabled:opacity-50 border border-transparent outline-none">
+           <button onClick={() => setIsModalOpen(true)} className="flex items-center justify-center gap-2 px-6 py-3 md:py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#06152D] rounded-xl text-xs md:text-[10px] uppercase tracking-widest font-bold shadow-[0_0_20px_rgba(212,166,79,0.3)] transition-all active:scale-95 disabled:opacity-50 border border-transparent outline-none">
              <Plus className="w-4 h-4" /> Nouveau Programme
            </button>
         </div>
@@ -102,24 +102,24 @@ export default function ProjectsPage() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", bounce: 0, duration: 0.8 }}
-        className="bg-[#051121] border border-white/5 shadow-[0_0_30px_rgba(0,0,0,0.5)] rounded-3xl relative overflow-hidden"
+        className="bg-[#051121] md:border md:border-white/5 md:shadow-[0_0_30px_rgba(0,0,0,0.5)] md:rounded-3xl relative overflow-hidden"
       >
         {/* Statistics Banner */}
-        <div className="bg-[#0A1829]/60 border-b border-white/5 p-8 relative overflow-hidden backdrop-blur-xl">
+        <div className="bg-[#0A1829]/60 border-b border-white/5 p-4 md:p-8 relative overflow-hidden backdrop-blur-xl">
           <div className="absolute top-0 right-0 w-[50%] h-[150%] bg-[radial-gradient(ellipse_at_top_right,_rgba(212,166,79,0.1),_transparent_70%)] pointer-events-none"></div>
           <div className="relative z-10 max-w-xl">
             <span className="inline-block px-3 py-1 bg-asas-gold/10 text-asas-gold border border-asas-gold/20 text-[9px] font-bold uppercase tracking-widest rounded-lg mb-4">
               Opérations de Promotion
             </span>
-            <h2 className="text-2xl font-bold text-white mb-2 font-display">Performance Globale des Programmes</h2>
-            <p className="text-sm font-medium text-white/50 leading-relaxed mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-white mb-2 font-display">Performance Globale des Programmes</h2>
+            <p className="text-xs md:text-sm font-medium text-white/50 leading-relaxed mb-2 md:mb-6">
               Vue consolidée de l'avancement technique de vos chantiers et de la structuration foncière. Pilotez vos appels de fonds en corrélant l'avancement travaux et la commercialisation.
             </p>
           </div>
         </div>
 
         {/* Feature Grid */}
-        <motion.div variants={container} initial="hidden" animate="show" className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+        <motion.div variants={container} initial="hidden" animate="show" className="p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10">
           {[
             { icon: LayoutTemplate, title: "Découpage Parcellaire", desc: "Arborescence Projet > Bâtiments > Étages > Unités.", color: "text-white/60", bg: "bg-white/5 border border-white/10" },
             { icon: HardHat, title: "Suivi de Chantier", desc: "Rapports de progression visuels et état d'avancement.", color: "text-asas-gold", bg: "bg-asas-gold/10 border border-asas-gold/20" },

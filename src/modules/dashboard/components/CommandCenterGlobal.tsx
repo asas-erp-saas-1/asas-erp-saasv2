@@ -425,7 +425,7 @@ export function CommandCenterGlobal() {
       {/* Mobile-Only Financial Pulse */}
       <div className="md:hidden mt-4 pb-8 mb-6">
         <h3 className="text-white font-bold text-lg tracking-tight mb-4 px-1">FINANCIAL PULSE</h3>
-        <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2 px-1">
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 px-1">
           <div className="min-w-[140px] p-4 rounded-3xl bg-[#0A1829] border border-white/5 flex flex-col justify-center relative overflow-hidden group">
             <span className="text-[10px] uppercase font-bold tracking-widest text-white/50 mb-1 z-10">Available Cash</span>
             <span className="text-xl font-bold text-white z-10">2.1<span className="text-sm text-white/50 ml-0.5">M</span></span>
@@ -465,24 +465,24 @@ export function CommandCenterGlobal() {
       {/* 5. Quick Actions Row (Desktop) */}
       <div className="hidden md:block mt-4 pb-8 border-b border-white/5 mb-6">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 mt-6">Quick Actions</h3>
-        <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2">
-           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group">
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group active:scale-95">
               <Users className="w-5 h-5 text-green-400" />
               <span className="text-[9px] font-bold text-white/60 group-hover:text-white uppercase text-center leading-tight">New<br/>Lead</span>
            </button>
-           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group">
+           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group active:scale-95">
               <Home className="w-5 h-5 text-[#D4A64F]" />
               <span className="text-[9px] font-bold text-white/60 group-hover:text-white uppercase text-center leading-tight">Reserve<br/>Unit</span>
            </button>
-           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group">
+           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group active:scale-95">
               <DollarSign className="w-5 h-5 text-green-400" />
               <span className="text-[9px] font-bold text-white/60 group-hover:text-white uppercase text-center leading-tight">Collect<br/>Payment</span>
            </button>
-           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group">
+           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group active:scale-95">
               <RefreshCcw className="w-5 h-5 text-blue-400" />
               <span className="text-[9px] font-bold text-white/60 group-hover:text-white uppercase text-center leading-tight">Create<br/>Invoice</span>
            </button>
-           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group">
+           <button className="flex flex-col items-center justify-center h-20 w-20 shrink-0 bg-[#0A1829] border border-white/10 hover:border-asas-gold/50 rounded-xl gap-2 transition-all hover:bg-white/5 group active:scale-95">
               <span className="text-xl text-white/40 mb-1 leading-none -mt-2">...</span>
               <span className="text-[9px] font-bold text-white/60 group-hover:text-white uppercase text-center tracking-widest">More</span>
            </button>
@@ -626,17 +626,18 @@ export function CommandCenterGlobal() {
             <h3 className="text-sm font-bold text-white tracking-tight">Performance des Projets</h3>
             <span className="text-[10px] text-[#D4A64F] uppercase tracking-widest font-bold cursor-pointer hover:underline">Voir tout</span>
           </div>
-          <table className="w-full text-[11px] text-left">
-            <thead>
-              <tr className="text-white/40 font-bold uppercase tracking-widest border-b border-white/5">
-                <th className="pb-3 font-medium">PROJET</th>
-                <th className="pb-3 font-medium">AVANCEMENT</th>
-                <th className="pb-3 text-right font-medium">VENDU</th>
-                <th className="pb-3 text-right font-medium">CA PRÉVISIONNEL</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
+          <div className="flex-1 overflow-x-auto w-full custom-scrollbar">
+            <table className="w-full text-[11px] text-left min-w-[500px]">
+              <thead>
+                <tr className="text-white/40 font-bold uppercase tracking-widest border-b border-white/5">
+                  <th className="pb-3 font-medium whitespace-nowrap">PROJET</th>
+                  <th className="pb-3 font-medium whitespace-nowrap">AVANCEMENT</th>
+                  <th className="pb-3 text-right font-medium whitespace-nowrap">VENDU</th>
+                  <th className="pb-3 text-right font-medium whitespace-nowrap">CA PRÉVISIONNEL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
                 { name: 'Résidence EL YASMINE', progress: 78, sold: '145/180', ca: '32.4 M DA' },
                 { name: 'Résidence AL RAYANE', progress: 62, sold: '98/160', ca: '21.7 M DA' },
                 { name: 'Résidence NOUR CITY', progress: 41, sold: '56/120', ca: '14.3 M DA' },
@@ -658,6 +659,7 @@ export function CommandCenterGlobal() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* Flux de Trésorerie Area Chart */}

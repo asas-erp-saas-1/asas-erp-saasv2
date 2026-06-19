@@ -196,10 +196,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10 bg-[#0A1629] border-l border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)] md:rounded-l-3xl my-0 md:my-2 mr-0 md:mr-2">
           {/* Top Header */}
-          <header className="h-[72px] bg-[#0A1629]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-8 shrink-0 z-20 sticky top-0">
+          <header className="h-[72px] bg-[#0A1629]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-4 sm:px-8 shrink-0 z-20 sticky top-0">
             <div className="flex items-center gap-4 w-full max-w-xl">
               <div className="md:hidden flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-white/10 to-transparent border border-asas-gold/30 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-white/10 to-transparent border border-asas-gold/30 flex items-center justify-center shadow-[0_0_15px_rgba(212,166,79,0.2)]">
                   <Building2 className="w-4 h-4 text-asas-gold" />
                 </div>
               </div>
@@ -210,12 +210,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <div className="flex items-center gap-2 sm:gap-4">
               <MobileOmnibarTrigger />
               <ThemeToggle />
-              <button className="relative p-2.5 text-white/50 hover:text-white hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10">
+              <button className="relative p-2.5 text-white/50 hover:text-white hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10 active:scale-95">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
               </button>
               <div className="w-px h-6 bg-white/10 hidden sm:block mx-1"></div>
-              <div className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group">
+              <div className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group hover:opacity-80 transition-opacity active:scale-[0.98]">
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-semibold text-white leading-none group-hover:text-asas-gold transition-colors">{(profile as any)?.full_name}</span>
                   <span className="text-[10px] uppercase tracking-widest text-white/40 mt-1">{roleDisplay}</span>
@@ -228,14 +228,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </header>
 
           {/* Scrollable Main Area */}
-          <main className="flex-1 overflow-y-auto flex flex-col w-full text-white custom-scrollbar relative pb-28 md:pb-0">
+          <main className="flex-1 overflow-y-auto flex flex-col w-full text-white custom-scrollbar relative pb-[calc(7rem+env(safe-area-inset-bottom))] md:pb-0">
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-1 flex flex-col pt-6 md:pt-8 min-h-0">
               {children}
             </div>
           </main>
         </div>
         <CommandPalette />
-        <BottomNav />
       </div>
     )
   } catch (err: any) {

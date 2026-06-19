@@ -9,9 +9,9 @@ import Link from 'next/link';
 
 export function AccountingLedger() {
   return (
-    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-500 bg-transparent text-white pt-4">
+    <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-500 bg-transparent text-white pt-0 md:pt-4 px-4 md:px-0">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-white/5 relative z-10 w-full">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-white/5 relative z-10 w-full mt-4 md:mt-0">
         <div>
           <div className="flex items-center gap-2 mb-2 hidden sm:flex">
             <div className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded text-[9px] text-[#D4A64F] uppercase font-bold tracking-widest flex items-center gap-1">
@@ -19,7 +19,7 @@ export function AccountingLedger() {
                <span>General Ledger Active</span>
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
             Accounting Ledger
           </h1>
           <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
@@ -27,8 +27,8 @@ export function AccountingLedger() {
             Oracle ERP Logic • Comptabilité Générale
           </p>
         </div>
-        <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(212,166,79,0.3)] transition-all active:scale-95 border border-transparent outline-none">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+           <button className="flex w-full md:w-auto items-center justify-center gap-2 px-6 py-3 md:py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(212,166,79,0.3)] transition-all active:scale-95 border border-transparent outline-none">
              <Plus className="w-4 h-4" /> New Entry
            </button>
         </div>

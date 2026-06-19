@@ -147,10 +147,10 @@ export default function PropertiesPage() {
   }), {} as Record<string, number>)
 
   return (
-    <div className="flex-1 text-white flex flex-col pt-4">
-      <div className="w-full space-y-8">
+    <div className="flex-1 text-white flex flex-col pt-0 md:pt-4">
+      <div className="w-full space-y-6 md:space-y-8 px-4 md:px-0">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10 border-b border-white/5 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10 border-b border-white/5 pb-6 mt-4 md:mt-0">
           <div>
             <div className="flex items-center gap-2 mb-2 hidden sm:flex">
               <div className="px-2 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded text-[9px] text-indigo-400 uppercase font-bold tracking-widest flex items-center gap-1">
@@ -158,7 +158,7 @@ export default function PropertiesPage() {
                  <span>Real Estate Catalog Active</span>
               </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
+            <h1 className="text-2xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3 font-display">
               Property Universe
             </h1>
             <p className="text-[10px] uppercase tracking-widest font-bold text-[#D4A64F] mt-2 flex items-center gap-2 hidden sm:flex">
@@ -166,18 +166,18 @@ export default function PropertiesPage() {
               Real Estate Engine • INVENTAIRE SYNCHRONISÉ
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-white/5 border border-white/10 text-white/80 rounded-xl text-xs uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all shadow-sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+            <button className="flex items-center justify-center gap-2 px-6 py-3 md:py-2.5 shrink-0 bg-white/5 border border-white/10 text-white/80 rounded-xl text-xs uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all shadow-sm">
               Générer Rapport
             </button>
-            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 border border-transparent outline-none">
+            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center justify-center gap-2 px-6 py-3 md:py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(212,166,79,0.3)] transform hover:scale-[1.02] active:scale-95 border border-transparent outline-none">
               <Plus className="h-4 w-4" strokeWidth={2} /> Nouvel Actif
             </button>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
           {[
             { label: 'Unité Disponible', key: 'available', color: 'text-green-400 bg-[#051121] border-white/10 hover:border-green-400/30' },
             { label: 'Processus de Réservation',    key: 'reserved',  color: 'text-asas-gold bg-[#051121] border-white/10 hover:border-asas-gold/30' },
