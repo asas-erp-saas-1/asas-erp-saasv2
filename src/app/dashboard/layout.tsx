@@ -215,7 +215,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
               </button>
               <div className="w-px h-6 bg-white/10 hidden sm:block mx-1"></div>
-              <div className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group hover:opacity-80 transition-opacity active:scale-[0.98]">
+              <Link href="/dashboard/profile" className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group hover:opacity-80 transition-opacity active:scale-[0.98]">
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-semibold text-white leading-none group-hover:text-asas-gold transition-colors">{(profile as any)?.full_name}</span>
                   <span className="text-[10px] uppercase tracking-widest text-white/40 mt-1">{roleDisplay}</span>
@@ -223,7 +223,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <div className="w-10 h-10 rounded-xl bg-[#051121] border border-white/10 flex items-center justify-center text-asas-gold font-bold shadow-inner group-hover:border-asas-gold/30 transition-colors">
                   {initial}
                 </div>
-              </div>
+              </Link>
             </div>
           </header>
 

@@ -205,18 +205,19 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
         </div>
 
         <div className="border-t border-asas-silver/20 px-6 py-5 bg-transparent shrink-0">
-          <div className="flex items-center justify-between gap-3 mb-4">
+          <Link href="/dashboard/profile" onClick={() => setIsOpen(false)} className="flex items-center justify-between gap-3 mb-4 group cursor-pointer active:scale-[0.98] transition-transform">
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-10 h-10 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center text-asas-sand font-bold shrink-0 shadow-sm relative">
+              <div className="w-10 h-10 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center text-asas-sand font-bold shrink-0 shadow-sm relative group-hover:border-asas-gold/40 transition-colors">
                 {initial}
                 <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-asas-emerald rounded-sm border-2 border-white dark:border-[#141618]"></div>
               </div>
               <div className="overflow-hidden">
-                <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest truncate leading-tight">{profile?.full_name}</p>
+                <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest truncate leading-tight group-hover:text-asas-gold transition-colors">{profile?.full_name}</p>
                 <p className="text-[9px] text-asas-silver uppercase tracking-widest truncate font-bold">{roleDisplay}</p>
               </div>
             </div>
-          </div>
+            <ChevronRight className="w-4 h-4 text-asas-silver group-hover:text-asas-gold transition-colors shrink-0" />
+          </Link>
           
           <form action="/auth/signout" method="post">
             <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[10px] uppercase font-bold tracking-widest text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/20 rounded-sm transition-all active:scale-[0.98] cursor-pointer">

@@ -36,7 +36,7 @@ const ActionPanelContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-y-0 right-0 z-50 h-full w-3/4 max-w-sm gap-4 border-l border-asas-silver/20 bg-asas-charcoal p-6 shadow-2xl transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right duration-300 sm:max-w-md md:max-w-xl",
+        "fixed inset-y-0 right-0 z-50 h-full w-full sm:w-3/4 sm:max-w-md md:max-w-xl gap-4 border-l border-asas-silver/20 bg-asas-charcoal p-6 shadow-2xl transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right duration-300",
         className
       )}
       {...props}

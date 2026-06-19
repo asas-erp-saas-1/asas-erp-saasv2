@@ -546,14 +546,14 @@ export default function LeadsPage() {
       </div>
 
       {/* Kanban board */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent custom-scrollbar py-2 md:py-4">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden bg-transparent no-scrollbar md:custom-scrollbar py-2 md:py-4 snap-x snap-mandatory">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex h-full gap-4 px-4 md:px-6 min-w-max items-start">
+          <div className="flex h-full gap-3 sm:gap-4 px-4 md:px-6 w-max items-start">
             {loading
               ? [...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className="w-[320px] bg-white/5 rounded-2xl border border-white/5 animate-pulse h-[80vh]"
+                    className="w-[280px] sm:w-[320px] shrink-0 snap-center bg-white/5 rounded-2xl border border-white/5 animate-pulse h-[80vh]"
                   />
                 ))
               : activeColumns.map((col) => {
@@ -561,28 +561,28 @@ export default function LeadsPage() {
                   return (
                     <div
                       key={col.key}
-                      className="w-[320px] flex flex-col bg-[#0A1829]/60 backdrop-blur-md rounded-3xl border border-white/5 overflow-hidden max-h-full"
+                      className="w-[280px] sm:w-[320px] shrink-0 snap-center flex flex-col bg-[#0A1829]/60 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-white/5 overflow-hidden max-h-full"
                     >
                       {/* Column header */}
-                      <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between shrink-0 bg-black/20">
-                        <div className="flex items-center gap-3">
+                      <div className="px-4 flex-col sm:flex-row sm:px-5 py-3 sm:py-4 border-b border-white/5 flex sm:items-center justify-between shrink-0 bg-black/20 gap-2">
+                        <div className="flex items-center gap-2 sm:gap-3">
                           <div
                             className={clsx(
-                              "h-2 w-2 rounded-full inline-block shadow-[0_0_10px_currentColor]",
+                              "h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full inline-block shadow-[0_0_10px_currentColor]",
                               col.dot,
                             )}
                           />
-                          <span className="text-sm font-bold text-white tracking-widest uppercase">
+                          <span className="text-xs sm:text-sm font-bold text-white tracking-widest uppercase truncate">
                             {col.label}
                           </span>
                         </div>
                         <span
                           className={clsx(
-                            "text-[10px] font-bold px-2 py-0.5 rounded-md border tracking-widest bg-black/40",
+                            "text-[9px] sm:text-[10px] w-fit font-bold px-2 py-0.5 rounded-md border tracking-widest bg-black/40",
                             col.color,
                           )}
                         >
-                          {colLeads.length}
+                          {colLeads.length} Profiles
                         </span>
                       </div>
 
@@ -593,7 +593,7 @@ export default function LeadsPage() {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             className={clsx(
-                              "flex-1 overflow-y-auto p-4 space-y-4 transition-colors min-h-[150px] custom-scrollbar",
+                              "flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 transition-colors min-h-[150px] no-scrollbar md:custom-scrollbar pb-24 md:pb-4",
                               snapshot.isDraggingOver
                                 ? "bg-white/5"
                                 : "",
