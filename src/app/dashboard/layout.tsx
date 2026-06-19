@@ -6,94 +6,96 @@ import { kernel } from '@/lib/kernel/core'
 import { NextMobileMenu } from '@/components/MobileMenu'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { CommandPalette } from '@/components/CommandPalette'
-import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/OmnibarTriggers'
+import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/OmnibarTriggers';
+import { SidebarNav } from '@/components/SidebarNav';
+import { BottomNav } from '@/components/BottomNav';
 
-const NAV_GROUPS = [
+const NAV_GROUPS_STATE = [
   {
     group: "EXECUTIVE OS",
     items: [
-      { href: '/dashboard/overview',   label: 'Command Center',   Icon: LayoutGrid },
-      { href: '/dashboard/intelligence', label: 'CEO Intelligence',   Icon: Zap },
-      { href: '/dashboard/intelligence/forecasting', label: 'Forecasting',   Icon: BarChart2 },
-      { href: '/dashboard/intelligence/reporting', label: 'Executive Reporting',   Icon: Receipt },
-      { href: '/dashboard/multi-company', label: 'Multi-Company',             Icon: Building2 },
+      { href: '/dashboard/overview',   label: 'Command Center',   iconName: 'LayoutGrid' },
+      { href: '/dashboard/intelligence', label: 'CEO Intelligence',   iconName: 'Zap' },
+      { href: '/dashboard/intelligence/forecasting', label: 'Forecasting',   iconName: 'BarChart2' },
+      { href: '/dashboard/intelligence/reporting', label: 'Executive Reporting',   iconName: 'Receipt' },
+      { href: '/dashboard/multi-company', label: 'Multi-Company',             iconName: 'Building2' },
     ]
   },
   {
     group: "CRM & SALES OS",
     items: [
-      { href: '/dashboard/leads',      label: 'Smart Leads', Icon: Users },
-      { href: '/dashboard/deals',      label: 'Sales Pipeline',      Icon: Handshake },
-      { href: '/dashboard/deals/workspace', label: 'Negotiation Room', Icon: Webhook },
-      { href: '/dashboard/deals/analytics', label: 'Sales Analytics', Icon: BarChart2 },
-      { href: '/dashboard/clients',    label: 'Customer 360°',       Icon: UserSquare2 },
-      { href: '/dashboard/reservations', label: 'Reservations',    Icon: CalendarIcon },
+      { href: '/dashboard/leads',      label: 'Smart Leads', iconName: 'Users' },
+      { href: '/dashboard/deals',      label: 'Sales Pipeline',      iconName: 'Handshake' },
+      { href: '/dashboard/deals/workspace', label: 'Negotiation Room', iconName: 'Webhook' },
+      { href: '/dashboard/deals/analytics', label: 'Sales Analytics', iconName: 'BarChart2' },
+      { href: '/dashboard/clients',    label: 'Customer 360°',       iconName: 'UserSquare2' },
+      { href: '/dashboard/reservations', label: 'Reservations',    iconName: 'CalendarIcon' },
     ]
   },
   {
     group: "REAL ESTATE OS",
     items: [
-      { href: '/dashboard/properties', label: 'Property Universe',     Icon: Building2 },
-      { href: '/dashboard/properties/analytics', label: 'Properties Analytics', Icon: BarChart2 },
-      { href: '/dashboard/projects',   label: 'Projects',            Icon: LayoutGrid },
-      { href: '/dashboard/unites',     label: 'Unit Management',    Icon: CheckSquare },
-      { href: '/dashboard/unites/matrix', label: 'Availability Matrix', Icon: Grid },
-      { href: '/dashboard/unites/pricing', label: 'Pricing Engine', Icon: Calculator },
-      { href: '/dashboard/map',        label: 'Interactive Map', Icon: Search },
+      { href: '/dashboard/properties', label: 'Property Universe',     iconName: 'Building2' },
+      { href: '/dashboard/properties/analytics', label: 'Properties Analytics', iconName: 'BarChart2' },
+      { href: '/dashboard/projects',   label: 'Projects',            iconName: 'LayoutGrid' },
+      { href: '/dashboard/unites',     label: 'Unit Management',    iconName: 'CheckSquare' },
+      { href: '/dashboard/unites/matrix', label: 'Availability Matrix', iconName: 'Grid' },
+      { href: '/dashboard/unites/pricing', label: 'Pricing Engine', iconName: 'Calculator' },
+      { href: '/dashboard/map',        label: 'Interactive Map', iconName: 'Search' },
     ]
   },
   {
     group: "FINANCE OS",
     items: [
-      { href: '/dashboard/finance',    label: 'Treasury Command', Icon: DollarSign },
-      { href: '/dashboard/accounting', label: 'Accounting', Icon: Receipt },
-      { href: '/dashboard/invoices',   label: 'Installments',      Icon: ShoppingCart },
-      { href: '/dashboard/finance/reconciliation', label: 'Reconciliation', Icon: CheckSquare },
-      { href: '/dashboard/finance/investors', label: 'Investor Reporting', Icon: Award },
+      { href: '/dashboard/finance',    label: 'Treasury Command', iconName: 'DollarSign' },
+      { href: '/dashboard/accounting', label: 'Accounting', iconName: 'Receipt' },
+      { href: '/dashboard/invoices',   label: 'Installments',      iconName: 'ShoppingCart' },
+      { href: '/dashboard/finance/reconciliation', label: 'Reconciliation', iconName: 'CheckSquare' },
+      { href: '/dashboard/finance/investors', label: 'Investor Reporting', iconName: 'Award' },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
     group: "OPERATIONS OS",
     items: [
-      { href: '/dashboard/chantiers', label: 'Construction', Icon: Building2 },
-      { href: '/dashboard/chantiers/risks', label: 'Delays & Risks', Icon: LayoutGrid },
-      { href: '/dashboard/fournisseurs', label: 'Procurement', Icon: Users },
-      { href: '/dashboard/qualite', label: 'Quality Control', Icon: CheckSquare },
+      { href: '/dashboard/chantiers', label: 'Construction', iconName: 'Building2' },
+      { href: '/dashboard/chantiers/risks', label: 'Delays & Risks', iconName: 'LayoutGrid' },
+      { href: '/dashboard/fournisseurs', label: 'Procurement', iconName: 'Users' },
+      { href: '/dashboard/qualite', label: 'Quality Control', iconName: 'CheckSquare' },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
     group: "HR & GOV OS",
     items: [
-      { href: '/dashboard/agents',     label: 'Employee Hub',  Icon: Users },
-      { href: '/dashboard/agents/attendance', label: 'Attendance System', Icon: Clock },
-      { href: '/dashboard/agents/performance', label: 'Performance Reviews', Icon: Star },
-      { href: '/dashboard/payroll',    label: 'Payroll', Icon: Receipt },
-      { href: '/dashboard/recruitment', label: 'Recruitment', Icon: Megaphone },
+      { href: '/dashboard/agents',     label: 'Employee Hub',  iconName: 'Users' },
+      { href: '/dashboard/agents/attendance', label: 'Attendance System', iconName: 'Clock' },
+      { href: '/dashboard/agents/performance', label: 'Performance Reviews', iconName: 'Star' },
+      { href: '/dashboard/payroll',    label: 'Payroll', iconName: 'Receipt' },
+      { href: '/dashboard/recruitment', label: 'Recruitment', iconName: 'Megaphone' },
     ],
     roles: ['owner', 'admin', 'finance']
   },
   {
     group: "AI & AUTOMATION",
     items: [
-      { href: '/dashboard/copilot', label: 'AI Copilot', Icon: Zap },
-      { href: '/dashboard/workflows',  label: 'Workflow Engine', Icon: Settings },
-      { href: '/dashboard/automation', label: 'Automation Center', Icon: Power },
+      { href: '/dashboard/copilot', label: 'AI Copilot', iconName: 'Zap' },
+      { href: '/dashboard/workflows',  label: 'Workflow Engine', iconName: 'Settings' },
+      { href: '/dashboard/automation', label: 'Automation Center', iconName: 'Power' },
     ],
   },
   {
     group: "ADMIN OS",
     items: [
-      { href: '/dashboard/settings', label: 'Global Setup', Icon: Settings },
-      { href: '/dashboard/settings/security', label: 'Security & RBAC', Icon: ShieldAlert },
-      { href: '/dashboard/settings/tenants', label: 'Tenant Management', Icon: Cloud },
-      { href: '/dashboard/settings/api', label: 'API Integrations', Icon: Webhook },
-      { href: '/dashboard/audit',    label: 'Audit Logs', Icon: Search },
+      { href: '/dashboard/settings', label: 'Global Setup', iconName: 'Settings' },
+      { href: '/dashboard/settings/security', label: 'Security & RBAC', iconName: 'ShieldAlert' },
+      { href: '/dashboard/settings/tenants', label: 'Tenant Management', iconName: 'Cloud' },
+      { href: '/dashboard/settings/api', label: 'API Integrations', iconName: 'Webhook' },
+      { href: '/dashboard/audit',    label: 'Audit Logs', iconName: 'Search' },
     ],
     roles: ['owner', 'admin']
   }
-]
+];
 
 export const dynamic = 'force-dynamic';
 
@@ -170,26 +172,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           </div>
 
-          <div className="px-4 py-4 flex-1 overflow-y-auto custom-scrollbar relative z-10 space-y-8">
-            {NAV_GROUPS.map((navGroup) => {
-               if (navGroup.roles && !navGroup.roles.includes(role)) return null;
-               return (
-                 <div key={navGroup.group}>
-                   <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 px-4">{navGroup.group}</p>
-                   <nav className="flex flex-col gap-1">
-                     {navGroup.items.map(({ href, label, Icon }) => (
-                       <Link key={href} href={href}
-                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-white/60 rounded-xl hover:bg-white/5 hover:text-white transition-all group relative overflow-hidden">
-                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 rounded-r-md bg-asas-gold transition-all duration-300 group-hover:h-1/2 opacity-0 group-hover:opacity-100 shadow-[0_0_10px_rgba(212,166,79,0.8)]"></div>
-                         <Icon className="h-4 w-4 text-white/40 group-hover:text-asas-gold transition-colors" />
-                         <span className="group-hover:translate-x-1 transition-transform tracking-wide">{label}</span>
-                       </Link>
-                     ))}
-                   </nav>
-                 </div>
-               )
-            })}
-          </div>
+          <SidebarNav navGroups={NAV_GROUPS_STATE} role={role} />
 
           <div className="mt-auto px-6 py-6 border-t border-white/5 shrink-0 relative z-10 bg-black/10">
             <div className="flex items-center gap-3 mb-5">
@@ -246,12 +229,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
           {/* Scrollable Main Area */}
           <main className="flex-1 overflow-y-auto flex flex-col w-full text-white custom-scrollbar relative pb-28 md:pb-0">
-            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-1 flex flex-col">
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full flex-1 flex flex-col pt-6 md:pt-8 min-h-0">
               {children}
             </div>
           </main>
         </div>
         <CommandPalette />
+        <BottomNav />
       </div>
     )
   } catch (err: any) {

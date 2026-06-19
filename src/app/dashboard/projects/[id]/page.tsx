@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { motion } from 'motion/react'
 import { clsx } from 'clsx'
 import type { Property } from '@/types/app'
-import { ConstructionEngine } from '../ConstructionEngine'
+import { ConstructionEngine } from '../ConstructionEngineV2'
 
 export default function ProjectDetail() {
   const params = useParams()
@@ -161,21 +161,23 @@ export default function ProjectDetail() {
                 <h2 className="text-xl font-extrabold text-white flex items-center gap-3 mb-6">
                    <BadgePercent className="w-6 h-6 text-asas-gold" /> Échéancier Global des Appels de Fonds (VEFA)
                 </h2>
-                <p className="text-sm font-medium text-white/50 mb-6">Lorsque vous validez une phase de construction, les appels de fonds sont automatiquement générés pour toutes les transactions en cours sur ce projet.</p>
+                <p className="text-sm font-medium text-white/50 mb-6">Lorsque vous validez une phase de construction, les appels de fonds sont automatiquement générés pour toutes les transactions (Deals) en cours sur ce projet.</p>
                 
                 <div className="space-y-4">
-                   {project.tranches?.length ? project.tranches.map((tranche: any, i: number) => (
-                     <div key={i} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", tranche.done ? "bg-green-500/5 border-green-500/20" : "bg-black/20 border-white/5")}>
+                   {(project.phases || []).map((phase: any, i: number) => {
+                     const done = phase.status === 'completed';
+                     return (
+                     <div key={phase.id} className={clsx("flex items-center justify-between p-4 rounded-xl border transition-colors", done ? "bg-green-500/5 border-green-500/20" : "bg-black/20 border-white/5")}>
                         <div className="flex items-center gap-4">
-                           <div className={clsx("w-8 h-8 rounded-xl flex items-center justify-center", tranche.done ? "bg-green-500/10 text-green-400" : "bg-white/5 text-white/40")}>
-                             {tranche.done ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-[10px] font-bold">{i+1}</span>}
+                           <div className={clsx("w-8 h-8 rounded-xl flex items-center justify-center", done ? "bg-green-500/10 text-green-400" : "bg-white/5 text-white/40")}>
+                             {done ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-[10px] font-bold">{i+1}</span>}
                            </div>
                            <div>
-                             <p className={clsx("text-sm font-bold", tranche.done ? "text-green-400" : "text-white")}>{tranche.label}</p>
-                             <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mt-0.5">{tranche.pct}% du montant total</p>
+                             <p className={clsx("text-sm font-bold", done ? "text-green-400" : "text-white")}>{phase.name}</p>
+                             <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mt-0.5">{Number(phase.billingPercentage)}% du montant total</p>
                            </div>
                         </div>
-                        {!tranche.done && (
+                        {!done && (
                           <button 
                             onClick={async (e) => {
                               e.currentTarget.disabled = true;
@@ -188,98 +190,35 @@ export default function ProjectDetail() {
                                   body: JSON.stringify({
                                     commandId: crypto.randomUUID(),
                                     aggregateId: project.id,
-                                    type: 'TRIGGER_PROJECT_TRANCHE',
+                                    type: 'UPDATE_PROJECT_PHASE',
                                     expectedVersion: 1,
-                                    payload: { projectId: project.id, trancheLabel: tranche.label, tranchePct: tranche.pct }
+                                    payload: { phaseId: phase.id, status: 'completed', constructionPercentage: phase.constructionPercentage }
                                   })
                                 });
                                 if (!res.ok) throw new Error('Failed');
                                 
-                                // Optimistic visual update (since we don't save tranches to DB yet)
-                                const newTranches = [...project.tranches];
-                                newTranches[i].done = true;
-                                setProject({ ...project, tranches: newTranches });
-                                
-                                alert('Appels de fonds générés avec succès pour les transactions actives.');
-                              } catch (err) {
-                                console.error(err);
-                                e.currentTarget.disabled = false;
-                                e.currentTarget.innerText = originalText;
-                                alert('Erreur lors du déclenchement de l\'appel de fonds');
-                              }
-                            }}
-                            className="px-4 py-2 bg-black/40 hover:bg-asas-gold hover:text-[#06152D] border border-white/10 hover:border-asas-gold disabled:opacity-50 text-white/80 text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm transition-all focus:outline-none">
-                            Déclencher
-                          </button>
-                        )}
-                     </div>
-                   )) : [
-                     { label: "Réservation (Signature)", pct: 20, done: true },
-                     { label: "Achèvement Fondations", pct: 15, done: true },
-                     { label: "Dalle RDC", pct: 10, done: false },
-                     { label: "Hors d'eau (Toiture)", pct: 20, done: false },
-                     { label: "Menuiseries & Cloisons", pct: 15, done: false },
-                     { label: "Remise des Clés", pct: 20, done: false },
-                   ].map((tranche, i) => (
-                     <div key={i} className={clsx("flex items-center justify-between p-4 rounded-2xl border transition-colors", tranche.done ? "bg-green-500/5 border-green-500/20" : "bg-transparent border-white/5 hover:border-white/10")}>
-                        <div className="flex items-center gap-4">
-                           <div className={clsx("w-8 h-8 rounded-xl flex items-center justify-center", tranche.done ? "bg-green-500/10 text-green-400" : "bg-white/5 text-white/40")}>
-                             {tranche.done ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-[10px] font-bold">{i+1}</span>}
-                           </div>
-                           <div>
-                             <p className={clsx("text-sm font-bold", tranche.done ? "text-green-400" : "text-white")}>{tranche.label}</p>
-                             <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mt-0.5">{tranche.pct}% du montant total</p>
-                           </div>
-                        </div>
-                        {!tranche.done && (
-                          <button 
-                            onClick={async (e) => {
-                              e.currentTarget.disabled = true;
-                              const originalText = e.currentTarget.innerText;
-                              e.currentTarget.innerText = "Déclenchement...";
-                              try {
-                                const res = await fetch('/api/command-gateway', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                    commandId: crypto.randomUUID(),
-                                    aggregateId: project.id,
-                                    type: 'TRIGGER_PROJECT_TRANCHE',
-                                    expectedVersion: 1,
-                                    payload: { projectId: project.id, trancheLabel: tranche.label, tranchePct: tranche.pct }
-                                  })
-                                });
-                                if (!res.ok) throw new Error('Failed');
-                                
-                                // Optimistically update our "fake" tranches by mutating state mock
+                                // Optimistic visual update
                                 const newProject = { ...project };
-                                if (!newProject.tranches) {
-                                  newProject.tranches = [
-                                    { label: "Réservation (Signature)", pct: 20, done: true },
-                                    { label: "Achèvement Fondations", pct: 15, done: true },
-                                    { label: "Dalle RDC", pct: 10, done: false },
-                                    { label: "Hors d'eau (Toiture)", pct: 20, done: false },
-                                    { label: "Menuiseries & Cloisons", pct: 15, done: false },
-                                    { label: "Remise des Clés", pct: 20, done: false },
-                                  ];
+                                const phaseIdx = newProject.phases.findIndex((p: any) => p.id === phase.id);
+                                if (phaseIdx > -1) {
+                                   newProject.phases[phaseIdx].status = 'completed';
                                 }
-                                newProject.tranches[i].done = true;
                                 setProject(newProject);
                                 
-                                alert('Appels de fonds générés avec succès pour les transactions actives.');
+                                alert('Phase validée. Appel de fonds (Appel de fonds) virtuellement généré pour les entités sous-jacentes.');
                               } catch (err) {
                                 console.error(err);
                                 e.currentTarget.disabled = false;
                                 e.currentTarget.innerText = originalText;
-                                alert('Erreur lors du déclenchement de l\'appel de fonds');
+                                alert('Erreur lors de la validation de la phase.');
                               }
                             }}
-                            className="px-4 py-2 bg-black/40 hover:bg-asas-gold hover:text-[#06152D] border border-white/10 hover:border-asas-gold disabled:opacity-50 text-white/80 text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm transition-all focus:outline-none">
-                            Déclencher
+                            className="px-4 py-2 bg-black/40 hover:bg-asas-gold hover:text-[#06152D] border border-white/10 hover:border-asas-gold disabled:opacity-50 text-white/80 text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm transition-all focus:outline-none cursor-pointer">
+                            Valider la Phase
                           </button>
                         )}
                      </div>
-                   ))}
+                   )})}
                 </div>
              </div>
           </div>
@@ -317,7 +256,7 @@ export default function ProjectDetail() {
         </div>
       ) : (
         <div className="relative z-10">
-          <ConstructionEngine projectId={id} projectCity={project.city || "Alger"} />
+          <ConstructionEngine projectId={id} projectCity={project.city || "Alger"} project={project} />
         </div>
       )}
     </div>

@@ -182,6 +182,119 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, data: expense });
     }
 
+    if (command.type === 'UPDATE_PROJECT_PHASE') {
+      const { phaseId, status, constructionPercentage } = command.payload;
+      
+      const payload: any = {};
+      if (status) payload.status = status;
+      if (constructionPercentage !== undefined) payload.construction_percentage = constructionPercentage;
+      if (status === 'completed') payload.completion_date = new Date().toISOString();
+
+      await kernel.mutate('project_phases', 'UPDATE', payload, { id: phaseId });
+
+      // Find project associated with this phase
+      const phaseData = await kernel.query<any>('project_phases', {
+         filters: { id: phaseId },
+         select: 'project_id'
+      });
+      const projectId = phaseData[0]?.project_id;
+
+      if (projectId) {
+         // Recalculate project progress
+         const allPhases = await kernel.query<any>('project_phases', {
+           filters: { project_id: projectId },
+           select: 'construction_percentage, billing_percentage'
+         });
+         
+         if (allPhases.length > 0) {
+            let totalWeightedProgress = 0;
+            let totalBillingPercentage = 0;
+
+            allPhases.forEach(p => {
+              const cp = Number(p.construction_percentage) || 0;
+              const bp = Number(p.billing_percentage) || 0;
+              totalWeightedProgress += cp * (bp / 100);
+              totalBillingPercentage += bp;
+            });
+            
+            // Avoid division by zero if billing percentages sum to 0
+            const projectProgress = totalBillingPercentage > 0 ? (totalWeightedProgress / totalBillingPercentage) * 100 : 0;
+
+            await kernel.mutate('projects', 'UPDATE', {
+              progress: Math.min(100, Math.round(projectProgress * 100) / 100)
+            }, { id: projectId });
+         }
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    if (command.type === 'ADD_PROJECT_TASK') {
+       const { projectId, phaseId, name, priority, vendorId, cost, dueDate, assigneeId } = command.payload;
+       const task = await kernel.mutate('project_tasks', 'INSERT', {
+          organization_id: identity.tenantId,
+          project_id: projectId,
+          phase_id: phaseId || null,
+          name,
+          status: 'todo',
+          priority: priority || 'medium',
+          vendor_id: vendorId || null,
+          assignee_id: assigneeId || identity.userId,
+          cost: cost || null,
+          due_date: dueDate || null
+       });
+       return NextResponse.json({ success: true, data: task });
+    }
+
+    if (command.type === 'UPDATE_PROJECT_TASK_STATUS') {
+       const { taskId, status } = command.payload;
+       await kernel.mutate('project_tasks', 'UPDATE', { status }, { id: taskId });
+       return NextResponse.json({ success: true });
+    }
+
+    // --- APPROVAL WORKFLOWS ---
+    if (command.type === 'CREATE_APPROVAL_REQUEST') {
+       const { type, entityId, reason, approverId } = command.payload;
+       const req = await kernel.mutate('approval_requests', 'INSERT', {
+          organization_id: identity.tenantId,
+          requester_id: identity.userId,
+          type,
+          entity_id: entityId,
+          reason,
+          approver_id: approverId ? Number(approverId) : null,
+          status: 'pending'
+       });
+       return NextResponse.json({ success: true, data: req });
+    }
+
+    if (command.type === 'RESOLVE_APPROVAL_REQUEST') {
+       const { requestId, status, decisionNotes } = command.payload;
+       // status -> 'approved' or 'rejected'
+       await kernel.mutate('approval_requests', 'UPDATE', {
+          status,
+          decision_notes: decisionNotes || null,
+          resolved_at: new Date().toISOString()
+       }, { id: requestId });
+       
+       // Handle side-effects (e.g. apply discount to deal if approved)
+       if (status === 'approved') {
+          const reqArray = await kernel.query<any>('approval_requests', { filters: { id: requestId } });
+          const req = reqArray[0];
+          if (req && req.type === 'deal_discount') {
+             // In a real scenario we'd parse the context/payload to apply the discount.
+             // Currently entityId is probably the deal.
+             await kernel.dispatch({
+               type: 'DISCOUNT_APPROVED',
+               aggregateId: req.entity_id,
+               payload: { requestId },
+               actorId: identity.userId
+             });
+          }
+       }
+
+       return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json({ error: 'Unknown command type' }, { status: 400 });
   } catch (error: any) {
     ErrorTracker.captureError(error, { context: 'CommandGateway' });

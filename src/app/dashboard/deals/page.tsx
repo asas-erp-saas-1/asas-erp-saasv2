@@ -355,6 +355,9 @@ export default function DealsPage() {
 
   useEffect(() => {
     load();
+    const handleUpdate = () => load();
+    window.addEventListener('deal-updated', handleUpdate);
+    return () => window.removeEventListener('deal-updated', handleUpdate);
   }, [load]);
 
   async function onStatusChange(dealId: string, newStatus: string) {
@@ -401,56 +404,10 @@ export default function DealsPage() {
   }
 
   async function onDragEnd(result: DropResult) {
-    const { destination, source, draggableId } = result;
-    if (!destination) return;
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
-      return;
-
-    const newStatus = destination.droppableId as DealStatus;
-    const dealVersion = deals.find((d) => d.id === draggableId)?.version || 1;
-
-    if (newStatus === "cancelled") {
-      setCancelDealInfo({ id: draggableId, version: dealVersion });
-      return;
-    }
-
-    // Optimistic update
-    setDeals((current) =>
-      current.map((deal) =>
-        deal.id === draggableId
-          ? { ...deal, status: newStatus as any, version: deal.version + 1 }
-          : deal,
-      ),
-    );
-
-    try {
-      // 1. You could execute an optimistic transition right here if you passed state up.
-      const { v4: uuidv4 } = await import("uuid");
-
-      const res = await fetch("/api/command-gateway", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          commandId: uuidv4(),
-          aggregateId: draggableId,
-          type: "SET_DEAL_STAGE",
-          expectedVersion: dealVersion,
-          payload: { stage: newStatus },
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || "Conflict");
-    } catch (e: any) {
-      import("@/lib/observability/errors").then((mod) =>
-        mod.ErrorTracker.captureError(e, { context: "DealsPage dragEnd" }),
-      );
-      // Revert on error
-      load();
-    }
+    // In Enterprise Mode, Drag and Drop is disabled to force Action-by-Action progression.
+    // The card will snap back. The user must click the card and use the Action Gating panel.
+    alert("Progression bloquée. Veuillez ouvrir le dossier (cliquer sur la carte) et valider l'action exécutive requise.");
+    return;
   }
 
   // Group by status

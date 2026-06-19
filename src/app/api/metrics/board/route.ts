@@ -1,29 +1,49 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { deals, properties, clients, projectRisks } from '@/db/schema';
-import { sql, eq, sum } from 'drizzle-orm';
+import { sql, eq, sum, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { kernel } from '@/lib/kernel/core';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || !identity.tenantId) {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    
+    // Multi-tenant safe casting since string might be UUID mapped or ID mapped in reality. 
+    // Usually tenant id in schema is Int, let's parse safely if the schema assumes int.
+    // Ensure we parse correctly to match organizationId format.
+    const orgId = parseInt(identity.tenantId as string, 10);
+    
+    if (isNaN(orgId)) {
+        return NextResponse.json({ error: 'Invalid organization identifier.' }, { status: 400 });
+    }
+
     const dealsStats = await db.select({
        totalSales: sum(deals.agreedPrice).mapWith(Number),
        dealCount: sql`count(${deals.id})`.mapWith(Number)
-    }).from(deals).where(eq(deals.status, 'completed'));
+    }).from(deals).where(
+        and(
+            eq(deals.status, 'completed'),
+            eq(deals.organizationId, orgId)
+        )
+    );
 
     const propertiesStats = await db.select({
        totalProperties: sql`count(${properties.id})`.mapWith(Number),
        availableProperties: sql`count(*) filter (where ${properties.status} = 'available')`.mapWith(Number)
-    }).from(properties);
+    }).from(properties).where(eq(properties.organizationId, orgId));
 
     const clientsStats = await db.select({
        totalClients: sql`count(${clients.id})`.mapWith(Number)
-    }).from(clients);
+    }).from(clients).where(eq(clients.organizationId, orgId));
 
     const risksStats = await db.select({
        activeRisks: sql`count(*) filter (where ${projectRisks.status} = 'active')`.mapWith(Number),
        totalRisks: sql`count(${projectRisks.id})`.mapWith(Number)
-    }).from(projectRisks);
+    }).from(projectRisks).where(eq(projectRisks.organizationId, orgId));
 
     return NextResponse.json({
        data: {

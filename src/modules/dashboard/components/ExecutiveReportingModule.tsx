@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, Download, Filter, Target, BrainCircuit, Activity, 
-  ArrowUpRight, ArrowDownRight, Printer, Share2, Layers
+  ArrowUpRight, ArrowDownRight, Printer, Share2, Layers, Loader2
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
@@ -19,6 +19,26 @@ const reportData = [
 ];
 
 export function ExecutiveReportingModule() {
+  const [metrics, setMetrics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const res = await fetch('/api/metrics/board');
+        const json = await res.json();
+        if (json.data) {
+           setMetrics(json.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch board metrics', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMetrics();
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-700 bg-transparent text-white pt-4">
       {/* 1. Header Row */}
@@ -95,23 +115,55 @@ export function ExecutiveReportingModule() {
                </div>
 
                {/* Document Body (Abstract Preview) */}
-               <div className="flex-1 p-8 flex flex-col gap-6 opacity-70">
-                  <div className="w-full h-8 bg-white/5 rounded"></div>
-                  <div className="w-3/4 h-4 bg-white/5 rounded"></div>
-                  <div className="w-5/6 h-4 bg-white/5 rounded"></div>
-                  
-                  <div className="flex gap-4 mt-6">
-                     <div className="w-1/2 h-32 bg-white/5 rounded-lg border border-white/5"></div>
-                     <div className="w-1/2 h-32 bg-white/5 rounded-lg border border-white/5"></div>
-                  </div>
+               <div className="flex-1 p-8 flex flex-col gap-6">
+                  {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                       <Loader2 className="w-8 h-8 animate-spin text-asas-gold" />
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-bold text-white border-b border-white/10 pb-2">Global Performance</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                         <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-white/50 uppercase tracking-widest">Revenue (Total)</span>
+                            <div className="text-xl font-bold text-white mt-1">{(metrics?.revenue || 0).toLocaleString()} DA</div>
+                         </div>
+                         <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-white/50 uppercase tracking-widest">Completed Deals</span>
+                            <div className="text-xl font-bold text-white mt-1">{metrics?.completedDeals || 0}</div>
+                         </div>
+                      </div>
 
-                  <div className="w-full h-4 bg-white/5 rounded mt-6"></div>
-                  <div className="w-2/3 h-4 bg-white/5 rounded"></div>
+                      <h3 className="text-lg font-bold text-white border-b border-white/10 pb-2 mt-4">Inventory & Assets</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                         <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-white/50 uppercase tracking-widest">Total Properties</span>
+                            <div className="text-xl font-bold text-white mt-1">{metrics?.totalProperties || 0}</div>
+                         </div>
+                         <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-white/50 uppercase tracking-widest">Available Units</span>
+                            <div className="text-xl font-bold text-white mt-1">{metrics?.availableProperties || 0}</div>
+                         </div>
+                      </div>
+                      
+                      <h3 className="text-lg font-bold text-white border-b border-white/10 pb-2 mt-4">Risk & Engagement</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                         <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-white/50 uppercase tracking-widest">Active Clients</span>
+                            <div className="text-xl font-bold text-white mt-1">{metrics?.totalClients || 0}</div>
+                         </div>
+                         <div className="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-red-400 uppercase tracking-widest">Active Risks</span>
+                            <div className="text-xl font-bold text-white mt-1">{metrics?.activeRisks || 0}</div>
+                         </div>
+                      </div>
+                    </>
+                  )}
                </div>
 
-               <div className="absolute inset-0 bg-gradient-to-t from-[#051121] via-transparent to-transparent flex items-end justify-center pb-12">
-                  <span className="px-4 py-2 bg-black/80 backdrop-blur border border-white/10 rounded-lg text-sm text-[#D4A64F] font-bold shadow-xl flex items-center gap-2">
-                     <Layers className="w-4 h-4" /> Live Document Preview
+               <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#051121] via-[#051121]/90 to-transparent flex items-end justify-center pb-8 pointer-events-auto cursor-pointer group">
+                  <span className="px-4 py-2 bg-black/80 backdrop-blur border border-asas-gold/30 rounded-lg text-sm text-[#D4A64F] font-bold shadow-xl flex items-center gap-2 group-hover:bg-[#D4A64F] group-hover:text-[#051121] transition-all">
+                     <Layers className="w-4 h-4" /> Live Board Preview Active
                   </span>
                </div>
             </div>

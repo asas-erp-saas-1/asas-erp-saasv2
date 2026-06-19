@@ -61,6 +61,35 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
     return () => { mounted = false }
   }, [leadId])
 
+  const updateStatus = async (newStatus: string) => {
+    if (!lead) return;
+    try {
+      const { v4: uuidv4 } = await import("uuid");
+      const res = await fetch("/api/command-gateway", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          commandId: uuidv4(),
+          aggregateId: lead.id,
+          type: "SET_LEAD_STATUS",
+          expectedVersion: 1,
+          payload: { status: newStatus },
+        }),
+      });
+      if (res.ok) {
+        setLead({ ...lead, status: newStatus as any });
+        // Dispatch to update page
+        if (typeof window !== 'undefined') {
+           window.dispatchEvent(new Event('lead-updated'));
+        }
+      } else {
+        alert("Action échouée.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <ActionPanel open={!!leadId} onOpenChange={(open) => { if (!open) onClose() }}>
       <ActionPanelContent className="flex flex-col p-0">
@@ -87,6 +116,44 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
           ) : (
             <div className="space-y-6">
               
+              {/* Execution Action Block (Gating System) */}
+              <div className="bg-[#1A2A4A] p-4 flex flex-col md:flex-row items-center justify-between gap-4 border border-[#1A2A4A] rounded-sm">
+                <div>
+                  <h3 className="text-sm font-bold text-[#D4A64F] mb-0.5 uppercase tracking-widest flex items-center gap-2">
+                    Action Exécutive ({lead.status})
+                  </h3>
+                  <p className="text-[10px] text-white/70">{
+                    lead.status === 'new' ? "Prospect qualifié ? Définissez ses critères avant de le basculer en Visite." :
+                    lead.status === 'visiting' ? "Visite effectuée ? Enregistrez le compte-rendu ou passez en Négociation." :
+                    lead.status === 'negotiating' ? "Discussion en cours. Obtenez un accord de principe ou convertissez-le en Vente/Option." :
+                    lead.status === 'reserved' ? "Déjà converti en Vente." :
+                    "Dossier perdu ou annulé."
+                  }</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {lead.status === 'new' && (
+                    <button onClick={() => updateStatus('visiting')} className="px-4 py-2 bg-[#D4A64F] hover:bg-[#D4A64F]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap">
+                      Pogrammer Visite
+                    </button>
+                  )}
+                  {lead.status === 'visiting' && (
+                    <button onClick={() => updateStatus('negotiating')} className="px-4 py-2 bg-[#D4A64F] hover:bg-[#D4A64F]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap">
+                      Démarrer Négociation
+                    </button>
+                  )}
+                  {lead.status === 'negotiating' && (
+                    <>
+                      <button onClick={() => updateStatus('option')} className="px-4 py-2 border border-[#D4A64F]/50 text-[#D4A64F] hover:bg-white/5 font-bold text-xs rounded-sm transition-all cursor-pointer whitespace-nowrap">
+                        Poser une Option
+                      </button>
+                      <button onClick={() => updateStatus('reserved')} className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap">
+                        Convertir en Vente
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
               {/* Profile Card */}
               <div className="bg-white/5 border border-asas-silver/10 rounded-sm p-5">
                  <h3 className="text-lg font-bold text-asas-sand mb-4 flex items-center justify-between">

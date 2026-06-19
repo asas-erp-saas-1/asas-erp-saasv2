@@ -36,6 +36,29 @@ export function ExecutionInboxWidget() {
     fetchInbox();
   }, []);
 
+  const handleTaskAction = async (task: any) => {
+    if (task.taskType === 'approval_request' && task.meta?.requestId) {
+      if (confirm('Voulez-vous approuver cette requête ?')) {
+        try {
+          await fetch('/api/command-gateway', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+                commandId: crypto.randomUUID(),
+                aggregateId: task.meta.entityId,
+                type: 'RESOLVE_APPROVAL_REQUEST',
+                expectedVersion: 1,
+                payload: { requestId: task.meta.requestId, status: 'approved' }
+             })
+          });
+          setTasks(tasks.filter(t => t.id !== task.id));
+        } catch(e) { console.error(e) }
+      }
+    } else {
+      alert(`Action non implémentée pour: ${task.taskType}`)
+    }
+  }
+
   return (
     <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 flex flex-col h-full overflow-hidden relative group">
       <div className="flex justify-between items-center mb-6">
@@ -55,18 +78,18 @@ export function ExecutionInboxWidget() {
             <p className="text-[10px]">Vous êtes à jour.</p>
           </div>
         ) : (
-          tasks.map((task) => (
+          tasks.map((task: any) => (
             <div key={task.id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition flex flex-col gap-2 cursor-pointer relative overflow-hidden group/task">
               {/* Importance strip */}
-              <div className={`absolute left-0 top-0 bottom-0 w-1 ${task.taskType === 'approve_deal' ? 'bg-red-500' : 'bg-[#D4A64F]'}`} />
+              <div className={`absolute left-0 top-0 bottom-0 w-1 ${task.taskType === 'approval_request' ? 'bg-red-500' : 'bg-[#D4A64F]'}`} />
               
               <div className="flex justify-between items-start pl-2">
                 <div className="flex flex-col">
                   <h4 className="text-sm font-bold text-white">{task.title}</h4>
                   <p className="text-[10px] text-white/50 line-clamp-1">{task.description}</p>
                 </div>
-                <button className="h-6 w-6 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center shrink-0">
-                  <CheckSquare className="w-3 h-3 text-white/50" />
+                <button onClick={(e) => { e.stopPropagation(); handleTaskAction(task); }} className="h-6 w-6 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center shrink-0">
+                  <CheckSquare className="w-3 h-3 text-white/50 hover:text-green-400 transition-colors" />
                 </button>
               </div>
 

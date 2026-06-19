@@ -16,7 +16,13 @@ export async function GET(request: Request) {
        const project = await db.query.projects.findFirst({
          where: (projects, { eq }) => eq(projects.id, Number(id)),
          with: {
-           properties: true
+           properties: true,
+           phases: true,
+           tasks: {
+             with: {
+               vendor: true
+             }
+           }
          }
        });
        if (!project) {
@@ -31,6 +37,7 @@ export async function GET(request: Request) {
       offset,
       with: {
         properties: true,
+        phases: true,
       }
     });
 
@@ -56,7 +63,20 @@ export async function POST(request: Request) {
       budget,
       managerId: managerId ? Number(managerId) : undefined,
       status: status || 'planning',
+      organizationId: 1 // Default organization fallback for now
     }).returning();
+
+    const projectId = newProject[0].id;
+    const { projectPhases } = await import('@/db/schema');
+
+    await db.insert(projectPhases).values([
+      { organizationId: 1, projectId, name: 'Réservation (Dépôt)', billingPercentage: 20, constructionPercentage: 0, status: 'completed' },
+      { organizationId: 1, projectId, name: 'Fondation & Sous-sol', billingPercentage: 15, constructionPercentage: 10, status: 'pending' },
+      { organizationId: 1, projectId, name: 'Plancher Haut (RDC)', billingPercentage: 15, constructionPercentage: 25, status: 'pending' },
+      { organizationId: 1, projectId, name: 'Gros Œuvres (Toiture)', billingPercentage: 20, constructionPercentage: 50, status: 'pending' },
+      { organizationId: 1, projectId, name: 'Second Œuvre (Achèvement)', billingPercentage: 20, constructionPercentage: 85, status: 'pending' },
+      { organizationId: 1, projectId, name: 'Remise des clés', billingPercentage: 10, constructionPercentage: 100, status: 'pending' }
+    ]);
 
     return NextResponse.json({ data: newProject[0] }, { status: 201 });
   } catch (error: any) {

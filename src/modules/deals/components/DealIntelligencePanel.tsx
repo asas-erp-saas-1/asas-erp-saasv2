@@ -658,6 +658,25 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
     reloadData()
   }, [dealId])
 
+  const updateDealStatus = async (newStatus: string) => {
+    if (!deal) return;
+    try {
+      const res = await fetch('/api/deals', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: deal.id, status: newStatus }),
+      });
+      if (!res.ok) throw new Error('Failed to update status');
+      reloadData();
+      // Optional: dispatch an event to refresh the board if needed
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('deal-updated'));
+      }
+    } catch (err: any) {
+      alert("Erreur lors de la mise à jour: " + err.message);
+    }
+  };
+
   const handleGenerateContract = () => {
     if (!deal) return
     const doc = new jsPDF()
@@ -766,6 +785,49 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
           <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 pb-[env(safe-area-inset-bottom)]">
       {/* Header section */}
       <div className="bg-white dark:bg-[#141618] rounded-sm shadow-sm border border-asas-silver/20 overflow-hidden">
+        
+        {/* Execution Action Block (Gating System) */}
+        <div className="bg-[#1A2A4A] p-4 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/10">
+          <div>
+            <h3 className="text-sm font-bold text-[#E8D1A7] mb-0.5 uppercase tracking-widest flex items-center gap-2">
+              <CheckSquare className="w-4 h-4" /> Action Exécutive Requise ({deal.status})
+            </h3>
+            <p className="text-xs text-white/70">{
+              deal.status === 'draft' ? "Valider le dossier VSP. Cette action générera l'échéancier et activera les appels de fonds." :
+              deal.status === 'active' ? "Enregistrer un appel de fonds ou faire passer la transaction en attente notaire." :
+              deal.status === 'notary' ? "L'acte est chez le Notaire. Cliquer pour acter la signature et clôturer la transaction." :
+              "Aucune action bloquante système à cette étape."
+            }</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {deal.status === 'draft' && (
+              <button onClick={() => updateDealStatus('active')} className="px-4 py-2 bg-[#E8D1A7] hover:bg-[#E8D1A7]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all whitespace-nowrap shadow-sm cursor-pointer">
+                Valider VSP
+              </button>
+            )}
+            {deal.status === 'active' && (
+              <>
+                <button onClick={() => setIsScheduleModalOpen(true)} className="px-4 py-2 border border-[#E8D1A7]/30 text-[#E8D1A7] hover:bg-[#E8D1A7]/10 font-bold text-xs rounded-sm transition-all whitespace-nowrap cursor-pointer">
+                  Planifier Appel de Fonds
+                </button>
+                <button onClick={() => updateDealStatus('notary')} className="px-4 py-2 bg-[#E8D1A7] hover:bg-[#E8D1A7]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all whitespace-nowrap shadow-sm cursor-pointer">
+                  Transmettre au Notaire
+                </button>
+              </>
+            )}
+            {deal.status === 'notary' && (
+              <button onClick={() => updateDealStatus('closed')} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-sm transition-all whitespace-nowrap shadow-sm cursor-pointer">
+                Acter Signature (Soldé)
+              </button>
+            )}
+            {deal.status === 'closed' && (
+              <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-sm text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Dossier Livré et Soldé
+              </span>
+            )}
+          </div>
+        </div>
+
         <div className="border-b border-asas-silver/20 flex items-center justify-between px-6 py-4 bg-asas-sand/30 dark:bg-black/20 flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
@@ -803,6 +865,27 @@ export function DealIntelligencePanel({ dealId }: { dealId: string }) {
                 <MessageCircle className="h-4 w-4" />
               </button>
             )}
+            <button 
+              onClick={() => {
+                const reason = prompt('Motif de la demande de remise exceptionnelle ?');
+                if (reason) {
+                  fetch('/api/command-gateway', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      commandId: crypto.randomUUID(),
+                      aggregateId: dealId,
+                      type: 'CREATE_APPROVAL_REQUEST',
+                      expectedVersion: 1,
+                      payload: { type: 'deal_discount', entityId: dealId, reason, approverId: null }
+                    })
+                  }).then(() => alert('Requête envoyée à la direction financière !'))
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 border border-orange-500/30 text-orange-600 bg-orange-500/10 hover:bg-orange-500/20 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap active:scale-95"
+            >
+              Demande Remise
+            </button>
             <button onClick={() => setIsTaskModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[#171717] border border-asas-silver/20 rounded-lg text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-white/5 transition-colors shadow-sm whitespace-nowrap active:scale-95">
               <CheckSquare className="w-4 h-4" /> Créer Tâche
             </button>

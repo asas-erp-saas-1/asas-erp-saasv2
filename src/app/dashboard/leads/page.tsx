@@ -396,6 +396,9 @@ export default function LeadsPage() {
 
   useEffect(() => {
     load();
+    const handleUpdate = () => load();
+    window.addEventListener('lead-updated', handleUpdate);
+    return () => window.removeEventListener('lead-updated', handleUpdate);
   }, [load]);
 
   // Derive filter options
@@ -476,46 +479,9 @@ export default function LeadsPage() {
   }
 
   async function onDragEnd(result: DropResult) {
-    const { destination, source, draggableId } = result;
-    if (!destination) return;
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
-      return;
-
-    const newStatus = destination.droppableId as LeadStatus;
-
-    // Optimistic update
-    setLeads((current) =>
-      current.map((lead) =>
-        lead.id === draggableId ? { ...lead, status: newStatus as any } : lead,
-      ),
-    );
-
-    try {
-      const { v4: uuidv4 } = await import("uuid");
-      const res = await fetch("/api/command-gateway", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          commandId: uuidv4(),
-          aggregateId: draggableId,
-          type: "SET_LEAD_STATUS",
-          expectedVersion: 1, // Leads typically don't have strict versions in legacy CRM yet
-          payload: { status: newStatus },
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || "Conflict");
-    } catch (e: any) {
-      import("@/lib/observability/errors").then((mod) =>
-        mod.ErrorTracker.captureError(e, { context: "LeadsPage dragEnd" }),
-      );
-      // Revert on error
-      load();
-    }
+    // Enterprise Gating: Disable drag and drop.
+    alert("Progression bloquée. Veuillez ouvrir le prospect (cliquer sur la carte) et valider l'action.");
+    return;
   }
 
   return (

@@ -79,9 +79,24 @@ export const projects = pgTable("projects", {
   location: varchar("location", { length: 255 }),
   budget: numeric("budget", { precision: 15, scale: 2 }),
   status: varchar("status", { length: 50 }).notNull().default('planning'), // planning, active, delayed, completed
+  progress: numeric("progress", { precision: 5, scale: 2 }).default('0'), // Overall completion %
   startDate: timestamp("start_date"),
   endDate: timestamp("end_date"),
   managerId: integer("manager_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const projectPhases = pgTable("project_phases", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id).notNull(),
+  projectId: integer("project_id").references(() => projects.id).notNull(),
+  name: varchar("name", { length: 255 }).notNull(), // e.g. "Fondations", "Gros Œuvres"
+  billingPercentage: numeric("billing_percentage", { precision: 5, scale: 2 }).notNull(), // e.g. 20 for 20% of sale price
+  constructionPercentage: numeric("construction_percentage", { precision: 5, scale: 2 }).notNull().default('0'),
+  status: varchar("status", { length: 50 }).notNull().default('pending'), // pending, active, completed
+  startDate: timestamp("start_date"),
+  completionDate: timestamp("completion_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -90,10 +105,13 @@ export const projectTasks = pgTable("project_tasks", {
   id: serial("id").primaryKey(),
   organizationId: integer("organization_id").references(() => organizations.id).notNull(),
   projectId: integer("project_id").references(() => projects.id).notNull(),
+  phaseId: integer("phase_id").references(() => projectPhases.id),
   name: varchar("name", { length: 255 }).notNull(),
   status: varchar("status", { length: 50 }).notNull().default('todo'), // todo, in_progress, done, blocked
   priority: varchar("priority", { length: 50 }).default('medium'),
   assigneeId: integer("assignee_id").references(() => users.id),
+  vendorId: integer("vendor_id").references(() => vendors.id), // For subcontractors
+  cost: numeric("cost", { precision: 12, scale: 2 }),
   dueDate: timestamp("due_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -227,6 +245,7 @@ export const projectsRelations = relations(projects, ({ many }) => ({
   properties: many(properties),
   tasks: many(projectTasks),
   risks: many(projectRisks),
+  phases: many(projectPhases),
 }));
 
 export const propertiesRelations = relations(properties, ({ one }) => ({
@@ -240,6 +259,29 @@ export const projectRisksRelations = relations(projectRisks, ({ one }) => ({
   project: one(projects, {
     fields: [projectRisks.projectId],
     references: [projects.id],
+  }),
+}));
+
+export const projectPhasesRelations = relations(projectPhases, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [projectPhases.projectId],
+    references: [projects.id],
+  }),
+  tasks: many(projectTasks),
+}));
+
+export const projectTasksRelations = relations(projectTasks, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectTasks.projectId],
+    references: [projects.id],
+  }),
+  phase: one(projectPhases, {
+    fields: [projectTasks.phaseId],
+    references: [projectPhases.id],
+  }),
+  vendor: one(vendors, {
+    fields: [projectTasks.vendorId],
+    references: [vendors.id],
   }),
 }));
 
