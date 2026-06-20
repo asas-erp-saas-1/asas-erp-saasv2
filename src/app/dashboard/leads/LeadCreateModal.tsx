@@ -102,14 +102,14 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
                   type="text"
                   required
                   placeholder="Nom complet du prospect"
-                  className="w-full px-4 py-3 bg-asas-sand/30 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold focus:border-asas-gold transition-all placeholder:text-gray-500"
+                  className="w-full px-4 py-3 sm:py-2 bg-asas-sand/30 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-sm text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-gray-500"
                   value={formData.clientName}
                   onChange={e => setFormData({ ...formData, clientName: e.target.value })}
                 />
                 <input
                   type="tel"
                   placeholder="Téléphone (WhatsApp)"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500 font-mono tracking-wide"
+                  className="w-full px-4 py-3 sm:py-2 bg-asas-sand/30 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-sm text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-gray-500 font-mono tracking-wide"
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
                 />
@@ -119,7 +119,7 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Acquisition</label>
               <select
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                className="w-full px-4 py-3 sm:py-2 bg-asas-sand/30 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-sm text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all"
                 value={formData.source}
                 onChange={e => setFormData({ ...formData, source: e.target.value })}
               >
@@ -140,14 +140,14 @@ export function LeadCreateModal({ onClose, onSuccess }: LeadCreateModalProps) {
                 <input
                   type="number"
                   placeholder="Budget Min"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500 placeholder:font-normal font-mono"
+                  className="w-full px-4 py-3 sm:py-2 bg-asas-sand/30 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-sm text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-gray-500 placeholder:font-normal font-mono"
                   value={formData.budgetMin}
                   onChange={e => setFormData({ ...formData, budgetMin: e.target.value })}
                 />
                 <input
                   type="number"
                   placeholder="Budget Max"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-xl text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500 placeholder:font-normal font-mono"
+                  className="w-full px-4 py-3 sm:py-2 bg-asas-sand/30 dark:bg-[#141618] border border-black/10 dark:border-white/10 rounded-sm text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-asas-gold focus:ring-1 focus:ring-asas-gold transition-all placeholder:text-gray-500 placeholder:font-normal font-mono"
                   value={formData.budgetMax}
                   onChange={e => setFormData({ ...formData, budgetMax: e.target.value })}
                 />
