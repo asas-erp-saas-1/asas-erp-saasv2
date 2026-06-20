@@ -183,7 +183,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                           href={href}
                           onClick={() => setIsOpen(false)}
                           className={clsx(
-                            "flex items-center justify-between px-4 py-3 text-[10px] font-bold tracking-widest uppercase rounded-sm transition-all relative overflow-hidden group active:scale-[0.98]",
+                            "flex items-center justify-between px-4 py-4 text-[10px] font-bold tracking-widest uppercase rounded-sm transition-all relative overflow-hidden group active:scale-[0.98]",
                             isActive 
                               ? "text-asas-charcoal dark:text-asas-sand bg-asas-gold/10 border border-asas-gold/20 shadow-[0_0_15px_rgba(199,161,90,0.05)]" 
                               : "text-asas-charcoal/60 dark:text-asas-silver bg-asas-sand/50 dark:bg-white/5 hover:bg-asas-silver/10 hover:text-asas-charcoal dark:hover:text-asas-sand border border-transparent"

@@ -152,12 +152,12 @@ export function CommandPalette() {
                 {results.length === 0 && query.length < 2 && (
                   <div className="p-4">
                     <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest pl-2 mb-2">Requêtes Rapides</p>
-                    <div className="grid grid-cols-2 gap-2">
-                         <button onClick={() => { router.push('/dashboard/leads/new'); setIsOpen(false); }} className="flex flex-col text-left p-3 rounded-sm bg-white dark:bg-[#141618] border border-asas-silver/10 hover:border-asas-gold/40 hover:bg-asas-sand/30 dark:hover:bg-white/5 transition-colors cursor-pointer group">
-                           <span className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex items-center gap-2 group-hover:text-asas-gold transition-colors"><Users className="w-4 h-4"/> Nlle. Requête </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                         <button onClick={() => { router.push('/dashboard/leads/new'); setIsOpen(false); }} className="flex flex-col text-left p-4 rounded-sm bg-white dark:bg-[#141618] border border-asas-silver/10 hover:border-asas-gold/40 hover:bg-asas-sand/30 dark:hover:bg-white/5 transition-colors cursor-pointer group active:scale-[0.98]">
+                           <span className="text-[10px] sm:text-xs font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex items-center gap-2 group-hover:text-asas-gold transition-colors"><Users className="w-4 h-4"/> Nlle. Requête </span>
                            <span className="text-[9px] text-asas-silver uppercase tracking-widest font-bold mt-1">Créer un prospect</span>
                          </button>
-                         <button onClick={() => { router.push('/dashboard/clients'); setIsOpen(false); }} className="flex flex-col text-left p-3 rounded-sm bg-white dark:bg-[#141618] border border-asas-silver/10 hover:border-asas-gold/40 hover:bg-asas-sand/30 dark:hover:bg-white/5 transition-colors cursor-pointer group">
+                         <button onClick={() => { router.push('/dashboard/clients'); setIsOpen(false); }} className="flex flex-col text-left p-4 rounded-sm bg-white dark:bg-[#141618] border border-asas-silver/10 hover:border-asas-gold/40 hover:bg-asas-sand/30 dark:hover:bg-white/5 transition-colors cursor-pointer group active:scale-[0.98]">
                            <span className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest flex items-center gap-2 group-hover:text-asas-gold transition-colors"><UserSquare2 className="w-4 h-4"/> Base Clients</span>
                            <span className="text-[9px] text-asas-silver uppercase tracking-widest font-bold mt-1">Rechercher contact</span>
                          </button>

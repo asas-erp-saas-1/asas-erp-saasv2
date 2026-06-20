@@ -237,23 +237,31 @@ export default function PropertiesPage() {
 
         {/* Content View */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {[...Array(8)].map((_, i) => <div key={i} className="h-80 bg-white/5 rounded-2xl border border-white/5 animate-pulse" />)}
           </div>
         ) : properties.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-white/50 bg-[#051121] rounded-2xl border border-white/10 shadow-2xl">
-            <div className="w-20 h-20 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+          <div className="flex flex-col items-center justify-center py-20 sm:py-32 text-white/50 bg-[#051121] rounded-2xl border border-white/10 shadow-2xl px-4 text-center">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
                <Building2 className="h-8 w-8 text-white/30" />
             </div>
-             <p className="text-lg font-bold text-white mb-2 font-display uppercase tracking-widest">Base de données vide</p>
-             <p className="text-[9px] uppercase tracking-widest">Ajustez vos paramètres régionaux ou d'état.</p>
+             <p className="text-base sm:text-lg font-bold text-white mb-2 font-display uppercase tracking-widest leading-tight">Base de données vide</p>
+             <p className="text-[10px] uppercase tracking-widest mb-6">Ajustez vos paramètres régionaux ou d'état.</p>
+             {(search || statusFilter || typeFilter) && (
+               <button 
+                 onClick={() => { setSearch(''); setStatus(''); setType(''); }} 
+                 className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-white transition-colors"
+               >
+                 Réinitialiser les filtres
+               </button>
+             )}
           </div>
         ) : viewMode === 'map' ? (
-          <div className="animate-in fade-in zoom-in-95 duration-500 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="animate-in fade-in zoom-in-95 duration-500 rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative z-0">
             <InteractiveGridMap properties={properties as any} onSelect={(id) => console.log('Selected', id)} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 animate-in fade-in duration-500 pb-20 md:pb-0">
             {properties.map((p, i) => <PropertyCard key={p.id} property={p} onStatusChange={async (id, s) => {
               setProperties(curr => curr.map(prop => prop.id === id ? { ...prop, status: s } : prop))
               try {

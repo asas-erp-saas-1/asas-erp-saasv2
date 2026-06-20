@@ -103,7 +103,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
           </ActionPanelDescription>
         </ActionPanelHeader>
 
-        <div className="flex-1 overflow-y-auto p-6 scrollbar-thin custom-scrollbar space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar custom-scrollbar space-y-4 sm:space-y-6 pb-safe mb-8">
           {loading ? (
             <div className="flex flex-col gap-4 animate-pulse">
               <div className="h-24 bg-white/5 rounded-sm border border-asas-silver/10" />
@@ -114,15 +114,15 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                Le prospect n'a pas pu être chargé.
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               
               {/* Execution Action Block (Gating System) */}
-              <div className="bg-[#1A2A4A] p-4 flex flex-col md:flex-row items-center justify-between gap-4 border border-[#1A2A4A] rounded-sm">
-                <div>
-                  <h3 className="text-sm font-bold text-[#D4A64F] mb-0.5 uppercase tracking-widest flex items-center gap-2">
+              <div className="bg-[#1A2A4A] p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 border border-[#1A2A4A] rounded-sm">
+                <div className="flex-1">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#D4A64F] mb-1 sm:mb-0.5 uppercase tracking-widest flex items-center gap-2">
                     Action Exécutive ({lead.status})
                   </h3>
-                  <p className="text-[10px] text-white/70">{
+                  <p className="text-[10px] text-white/70 leading-relaxed">{
                     lead.status === 'new' ? "Prospect qualifié ? Définissez ses critères avant de le basculer en Visite." :
                     lead.status === 'visiting' ? "Visite effectuée ? Enregistrez le compte-rendu ou passez en Négociation." :
                     lead.status === 'negotiating' ? "Discussion en cours. Obtenez un accord de principe ou convertissez-le en Vente/Option." :
@@ -130,26 +130,26 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                     "Dossier perdu ou annulé."
                   }</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
                   {lead.status === 'new' && (
-                    <button onClick={() => updateStatus('visiting')} className="px-4 py-2 bg-[#D4A64F] hover:bg-[#D4A64F]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap">
+                    <button onClick={() => updateStatus('visiting')} className="flex-1 md:flex-none px-4 py-3 sm:py-2 bg-[#D4A64F] hover:bg-[#D4A64F]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap active:scale-95">
                       Pogrammer Visite
                     </button>
                   )}
                   {lead.status === 'visiting' && (
-                    <button onClick={() => updateStatus('negotiating')} className="px-4 py-2 bg-[#D4A64F] hover:bg-[#D4A64F]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap">
+                    <button onClick={() => updateStatus('negotiating')} className="flex-1 md:flex-none px-4 py-3 sm:py-2 bg-[#D4A64F] hover:bg-[#D4A64F]/90 text-[#1A2A4A] font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap active:scale-95">
                       Démarrer Négociation
                     </button>
                   )}
                   {lead.status === 'negotiating' && (
-                    <>
-                      <button onClick={() => updateStatus('option')} className="px-4 py-2 border border-[#D4A64F]/50 text-[#D4A64F] hover:bg-white/5 font-bold text-xs rounded-sm transition-all cursor-pointer whitespace-nowrap">
+                    <div className="flex gap-2 w-full flex-col sm:flex-row">
+                      <button onClick={() => updateStatus('option')} className="flex-1 px-4 py-3 sm:py-2 border border-[#D4A64F]/50 text-[#D4A64F] hover:bg-white/5 font-bold text-xs rounded-sm transition-all cursor-pointer whitespace-nowrap active:scale-95">
                         Poser une Option
                       </button>
-                      <button onClick={() => updateStatus('reserved')} className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap">
+                      <button onClick={() => updateStatus('reserved')} className="flex-1 px-3 py-3 sm:py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-sm transition-all shadow-sm cursor-pointer whitespace-nowrap active:scale-95">
                         Convertir en Vente
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -226,12 +226,12 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                   </h4>
                 </div>
 
-                <div className="mb-6 flex flex-col gap-2">
-                  <div className="flex gap-2">
+                <div className="mb-6 flex flex-col gap-3 sm:gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input 
                       type="text" 
                       id="new-note-input"
-                      className="flex-1 bg-white/5 border border-asas-silver/20 rounded-sm px-4 py-2 text-xs text-asas-sand focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
+                      className="flex-1 bg-white/5 border border-asas-silver/20 rounded-sm px-4 py-3 sm:py-2 text-sm sm:text-xs text-asas-sand focus:outline-none focus:ring-1 focus:ring-asas-gold focus:border-asas-gold"
                       placeholder="Ajouter une note rapide..."
                       onKeyDown={async (e) => {
                         if (e.key === 'Enter' && e.currentTarget.value.trim() && !loading) {
@@ -254,6 +254,7 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
                       }}
                     />
                     <Button 
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm sm:text-xs"
                       onClick={async () => {
                         const input = document.getElementById('new-note-input') as HTMLInputElement;
                         if (!input || !input.value.trim() || loading) return;
@@ -354,17 +355,17 @@ export function LeadDetailModal({ leadId, onClose }: LeadDetailModalProps) {
           )}
         </div>
 
-        <ActionPanelFooter className="px-6 pb-6 pt-4 bg-white/5">
-           <Button variant="outline" onClick={onClose}>Fermer</Button>
+        <ActionPanelFooter className="px-4 sm:px-6 pb-6 sm:pb-6 pt-4 bg-white/5 flex flex-wrap sm:flex-nowrap gap-2 sm:gap-4 md:mb-0 mb-4">
+           <Button variant="outline" onClick={onClose} className="flex-1 sm:flex-none py-3 sm:py-2 active:scale-95">Fermer</Button>
            {lead && (
-             <>
-               <Button onClick={() => setIsTaskModalOpen(true)} variant="secondary" className="gap-2">
-                 <Calendar className="w-4 h-4" /> Créer Tâche
+             <div className="flex gap-2 flex-1 w-full sm:w-auto">
+               <Button onClick={() => setIsTaskModalOpen(true)} variant="secondary" className="gap-2 flex-1 flex items-center justify-center py-3 sm:py-2 active:scale-95">
+                 <Calendar className="w-4 h-4 shrink-0" /> <span className="truncate">Créer Tâche</span>
                </Button>
-               <Button onClick={() => window.open(`https://wa.me/${(lead as any).clients?.phone?.replace(/\+/g, '') || ''}`, '_blank')} className="gap-2 bg-[#25D366] text-white hover:bg-[#25D366]/90">
-                 <MessageCircle className="w-4 h-4" /> WhatsApp
+               <Button onClick={() => window.open(`https://wa.me/${(lead as any).clients?.phone?.replace(/\+/g, '') || ''}`, '_blank')} className="gap-2 bg-[#25D366] text-white hover:bg-[#25D366]/90 flex-1 flex items-center justify-center py-3 sm:py-2 active:scale-95 border-none">
+                 <MessageCircle className="w-4 h-4 shrink-0" /> WhatsApp
                </Button>
-             </>
+             </div>
            )}
         </ActionPanelFooter>
       </ActionPanelContent>

@@ -42,8 +42,8 @@ const ActionPanelContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-asas-gold disabled:pointer-events-none data-[state=open]:bg-white/10">
-        <X className="h-4 w-4 text-asas-silver hover:text-asas-sand" />
+      <DialogPrimitive.Close className="absolute right-4 top-4 p-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-asas-gold disabled:pointer-events-none data-[state=open]:bg-white/10 active:scale-95">
+        <X className="h-5 w-5 text-asas-silver hover:text-asas-sand" />
         <span className="sr-only">Fermer</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>

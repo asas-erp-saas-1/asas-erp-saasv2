@@ -593,7 +593,7 @@ export default function LeadsPage() {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             className={clsx(
-                              "flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 transition-colors min-h-[150px] no-scrollbar md:custom-scrollbar pb-24 md:pb-4",
+                              "flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 transition-colors min-h-[150px] no-scrollbar md:custom-scrollbar pb-[120px] sm:pb-4 relative",
                               snapshot.isDraggingOver
                                 ? "bg-white/5"
                                 : "",
