@@ -110,7 +110,7 @@ export function CommandCenterGlobal() {
              <p className="text-white/40 text-[10px] sm:text-xs font-mono uppercase tracking-widest">Enterprise Real Estate Operating System</p>
           </div>
           <div className="hidden md:block">
-            <button className="flex items-center justify-between px-4 py-3 bg-[#0A1829] border border-white/10 rounded-xl text-sm font-bold shadow-sm hover:bg-[#0c1c2e] transition-colors min-w-[280px]">
+            <button className="flex items-center justify-between px-4 py-3 bg-[#0A1829] border border-white/10 rounded-xl text-sm font-bold shadow-sm hover:bg-[#0c1c2e] active:scale-95 transition-all min-w-[280px] min-h-[44px]">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-asas-gold/10 flex items-center justify-center border border-asas-gold/20">
                   <Building2 className="w-4 h-4 text-asas-gold" />
@@ -127,73 +127,73 @@ export function CommandCenterGlobal() {
       </motion.div>
 
       {/* 2. Primary KPI Architecture (Mobile Horizontal Scroll / Grid on Desktop) */}
-      <div className="flex sm:grid overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 -mx-3 px-3 sm:mx-0 sm:px-0 snap-x snap-mandatory no-scrollbar grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="flex sm:grid overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 -mx-3 px-3 sm:mx-0 sm:px-0 snap-x snap-mandatory no-scrollbar grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Revenue */}
-        <motion.div variants={itemVariants} className="min-w-[240px] sm:min-w-0 snap-center p-4 sm:p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group">
-          <div className="flex justify-between items-start mb-3 sm:mb-4">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-white/60">Gross Revenue</span>
-             <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D4A64F]" />
+        <motion.div variants={itemVariants} className="min-w-[280px] sm:min-w-0 snap-center p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Gross Revenue</span>
+             <DollarSign className="w-4 h-4 text-[#D4A64F]" />
           </div>
           <div>
-            <span className="text-xl sm:text-2xl font-mono font-bold text-white tracking-tight flex items-center">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${((metrics?.revenue || 842000000) / 1000000).toFixed(1)}`}
-              <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1 text-white/40">M DZD</span>
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight flex items-center">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : `${((metrics?.revenue || 842000000) / 1000000).toFixed(1)}`}
+              <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1.5 text-white/40">M DZD</span>
             </span>
-            <div className="flex items-center gap-1 mt-1.5 sm:mt-2 bg-green-500/10 w-fit px-1.5 py-0.5 rounded">
+            <div className="flex items-center gap-1.5 mt-2 bg-green-500/10 w-fit px-2 py-1 rounded-sm">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
-              <span className="text-green-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">+18.6%</span>
+              <span className="text-green-400 text-[10px] font-bold uppercase tracking-widest">+18.6%</span>
             </div>
           </div>
         </motion.div>
 
         {/* KPI 2: Cash Position */}
-        <motion.div variants={itemVariants} className="min-w-[240px] sm:min-w-0 snap-center p-4 sm:p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group">
-          <div className="flex justify-between items-start mb-3 sm:mb-4">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-white/60">Cash Position</span>
-            <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400" />
+        <motion.div variants={itemVariants} className="min-w-[280px] sm:min-w-0 snap-center p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Cash Position</span>
+            <Activity className="w-4 h-4 text-green-400" />
           </div>
           <div>
-            <span className="text-xl sm:text-2xl font-mono font-bold text-white tracking-tight flex items-center">
-               182.7 <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1 text-white/40">M DZD</span>
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight flex items-center">
+               182.7 <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1.5 text-white/40">M DZD</span>
             </span>
-            <div className="flex items-center gap-1 mt-1.5 sm:mt-2 bg-green-500/10 w-fit px-1.5 py-0.5 rounded">
+            <div className="flex items-center gap-1.5 mt-2 bg-green-500/10 w-fit px-2 py-1 rounded-sm">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
-              <span className="text-green-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">+15.2%</span>
+              <span className="text-green-400 text-[10px] font-bold uppercase tracking-widest">+15.2%</span>
             </div>
           </div>
         </motion.div>
 
         {/* KPI 3: Collections */}
-        <motion.div variants={itemVariants} className="min-w-[240px] sm:min-w-0 snap-center p-4 sm:p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group">
-          <div className="flex justify-between items-start mb-3 sm:mb-4">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-white/60">A/R Collections</span>
-             <RefreshCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
+        <motion.div variants={itemVariants} className="min-w-[280px] sm:min-w-0 snap-center p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">A/R Collections</span>
+             <RefreshCcw className="w-4 h-4 text-blue-400" />
           </div>
           <div>
-            <span className="text-xl sm:text-2xl font-mono font-bold text-white tracking-tight flex items-center">
-               64.3 <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1 text-white/40">M DZD</span>
+             <span className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight flex items-center">
+               64.3 <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1.5 text-white/40">M DZD</span>
             </span>
-            <div className="flex items-center gap-1 mt-1.5 sm:mt-2 bg-green-500/10 w-fit px-1.5 py-0.5 rounded">
+            <div className="flex items-center gap-1.5 mt-2 bg-green-500/10 w-fit px-2 py-1 rounded-sm">
               <ArrowUpRight className="w-3 h-3 text-green-400" />
-              <span className="text-green-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">+22.1%</span>
+              <span className="text-green-400 text-[10px] font-bold uppercase tracking-widest">+22.1%</span>
             </div>
           </div>
         </motion.div>
 
         {/* KPI 4: Inventory Sold */}
-        <motion.div variants={itemVariants} className="min-w-[240px] sm:min-w-0 snap-center p-4 sm:p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group relative overflow-hidden">
-          <div className="flex justify-between items-start mb-3 sm:mb-4 relative z-10">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-white/60">Units Sold</span>
-             <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400" />
+        <motion.div variants={itemVariants} className="min-w-[280px] sm:min-w-0 snap-center p-5 rounded-2xl bg-[#0A1829] border border-white/5 hover:border-white/10 transition-colors group relative overflow-hidden">
+          <div className="flex justify-between items-start mb-4 relative z-10">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/60">Units Sold</span>
+             <Home className="w-4 h-4 text-purple-400" />
           </div>
           <div className="relative z-10">
-            <span className="text-xl sm:text-2xl font-mono font-bold text-white tracking-tight flex items-center">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : metrics?.availableProperties || 124}
-              <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1 text-white/40">Units</span>
+             <span className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight flex items-center">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : metrics?.availableProperties || 124}
+              <span className="text-xs sm:text-sm font-sans tracking-normal uppercase ml-1.5 text-white/40">Units</span>
             </span>
-            <div className="flex items-center gap-1 mt-1.5 sm:mt-2 bg-red-500/10 w-fit px-1.5 py-0.5 rounded">
+            <div className="flex items-center gap-1.5 mt-2 bg-red-500/10 w-fit px-2 py-1 rounded-sm">
               <ArrowDownRight className="w-3 h-3 text-red-400" />
-              <span className="text-red-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">-5.2%</span>
+              <span className="text-red-400 text-[10px] font-bold uppercase tracking-widest">-5.2%</span>
             </div>
           </div>
           <div className="absolute bottom-0 inset-x-0 h-10 sm:h-12 opacity-30 mt-4 pointer-events-none">
@@ -242,33 +242,33 @@ export function CommandCenterGlobal() {
              <Star className="w-24 h-24 sm:w-32 sm:h-32 text-[#8b5cf6]" />
           </div>
           <div className="relative z-10 flex flex-col h-full">
-            <div className="flex justify-between items-start mb-4 sm:mb-6">
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-[#8b5cf6] flex items-center gap-1.5 sm:gap-2">
-                <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Copilot Intelligence
+            <div className="flex justify-between items-start mb-6">
+              <span className="text-[10px] sm:text-[10px] uppercase font-bold tracking-widest text-[#8b5cf6] flex items-center gap-2">
+                <Star className="w-3.5 h-3.5" /> Copilot Intelligence
               </span>
             </div>
             
-            <div className="flex-1 flex flex-col gap-3 sm:gap-4">
+            <div className="flex-1 flex flex-col gap-4">
                {/* Insight Card */}
-               <div className="p-3 sm:p-4 rounded-xl bg-white/5 border border-white/5 active:bg-white/10 sm:hover:border-[#8b5cf6]/30 transition-colors cursor-pointer">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-white mb-1.5 sm:mb-2 leading-tight">Collections Optimizer</h4>
-                  <p className="text-[10px] text-white/60 leading-relaxed font-mono">
+               <div className="p-4 rounded-xl bg-white/5 border border-white/5 active:bg-white/10 active:scale-[0.98] transition-all cursor-pointer">
+                  <h4 className="text-xs font-bold text-white mb-2 leading-tight">Collections Optimizer</h4>
+                  <p className="text-[10px] sm:text-xs text-white/60 leading-relaxed font-mono">
                     System detects 24% increase in on-time payments. AI recommends automating follow-up sequence.
                   </p>
                </div>
                
                {/* Insight Card */}
-               <div className="p-3 sm:p-4 rounded-xl bg-white/5 border border-white/5 active:bg-white/10 sm:hover:border-red-500/30 transition-colors cursor-pointer mt-auto">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-white mb-1.5 sm:mb-2 leading-tight flex items-center gap-1.5 sm:gap-2">
-                     <AlertCircle className="w-3 h-3 text-red-500" /> Supply Chain Risk
+               <div className="p-4 rounded-xl bg-white/5 border border-white/5 active:bg-white/10 active:scale-[0.98] transition-all cursor-pointer mt-auto">
+                  <h4 className="text-xs font-bold text-white mb-2 leading-tight flex items-center gap-2">
+                     <AlertCircle className="w-3.5 h-3.5 text-red-500" /> Supply Chain Risk
                   </h4>
-                  <p className="text-[10px] text-white/60 leading-relaxed font-mono">
+                  <p className="text-[10px] sm:text-xs text-white/60 leading-relaxed font-mono">
                     Marina Heights structural delivery delayed by 4 days. Probability of cascading schedule impact: 78%.
                   </p>
                </div>
             </div>
             
-            <button className="w-full mt-4 py-2.5 sm:py-3 bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 active:bg-[#8b5cf6]/30 text-[#c4b5fd] rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-[#8b5cf6]/30 transition-all shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+            <button className="w-full mt-4 py-3 sm:py-3 bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 active:bg-[#8b5cf6]/30 text-[#c4b5fd] rounded-xl text-[10px] font-bold uppercase tracking-widest border border-[#8b5cf6]/30 transition-all shadow-[0_0_15px_rgba(139,92,246,0.1)] active:scale-[0.98] min-h-[44px]">
               View AI Analysis Log
             </button>
           </div>
@@ -276,21 +276,21 @@ export function CommandCenterGlobal() {
       </div>
 
       {/* 4. Bottom Tactical Data Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 pb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pb-20 md:pb-4">
         {/* Project Pipeline Execution */}
-        <motion.div variants={itemVariants} className="lg:col-span-8 p-4 sm:p-6 rounded-2xl bg-[#0A1829] border border-white/5 flex flex-col h-auto sm:h-[320px]">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-1">
-            <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight">Project Execution Ledger</h3>
-            <span className="text-[8px] sm:text-[10px] text-white/40 uppercase tracking-widest font-bold">Immutable Pipeline Data</span>
+        <motion.div variants={itemVariants} className="lg:col-span-8 p-5 sm:p-6 rounded-2xl bg-[#0A1829] border border-white/5 flex flex-col h-auto sm:h-[320px]">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2">
+            <h3 className="text-sm font-bold text-white tracking-tight">Project Execution Ledger</h3>
+            <span className="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest font-bold">Immutable Pipeline Data</span>
           </div>
           <div className="flex-1 overflow-x-auto w-full custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full text-left whitespace-nowrap min-w-[500px]">
               <thead>
                 <tr className="border-b border-white/5">
-                  <th className="pb-2 sm:pb-3 text-[8px] sm:text-[9px] font-bold text-white/30 uppercase tracking-widest">Project Identity</th>
-                  <th className="pb-2 sm:pb-3 text-[8px] sm:text-[9px] font-bold text-white/30 uppercase tracking-widest">Completion Index</th>
-                  <th className="pb-2 sm:pb-3 text-[8px] sm:text-[9px] font-bold text-white/30 uppercase tracking-widest text-right">Inventory Target</th>
-                  <th className="pb-2 sm:pb-3 text-[8px] sm:text-[9px] font-bold text-white/30 uppercase tracking-widest text-right">Yield Value</th>
+                  <th className="pb-3 text-[9px] font-bold text-white/30 uppercase tracking-widest">Project Identity</th>
+                  <th className="pb-3 text-[9px] font-bold text-white/30 uppercase tracking-widest">Completion Index</th>
+                  <th className="pb-3 text-[9px] font-bold text-white/30 uppercase tracking-widest text-right">Inventory Target</th>
+                  <th className="pb-3 text-[9px] font-bold text-white/30 uppercase tracking-widest text-right">Yield Value</th>
                 </tr>
               </thead>
               <tbody>
@@ -299,18 +299,18 @@ export function CommandCenterGlobal() {
                 { name: 'Azure Coastal Villas', progress: 62, sold: '98/160', ca: '21.7 M' },
                 { name: 'Nova Tech District', progress: 41, sold: '56/120', ca: '14.3 M' },
               ].map((proj, i) => (
-                <tr key={i} className="border-b border-white/5 last:border-0 active:bg-white/[0.05] sm:hover:bg-white/[0.02] transition-colors group cursor-pointer">
-                  <td className="py-3 sm:py-4 font-bold text-[11px] sm:text-xs text-white group-hover:text-asas-gold transition-colors">{proj.name}</td>
-                  <td className="py-3 sm:py-4">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="w-16 sm:w-24 bg-white/5 h-1.5 rounded-full overflow-hidden">
+                <tr key={i} className="border-b border-white/5 last:border-0 active:bg-white/[0.05] sm:hover:bg-white/[0.02] transition-colors group cursor-pointer active:scale-[0.99]">
+                  <td className="py-4 font-bold text-xs text-white group-hover:text-asas-gold transition-colors">{proj.name}</td>
+                  <td className="py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 sm:w-24 bg-white/5 h-1.5 rounded-full overflow-hidden">
                         <div className="bg-green-500 h-full rounded-full" style={{ width: `${proj.progress}%` }}></div>
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-mono text-white/50">{proj.progress}%</span>
+                      <span className="text-[10px] font-mono text-white/50">{proj.progress}%</span>
                     </div>
                   </td>
-                  <td className="py-3 sm:py-4 text-right font-mono text-[10px] sm:text-xs text-white/70">{proj.sold}</td>
-                  <td className="py-3 sm:py-4 text-right font-mono font-bold text-xs sm:text-sm text-white">{proj.ca} <span className="text-[8px] sm:text-[9px] font-sans text-white/40">DZD</span></td>
+                  <td className="py-4 text-right font-mono text-xs text-white/70">{proj.sold}</td>
+                  <td className="py-4 text-right font-mono font-bold text-sm text-white">{proj.ca} <span className="text-[9px] font-sans text-white/40">DZD</span></td>
                 </tr>
               ))}
             </tbody>
@@ -319,13 +319,13 @@ export function CommandCenterGlobal() {
         </motion.div>
 
         {/* Sales Funnel Yield */}
-        <motion.div variants={itemVariants} className="lg:col-span-4 p-4 sm:p-6 rounded-2xl bg-[#0A1829] border border-white/5 flex flex-col h-[280px] sm:h-[320px]">
-          <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight mb-2">Conversion Yield</h3>
-          <div className="flex flex-col sm:flex-row flex-1 items-center mt-2 overflow-hidden">
-            <div className="w-full sm:w-1/2 h-32 sm:h-full relative">
+        <motion.div variants={itemVariants} className="lg:col-span-4 p-5 sm:p-6 rounded-2xl bg-[#0A1829] border border-white/5 flex flex-col h-[320px] sm:h-[320px]">
+          <h3 className="text-sm font-bold text-white tracking-tight mb-4">Conversion Yield</h3>
+          <div className="flex flex-col sm:flex-row flex-1 items-center mt-2 overflow-hidden gap-4 sm:gap-0">
+            <div className="w-full sm:w-1/2 h-40 sm:h-full relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={40} outerRadius={55} sm-innerRadius={55} sm-outerRadius={75} stroke="none" dataKey="value">
+                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={45} outerRadius={60} sm-innerRadius={55} sm-outerRadius={75} stroke="none" dataKey="value">
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
@@ -333,19 +333,19 @@ export function CommandCenterGlobal() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-lg sm:text-xl font-mono font-bold text-white">162.4</span>
-                <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-widest text-white/40 mt-0.5 sm:mt-1">M DZD</span>
+                <span className="text-xl font-mono font-bold text-white">162.4</span>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-white/40 mt-1">M DZD</span>
               </div>
             </div>
-            <div className="w-full sm:w-1/2 flex sm:flex-col justify-center gap-2 sm:space-y-3 pt-3 sm:pt-0 sm:pl-4 border-t sm:border-t-0 sm:border-l border-white/5 overflow-x-auto no-scrollbar">
+            <div className="w-full sm:w-1/2 flex sm:flex-col justify-start gap-4 sm:space-y-3 pt-3 sm:pt-0 sm:pl-4 border-t sm:border-t-0 sm:border-l border-white/5 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
               {pieData.map((item, i) => (
-                <div key={i} className="min-w-fit pr-4 sm:pr-0">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{backgroundColor: item.color, color: item.color}}></span>
-                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/60">{item.name}</span>
+                <div key={i} className="min-w-fit pr-4 sm:pr-0 pl-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{backgroundColor: item.color, color: item.color}}></span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{item.name}</span>
                   </div>
-                  <div className="pl-3 sm:pl-4">
-                     <span className="text-[10px] sm:text-[11px] font-mono text-white/40">{item.value}M <span className="ml-0.5 sm:ml-1 text-white/20">({item.percent})</span></span>
+                  <div className="pl-4">
+                     <span className="text-[11px] font-mono text-white/40">{item.value}M <span className="ml-1 text-white/20">({item.percent})</span></span>
                   </div>
                 </div>
               ))}
