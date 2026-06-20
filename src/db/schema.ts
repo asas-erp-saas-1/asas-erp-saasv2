@@ -351,3 +351,48 @@ export const journalEntries = pgTable("journal_entries", {
   actorId: integer("actor_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// --- ENTERPRISE DOCUMENT ENGINE ---
+
+export const documentTemplates = pgTable("document_templates", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // 'contract', 'invoice', 'receipt'
+  body: text("body").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const documents = pgTable("documents", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id).notNull(),
+  templateId: integer("template_id").references(() => documentTemplates.id),
+  entityType: varchar("entity_type", { length: 50 }).notNull(), // e.g. 'deal', 'client', 'project'
+  entityId: integer("entity_id").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 100 }).default('Autre'),
+  fileUrl: text("file_url").notNull(),
+  fileType: varchar("file_type", { length: 100 }),
+  fileSize: integer("file_size"),
+  version: integer("version").default(1),
+  status: varchar("status", { length: 50 }).default('active'),
+  uploadedBy: varchar("uploaded_by", { length: 50 }).default('Agent'),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const signatures = pgTable("signatures", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => organizations.id).notNull(),
+  documentId: integer("document_id").references(() => documents.id).notNull(),
+  contactId: integer("contact_id").references(() => clients.id).notNull(),
+  status: varchar("status", { length: 50 }).default('pending'), // pending, signed, declined
+  signedAt: timestamp("signed_at"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  signatureData: jsonb("signature_data"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+

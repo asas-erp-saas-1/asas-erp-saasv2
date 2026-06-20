@@ -132,7 +132,7 @@ export function CommandPalette() {
                   ref={inputRef}
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  placeholder="Rechercher par nom, téléphone, ou matricule..."
+                  placeholder="Rechercher nom, réf, ou IA: 'Apparts Oran sous 20M'"
                   className="flex-1 bg-transparent border-none outline-none text-base font-bold text-asas-charcoal dark:text-asas-sand placeholder-asas-silver/60"
                 />
                 {isLoading && <Loader2 className="w-5 h-5 text-asas-silver animate-spin" />}

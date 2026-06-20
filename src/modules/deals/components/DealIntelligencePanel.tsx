@@ -290,23 +290,19 @@ function DealActivitiesSection({ dealId }: { dealId: string }) {
 }
 
 function DealVaultSection({ dealId }: { dealId: string }) {
-  const [links, setLinks] = useState<Activity[]>([]);
+  const [links, setLinks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dragActive, setDragActive] = useState(false);
-  const [uploadCategory, setUploadCategory] = useState("CNI");
+  const [uploadCategory, setUploadCategory] = useState("CNI / Passeport");
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const fetchVaultDocs = () => {
     setLoading(true);
-    fetch(`/api/activities?deal_id=${dealId}`)
+    fetch(`/api/documents?entityType=deal&entityId=${dealId}`)
       .then(res => res.json())
-      .then(data => {
-        // Identify both legacy [VAULT] links and new structured [VAULT-JSON] data nodes
-        const vaultLinks = (data.data || []).filter((a: any) => 
-          a.type === 'note' && (a.description.startsWith('[VAULT]') || a.description.startsWith('[VAULT-JSON]'))
-        );
-        setLinks(vaultLinks);
+      .then(json => {
+        setLinks(json.data || []);
         setLoading(false);
       })
       .catch(err => {
@@ -350,7 +346,8 @@ function DealVaultSection({ dealId }: { dealId: string }) {
             category: uploadCategory,
             dataUrl,
             dealId,
-            portalUpload: false
+            portalUpload: false,
+            entityType: 'deal'
           })
         });
 
@@ -393,10 +390,10 @@ function DealVaultSection({ dealId }: { dealId: string }) {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | number) => {
     if (!confirm("Voulez-vous vraiment retirer ce document du coffre-fort ?")) return;
     try {
-      const res = await fetch(`/api/activities?id=${id}`, {
+      const res = await fetch(`/api/documents?id=${id}`, {
         method: "DELETE"
       });
       if (res.ok) {
@@ -414,53 +411,6 @@ function DealVaultSection({ dealId }: { dealId: string }) {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1048576) return `${Math.round(bytes / 1024)} KB`;
     return `${(bytes / 1048576).toFixed(1)} MB`;
-  };
-
-  // Helper to parse unstructured legacy notes or structured JSON nodes smoothly
-  const parseDocument = (link: Activity) => {
-    const isJson = link.description.startsWith('[VAULT-JSON]');
-    if (isJson) {
-      try {
-        const payloadStr = link.description.replace('[VAULT-JSON] ', '').trim();
-        const payload = JSON.parse(payloadStr);
-        return {
-          id: link.id,
-          filename: payload.filename,
-          category: payload.category || "Autre",
-          url: payload.url,
-          size: payload.size,
-          uploadedBy: payload.uploadedBy || "Agent",
-          date: new Date(payload.timestamp || link.created_at).toLocaleDateString('fr-FR')
-        };
-      } catch (err) {
-         return {
-          id: link.id,
-          filename: "Document Corrompu",
-          category: "Autre",
-          url: "#",
-          size: 0,
-          uploadedBy: "Inconnu",
-          date: new Date(link.created_at).toLocaleDateString('fr-FR')
-         };
-      }
-    } else {
-      // Legacy parsing
-      const url = link.description.replace('[VAULT] ', '').trim();
-      let guessedFilename = "Lien Document Externe";
-      try {
-        const u = new URL(url);
-        guessedFilename = u.pathname.split('/').pop() || u.hostname;
-      } catch(e){}
-      return {
-        id: link.id,
-        filename: guessedFilename,
-        category: "Lien Externe",
-        url: url,
-        size: undefined,
-        uploadedBy: "Agent",
-        date: new Date(link.created_at).toLocaleDateString('fr-FR')
-      };
-    }
   };
 
   const getCategoryColor = (cat: string) => {
@@ -483,7 +433,15 @@ function DealVaultSection({ dealId }: { dealId: string }) {
     }
   };
 
-  const parsedDocs = links.map(parseDocument);
+  const parsedDocs = links.map(doc => ({
+    id: doc.id,
+    filename: doc.name || 'Document inconnu',
+    category: doc.category || 'Autre',
+    url: doc.fileUrl,
+    size: doc.fileSize,
+    uploadedBy: doc.uploadedBy || 'Agent',
+    date: new Date(doc.createdAt || Date.now()).toLocaleDateString('fr-FR')
+  }));
 
   return (
     <div className="bg-white dark:bg-[#141618] rounded-sm p-6 border border-asas-silver/20 shadow-sm mt-6 font-sans">

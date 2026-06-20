@@ -1,9 +1,52 @@
 import { NextResponse } from 'next/server';
 import { kernel } from '@/lib/kernel/core';
+import { GoogleGenAI } from '@google/genai';
 
 export const dynamic = 'force-dynamic';
 
-// In-Memory Simulation State for Phase H falling back to preserve preview sandboxing on un-migrated DBs
+function calculateTreasuryFlows(options: { bankDelayDays: number, stressScenario: boolean, overrideInitialCash?: number }) {
+  const initialCash = options.overrideInitialCash ?? 65000000;
+  const baseInflows = [25000000, 32000000, 41000000, 22000000, 31000000, 48000000];
+  const baseOutflows = [18000000, 22000000, 35000000, 19000000, 30000000, 28000000];
+
+  let currentBalance = initialCash;
+  const list = [];
+  const currentDate = new Date();
+
+  for (let m = 0; m < 6; m++) {
+    const predictionDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + m + 1, 1);
+    
+    let projectedInflow = baseInflows[m] || 25000000;
+    if (options.bankDelayDays > 45) {
+      projectedInflow = projectedInflow * 0.70;
+    } else if (options.bankDelayDays > 20) {
+      projectedInflow = projectedInflow * 0.85;
+    }
+
+    if (options.stressScenario) {
+      projectedInflow = projectedInflow * 0.75;
+      baseOutflows[m] = (baseOutflows[m] || 18000000) * 1.25;
+    }
+
+    const projectedOutflow = baseOutflows[m] || 18000000;
+    currentBalance = currentBalance + projectedInflow - projectedOutflow;
+
+    const p10 = currentBalance - (options.stressScenario ? 12000000 : 5000000);
+    const p90 = currentBalance + (options.stressScenario ? 4000000 : 10000000);
+
+    list.push({
+      monthName: predictionDate.toLocaleString('fr-FR', { month: 'short', year: '2-digit' }).toUpperCase(),
+      predicted_inflow: Math.round(projectedInflow),
+      predicted_outflow: Math.round(projectedOutflow),
+      expected_balance: Math.round(currentBalance),
+      p10_balance: Math.round(p10),
+      p90_balance: Math.round(p90),
+      delayed_impact: Math.round((baseInflows[m] || 25000000) - projectedInflow)
+    });
+  }
+
+  return list;
+}
 let mockKpis = [
   { namespace: 'financial', key: 'cash_burn_rate_dzd', value: 1800000, date: '2026-05-27' },
   { namespace: 'financial', key: 'liquidity_reserve_days', value: 37, date: '2026-05-27' },
@@ -36,55 +79,6 @@ let mockExecutiveAlerts = [
   { id: 'alert-3', severity: 'medium', namespace: 'crm_growth', title: 'Chute de Réservation Agence Blida', message: 'Les rendez-vous sur site à Blida sont en déclin de 40% sur les 14 derniers jours. Risque de sous-financement local.', is_resolved: true, created_at: new Date(Date.now() - 86450000 * 2).toISOString(), action_taken: 'Campagne de relance SMS localisée.' }
 ];
 
-// Helper to project cash flow curves dynamically
-function calculateTreasuryFlows(options: { bankDelayDays: number, stressScenario: boolean, overrideInitialCash?: number }) {
-  const initialCash = options.overrideInitialCash ?? 65000000; // default 65M DZD
-  const baseInflows = [25000000, 32000000, 41000000, 22000000, 31000000, 48000000];
-  const baseOutflows = [18000000, 22000000, 35000000, 19000000, 30000000, 28000000];
-
-  let currentBalance = initialCash;
-  const list = [];
-  const currentDate = new Date();
-
-  for (let m = 0; m < 6; m++) {
-    const predictionDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + m + 1, 1);
-    
-    // Calculate inflow taking into account bank bottlenecks
-    let projectedInflow = baseInflows[m] || 25000000;
-    if (options.bankDelayDays > 45) {
-      // Shifting 25% of inflows to the next cycles
-      projectedInflow = projectedInflow * 0.70;
-    } else if (options.bankDelayDays > 20) {
-      projectedInflow = projectedInflow * 0.85;
-    }
-
-    if (options.stressScenario) {
-      // Squeeze inflows further and bump up outflows due to material price inflation in Algerian market
-      projectedInflow = projectedInflow * 0.75;
-      baseOutflows[m] = (baseOutflows[m] || 18000000) * 1.25;
-    }
-
-    const projectedOutflow = baseOutflows[m] || 18000000;
-    currentBalance = currentBalance + projectedInflow - projectedOutflow;
-
-    // Standard deviation boundaries
-    const p10 = currentBalance - (options.stressScenario ? 12000000 : 5000000);
-    const p90 = currentBalance + (options.stressScenario ? 4000000 : 10000000);
-
-    list.push({
-      monthName: predictionDate.toLocaleString('fr-FR', { month: 'short', year: '2-digit' }).toUpperCase(),
-      predicted_inflow: Math.round(projectedInflow),
-      predicted_outflow: Math.round(projectedOutflow),
-      expected_balance: Math.round(currentBalance),
-      p10_balance: Math.round(p10),
-      p90_balance: Math.round(p90),
-      delayed_impact: Math.round((baseInflows[m] || 25000000) - projectedInflow)
-    });
-  }
-
-  return list;
-}
-
 export async function GET(request: Request) {
   try {
     const identity = await kernel.identity();
@@ -92,8 +86,30 @@ export async function GET(request: Request) {
     const bankDelayDays = parseInt(searchParams.get('bankDelayDays') || '30');
     const stressScenario = searchParams.get('stressScenario') === 'true';
 
-    // Core calculations
-    const treasuryPredictionCurve = calculateTreasuryFlows({ bankDelayDays, stressScenario });
+    // Base fallback calculation
+    let treasuryPredictionCurve = calculateTreasuryFlows({ bankDelayDays, stressScenario });
+    
+    // Check if we can augment with Live Gemini prediction data
+    if (process.env.GEMINI_API_KEY && searchParams.get('useAi') === 'true') {
+       try {
+         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+         const response = await ai.models.generateContent({
+           model: 'gemini-2.5-flash',
+           contents: `You are the ASAS Real Estate AI OS. Based on current constraints (Bank delays: ${bankDelayDays} days, Stress Scenario: ${stressScenario}), generate a highly optimized Treasury Forecast for 6 months tracking actual expected cashflow considering Algerian banking bottlenecks.
+Return ONLY valid JSON like: [{"monthName": "JUN 26", "predicted_inflow": 28000000, "predicted_outflow": 15000000, "expected_balance": 78000000, "p10_balance": 75000000, "p90_balance": 82000000, "delayed_impact": 5000000}]
+Do not use markdown blocks. Return pure JSON.`,
+         });
+         
+         const text = response.text || '';
+         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+         const parsed = JSON.parse(cleanText);
+         if (Array.isArray(parsed) && parsed.length > 0) {
+           treasuryPredictionCurve = parsed;
+         }
+       } catch (err) {
+         console.error('Gemini treasury forecast failed, using base model', err);
+       }
+    }
     
     // Attempt database fetching if tables are provisioned, default to robust fallbacks
     let kpisList = mockKpis;

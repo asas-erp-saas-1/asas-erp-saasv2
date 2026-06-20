@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { promises as fs } from "fs"
 import { join } from "path"
+import { db } from "@/db"
+import { documents } from "@/db/schema"
 import { kernel } from "@/lib/kernel/core"
 
 export async function POST(req: NextRequest) {
   try {
-    const { filename, category, dataUrl, dealId, portalUpload } = await req.json()
+    const identity = await kernel.identity()
+    const { filename, category, dataUrl, dealId, portalUpload, entityType } = await req.json()
 
-    if (!filename || !dataUrl || !dealId) {
+    const actualEntityType = entityType || 'deal'
+    const actualEntityId = dealId
+
+    if (!filename || !dataUrl || !actualEntityId) {
       return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
     }
 
@@ -45,7 +51,20 @@ export async function POST(req: NextRequest) {
     // Write file to local disk
     await fs.writeFile(absolutePath, buffer)
 
-    // Construct the structured JSON payload for the vault entry description
+    // Insert into enterprise documents table
+    const [newDoc] = await db.insert(documents).values({
+       organizationId: identity.tenantId,
+       entityType: actualEntityType,
+       entityId: parseInt(actualEntityId),
+       name: filename,
+       category: category || "Autre",
+       fileUrl: relativeUrl,
+       fileType: mimeType,
+       fileSize: sizeBytes,
+       uploadedBy: portalUpload ? "Client" : "Agent"
+    }).returning();
+
+    // Also inject a legacy activity note for timeline visibility, but the source of truth is now `documents`.
     const vaultPayload = {
       filename,
       category: category || "Autre",
@@ -55,29 +74,19 @@ export async function POST(req: NextRequest) {
       mimeType,
       timestamp
     }
-
-    // Save as a note activity prefixed with [VAULT-JSON] to make parsing extremely robust
-    // This allows backward compatibility and handles complex structures cleanly
-    const mockRes = await fetch(`${req.nextUrl.origin}/api/activities`, {
+    await fetch(`${req.nextUrl.origin}/api/activities`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        deal_id: dealId,
+        deal_id: actualEntityId,
         type: "note",
         description: `[VAULT-JSON] ${JSON.stringify(vaultPayload)}`
       })
-    })
-
-    if (!mockRes.ok) {
-       throw new Error("Impossible d'enregistrer l'activité relative au document")
-    }
-
-    const result = await mockRes.json()
+    }).catch(e => console.warn('Silently failed to push timeline note:', e));
 
     return NextResponse.json({
       success: true,
-      url: relativeUrl,
-      activity: result.data
+      data: newDoc
     })
   } catch (error: any) {
     console.error("Document Upload Router Error:", error)

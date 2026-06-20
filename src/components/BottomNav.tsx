@@ -17,7 +17,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-safe-offset-6 pt-4 bg-gradient-to-t from-[#010812] to-transparent pointer-events-none">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-4 bg-gradient-to-t from-[#010812] to-transparent pointer-events-none">
       {/* Mobile nav bar container */}
       <div className="bg-[#051121]/95 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.8)] flex items-center justify-around px-1 sm:px-2 py-2 sm:py-3 relative pointer-events-auto mx-auto max-w-sm mb-4 sm:mb-6">
         
