@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Plus, Search, HardHat, Factory, Users, Hammer, ShieldCheck, Star, Loader2, Mail, Phone
+  Plus, Search, HardHat, Factory, Users, Hammer, ShieldCheck, Star, Loader2, Mail, Phone, X, Save
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { toast } from 'react-hot-toast';
 
 const STATUS_STYLE: Record<string, string> = {
   active: "bg-green-500/10 text-green-400 border-green-500/20",
@@ -15,23 +16,60 @@ const STATUS_STYLE: Record<string, string> = {
 export function ContractorsModule() {
   const [vendors, setVendors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [formData, setFormData] = useState({
+     name: '',
+     type: 'contractor',
+     specialty: '',
+     contactEmail: '',
+     contactPhone: '',
+  });
+
+  async function fetchVendors() {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/vendors?limit=50');
+      const json = await res.json();
+      if (json.data) {
+         setVendors(json.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch vendors', err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchVendors() {
-      try {
-        const res = await fetch('/api/vendors?limit=50');
-        const json = await res.json();
-        if (json.data) {
-           setVendors(json.data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch vendors', err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchVendors();
   }, []);
+
+  const handleSave = async (e: React.FormEvent) => {
+     e.preventDefault();
+     setSaving(true);
+     try {
+        const res = await fetch('/api/vendors', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify(formData)
+        });
+        const json = await res.json();
+        if (json.data) {
+           toast.success('Vendor added successfully');
+           setIsAdding(false);
+           setFormData({ name: '', type: 'contractor', specialty: '', contactEmail: '', contactPhone: '' });
+           fetchVendors();
+        } else {
+           toast.error(json.error || 'Failed to add vendor');
+        }
+     } catch (e) {
+        toast.error('Network Error');
+     } finally {
+        setSaving(false);
+     }
+  };
 
   return (
     <div className="w-full h-full flex flex-col space-y-6 animate-in fade-in duration-500 bg-transparent text-white pt-4">
@@ -53,11 +91,51 @@ export function ContractorsModule() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#F97316] hover:bg-[#FB923C] text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all active:scale-95 border border-transparent outline-none">
-             <Plus className="w-4 h-4" /> Add Vendor
+           <button 
+             onClick={() => setIsAdding(!isAdding)}
+             className="flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#F97316] hover:bg-[#FB923C] text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all active:scale-95 border border-transparent outline-none">
+             {isAdding ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />} 
+             {isAdding ? "Cancel" : "Add Vendor"}
            </button>
         </div>
       </div>
+
+      {isAdding && (
+         <div className="p-6 bg-[#0A1829] border border-white/10 rounded-2xl">
+            <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-6">New Vendor Details</h2>
+            <form onSubmit={handleSave} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <div>
+                  <label className="block text-[10px] uppercase font-bold text-white/50 tracking-widest mb-2">Company Name</label>
+                  <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-orange-500/50 outline-none" placeholder="Acme Construction" />
+               </div>
+               <div>
+                  <label className="block text-[10px] uppercase font-bold text-white/50 tracking-widest mb-2">Type</label>
+                  <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-orange-500/50 outline-none">
+                     <option value="contractor">Contractor</option>
+                     <option value="supplier">Supplier</option>
+                     <option value="service">Service</option>
+                  </select>
+               </div>
+               <div>
+                  <label className="block text-[10px] uppercase font-bold text-white/50 tracking-widest mb-2">Specialty</label>
+                  <input type="text" value={formData.specialty} onChange={e => setFormData({...formData, specialty: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-orange-500/50 outline-none" placeholder="Plumbing, Concrete..." />
+               </div>
+               <div>
+                  <label className="block text-[10px] uppercase font-bold text-white/50 tracking-widest mb-2">Contact Email</label>
+                  <input type="email" value={formData.contactEmail} onChange={e => setFormData({...formData, contactEmail: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-orange-500/50 outline-none" placeholder="contact@acme.com" />
+               </div>
+               <div>
+                  <label className="block text-[10px] uppercase font-bold text-white/50 tracking-widest mb-2">Contact Phone</label>
+                  <input type="text" value={formData.contactPhone} onChange={e => setFormData({...formData, contactPhone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-orange-500/50 outline-none" placeholder="+213 555 123 456" />
+               </div>
+               <div className="sm:col-span-2 flex justify-end mt-4">
+                  <button type="submit" disabled={saving} className="flex items-center gap-2 px-8 py-3 bg-[#F97316] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50">
+                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Vendor
+                  </button>
+               </div>
+            </form>
+         </div>
+      )}
 
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="relative flex-1 max-w-md">

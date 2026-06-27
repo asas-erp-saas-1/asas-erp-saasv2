@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'motion/react';
+import { PropertyCreateModal } from '@/app/dashboard/properties/PropertyCreateModal';
 
 const STATUS_STYLE: Record<string, string> = {
   sold: "bg-[#0A1829] text-blue-400 border-blue-500/30",
@@ -25,25 +26,27 @@ export function UnitManagement() {
   const [units, setUnits] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  async function fetchUnits() {
+    try {
+      const res = await fetch('/api/properties?limit=50');
+      const json = await res.json();
+      // Fallback to strict demo data if DB is empty, guaranteeing UI rendering
+      if (json.data && json.data.length > 0) {
+         setUnits(json.data);
+      } else {
+         setUnits(DEFAULT_DEMO_UNITS);
+      }
+    } catch (err) {
+      console.error('Failed to fetch units', err);
+      setUnits(DEFAULT_DEMO_UNITS); // Fallback on api crash
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchUnits() {
-      try {
-        const res = await fetch('/api/properties?limit=50');
-        const json = await res.json();
-        // Fallback to strict demo data if DB is empty, guaranteeing UI rendering
-        if (json.data && json.data.length > 0) {
-           setUnits(json.data);
-        } else {
-           setUnits(DEFAULT_DEMO_UNITS);
-        }
-      } catch (err) {
-        console.error('Failed to fetch units', err);
-        setUnits(DEFAULT_DEMO_UNITS); // Fallback on api crash
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchUnits();
   }, []);
 
@@ -79,11 +82,25 @@ export function UnitManagement() {
            <button className="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest transition-colors border border-white/10">
              <Filter className="w-3.5 h-3.5" /> Filter Stock
            </button>
-           <button className="flex-1 md:flex-none justify-center flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(212,166,79,0.2)] transition-all active:scale-95 border border-transparent">
+           <button 
+             onClick={() => setIsModalOpen(true)}
+             className="flex-1 md:flex-none justify-center flex items-center gap-2 px-6 py-2.5 shrink-0 bg-[#D4A64F] hover:bg-[#E0B96B] text-[#051121] rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(212,166,79,0.2)] transition-all active:scale-95 border border-transparent">
              <Plus className="w-4 h-4" /> Add Inventory
            </button>
         </div>
       </div>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <PropertyCreateModal 
+            onClose={() => setIsModalOpen(false)}
+            onSuccess={() => {
+              setIsModalOpen(false);
+              fetchUnits();
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* 2. Enterprise Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
