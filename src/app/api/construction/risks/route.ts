@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
+import { kernel } from '@/lib/kernel/core';
 import { db } from '@/db';
 import { projectRisks, projects } from '@/db/schema';
-import { desc, eq, inArray } from 'drizzle-orm';
+import { desc, eq, inArray, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const projectId = searchParams.get('projectId');
@@ -25,10 +32,11 @@ export async function GET(request: Request) {
       }
     })
     .from(projectRisks)
-    .leftJoin(projects, eq(projectRisks.projectId, projects.id));
+    .leftJoin(projects, eq(projectRisks.projectId, projects.id))
+    .where(eq(projectRisks.organizationId, orgId));
 
     if (projectId) {
-       query = query.where(eq(projectRisks.projectId, Number(projectId))) as any;
+       query = query.where(and(eq(projectRisks.projectId, Number(projectId)), eq(projectRisks.organizationId, orgId))) as any;
     }
 
     const results = await query.orderBy(desc(projectRisks.createdAt)).limit(limit);
@@ -55,6 +63,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const body = await request.json();
     const { projectId, type, description, severity, status, delayImpact } = body;
     
@@ -63,6 +77,7 @@ export async function POST(request: Request) {
     }
 
     const newRisk = await db.insert(projectRisks).values({
+      organizationId: orgId,
       projectId: Number(projectId),
       type,
       description,

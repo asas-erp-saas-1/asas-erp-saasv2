@@ -1,17 +1,24 @@
 import { NextResponse } from 'next/server';
+import { kernel } from '@/lib/kernel/core';
 import { db } from '@/db';
-import { deals, projectRisks, invoices, journalEntries, projectPhases } from '@/db/schema';
-import { sql, eq } from 'drizzle-orm';
+import { deals, projectRisks, invoices, journalEntries, projectPhases, projects } from '@/db/schema';
+import { sql, eq, inArray } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     // 1. CRM Metrics
     const dealsStats = await db.select({
        total: sql`count(*)`.mapWith(Number),
        completed: sql`count(*) filter (where ${deals.status} = 'completed')`.mapWith(Number),
        revenue: sql`sum(${deals.agreedPrice})`.mapWith(Number)
-    }).from(deals);
+    }).from(deals).where(eq(deals.organizationId, orgId));
 
     const totalDeals = dealsStats[0]?.total || 0;
     const completedDeals = dealsStats[0]?.completed || 0;
@@ -24,7 +31,7 @@ export async function GET(request: Request) {
     const ledgerStats = await db.select({
        totalCredits: sql`sum(case when ${journalEntries.entryType} = 'credit' then ${journalEntries.amount} else 0 end)`.mapWith(Number),
        totalDebits: sql`sum(case when ${journalEntries.entryType} = 'debit' then ${journalEntries.amount} else 0 end)`.mapWith(Number)
-    }).from(journalEntries);
+    }).from(journalEntries).where(eq(journalEntries.organizationId, orgId));
     
     // Dynamic margin calculation
     const totalCredits = ledgerStats[0]?.totalCredits || 0;
@@ -36,13 +43,16 @@ export async function GET(request: Request) {
     const phasesStats = await db.select({
        totalPhases: sql`count(*)`.mapWith(Number),
        completedPhases: sql`count(*) filter (where ${projectPhases.status} = 'completed')`.mapWith(Number),
-    }).from(projectPhases);
+    }).from(projectPhases)
+      .leftJoin(projects, eq(projectPhases.projectId, projects.id))
+      .where(eq(projects.organizationId, orgId));
+
     const constructionProgress = phasesStats[0]?.totalPhases > 0 
       ? Math.round((phasesStats[0].completedPhases / phasesStats[0].totalPhases) * 100) 
       : 72;
 
     // Risks extracted for scatter plot
-    const risks = await db.select().from(projectRisks).limit(10);
+    const risks = await db.select().from(projectRisks).where(eq(projectRisks.organizationId, orgId)).limit(10);
     const riskData = risks.map(r => ({
        x: r.severity === 'critical' ? 90 : r.severity === 'high' ? 70 : r.severity === 'medium' ? 40 : 20,
        y: r.status === 'active' ? 80 : r.status === 'monitoring' ? 40 : 10,

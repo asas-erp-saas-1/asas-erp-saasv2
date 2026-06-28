@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
+import { kernel } from '@/lib/kernel/core';
 import { db } from '@/db';
 import { projects } from '@/db/schema';
-import { desc } from 'drizzle-orm';
+import { desc, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (identity.tenantId === 'unknown') {
+       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
@@ -14,7 +20,10 @@ export async function GET(request: Request) {
 
     if (id) {
        const project = await db.query.projects.findFirst({
-         where: (projects, { eq }) => eq(projects.id, Number(id)),
+         where: (projects, { and, eq }) => and(
+            eq(projects.id, Number(id)),
+            eq(projects.organizationId, identity.tenantId as number)
+         ),
          with: {
            properties: true,
            phases: true,
@@ -32,6 +41,7 @@ export async function GET(request: Request) {
     }
 
     const projectsResult = await db.query.projects.findMany({
+      where: (projects, { eq }) => eq(projects.organizationId, identity.tenantId as number),
       orderBy: [desc(projects.createdAt)],
       limit,
       offset,
@@ -50,6 +60,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (identity.tenantId === 'unknown') {
+       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { name, location, budget, managerId, status } = body;
     
@@ -63,19 +78,19 @@ export async function POST(request: Request) {
       budget,
       managerId: managerId ? Number(managerId) : undefined,
       status: status || 'planning',
-      organizationId: 1 // Default organization fallback for now
+      organizationId: identity.tenantId as number
     }).returning();
 
     const projectId = newProject[0].id;
     const { projectPhases } = await import('@/db/schema');
 
     await db.insert(projectPhases).values([
-      { organizationId: 1, projectId, name: 'Réservation (Dépôt)', billingPercentage: 20, constructionPercentage: 0, status: 'completed' },
-      { organizationId: 1, projectId, name: 'Fondation & Sous-sol', billingPercentage: 15, constructionPercentage: 10, status: 'pending' },
-      { organizationId: 1, projectId, name: 'Plancher Haut (RDC)', billingPercentage: 15, constructionPercentage: 25, status: 'pending' },
-      { organizationId: 1, projectId, name: 'Gros Œuvres (Toiture)', billingPercentage: 20, constructionPercentage: 50, status: 'pending' },
-      { organizationId: 1, projectId, name: 'Second Œuvre (Achèvement)', billingPercentage: 20, constructionPercentage: 85, status: 'pending' },
-      { organizationId: 1, projectId, name: 'Remise des clés', billingPercentage: 10, constructionPercentage: 100, status: 'pending' }
+      { organizationId: identity.tenantId as number, projectId, name: 'Réservation (Dépôt)', billingPercentage: 20, constructionPercentage: 0, status: 'completed' },
+      { organizationId: identity.tenantId as number, projectId, name: 'Fondation & Sous-sol', billingPercentage: 15, constructionPercentage: 10, status: 'pending' },
+      { organizationId: identity.tenantId as number, projectId, name: 'Plancher Haut (RDC)', billingPercentage: 15, constructionPercentage: 25, status: 'pending' },
+      { organizationId: identity.tenantId as number, projectId, name: 'Gros Œuvres (Toiture)', billingPercentage: 20, constructionPercentage: 50, status: 'pending' },
+      { organizationId: identity.tenantId as number, projectId, name: 'Second Œuvre (Achèvement)', billingPercentage: 20, constructionPercentage: 85, status: 'pending' },
+      { organizationId: identity.tenantId as number, projectId, name: 'Remise des clés', billingPercentage: 10, constructionPercentage: 100, status: 'pending' }
     ]);
 
     return NextResponse.json({ data: newProject[0] }, { status: 201 });

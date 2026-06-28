@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { jobCandidates, jobPostings } from '@/db/schema';
-import { desc, eq, sql } from 'drizzle-orm';
+import { desc, eq, sql, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { kernel } from '@/lib/kernel/core';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
 
@@ -23,6 +30,7 @@ export async function GET(request: Request) {
     })
     .from(jobCandidates)
     .leftJoin(jobPostings, eq(jobCandidates.jobPostingId, jobPostings.id))
+    .where(eq(jobCandidates.organizationId, orgId))
     .orderBy(desc(jobCandidates.createdAt))
     .limit(limit);
 
@@ -41,7 +49,9 @@ export async function GET(request: Request) {
        openRoles: sql`count(distinct ${jobPostings.id})`.mapWith(Number),
        activeCandidates: sql`count(${jobCandidates.id})`.mapWith(Number),
        interviews: sql`count(*) filter (where ${jobCandidates.status} = 'En entretien')`.mapWith(Number),
-    }).from(jobCandidates).leftJoin(jobPostings, eq(jobCandidates.jobPostingId, jobPostings.id));
+    }).from(jobCandidates)
+      .leftJoin(jobPostings, eq(jobCandidates.jobPostingId, jobPostings.id))
+      .where(eq(jobCandidates.organizationId, orgId));
 
     return NextResponse.json({ 
        data: formatted, 

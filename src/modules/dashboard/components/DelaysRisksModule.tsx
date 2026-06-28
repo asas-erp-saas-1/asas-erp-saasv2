@@ -54,15 +54,21 @@ export function DelaysRisksModule() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-[#D4A64F] mb-4">Risques Actifs</h3>
-            <span className="text-3xl font-display font-bold text-white">3</span>
+            <span className="text-3xl font-display font-bold text-white">
+               {loading ? <Loader2 className="w-6 h-6 animate-spin text-white/50" /> : risks.filter(r => r.status === 'active').length}
+            </span>
          </div>
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-red-500/20 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-red-400 mb-4">Jours de retards projetés (Moyen)</h3>
-            <span className="text-3xl font-display font-bold text-red-500">+8 Jours</span>
+            <span className="text-3xl font-display font-bold text-red-500">
+               {loading ? <Loader2 className="w-6 h-6 animate-spin text-red-500/50" /> : '+0 Jours'}
+            </span>
          </div>
          <div className="p-6 rounded-2xl bg-[#0A1829] border border-white/5 relative overflow-hidden">
             <h3 className="text-[10px] uppercase font-bold tracking-widest text-green-400 mb-4">Risques Mitigés ce mois</h3>
-            <span className="text-3xl font-display font-bold text-white">12</span>
+            <span className="text-3xl font-display font-bold text-white">
+               {loading ? <Loader2 className="w-6 h-6 animate-spin text-white/50" /> : risks.filter(r => r.status === 'mitigated').length}
+            </span>
          </div>
       </div>
       

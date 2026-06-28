@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { auditLogs, users } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 import { requireSession } from '@/lib/enterprise/auth';
 
@@ -31,11 +31,12 @@ export async function GET(request: Request) {
        }
     })
     .from(auditLogs)
-    .leftJoin(users, eq(auditLogs.userId, users.id))
-    .where(eq(auditLogs.organizationId, session.organizationId));
+    .leftJoin(users, eq(auditLogs.userId, users.id));
     
     if (entityType) {
-       query = query.where(eq(auditLogs.entityType, entityType)) as any;
+       query = query.where(and(eq(auditLogs.organizationId, session.organizationId), eq(auditLogs.entityType, entityType))) as any;
+    } else {
+       query = query.where(eq(auditLogs.organizationId, session.organizationId)) as any;
     }
     
     const logs = await query.orderBy(desc(auditLogs.createdAt)).limit(limit);
