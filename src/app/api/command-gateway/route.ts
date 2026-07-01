@@ -283,11 +283,14 @@ export async function POST(request: Request) {
           if (req && req.type === 'deal_discount') {
              // In a real scenario we'd parse the context/payload to apply the discount.
              // Currently entityId is probably the deal.
-             await kernel.dispatch({
-               type: 'DISCOUNT_APPROVED',
-               aggregateId: req.entity_id,
+             await kernel.mutate('system_events', 'INSERT', {
+               aggregate_type: 'deal',
+               aggregate_id: req.entity_id,
+               event_type: 'DISCOUNT_APPROVED',
                payload: { requestId },
-               actorId: identity.userId
+               version: 1,
+               actor_id: identity.userId,
+               organization_id: identity.tenantId
              });
           }
        }

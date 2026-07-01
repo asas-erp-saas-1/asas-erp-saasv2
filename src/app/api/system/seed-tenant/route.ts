@@ -17,7 +17,9 @@ export async function POST(request: Request) {
        }).returning();
     }
 
-    const orgId = org[0].id;
+    const orgData = org[0];
+    if (!orgData) throw new Error("Failed to create org");
+    const orgId = orgData.id;
 
     // 2. Create Roles
     let adminRole = await db.select().from(roles).where(eq(roles.name, 'Super Admin')).limit(1);
@@ -30,7 +32,9 @@ export async function POST(request: Request) {
        }).returning();
     }
 
-    const roleId = adminRole[0].id;
+    const roleData = adminRole[0];
+    if (!roleData) throw new Error("Failed to create role");
+    const roleId = roleData.id;
 
     // 3. Create initial Admin User
     let adminUser = await db.select().from(users).where(eq(users.email, 'admin@asas.dz')).limit(1);

@@ -17,7 +17,12 @@ export async function GET(request: Request) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const projectId = searchParams.get('projectId');
 
-    let query = db.select({
+    const conditions = [eq(projectRisks.organizationId, orgId)];
+    if (projectId) {
+       conditions.push(eq(projectRisks.projectId, Number(projectId)));
+    }
+
+    const query = db.select({
       id: projectRisks.id,
       projectId: projectRisks.projectId,
       type: projectRisks.type,
@@ -33,11 +38,7 @@ export async function GET(request: Request) {
     })
     .from(projectRisks)
     .leftJoin(projects, eq(projectRisks.projectId, projects.id))
-    .where(eq(projectRisks.organizationId, orgId));
-
-    if (projectId) {
-       query = query.where(and(eq(projectRisks.projectId, Number(projectId)), eq(projectRisks.organizationId, orgId))) as any;
-    }
+    .where(and(...conditions));
 
     const results = await query.orderBy(desc(projectRisks.createdAt)).limit(limit);
     

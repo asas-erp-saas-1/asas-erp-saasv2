@@ -16,7 +16,12 @@ export async function GET(request: Request) {
     const limit = Number(searchParams.get('limit')) || 25;
     const id = searchParams.get('id');
     
-    let query = db.select({
+    const conditions = [eq(deals.organizationId, session.organizationId)];
+    if (id) {
+       conditions.push(eq(deals.id, Number(id)));
+    }
+
+    const query = db.select({
       id: deals.id,
       reference: deals.reference,
       status: deals.status,
@@ -33,19 +38,17 @@ export async function GET(request: Request) {
       properties: {
          id: properties.id,
          title: properties.title,
-         projects: {
-             name: properties.title // fallback projection
-         }
       }
     })
     .from(deals)
     .leftJoin(clients, eq(deals.clientId, clients.id))
     .leftJoin(properties, eq(deals.propertyId, properties.id))
-    .where(eq(deals.organizationId, session.organizationId)); // TANANT ISOLATION
+    .where(and(...conditions)); // TANANT ISOLATION
     
     if (id) {
-       const dealResult = await query.where(and(eq(deals.id, Number(id)), eq(deals.organizationId, session.organizationId))).limit(1);
-       if (dealResult.length === 0) {
+       const dealResult = await query.limit(1);
+       const deal = dealResult[0];
+       if (!deal) {
          return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
        }
        
@@ -54,10 +57,10 @@ export async function GET(request: Request) {
           userId: session.userId,
           action: 'VIEW_DEAL',
           entityType: 'deals',
-          entityId: String(dealResult[0].id)
+          entityId: String(deal.id)
        });
 
-       return NextResponse.json({ data: dealResult[0], count: 1 });
+       return NextResponse.json({ data: deal, count: 1 });
     }
     
     const allDeals = await query.orderBy(desc(deals.createdAt)).limit(limit);
@@ -109,16 +112,21 @@ export async function POST(request: Request) {
       status: 'negotiation'
     }).returning();
 
+    const deal = newDeal[0];
+    if (!deal) {
+      return NextResponse.json({ error: 'Failed to create deal' }, { status: 500 });
+    }
+
     await logAudit({
         organizationId: session.organizationId,
         userId: session.userId,
         action: 'CREATE_DEAL',
         entityType: 'deals',
-        entityId: String(newDeal[0].id),
-        newData: newDeal[0]
+        entityId: String(deal.id),
+        newData: deal
     });
 
-    return NextResponse.json({ data: newDeal[0] }, { status: 201 });
+    return NextResponse.json({ data: deal }, { status: 201 });
   } catch (error: any) {
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });
@@ -146,7 +154,8 @@ export async function PUT(request: Request) {
       status: status
     }).where(and(eq(deals.id, Number(id)), eq(deals.organizationId, session.organizationId))).returning();
 
-    if (updatedDeal.length === 0) {
+    const deal = updatedDeal[0];
+    if (!deal) {
       return NextResponse.json({ error: 'Not found or permission denied' }, { status: 404 });
     }
 
@@ -155,11 +164,11 @@ export async function PUT(request: Request) {
         userId: session.userId,
         action: 'WORKFLOW_TRANSITION',
         entityType: 'deals',
-        entityId: String(updatedDeal[0].id),
+        entityId: String(deal.id),
         newData: { status: status }
     });
 
-    return NextResponse.json({ data: updatedDeal[0] }, { status: 200 });
+    return NextResponse.json({ data: deal }, { status: 200 });
   } catch (error: any) {
     if (error.message === 'Unauthorized' || error.message.includes('Forbidden')) {
        return NextResponse.json({ error: error.message }, { status: 403 });

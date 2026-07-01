@@ -72,25 +72,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
     }
 
+    const orgId = Number(identity.tenantId);
     const newProject = await db.insert(projects).values({
       name,
       location,
       budget,
       managerId: managerId ? Number(managerId) : undefined,
       status: status || 'planning',
-      organizationId: identity.tenantId as number
+      organizationId: orgId
     }).returning();
+    
+    const project = newProject[0];
+    if (!project) throw new Error('Failed to create project');
 
-    const projectId = newProject[0].id;
+    const projectId = project.id;
     const { projectPhases } = await import('@/db/schema');
 
     await db.insert(projectPhases).values([
-      { organizationId: identity.tenantId as number, projectId, name: 'Réservation (Dépôt)', billingPercentage: 20, constructionPercentage: 0, status: 'completed' },
-      { organizationId: identity.tenantId as number, projectId, name: 'Fondation & Sous-sol', billingPercentage: 15, constructionPercentage: 10, status: 'pending' },
-      { organizationId: identity.tenantId as number, projectId, name: 'Plancher Haut (RDC)', billingPercentage: 15, constructionPercentage: 25, status: 'pending' },
-      { organizationId: identity.tenantId as number, projectId, name: 'Gros Œuvres (Toiture)', billingPercentage: 20, constructionPercentage: 50, status: 'pending' },
-      { organizationId: identity.tenantId as number, projectId, name: 'Second Œuvre (Achèvement)', billingPercentage: 20, constructionPercentage: 85, status: 'pending' },
-      { organizationId: identity.tenantId as number, projectId, name: 'Remise des clés', billingPercentage: 10, constructionPercentage: 100, status: 'pending' }
+      { organizationId: orgId, projectId, name: 'Réservation (Dépôt)', billingPercentage: '20', constructionPercentage: '0', status: 'completed' },
+      { organizationId: orgId, projectId, name: 'Fondation & Sous-sol', billingPercentage: '15', constructionPercentage: '10', status: 'pending' },
+      { organizationId: orgId, projectId, name: 'Plancher Haut (RDC)', billingPercentage: '15', constructionPercentage: '25', status: 'pending' },
+      { organizationId: orgId, projectId, name: 'Gros Œuvres (Toiture)', billingPercentage: '20', constructionPercentage: '50', status: 'pending' },
+      { organizationId: orgId, projectId, name: 'Second Œuvre (Achèvement)', billingPercentage: '20', constructionPercentage: '85', status: 'pending' },
+      { organizationId: orgId, projectId, name: 'Remise des clés', billingPercentage: '10', constructionPercentage: '100', status: 'pending' }
     ]);
 
     return NextResponse.json({ data: newProject[0] }, { status: 201 });

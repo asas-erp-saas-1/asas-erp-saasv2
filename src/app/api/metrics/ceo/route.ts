@@ -47,8 +47,9 @@ export async function GET(request: Request) {
       .leftJoin(projects, eq(projectPhases.projectId, projects.id))
       .where(eq(projects.organizationId, orgId));
 
-    const constructionProgress = phasesStats[0]?.totalPhases > 0 
-      ? Math.round((phasesStats[0].completedPhases / phasesStats[0].totalPhases) * 100) 
+    const stats = phasesStats[0];
+    const constructionProgress = (stats && stats.totalPhases > 0) 
+      ? Math.round((stats.completedPhases / stats.totalPhases) * 100) 
       : 72;
 
     // Risks extracted for scatter plot

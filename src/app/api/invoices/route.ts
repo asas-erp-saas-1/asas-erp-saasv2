@@ -17,7 +17,12 @@ export async function GET(request: Request) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const dealId = searchParams.get('dealId');
 
-    let query = db.select({
+    const conditions = [eq(invoices.organizationId, orgId)];
+    if (dealId) {
+       conditions.push(eq(invoices.dealId, Number(dealId)));
+    }
+
+    const query = db.select({
       id: invoices.id,
       dealId: invoices.dealId,
       reference: invoices.reference,
@@ -29,27 +34,23 @@ export async function GET(request: Request) {
       deals: {
          id: deals.id,
          reference: deals.reference,
-         clients: {
-             firstName: clients.firstName,
-             lastName: clients.lastName,
-         }
+      },
+      clients: {
+         firstName: clients.firstName,
+         lastName: clients.lastName,
       }
     })
     .from(invoices)
     .leftJoin(deals, eq(invoices.dealId, deals.id))
     .leftJoin(clients, eq(deals.clientId, clients.id))
-    .where(eq(invoices.organizationId, orgId));
-
-    if (dealId) {
-       query = query.where(and(eq(invoices.dealId, Number(dealId)), eq(invoices.organizationId, orgId))) as any;
-    }
+    .where(and(...conditions));
 
     const results = await query.orderBy(desc(invoices.createdAt)).limit(limit);
     
     // Map data for front-end
     const formatted = results.map(inv => ({
        ...inv,
-       customer_name: inv.deals?.clients ? `${inv.deals.clients.firstName} ${inv.deals.clients.lastName}` : 'Unknown Customer'
+       customer_name: inv.clients ? `${inv.clients.firstName} ${inv.clients.lastName}` : 'Unknown Customer'
     }))
 
     return NextResponse.json({ data: formatted, count: formatted.length });

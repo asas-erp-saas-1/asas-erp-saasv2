@@ -8,7 +8,7 @@ import {
 import { 
   ComposedChart, Bar, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
-import { motion } from 'motion/react';
+import { motion, Variants } from 'motion/react';
 
 export function StrategicForecastingModule() {
   const [timelineData, setTimelineData] = useState<any[]>([]);
@@ -42,7 +42,7 @@ export function StrategicForecastingModule() {
     load();
   }, [useStress]);
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -50,7 +50,7 @@ export function StrategicForecastingModule() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 10 },
     show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
   };

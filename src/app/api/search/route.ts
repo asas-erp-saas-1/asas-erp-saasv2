@@ -73,16 +73,16 @@ If it's not a property search, set isPropertySearch false. No markdown blocks.`,
 
     // Standard Lexical Search
     const [fetchedClients, fetchedProperties, fetchedLeads] = await Promise.all([
-      db.select().from(clients).where(and(tenantCondition, or(ilike(clients.fullName, lowerQ), ilike(clients.phone, lowerQ), ilike(clients.email, lowerQ)))).limit(5),
-      db.select().from(properties).where(and(eq(properties.organizationId, identity.tenantId), or(ilike(properties.title, lowerQ), ilike(properties.referenceCode, lowerQ), ilike(properties.location, lowerQ)))).limit(5),
-      db.select().from(leads).where(and(eq(leads.organizationId, identity.tenantId), ilike(leads.status, lowerQ))).limit(5)
+      db.select().from(clients).where(and(tenantCondition, or(ilike(clients.firstName, lowerQ), ilike(clients.lastName, lowerQ), ilike(clients.phone, lowerQ), ilike(clients.email, lowerQ)))).limit(5),
+      db.select().from(properties).where(and(eq(properties.organizationId, Number(identity.tenantId)), or(ilike(properties.title, lowerQ), ilike(properties.location, lowerQ)))).limit(5),
+      db.select().from(leads).where(and(eq(leads.organizationId, Number(identity.tenantId)), ilike(leads.status, lowerQ))).limit(5)
     ]);
 
     for (const item of fetchedClients) {
       results.push({
         id: item.id,
         type: 'client',
-        title: item.fullName,
+        title: `${item.firstName} ${item.lastName}`,
         subtitle: `Téléphone: ${item.phone || 'N/A'} | Email: ${item.email || 'N/A'}`,
         url: `/dashboard/clients?q=${item.phone}`,
       });
@@ -93,7 +93,7 @@ If it's not a property search, set isPropertySearch false. No markdown blocks.`,
         id: item.id,
         type: 'property',
         title: item.title,
-        subtitle: `Réf: ${item.referenceCode || 'N/A'} | Prix: ${item.price} DZD`,
+        subtitle: `Location: ${item.location || 'N/A'} | Prix: ${item.price} DZD`,
         url: `/dashboard/properties`,
       });
     }

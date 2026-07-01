@@ -10,7 +10,7 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
   ScatterChart, Scatter, ZAxis, Cell
 } from 'recharts';
-import { motion } from 'motion/react';
+import { motion, Variants } from 'motion/react';
 
 export function CEOIntelligenceRoom() {
   const [metrics, setMetrics] = useState<any>(null);
@@ -37,7 +37,7 @@ export function CEOIntelligenceRoom() {
   const riskData = metrics?.riskData || [];
   const departmentData = metrics?.departmentData || [];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -45,7 +45,7 @@ export function CEOIntelligenceRoom() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 10 },
     show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
   };
@@ -266,7 +266,7 @@ export function CEOIntelligenceRoom() {
                 <ZAxis type="number" dataKey="z" range={[50, 300]} name="Value" />
                 <Tooltip cursor={{strokeDasharray: '3 3'}} contentStyle={{backgroundColor: '#051121', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '10px'}} />
                 <Scatter name="Risks" data={riskData} fill="#8884d8">
-                  {riskData.map((entry, index) => (
+                  {riskData.map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Scatter>
@@ -288,7 +288,7 @@ export function CEOIntelligenceRoom() {
             </div>
           </div>
           <div className="flex-1 flex flex-col justify-center gap-4 sm:gap-5 mt-2">
-             {departmentData.map((dept, i) => (
+             {departmentData.map((dept: any, i: number) => (
                <div key={i} className="group cursor-pointer">
                  <div className="flex justify-between items-center mb-1.5 sm:mb-2 text-[10px] sm:text-xs">
                    <span className="font-bold text-white active:text-asas-gold sm:group-hover:text-asas-gold transition-colors">{dept.name}</span>

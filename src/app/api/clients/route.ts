@@ -22,12 +22,13 @@ export async function GET(request: Request) {
         .where(and(eq(clients.id, Number(id)), eq(clients.organizationId, orgId)))
         .limit(1);
       
-      if (clientResult.length === 0) {
+      const client = clientResult[0];
+      if (!client) {
         return NextResponse.json({ error: 'Client not found' }, { status: 404 });
       }
       return NextResponse.json({ data: {
-         ...clientResult[0],
-         full_name: `${clientResult[0].firstName} ${clientResult[0].lastName}`
+         ...client,
+         full_name: `${client.firstName} ${client.lastName}`
       }});
     }
 

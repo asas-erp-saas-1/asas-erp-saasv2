@@ -141,7 +141,7 @@ export function AccountingLedger() {
                      <div key={i} className="flex gap-2 items-center">
                         <select
                            value={l.accountId}
-                           onChange={(e) => { const n = [...lines]; n[i].accountId = e.target.value; setLines(n); }}
+                           onChange={(e) => setLines(lines.map((l, idx) => idx === i ? { ...l, accountId: e.target.value } : l))}
                            className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-yellow-500/50 outline-none transition-colors"
                         >
                            <option value="" disabled>Select Chart of Accounts ID...</option>
@@ -152,7 +152,7 @@ export function AccountingLedger() {
 
                         <select
                            value={l.entryType}
-                           onChange={(e) => { const n = [...lines]; n[i].entryType = e.target.value as any; setLines(n); }}
+                           onChange={(e) => setLines(lines.map((l, idx) => idx === i ? { ...l, entryType: e.target.value as 'debit' | 'credit' } : l))}
                            className="w-32 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none"
                         >
                            <option value="debit">DEBIT</option>
@@ -162,7 +162,7 @@ export function AccountingLedger() {
                         <input 
                            type="number"
                            value={l.amount}
-                           onChange={(e) => { const n = [...lines]; n[i].amount = e.target.value; setLines(n); }}
+                           onChange={(e) => setLines(lines.map((l, idx) => idx === i ? { ...l, amount: e.target.value } : l))}
                            placeholder="0.00"
                            className="w-40 font-mono bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-yellow-500/50 outline-none text-right"
                         />

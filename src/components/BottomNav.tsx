@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
-import { Home, Users, Building2, MathOperations, DollarSign, Sparkles } from 'lucide-react';
+import { Home, Users, Building2, Calculator, DollarSign, Sparkles } from 'lucide-react';
 
 const BOTTOM_NAV_ITEMS = [
   { href: '/dashboard/overview', label: 'Home', icon: Home },

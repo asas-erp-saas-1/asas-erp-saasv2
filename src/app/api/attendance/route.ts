@@ -17,7 +17,12 @@ export async function GET(request: Request) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const userId = searchParams.get('userId');
 
-    let query = db.select({
+    const conditions = [eq(attendance.organizationId, orgId)];
+    if (userId) {
+       conditions.push(eq(attendance.userId, Number(userId)));
+    }
+
+    const query = db.select({
       id: attendance.id,
       userId: attendance.userId,
       date: attendance.date,
@@ -33,11 +38,7 @@ export async function GET(request: Request) {
       }
     }).from(attendance)
       .leftJoin(users, eq(attendance.userId, users.id))
-      .where(eq(attendance.organizationId, orgId));
-
-    if (userId) {
-       query = query.where(and(eq(attendance.userId, Number(userId)), eq(attendance.organizationId, orgId))) as any;
-    }
+      .where(and(...conditions));
 
     const results = await query.orderBy(desc(attendance.date)).limit(limit);
 

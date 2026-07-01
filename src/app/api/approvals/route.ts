@@ -22,22 +22,22 @@ export async function POST(req: NextRequest) {
       .set({ 
          status: action === 'approve' ? 'approved' : 'rejected',
          decisionNotes: notes || '',
-         approverId: identity.userId,
+         approverId: Number(identity.userId),
       })
       .where(and(
          eq(approvalRequests.id, reqIdNum),
-         eq(approvalRequests.organizationId, identity.tenantId)
+         eq(approvalRequests.organizationId, Number(identity.tenantId))
       ));
 
     // Log the event
     await db.insert(systemEvents).values({
-       organizationId: identity.tenantId,
+       organizationId: Number(identity.tenantId),
        aggregateId: requestId.toString(),
        aggregateType: 'approval_request',
        eventType: `approval_${action}d`,
        payload: { action, notes },
        version: 1,
-       actorId: identity.userId,
+       actorId: Number(identity.userId),
     });
 
     return NextResponse.json({ success: true });
