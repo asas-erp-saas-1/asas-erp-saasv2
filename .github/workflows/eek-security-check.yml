@@ -1,0 +1,30 @@
+name: EEK Security Check
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  eek-enforcement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Phantom Types Verification (TSC)
+        run: npx tsc --noEmit
+        
+      - name: EEK Boundary Verification (ESLint)
+        run: npx eslint . --max-warnings 0
+        # This will run ESLint which now includes our custom rules to ban raw db
+        
+      - name: EEK AST AST Security Compiler Check
+        run: npx ts-node eek/compiler/verify-coverage.ts
