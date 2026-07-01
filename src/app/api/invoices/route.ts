@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { invoices, deals, clients } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { kernel } from '@/lib/kernel/core';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const dealId = searchParams.get('dealId');
@@ -30,10 +37,11 @@ export async function GET(request: Request) {
     })
     .from(invoices)
     .leftJoin(deals, eq(invoices.dealId, deals.id))
-    .leftJoin(clients, eq(deals.clientId, clients.id));
+    .leftJoin(clients, eq(deals.clientId, clients.id))
+    .where(eq(invoices.organizationId, orgId));
 
     if (dealId) {
-       query = query.where(eq(invoices.dealId, Number(dealId))) as any;
+       query = query.where(and(eq(invoices.dealId, Number(dealId)), eq(invoices.organizationId, orgId))) as any;
     }
 
     const results = await query.orderBy(desc(invoices.createdAt)).limit(limit);
@@ -53,6 +61,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const body = await request.json();
     const { dealId, amount, dueDate, status } = body;
     
@@ -63,6 +77,7 @@ export async function POST(request: Request) {
     const reference = `INV-${Date.now().toString().slice(-6)}`;
 
     const newInvoice = await db.insert(invoices).values({
+      organizationId: orgId,
       dealId: Number(dealId),
       reference,
       amount,

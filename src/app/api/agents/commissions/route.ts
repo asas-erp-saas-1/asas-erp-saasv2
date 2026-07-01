@@ -5,6 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const agentId = searchParams.get('agentId');
 
@@ -13,7 +18,10 @@ export async function GET(request: Request) {
     }
 
     const agreements = await kernel.query<any>('vw_commission_balance', {
-      filters: { agent_id: agentId }
+      filters: { 
+        agent_id: agentId,
+        agency_id: identity.tenantId
+      }
     });
     
     // Filter out fully paid ones

@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { leads, clients } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
+import { kernel } from '@/lib/kernel/core';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
@@ -30,6 +37,7 @@ export async function GET(request: Request) {
     })
       .from(leads)
       .leftJoin(clients, eq(leads.clientId, clients.id))
+      .where(eq(leads.organizationId, orgId))
       .orderBy(desc(leads.createdAt))
       .limit(limit)
       .offset(offset);
@@ -51,6 +59,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+    const orgId = identity.tenantId as number;
+
     const body = await request.json();
     const clientId = body.clientId || body.client_id;
     if (!clientId) {
@@ -58,6 +72,7 @@ export async function POST(request: Request) {
     }
 
     const newLead = await db.insert(leads).values({
+      organizationId: orgId,
       clientId: Number(clientId),
       source: body.source,
       budgetMin: body.budgetMin || body.budget_min,

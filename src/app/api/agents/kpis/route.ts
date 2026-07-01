@@ -5,12 +5,18 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = Number(searchParams.get('limit')) || 50;
     const view = searchParams.get('view');
 
     const performances = await kernel.query<any>('vw_agent_performance', {
       limit,
+      filters: { agency_id: identity.tenantId },
       orderBy: { column: 'closed_deals', ascending: false }
     });
 

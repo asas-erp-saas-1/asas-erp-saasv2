@@ -5,6 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
@@ -13,13 +18,13 @@ export async function GET(request: Request) {
     const lead_id = searchParams.get('lead_id');
     const assigned_to = searchParams.get('assigned_to');
 
-    const filters: Record<string, any> = {};
+    // Assuming legacy tables use agency_id, or organization_id. For safety we enforce agency_id based on POST logic.
+    const filters: Record<string, any> = { agency_id: identity.tenantId };
     if (deal_id) filters['deal_id'] = deal_id;
     if (lead_id) filters['lead_id'] = lead_id;
     if (assigned_to) filters['assigned_to'] = assigned_to;
 
-    const qOpts: any = { limit, offset, orderBy: { column: 'created_at', ascending: false } };
-    if (Object.keys(filters).length > 0) qOpts.filters = filters;
+    const qOpts: any = { limit, offset, orderBy: { column: 'created_at', ascending: false }, filters };
 
     const tasks = await kernel.query('tasks', qOpts);
     return NextResponse.json({ data: tasks, count: tasks.length });
@@ -32,6 +37,10 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+
     const task = await kernel.mutate('tasks', 'INSERT', {
       title: data.title,
       description: data.description || null,
@@ -53,9 +62,14 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+
     const { id, ...data } = await request.json();
     if (!id) throw new Error('ID is required');
-    const task = await kernel.mutate('tasks', 'UPDATE', data, { id });
+    const task = await kernel.mutate('tasks', 'UPDATE', data, { id, agency_id: identity.tenantId });
     return NextResponse.json({ data: task });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

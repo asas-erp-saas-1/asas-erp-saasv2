@@ -6,13 +6,26 @@ export const dynamic = 'force-dynamic';
 
 export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const identity = await kernel.identity();
+    if (!identity || identity.tenantId === 'unknown') {
+       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
+    }
+
     const params = await props.params;
     const body = await request.json();
     
     // Server-side validation using Zod
     const validatedData = parseAndValidate(taskSchema, body, 'Task Update');
     
-    const task = await kernel.mutate('tasks', 'UPDATE', validatedData, { id: params.id });
+    const task = await kernel.mutate('tasks', 'UPDATE', validatedData, { 
+      id: params.id, 
+      organization_id: identity.tenantId 
+    });
+    
+    if (!task) {
+      return NextResponse.json({ error: 'Task not found or unauthorized' }, { status: 404 });
+    }
+    
     return NextResponse.json({ data: task });
   } catch (error: any) {
     if (error instanceof ValidationError) {

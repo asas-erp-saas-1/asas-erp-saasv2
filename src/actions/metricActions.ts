@@ -18,11 +18,27 @@ export async function getMetricsData() {
       // Identity check can fail if called in non-auth contexts, fall forward
     }
 
+    if (tenantId === 'unknown') {
+      throw new Error('Unauthorized or missing tenant context for metrics');
+    }
+
     // We aim to fetch real data
-    const deals = await kernel.query<any>('deals', { select: 'id, amount, agreed_price, status, created_at' });
-    const leads = await kernel.query<any>('leads', { select: 'id, status, source' });
-    const finance = await kernel.query<any>('finance_snapshot', { orderBy: { column: 'snapshot_date', ascending: false }, limit: 1 });
-    const expenses = await kernel.query<any>('expenses', { filters: { category: 'marketing' } }) || [];
+    const deals = await kernel.query<any>('deals', { 
+       select: 'id, amount, agreed_price, status, created_at',
+       filters: { organization_id: tenantId }
+    });
+    const leads = await kernel.query<any>('leads', { 
+       select: 'id, status, source',
+       filters: { organization_id: tenantId }
+    });
+    const finance = await kernel.query<any>('finance_snapshot', { 
+       filters: { organization_id: tenantId },
+       orderBy: { column: 'snapshot_date', ascending: false }, 
+       limit: 1 
+    });
+    const expenses = await kernel.query<any>('expenses', { 
+       filters: { category: 'marketing', organization_id: tenantId } 
+    }) || [];
 
     const snap = finance?.[0] || null;
 
