@@ -18,12 +18,7 @@ export const POST = withEEK({
       return NextResponse.json({ token: 'ag-mock-invite-' + Date.now() });
     }
 
-    const supabase = /* EEK bypass removed */ null as any /*supabaseUrl, supabaseKey, {
-      cookies: {
-        getAll() { return cookieStore.getAll(); },
-        setAll() {}
-      }
-    });
+    const supabase = null as any;
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

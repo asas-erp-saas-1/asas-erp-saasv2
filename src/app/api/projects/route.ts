@@ -9,7 +9,7 @@ export const GET = withEEK({
   action: 'read',
   handler: async (ctx, request: Request) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     if (ctx.organizationId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -66,7 +66,7 @@ export const POST = withEEK({
   action: 'write',
   handler: async (ctx, request: Request) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     if (ctx.organizationId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }

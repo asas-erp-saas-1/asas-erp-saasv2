@@ -9,7 +9,7 @@ export const POST = withEEK({
   action: 'write',
   handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id })
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     const { filename, category, dataUrl, dealId, portalUpload, entityType } = await req.json()
 
     const actualEntityType = entityType || 'deal'

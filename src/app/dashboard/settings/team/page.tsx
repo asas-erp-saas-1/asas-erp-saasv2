@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { TeamManagementClient } from '@/modules/settings/components/TeamManagementClient'
 import { withPageEEK } from '@/eek/withPageEEK'
-import { profiles } from '@/db/schema'
+import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
@@ -14,9 +14,9 @@ export default withPageEEK({
       redirect('/dashboard/settings')
     }
 
-    const profilesList = await ctx.db.select().from(profiles).where(eq(profiles.organizationId, ctx.organizationId));
+    const usersList = await ctx.db.select().from(users).where(eq(users.organizationId, ctx.organizationId));
 
-    const mappedProfiles = profilesList.map((p: any) => ({
+    const mappedProfiles = usersList.map((p: any) => ({
       id: p.id,
       full_name: [p.firstName, p.lastName].filter(Boolean).join(' ') || 'Unknown',
       email: p.email || '',

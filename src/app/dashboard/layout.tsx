@@ -4,13 +4,13 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { requireSession } from '@/eek/auth'
 import { createTenantScopedDB } from '@/eek/db-proxy'
-import { profiles } from '@/db/schema'
+import { users } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { NextMobileMenu } from '@/components/NextMobileMenu'
+import { NextMobileMenu } from '@/components/MobileMenu'
 import { SidebarNav, NAV_GROUPS_STATE } from '@/components/SidebarNav'
 import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/OmnibarTriggers'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { CommandPalette } from '@/modules/dashboard/components/CommandPalette'
+import { CommandPalette } from '@/components/CommandPalette'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,8 +23,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const db = createTenantScopedDB(session.organizationId);
-  const profilesResult = await db.select().from(profiles).where(
-    and(eq(profiles.organizationId, session.organizationId), eq(profiles.id, session.user.id))
+  const usersResult = await db.select().from(users).where(
+    and(eq(users.organizationId, session.organizationId), eq(users.id, session.user.id))
   ).limit(1);
 
   let profile = {
@@ -33,8 +33,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     avatar_url: null,
   };
 
-  if (profilesResult.length > 0) {
-    profile = { ...profilesResult[0], role: session.role } as any;
+  if (usersResult.length > 0) {
+    profile = { ...usersResult[0], role: session.role } as any;
   }
 
   const roleDisplay = profile.role === 'owner' ? 'CEO / Admin' : profile.role;

@@ -10,7 +10,7 @@ export class DocumentEngine {
   public static async register(
     doc: Omit<DocumentRecord, 'id' | 'agencyId' | 'uploadedBy' | 'lifecycleState'>
   ): Promise<any> {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     
     const payload = {
       agency_id: identity.tenantId,
@@ -47,7 +47,7 @@ export class DocumentEngine {
     targetState: 'verified' | 'approved' | 'archived' | 'rejected',
     notesOrJustification?: string
   ): Promise<any> {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     
     const existing = await /* @todo fix */ ctx.db.select().from('document_records', {
       filters: { id: documentId }
@@ -91,7 +91,7 @@ export class DocumentEngine {
     associatedEntityId: string
   ): Promise<any[]> {
     try {
-      const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+      const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
       return await /* @todo fix */ ctx.db.select().from('document_records', {
         filters: {
           agency_id: identity.tenantId,

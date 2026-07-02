@@ -17,7 +17,7 @@ export const GET = withEEK({
   action: 'read',
   handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     if (identity.tenantId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }

@@ -11,7 +11,7 @@ export const GET = withEEK({
   action: 'read',
   handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     const { searchParams } = new URL(req.url);
     const q = searchParams.get('q');
 

@@ -10,7 +10,7 @@ export class TaskEngine {
   public static async create(
     task: Omit<FoundationTask, 'id' | 'agencyId' | 'taskStatus' | 'escalationCount' | 'completedAt'>
   ): Promise<any> {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     
     const payload = {
       agency_id: identity.tenantId,

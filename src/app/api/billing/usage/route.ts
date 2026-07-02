@@ -9,7 +9,7 @@ export const GET = withEEK({
   action: 'read',
   handler: async (ctx, request: Request) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     const subscription = await BillingService.getSubscription(identity.tenantId);
     
     return NextResponse.json({

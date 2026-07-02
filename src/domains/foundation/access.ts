@@ -9,7 +9,7 @@ export class FoundationAccessEngine {
    * Completely backward compatible with legacy flat roles ('owner', 'manager', 'agent').
    */
   public static async resolveContext(): Promise<IdentityContext> {
-    const defaultIdentity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const defaultIdentity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     
     // Resolve profile details
     const profiles = await /* @todo fix */ ctx.db.select().from('profiles', {

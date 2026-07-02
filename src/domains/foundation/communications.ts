@@ -12,7 +12,7 @@ export class CommunicationEngine {
       sendAfter?: string;
     }
   ): Promise<any> {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     
     const payload = {
       agency_id: identity.tenantId,

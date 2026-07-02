@@ -8,7 +8,7 @@ export const POST = withEEK({
   action: 'write',
   handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     if (identity.role !== 'owner' && identity.role !== 'manager') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

@@ -15,7 +15,7 @@ export class ImmutableAuditEngine {
     const activeCorrelationId = correlationId || randomUUID();
     
     try {
-      const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+      const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
       
       const auditPayload = {
         correlation_id: activeCorrelationId,
@@ -66,7 +66,7 @@ export class ImmutableAuditEngine {
    */
   public static async searchVault(filters?: Record<string, any>, limit = 50): Promise<any[]> {
     try {
-      const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+      const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
       const queryFilters = { agency_id: identity.tenantId, ...filters };
       return await /* @todo fix */ ctx.db.select().from('sys_audit_vault', {
         filters: queryFilters,

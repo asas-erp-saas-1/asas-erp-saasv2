@@ -9,7 +9,7 @@ export const PATCH = withEEK({
   action: 'write',
   handler: async (ctx, request: Request, props: { params: Promise<{ id: string }> }) => {
   try {
-    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    const identity = { tenantId: ctx.organizationId, userId: ctx.session.user.id };
     if (!identity || identity.tenantId === 'unknown') {
        return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
     }
