@@ -1,11 +1,11 @@
-import { kernel } from '@/lib/kernel/core';
+import { EEKProtectedContext } from '@/eek/types';
 import { Database } from '@/types/supabase';
 import type { Lead } from '@/types/app';
 import { LeadStateMachine } from '@/core/stateMachine';
 
 export class LeadService {
-  static async getLeads(limit = 50, offset = 0): Promise<Lead[]> {
-    const leads = await kernel.query<any>('leads', {
+  static async getLeads(ctx: EEKProtectedContext, limit = 50, offset = 0) {
+    const leads = await /* @todo fix */ ctx.db.select().from('leads', {
       select: '*, clients(full_name, phone), profiles(full_name), projects(name)',
       filters: { deleted_at: null },
       orderBy: { column: 'created_at', ascending: false },
@@ -15,10 +15,10 @@ export class LeadService {
     return leads as Lead[];
   }
 
-  static async createLead(data: { clientId: string; source?: string; budgetMin?: number; budgetMax?: number; assignedAgent?: string }): Promise<Lead> {
-    const identity = await kernel.identity();
-    const lead = await kernel.mutate<any>('leads', 'INSERT', {
-      agency_id: identity.tenantId,
+  static async createLead(ctx: EEKProtectedContext, data: { clientId: string; source?: string; budgetMin?: number; budgetMax?: number; assignedAgent?: string }) {
+    
+    const lead = await ctx.db.insert('leads', 'INSERT', {
+      agency_id: ctx.organizationId,
       client_id: data.clientId,
       source: data.source || null,
       budget_min: data.budgetMin || null,
@@ -32,21 +32,21 @@ export class LeadService {
     return lead as Lead;
   }
 
-  static async assignLead(leadId: string, agentId: string): Promise<Lead> {
-    const lead = await kernel.mutate<any>('leads', 'UPDATE', {
+  static async assignLead(ctx: EEKProtectedContext, leadId: string, agentId: string) {
+    const lead = await ctx.db.insert('leads', 'UPDATE', {
       assigned_agent: agentId
     }, { id: leadId, deleted_at: null });
     return lead as Lead;
   }
   
-  static async updateStatus(
+  static async updateStatus(ctx: EEKProtectedContext, 
     leadId: string, 
     status: string,
     metadata?: { lostReason?: string }
-  ): Promise<Lead> {
-    const identity = await kernel.identity();
+  ) {
+    
 
-    return await kernel.transaction(async (tx) => {
+    return await ctx.db.transaction(async (tx) => {
       // 1. Fetch current lead state
       const leads = await tx.query<any>('leads', {
         filters: { id: leadId, deleted_at: null }
@@ -59,7 +59,7 @@ export class LeadService {
       const currentLead = leads[0];
 
       // 2. Tenant isolation verification (Prevent cross-tenant mutation)
-      if (currentLead.agency_id !== identity.tenantId) {
+      if (currentLead.agency_id !== ctx.organizationId) {
         throw new Error('Tenant boundary violation: you do not have permission to access or modify this lead.');
       }
 
@@ -87,28 +87,28 @@ export class LeadService {
 
       // 6. Logs & Activity synchronization workflow
       await tx.mutate('activities', 'INSERT', {
-        agency_id: identity.tenantId,
+        agency_id: ctx.organizationId,
         lead_id: leadId,
         deal_id: null,
         type: 'status_change',
         notes: `Lead status changed from ${currentLead.status.toUpperCase()} to ${status.toUpperCase()}.${
           metadata?.lostReason ? ` Reason: ${metadata.lostReason}` : ''
         }`,
-        created_by: identity.userId
+        created_by: ctx.session.user.id
       });
 
       // 7. Invalidate client-facing dashboard metrics cache
       try {
         const { CacheService } = await import('@/lib/cache/cache.service');
-        await CacheService.invalidateExact(identity.tenantId, 'dashboard_metrics');
+        await CacheService.invalidateExact(ctx.organizationId, 'dashboard_metrics');
       } catch (_) {}
 
       return updatedLead as Lead;
     });
   }
 
-  static async deleteLead(leadId: string): Promise<void> {
-    await kernel.mutate('leads', 'UPDATE', {
+  static async deleteLead(ctx: EEKProtectedContext, leadId: string) {
+    await ctx.db.insert('leads', 'UPDATE', {
       deleted_at: new Date().toISOString(),
       status: 'lost'
     }, { id: leadId });

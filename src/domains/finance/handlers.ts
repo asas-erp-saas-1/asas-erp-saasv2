@@ -1,4 +1,3 @@
-import { CommandHandler, EventHandler, SystemEvent, kernel } from '@/lib/kernel/core';
 import { CreatePaymentScheduleCommand, RequestDiscountCommand } from './commands';
 import { FinanceEvents, PaymentScheduleCreatedPayload } from './events';
 import { eventBus } from '@/lib/kernel/bus';
@@ -7,7 +6,7 @@ export class CreatePaymentScheduleCommandHandler implements CommandHandler<Creat
   async execute(command: CreatePaymentScheduleCommand): Promise<string> {
     const scheduleId = crypto.randomUUID();
     
-    await kernel.mutate('payment_schedules', 'INSERT', {
+    await /* @todo fix */ ctx.db.insert('payment_schedules', 'INSERT', {
         id: scheduleId,
         agency_id: command.payload.agencyId,
         deal_id: command.payload.dealId,

@@ -1,4 +1,3 @@
-import { EventHandler, SystemEvent, kernel } from '@/lib/kernel/core';
 import { DomainRegistry } from '@/lib/kernel/registry';
 import { FinanceEvents } from '../finance/events';
 

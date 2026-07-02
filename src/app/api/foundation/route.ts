@@ -1,3 +1,4 @@
+import { withEEK } from '@/eek/withEEK';
 // src/app/api/foundation/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -5,7 +6,10 @@ import { Access, Audit, Documents, Communications, Tasks, Organization } from '@
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: NextRequest) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const action = searchParams.get('action');
@@ -69,9 +73,13 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Internal Foundation Error' }, { status: 500 });
   }
-}
+  }
+});
 
-export async function POST(req: NextRequest) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, req: NextRequest) => {
   try {
     const body = await req.json();
     const { action } = body;
@@ -186,13 +194,13 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Internal Foundation Error' }, { status: 500 });
   }
-}
+  }
+});
 
 // Low-level helper access points
 async function globalFetchBranches(agencyId: string) {
   try {
-    const { kernel } = await import('@/lib/kernel/core');
-    return await kernel.query('branches', {
+    return await /* @todo fix */ ctx.db.select().from('branches', {
       filters: { agency_id: agencyId }
     });
   } catch {
@@ -202,8 +210,7 @@ async function globalFetchBranches(agencyId: string) {
 
 async function queryTaskTable(agencyId: string) {
   try {
-    const { kernel } = await import('@/lib/kernel/core');
-    return await kernel.query('foundation_tasks', {
+    return await /* @todo fix */ ctx.db.select().from('foundation_tasks', {
       filters: { agency_id: agencyId },
       orderBy: { column: 'created_at', ascending: false }
     });

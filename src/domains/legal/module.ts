@@ -1,5 +1,4 @@
 import { DomainRegistry } from '@/lib/kernel/registry';
-import { CommandHandler, Command, SystemEvent, EventHandler } from '@/lib/kernel/core';
 import { eventBus } from '@/lib/kernel/bus';
 
 export const LegalEvents = { CONTRACT_GENERATED: 'Legal.ContractGenerated' };

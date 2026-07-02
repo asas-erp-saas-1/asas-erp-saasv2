@@ -1,7 +1,6 @@
 'use server';
 
 import { withActionEEK } from '@/eek/withActionEEK';
-import { kernel } from '@/lib/kernel/core';
 import { CacheService } from '@/lib/cache/cache.service';
 
 export const getMetricsData = withActionEEK({
@@ -17,20 +16,20 @@ export const getMetricsData = withActionEEK({
       }
 
       // We aim to fetch real data
-      const deals = await kernel.query<any>('deals', { 
+      const deals = await ctx.db.query<any>('deals', { 
          select: 'id, amount, agreed_price, status, created_at',
          filters: { organization_id: tenantId }
       });
-      const leads = await kernel.query<any>('leads', { 
+      const leads = await ctx.db.query<any>('leads', { 
          select: 'id, status, source',
          filters: { organization_id: tenantId }
       });
-      const finance = await kernel.query<any>('finance_snapshot', { 
+      const finance = await ctx.db.query<any>('finance_snapshot', { 
          filters: { organization_id: tenantId },
          orderBy: { column: 'snapshot_date', ascending: false }, 
          limit: 1 
       });
-      const expenses = await kernel.query<any>('expenses', { 
+      const expenses = await ctx.db.query<any>('expenses', { 
          filters: { category: 'marketing', organization_id: tenantId } 
       }) || [];
 

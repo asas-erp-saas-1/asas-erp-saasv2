@@ -1,4 +1,3 @@
-import { Command } from '@/lib/kernel/core';
 
 export interface CreatePaymentScheduleCommand extends Command<{
   agencyId: string;

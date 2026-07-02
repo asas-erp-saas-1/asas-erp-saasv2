@@ -6,14 +6,14 @@ import { LedgerService } from "./ledger";
 import { EEKProtectedContext } from "./types";
 import { v4 as uuidv4 } from "uuid";
 
-interface EEKActionConfig<Input, Output> {
+interface EEKActionConfig<Input = void, Output = any> {
   resource: string;
   action: ResourceAction;
   handler: (ctx: EEKProtectedContext, input: Input) => Promise<Output>;
 }
 
-export function withActionEEK<Input, Output>({ resource, action, handler }: EEKActionConfig<Input, Output>) {
-  return async (input: Input): Promise<Output> => {
+export function withActionEEK<Input = void, Output = any>({ resource, action, handler }: EEKActionConfig<Input, Output>) {
+  return async (input?: Input): Promise<Output> => {
     const requestId = uuidv4();
     
     // 1. Authenticate
@@ -33,6 +33,6 @@ export function withActionEEK<Input, Output>({ resource, action, handler }: EEKA
     };
 
     // 4. Execute safe handler
-    return await handler(ctx, input);
+    return await handler(ctx, input as Input);
   };
 }

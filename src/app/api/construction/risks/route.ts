@@ -1,17 +1,16 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
-import { db } from '@/db';
 import { projectRisks, projects } from '@/db/schema';
 import { desc, eq, inArray, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
@@ -22,7 +21,7 @@ export async function GET(request: Request) {
        conditions.push(eq(projectRisks.projectId, Number(projectId)));
     }
 
-    const query = db.select({
+    const query = ctx.db.select({
       id: projectRisks.id,
       projectId: projectRisks.projectId,
       type: projectRisks.type,
@@ -60,15 +59,16 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/construction/risks' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
 
-export async function POST(request: Request) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const body = await request.json();
     const { projectId, type, description, severity, status, delayImpact } = body;
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'projectId and description are required' }, { status: 400 });
     }
 
-    const newRisk = await db.insert(projectRisks).values({
+    const newRisk = await ctx.db.insert(projectRisks).values({
       organizationId: orgId,
       projectId: Number(projectId),
       type,
@@ -92,4 +92,5 @@ export async function POST(request: Request) {
     ErrorTracker.captureError(error, { context: 'POST /api/construction/risks' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

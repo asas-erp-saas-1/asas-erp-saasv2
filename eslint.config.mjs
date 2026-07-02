@@ -7,6 +7,7 @@ export default [
     ignores: [".next/**", "node_modules/**", "dist/**"],
   },
   {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     plugins: {
       "eek": eekPlugin
     },
@@ -14,6 +15,7 @@ export default [
       "no-unused-vars": "off",
       "no-undef": "off",
       "react/no-unescaped-entities": "off",
+      "eek/no-raw-db-import": "error",
       "eek/no-unwrapped-server-actions": "error",
       "eek/enforce-withEEK": "error",
       "no-restricted-imports": [

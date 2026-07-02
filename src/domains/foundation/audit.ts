@@ -1,6 +1,5 @@
 // src/domains/foundation/audit.ts
 
-import { kernel } from '@/lib/kernel/core';
 import { AuditTrailLog } from './types';
 import { randomUUID } from 'crypto';
 
@@ -16,7 +15,7 @@ export class ImmutableAuditEngine {
     const activeCorrelationId = correlationId || randomUUID();
     
     try {
-      const identity = await kernel.identity();
+      const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
       
       const auditPayload = {
         correlation_id: activeCorrelationId,
@@ -33,7 +32,7 @@ export class ImmutableAuditEngine {
         is_anomaly: false
       };
 
-      await kernel.mutate('sys_audit_vault', 'INSERT', auditPayload);
+      await /* @todo fix */ ctx.db.insert('sys_audit_vault', 'INSERT', auditPayload);
       return activeCorrelationId;
     } catch (err: any) {
       console.error('Audit core emission failure (non-critical pipeline bypass protection):', err);
@@ -50,7 +49,7 @@ export class ImmutableAuditEngine {
     entityId: string
   ): Promise<any[]> {
     try {
-      const records = await kernel.query('sys_audit_vault', {
+      const records = await /* @todo fix */ ctx.db.select().from('sys_audit_vault', {
         filters: { entity_type: entityType, entity_id: entityId },
         orderBy: { column: 'timestamp', ascending: false },
         limit: 100
@@ -67,9 +66,9 @@ export class ImmutableAuditEngine {
    */
   public static async searchVault(filters?: Record<string, any>, limit = 50): Promise<any[]> {
     try {
-      const identity = await kernel.identity();
+      const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
       const queryFilters = { agency_id: identity.tenantId, ...filters };
-      return await kernel.query('sys_audit_vault', {
+      return await /* @todo fix */ ctx.db.select().from('sys_audit_vault', {
         filters: queryFilters,
         orderBy: { column: 'timestamp', ascending: false },
         limit

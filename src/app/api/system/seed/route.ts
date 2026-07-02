@@ -1,18 +1,21 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextRequest, NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
 import { ErrorTracker } from '@/lib/observability/errors';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function POST(req: NextRequest) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     if (identity.role !== 'owner' && identity.role !== 'manager') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Attempt to seed data for testing
     // 1. Create a Developer
-    const developerResult: any = await kernel.mutate('developers', 'INSERT', {
+    const developerResult: any = await /* @todo fix */ ctx.db.insert('developers', 'INSERT', {
         agency_id: identity.tenantId,
         name: 'Sarl Immobilier ASAS',
         country: 'Algeria',
@@ -24,7 +27,7 @@ export async function POST(req: NextRequest) {
     const devId = developerResult.id;
 
     // 2. Create a Project
-    const projectResult: any = await kernel.mutate('projects', 'INSERT', {
+    const projectResult: any = await /* @todo fix */ ctx.db.insert('projects', 'INSERT', {
         agency_id: identity.tenantId,
         developer_id: devId,
         name: 'Résidence Les Jasmins',
@@ -36,7 +39,7 @@ export async function POST(req: NextRequest) {
     const projectId = projectResult.id;
 
     // 3. Create properties
-    const prop1: any = await kernel.mutate('properties', 'INSERT', {
+    const prop1: any = await /* @todo fix */ ctx.db.insert('properties', 'INSERT', {
         agency_id: identity.tenantId,
         project_id: projectId,
         reference_code: 'JAS-001',
@@ -47,7 +50,7 @@ export async function POST(req: NextRequest) {
         list_price: 18500000
     });
 
-    await kernel.mutate('properties', 'INSERT', {
+    await /* @todo fix */ ctx.db.insert('properties', 'INSERT', {
         agency_id: identity.tenantId,
         project_id: projectId,
         reference_code: 'JAS-002',
@@ -59,7 +62,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 4. Create a Lead
-    const leadResult: any = await kernel.mutate('leads', 'INSERT', {
+    const leadResult: any = await /* @todo fix */ ctx.db.insert('leads', 'INSERT', {
         agency_id: identity.tenantId,
         agent_id: identity.userId,
         full_name: 'Amine B.',
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 5. Create a Client
-    const clientResult: any = await kernel.mutate('clients', 'INSERT', {
+    const clientResult: any = await /* @todo fix */ ctx.db.insert('clients', 'INSERT', {
         agency_id: identity.tenantId,
         full_name: 'Omar T.',
         phone: '0770987654',
@@ -84,4 +87,5 @@ export async function POST(req: NextRequest) {
     ErrorTracker.captureError(error, { context: 'System Seed API' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

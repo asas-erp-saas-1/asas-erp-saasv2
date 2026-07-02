@@ -1,3 +1,4 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
 import { redis } from '@/lib/cache/redis';
 import { ErrorTracker } from '@/lib/observability/errors';
@@ -22,7 +23,10 @@ const DEFAULT_CONFIG = {
   timezone: 'Africa/Algiers'
 };
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
     const cached = await redis.get<typeof DEFAULT_CONFIG>('tenant:config:default');
     return NextResponse.json(cached || DEFAULT_CONFIG);
@@ -30,9 +34,13 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/config' });
     return NextResponse.json(DEFAULT_CONFIG); // Fallback so UI doesn't crash if redis fails
   }
-}
+  }
+});
 
-export async function PATCH(request: Request) {
+export const PATCH = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, request: Request) => {
   try {
     const body = await request.json();
     const current = await redis.get<typeof DEFAULT_CONFIG>('tenant:config:default') || DEFAULT_CONFIG;
@@ -45,4 +53,5 @@ export async function PATCH(request: Request) {
     ErrorTracker.captureError(error, { context: 'PATCH /api/config' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

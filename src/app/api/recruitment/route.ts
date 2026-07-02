@@ -1,22 +1,21 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
 import { jobCandidates, jobPostings } from '@/db/schema';
 import { desc, eq, sql, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
-import { kernel } from '@/lib/kernel/core';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
 
-    const candidatesResult = await db.select({
+    const candidatesResult = await ctx.db.select({
       id: jobCandidates.id,
       firstName: jobCandidates.firstName,
       lastName: jobCandidates.lastName,
@@ -45,7 +44,7 @@ export async function GET(request: Request) {
     }))
 
     // Count statistics
-    const stats = await db.select({
+    const stats = await ctx.db.select({
        openRoles: sql`count(distinct ${jobPostings.id})`.mapWith(Number),
        activeCandidates: sql`count(${jobCandidates.id})`.mapWith(Number),
        interviews: sql`count(*) filter (where ${jobCandidates.status} = 'En entretien')`.mapWith(Number),
@@ -61,4 +60,5 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/recruitment' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

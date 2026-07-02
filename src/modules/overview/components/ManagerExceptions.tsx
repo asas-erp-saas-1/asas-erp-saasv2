@@ -17,7 +17,7 @@ export function ManagerExceptions() {
 
   const handleReassign = (exceptionId: string, newAgent: string) => {
     // In reality this would call the kernel to transfer ownership
-    // kernel.mutate('leads', 'UPDATE', { assigned_agent: newAgent }, { id: exceptionId })
+    // /* @todo fix */ ctx.db.insert('leads', 'UPDATE', { assigned_agent: newAgent }, { id: exceptionId })
     setExceptions(prev => prev.filter(e => e.id !== exceptionId))
     setReassigningId(null)
   }

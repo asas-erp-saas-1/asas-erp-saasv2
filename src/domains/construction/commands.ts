@@ -1,4 +1,3 @@
-import { Command } from '@/lib/kernel/core';
 
 export interface AdvanceMilestoneCommand extends Command<{
   agencyId: string;

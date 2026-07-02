@@ -12,7 +12,6 @@ import {
 } from '@/components/patterns/ActionPanel'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { kernel } from '@/lib/kernel/core'
 
 interface Client360DrawerProps {
   clientId: string | null

@@ -1,17 +1,16 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
 import { invoices, deals, clients } from '@/db/schema';
 import { desc, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
-import { kernel } from '@/lib/kernel/core';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
@@ -22,7 +21,7 @@ export async function GET(request: Request) {
        conditions.push(eq(invoices.dealId, Number(dealId)));
     }
 
-    const query = db.select({
+    const query = ctx.db.select({
       id: invoices.id,
       dealId: invoices.dealId,
       reference: invoices.reference,
@@ -58,15 +57,16 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/invoices' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
 
-export async function POST(request: Request) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const body = await request.json();
     const { dealId, amount, dueDate, status } = body;
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 
     const reference = `INV-${Date.now().toString().slice(-6)}`;
 
-    const newInvoice = await db.insert(invoices).values({
+    const newInvoice = await ctx.db.insert(invoices).values({
       organizationId: orgId,
       dealId: Number(dealId),
       reference,
@@ -91,4 +91,5 @@ export async function POST(request: Request) {
     ErrorTracker.captureError(error, { context: 'POST /api/invoices' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

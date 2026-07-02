@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { Building2, Rocket, ArrowRight } from 'lucide-react';
-import { kernel } from '@/lib/kernel/core';
 import Link from 'next/link';
 
 export default async function InvitePage({ params }: { params: Promise<{ code: string }> }) {

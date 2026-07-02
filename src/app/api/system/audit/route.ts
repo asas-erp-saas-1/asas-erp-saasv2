@@ -1,11 +1,14 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
 import { auditLogs, users } from '@/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 import { requireSession } from '@/lib/enterprise/auth';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
     const session = await requireSession();
     
@@ -18,7 +21,7 @@ export async function GET(request: Request) {
     const limit = Number(searchParams.get('limit')) || 50;
     const entityType = searchParams.get('entityType');
     
-    let query = db.select({
+    let query = ctx.db.select({
        id: auditLogs.id,
        action: auditLogs.action,
        entityType: auditLogs.entityType,
@@ -46,4 +49,5 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/system/audit' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

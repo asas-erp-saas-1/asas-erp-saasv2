@@ -1,12 +1,11 @@
 // src/domains/foundation/organization.ts
-import { kernel } from '@/lib/kernel/core';
 import { Access } from './access';
 import { Audit } from './audit';
 
 export class OrganizationEngine {
   static async listBranches() {
     const context = await Access.resolveContext();
-    return await kernel.query('branches', {
+    return await /* @todo fix */ ctx.db.select().from('branches', {
       filters: { agency_id: context.agencyId }
     });
   }
@@ -18,7 +17,7 @@ export class OrganizationEngine {
       throw new Error('Unauthorized to manage organization');
     }
 
-    const record = await kernel.mutate('branches', 'INSERT', {
+    const record = await /* @todo fix */ ctx.db.insert('branches', 'INSERT', {
       agency_id: context.agencyId,
       name: payload.name,
       code: payload.code,
@@ -40,7 +39,7 @@ export class OrganizationEngine {
 
   static async listTeams() {
     const context = await Access.resolveContext();
-    return await kernel.query('teams', {
+    return await /* @todo fix */ ctx.db.select().from('teams', {
       filters: { agency_id: context.agencyId }
     });
   }
@@ -52,7 +51,7 @@ export class OrganizationEngine {
       throw new Error('Unauthorized to manage organization');
     }
 
-    const record = await kernel.mutate('teams', 'INSERT', {
+    const record = await /* @todo fix */ ctx.db.insert('teams', 'INSERT', {
       agency_id: context.agencyId,
       branch_id: payload.branchId,
       name: payload.name,
@@ -78,7 +77,7 @@ export class OrganizationEngine {
     }
 
     // First we check if a mapping exists
-    const existing = await kernel.query('team_members', {
+    const existing = await /* @todo fix */ ctx.db.select().from('team_members', {
        filters: { team_id: teamId, profile_id: profileId }
     });
 
@@ -86,7 +85,7 @@ export class OrganizationEngine {
       throw new Error("L'agent appartient déjà à cette équipe.");
     }
 
-    const record = await kernel.mutate('team_members', 'INSERT', {
+    const record = await /* @todo fix */ ctx.db.insert('team_members', 'INSERT', {
       team_id: teamId,
       profile_id: profileId,
       role_in_team: 'member'

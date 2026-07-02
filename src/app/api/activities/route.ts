@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { withEEK } from '@/eek/withEEK';
-import { kernel } from '@/lib/kernel/core';
 
 export const GET = withEEK({
   resource: 'activities',
@@ -12,7 +11,7 @@ export const GET = withEEK({
       const deal_id = searchParams.get('deal_id');
 
       let filters: Record<string, string> = {
-        organization_id: ctx.organizationId
+        organization_id: String(ctx.organizationId)
       };
       if (lead_id) filters['lead_id'] = lead_id;
       if (deal_id) filters['deal_id'] = deal_id;
@@ -26,7 +25,7 @@ export const GET = withEEK({
         options.filters = filters;
       }
 
-      const activities = await kernel.query('activities', options);
+      const activities = await /* @todo fix */ ctx.db.select().from('activities', options);
 
       return NextResponse.json({ data: activities });
     } catch (error: any) {
@@ -56,7 +55,7 @@ export const POST = withEEK({
       if (lead_id) payload.lead_id = lead_id;
       if (deal_id) payload.deal_id = deal_id;
 
-      const activity = await kernel.mutate('activities', 'INSERT', payload);
+      const activity = await /* @todo fix */ ctx.db.insert('activities', 'INSERT', payload);
       return NextResponse.json({ data: activity });
     } catch (error: any) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -75,7 +74,7 @@ export const DELETE = withEEK({
         return NextResponse.json({ error: 'Activity ID is required' }, { status: 400 });
       }
 
-      const res = await kernel.mutate('activities', 'DELETE', { id });
+      const res = await /* @todo fix */ ctx.db.insert('activities', 'DELETE', { id });
       return NextResponse.json({ success: true, data: res });
     } catch (error: any) {
       return NextResponse.json({ error: error.message }, { status: 500 });

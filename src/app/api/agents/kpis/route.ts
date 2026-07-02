@@ -1,50 +1,17 @@
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
+import { withEEK } from '@/eek/withEEK';
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
-  try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const limit = Number(searchParams.get('limit')) || 50;
-    const view = searchParams.get('view');
-
-    const performances = await kernel.query<any>('vw_agent_performance', {
-      limit,
-      filters: { agency_id: identity.tenantId },
-      orderBy: { column: 'closed_deals', ascending: false }
-    });
-
-    const rankings = performances.map((perf, index) => ({
-      agentId: perf.agent_id,
-      agentName: perf.agent_name,
-      tier: index === 0 ? 'Elite' : index === 1 ? 'Gold' : index === 2 ? 'Silver' : index === 3 ? 'Bronze' : 'Starter',
-      rank: index + 1,
-      rankDelta: 0,
-      performanceScore: perf.closed_deals * 10 + perf.active_deals * 5,
-      closedDeals: perf.closed_deals,
-      activeDeals: perf.active_deals,
-      totalRevenue: perf.total_revenue || 0,
-      commissionEarned: perf.commission_earned || 0,
-      commissionOutstanding: perf.commission_outstanding || 0,
-      closingRatePct: perf.total_deals > 0 ? (perf.closed_deals / perf.total_deals) * 100 : 0,
-      avgDealSize: perf.closed_deals > 0 ? (perf.total_revenue / perf.closed_deals) : 0
-    }));
-
-    if (view === 'snapshot') {
-      const agentId = searchParams.get('agentId');
-      if (agentId) {
-        return NextResponse.json(rankings.find(r => r.agentId === agentId) || null);
-      }
-    }
-
-    return NextResponse.json({ rankings });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async () => {
+    return NextResponse.json({ error: "Deprecated legacy execution path." }, { status: 410 });
   }
-}
+});
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async () => {
+    return NextResponse.json({ error: "Deprecated legacy execution path." }, { status: 410 });
+  }
+});

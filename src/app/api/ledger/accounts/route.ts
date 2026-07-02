@@ -1,6 +1,5 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextRequest, NextResponse } from "next/server";
-import { kernel } from "@/lib/kernel/core";
-import { db } from "@/db";
 import { ledgerAccounts } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -13,9 +12,12 @@ const DEFAULT_ACCOUNTS = [
    { code: '101', name: 'Capital Social', type: 'equity' },
 ];
 
-export async function GET(req: NextRequest) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     if (identity.tenantId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -54,4 +56,5 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
-}
+  }
+});

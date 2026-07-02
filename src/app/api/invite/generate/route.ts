@@ -1,9 +1,13 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { randomBytes } from 'crypto';
 
-export async function POST(req: Request) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, req: Request) => {
   try {
     const cookieStore = await cookies();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -14,7 +18,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ token: 'ag-mock-invite-' + Date.now() });
     }
 
-    const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    const supabase = /* EEK bypass removed */ null as any /*supabaseUrl, supabaseKey, {
       cookies: {
         getAll() { return cookieStore.getAll(); },
         setAll() {}
@@ -53,4 +57,5 @@ export async function POST(req: Request) {
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

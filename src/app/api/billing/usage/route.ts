@@ -1,12 +1,15 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
 import { BillingService } from '@/services/billing/billing.service';
-import { kernel } from '@/lib/kernel/core';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     const subscription = await BillingService.getSubscription(identity.tenantId);
     
     return NextResponse.json({
@@ -17,4 +20,5 @@ export async function GET(request: Request) {
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

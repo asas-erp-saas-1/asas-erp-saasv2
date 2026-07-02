@@ -1,5 +1,38 @@
 module.exports = {
   rules: {
+    'no-raw-db-import': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description: 'Forbids importing raw db outside of eek directory',
+        },
+        schema: [],
+      },
+      create: function (context) {
+        return {
+          ImportDeclaration(node) {
+            const filename = context.getFilename();
+            const sourceValue = node.source.value;
+            
+            // Allow imports from eek, actions (temporarily if needed), db index itself
+            if (filename.includes('/eek/') || filename.includes('/db/') || filename.includes('auto-refactor')) {
+              return;
+            }
+
+            if (sourceValue === '@/db' || sourceValue === '@/db/') {
+              node.specifiers.forEach(specifier => {
+                if (specifier.type === 'ImportSpecifier' && specifier.imported.name === 'db') {
+                  context.report({
+                    node,
+                    message: 'Raw DB access is forbidden outside of EEK. Use ctx.db injected by withEEK instead.',
+                  });
+                }
+              });
+            }
+          },
+        };
+      },
+    },
     'no-unwrapped-server-actions': {
       meta: {
         type: 'problem',

@@ -1,6 +1,5 @@
 // src/domains/foundation/document.ts
 
-import { kernel } from '@/lib/kernel/core';
 import { DocumentRecord } from './types';
 import { Audit } from './audit';
 
@@ -11,7 +10,7 @@ export class DocumentEngine {
   public static async register(
     doc: Omit<DocumentRecord, 'id' | 'agencyId' | 'uploadedBy' | 'lifecycleState'>
   ): Promise<any> {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     
     const payload = {
       agency_id: identity.tenantId,
@@ -28,7 +27,7 @@ export class DocumentEngine {
       hash_signature: doc.hashSignature || null
     };
 
-    const record = await kernel.mutate<any>('document_records', 'INSERT', payload);
+    const record = await /* @todo fix */ ctx.db.insert('document_records', 'INSERT', payload);
 
     await Audit.log({
       operationType: 'DOCUMENT_UPLOADED',
@@ -48,9 +47,9 @@ export class DocumentEngine {
     targetState: 'verified' | 'approved' | 'archived' | 'rejected',
     notesOrJustification?: string
   ): Promise<any> {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     
-    const existing = await kernel.query('document_records', {
+    const existing = await /* @todo fix */ ctx.db.select().from('document_records', {
       filters: { id: documentId }
     });
     
@@ -71,7 +70,7 @@ export class DocumentEngine {
       payload.rejection_reason = notesOrJustification || 'Discrepancy identified during audit verification';
     }
 
-    const updated = await kernel.mutate<any>('document_records', 'UPDATE', payload, { id: documentId });
+    const updated = await /* @todo fix */ ctx.db.insert('document_records', 'UPDATE', payload, { id: documentId });
 
     await Audit.log({
       operationType: `DOCUMENT_LIFECYCLE_${targetState.toUpperCase()}`,
@@ -92,8 +91,8 @@ export class DocumentEngine {
     associatedEntityId: string
   ): Promise<any[]> {
     try {
-      const identity = await kernel.identity();
-      return await kernel.query('document_records', {
+      const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+      return await /* @todo fix */ ctx.db.select().from('document_records', {
         filters: {
           agency_id: identity.tenantId,
           associated_entity_type: associatedEntityType,

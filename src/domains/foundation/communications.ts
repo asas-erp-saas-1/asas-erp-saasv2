@@ -1,6 +1,5 @@
 // src/domains/foundation/communications.ts
 
-import { kernel } from '@/lib/kernel/core';
 import { CommunicationLog } from './types';
 import { Audit } from './audit';
 
@@ -13,7 +12,7 @@ export class CommunicationEngine {
       sendAfter?: string;
     }
   ): Promise<any> {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     
     const payload = {
       agency_id: identity.tenantId,
@@ -30,7 +29,7 @@ export class CommunicationEngine {
       send_after: message.sendAfter || new Date().toISOString()
     };
 
-    const record = await kernel.mutate<any>('communication_logs', 'INSERT', payload);
+    const record = await /* @todo fix */ ctx.db.insert('communication_logs', 'INSERT', payload);
 
     await Audit.log({
       operationType: 'COMMUNICATION_QUEUED',
@@ -59,7 +58,7 @@ export class CommunicationEngine {
       payload.error_message = errorMsg;
     }
 
-    const updated = await kernel.mutate<any>('communication_logs', 'UPDATE', payload, { id: logId });
+    const updated = await /* @todo fix */ ctx.db.insert('communication_logs', 'UPDATE', payload, { id: logId });
 
     await Audit.log({
       operationType: `COMMUNICATION_DISPATCH_${status.toUpperCase()}`,
@@ -77,7 +76,7 @@ export class CommunicationEngine {
   public static async fetchPendingQueue(): Promise<any[]> {
     try {
       const now = new Date().toISOString();
-      const records = await kernel.query('communication_logs', {
+      const records = await /* @todo fix */ ctx.db.select().from('communication_logs', {
         filters: { delivery_status: 'pending' }
       });
       return records.filter((r: any) => new Date(r.send_after) <= new Date(now));

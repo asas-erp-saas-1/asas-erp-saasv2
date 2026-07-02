@@ -84,16 +84,21 @@ export const POST = withEEK({
         companyName,
       }).returning();
       
+      const client = newClient[0];
+      if (!client) {
+        return NextResponse.json({ error: 'Failed to create client' }, { status: 500 });
+      }
+
       ctx.audit.logAudit({
          organizationId: ctx.organizationId,
          userId: ctx.session.user.id,
          action: 'CREATE_CLIENT',
          entityType: 'clients',
-         entityId: String(newClient[0].id),
-         newData: newClient[0]
+         entityId: String(client.id),
+         newData: client
       });
 
-      return NextResponse.json({ data: newClient[0] }, { status: 201 });
+      return NextResponse.json({ data: client }, { status: 201 });
     } catch (error: any) {
       ErrorTracker.captureError(error, { context: 'POST /api/clients' });
       return NextResponse.json({ error: 'Failed to create client', message: error.message }, { status: 500 });

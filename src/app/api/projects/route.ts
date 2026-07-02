@@ -1,14 +1,16 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
-import { db } from '@/db';
 import { projects } from '@/db/schema';
 import { desc, eq, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (identity.tenantId === 'unknown') {
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    if (ctx.organizationId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -22,7 +24,7 @@ export async function GET(request: Request) {
        const project = await db.query.projects.findFirst({
          where: (projects, { and, eq }) => and(
             eq(projects.id, Number(id)),
-            eq(projects.organizationId, identity.tenantId as number)
+            eq(projects.organizationId, ctx.organizationId as number)
          ),
          with: {
            properties: true,
@@ -41,7 +43,7 @@ export async function GET(request: Request) {
     }
 
     const projectsResult = await db.query.projects.findMany({
-      where: (projects, { eq }) => eq(projects.organizationId, identity.tenantId as number),
+      where: (projects, { eq }) => eq(projects.organizationId, ctx.organizationId as number),
       orderBy: [desc(projects.createdAt)],
       limit,
       offset,
@@ -56,12 +58,16 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/projects' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
 
-export async function POST(request: Request) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (identity.tenantId === 'unknown') {
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    if (ctx.organizationId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -72,8 +78,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
     }
 
-    const orgId = Number(identity.tenantId);
-    const newProject = await db.insert(projects).values({
+    const orgId = Number(ctx.organizationId);
+    const newProject = await ctx.db.insert(projects).values({
       name,
       location,
       budget,
@@ -88,7 +94,7 @@ export async function POST(request: Request) {
     const projectId = project.id;
     const { projectPhases } = await import('@/db/schema');
 
-    await db.insert(projectPhases).values([
+    await ctx.db.insert(projectPhases).values([
       { organizationId: orgId, projectId, name: 'Réservation (Dépôt)', billingPercentage: '20', constructionPercentage: '0', status: 'completed' },
       { organizationId: orgId, projectId, name: 'Fondation & Sous-sol', billingPercentage: '15', constructionPercentage: '10', status: 'pending' },
       { organizationId: orgId, projectId, name: 'Plancher Haut (RDC)', billingPercentage: '15', constructionPercentage: '25', status: 'pending' },
@@ -102,4 +108,5 @@ export async function POST(request: Request) {
     ErrorTracker.captureError(error, { context: 'POST /api/projects' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

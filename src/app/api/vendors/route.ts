@@ -1,14 +1,16 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
-import { db } from '@/db';
 import { vendors } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (identity.tenantId === 'unknown') {
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    if (ctx.organizationId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -17,9 +19,9 @@ export async function GET(request: Request) {
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
     const offset = (page - 1) * limit;
 
-    const vendorsResult = await db.select()
+    const vendorsResult = await ctx.db.select()
       .from(vendors)
-      .where(eq(vendors.organizationId, identity.tenantId))
+      .where(eq(vendors.organizationId, ctx.organizationId))
       .orderBy(desc(vendors.createdAt))
       .limit(limit)
       .offset(offset);
@@ -29,12 +31,16 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/vendors' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
 
-export async function POST(request: Request) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (identity.tenantId === 'unknown') {
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
+    if (ctx.organizationId === 'unknown') {
        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -45,8 +51,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Vendor name is required' }, { status: 400 });
     }
 
-    const newVendor = await db.insert(vendors).values({
-      organizationId: identity.tenantId,
+    const newVendor = await ctx.db.insert(vendors).values({
+      organizationId: ctx.organizationId,
       name,
       type: type || 'contractor',
       specialty,
@@ -60,4 +66,5 @@ export async function POST(request: Request) {
     ErrorTracker.captureError(error, { context: 'POST /api/vendors' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

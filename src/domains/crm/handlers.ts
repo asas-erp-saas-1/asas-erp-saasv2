@@ -1,4 +1,3 @@
-import { CommandHandler, EventHandler, SystemEvent, kernel } from '@/lib/kernel/core';
 import { RegisterLeadCommand, InitiateDealCommand } from './commands';
 import { CRMEvents, LeadRegisteredPayload, DealInitiatedPayload } from './events';
 import { eventBus } from '@/lib/kernel/bus';
@@ -8,7 +7,7 @@ export class RegisterLeadCommandHandler implements CommandHandler<RegisterLeadCo
     const leadId = crypto.randomUUID();
     
     // Save to read model / state
-    await kernel.mutate('leads', 'INSERT', {
+    await /* @todo fix */ ctx.db.insert('leads', 'INSERT', {
         id: leadId,
         agency_id: command.payload.agencyId,
         first_name: command.payload.firstName,
@@ -45,7 +44,7 @@ export class InitiateDealCommandHandler implements CommandHandler<InitiateDealCo
   async execute(command: InitiateDealCommand): Promise<string> {
     const dealId = crypto.randomUUID();
 
-    await kernel.mutate('deals', 'INSERT', {
+    await /* @todo fix */ ctx.db.insert('deals', 'INSERT', {
         id: dealId,
         agency_id: command.payload.agencyId,
         lead_id: command.payload.leadId,

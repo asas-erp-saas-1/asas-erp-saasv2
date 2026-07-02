@@ -1,4 +1,3 @@
-import { kernel } from '@/lib/kernel/core';
 
 export async function processLeadAssignment(payload: { tenantId: string, leadId: string }) {
   await kernel.transaction(async (tx) => {

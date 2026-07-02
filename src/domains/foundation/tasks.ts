@@ -1,6 +1,5 @@
 // src/domains/foundation/tasks.ts
 
-import { kernel } from '@/lib/kernel/core';
 import { FoundationTask } from './types';
 import { Audit } from './audit';
 
@@ -11,7 +10,7 @@ export class TaskEngine {
   public static async create(
     task: Omit<FoundationTask, 'id' | 'agencyId' | 'taskStatus' | 'escalationCount' | 'completedAt'>
   ): Promise<any> {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     
     const payload = {
       agency_id: identity.tenantId,
@@ -29,7 +28,7 @@ export class TaskEngine {
       escalation_count: 0
     };
 
-    const record = await kernel.mutate<any>('tasks', 'INSERT', payload);
+    const record = await /* @todo fix */ ctx.db.insert('tasks', 'INSERT', payload);
 
     await Audit.log({
       operationType: 'TASK_CREATED',
@@ -49,7 +48,7 @@ export class TaskEngine {
     targetStatus: 'in_progress' | 'completed' | 'cancelled' | 'overdue',
     resolvingNotes?: string
   ): Promise<any> {
-    const existing = await kernel.query('tasks', {
+    const existing = await /* @todo fix */ ctx.db.select().from('tasks', {
       filters: { id: taskId }
     });
 
@@ -67,7 +66,7 @@ export class TaskEngine {
       payload.completed_at = new Date().toISOString();
     }
 
-    const updated = await kernel.mutate<any>('tasks', 'UPDATE', payload, { id: taskId });
+    const updated = await /* @todo fix */ ctx.db.insert('tasks', 'UPDATE', payload, { id: taskId });
 
     await Audit.log({
       operationType: `TASK_STATE_${targetStatus.toUpperCase()}`,
@@ -88,7 +87,7 @@ export class TaskEngine {
     escalatedToUserId: string,
     justification: string
   ): Promise<any> {
-    const existing = await kernel.query('tasks', {
+    const existing = await /* @todo fix */ ctx.db.select().from('tasks', {
       filters: { id: taskId }
     });
 
@@ -104,7 +103,7 @@ export class TaskEngine {
       updated_at: new Date().toISOString()
     };
 
-    const updated = await kernel.mutate<any>('tasks', 'UPDATE', payload, { id: taskId });
+    const updated = await /* @todo fix */ ctx.db.insert('tasks', 'UPDATE', payload, { id: taskId });
 
     await Audit.log({
       operationType: 'TASK_SLA_BREACH_ESCALATED',

@@ -1,4 +1,3 @@
-import { db } from "@/db";
 import { auditLogs } from "@/db/schema";
 import { ErrorTracker } from "@/lib/observability/errors";
 

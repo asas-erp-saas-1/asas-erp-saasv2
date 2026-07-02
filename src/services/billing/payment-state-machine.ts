@@ -1,4 +1,4 @@
-import { kernel } from '@/lib/kernel/core';
+import { EEKProtectedContext } from '@/eek/types';
 import { Logger } from '@/lib/observability/logger';
 import { ErrorTracker } from '@/lib/observability/errors';
 import { BillingService } from './billing.service';
@@ -6,10 +6,10 @@ import { BillingService } from './billing.service';
 export type PaymentStatus = 'pending' | 'processing' | 'succeeded' | 'failed';
 
 export class PaymentStateMachine {
-  static async initiatePayment(invoiceId: string, amount: number, paymentMethod: string) {
+  static async initiatePayment(ctx: EEKProtectedContext, invoiceId: string, amount: number, paymentMethod: string) {
     Logger.info('Initiating payment', { invoiceId, amount, paymentMethod });
     
-    return await kernel.mutate<any>('payments', 'INSERT', {
+    return await ctx.db.insert('payments', 'INSERT', {
       invoice_id: invoiceId,
       amount,
       status: 'pending',
@@ -17,18 +17,18 @@ export class PaymentStateMachine {
     });
   }
 
-  static async markProcessing(paymentId: string, transactionId: string) {
-    return await kernel.mutate<any>('payments', 'UPDATE', {
+  static async markProcessing(ctx: EEKProtectedContext, paymentId: string, transactionId: string) {
+    return await ctx.db.insert('payments', 'UPDATE', {
       status: 'processing',
       transaction_id: transactionId,
       updated_at: new Date().toISOString()
     }, { id: paymentId, status: 'pending' });
   }
 
-  static async handleSuccess(paymentId: string) {
+  static async handleSuccess(ctx: EEKProtectedContext, paymentId: string) {
     Logger.info('Payment succeeded', { paymentId });
     
-    await kernel.transaction(async (tx) => {
+    await ctx.db.transaction(async (tx) => {
       const payment = await tx.mutate<any>('payments', 'UPDATE', {
         status: 'succeeded',
         updated_at: new Date().toISOString()
@@ -47,11 +47,11 @@ export class PaymentStateMachine {
     });
   }
 
-  static async handleFailure(paymentId: string, errorMessage: string) {
+  static async handleFailure(ctx: EEKProtectedContext, paymentId: string, errorMessage: string) {
     Logger.warn('Payment failed', { paymentId, errorMessage });
     ErrorTracker.captureRejection('Payment failed', { paymentId, errorMessage });
     
-    return await kernel.mutate<any>('payments', 'UPDATE', {
+    return await ctx.db.insert('payments', 'UPDATE', {
       status: 'failed',
       error_message: errorMessage,
       updated_at: new Date().toISOString()

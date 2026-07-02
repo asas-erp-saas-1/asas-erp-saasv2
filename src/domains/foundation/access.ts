@@ -1,6 +1,5 @@
 // src/domains/foundation/access.ts
 
-import { kernel } from '@/lib/kernel/core';
 import { IdentityContext, BranchScope, ScopeLevel } from './types';
 import { Audit } from './audit';
 
@@ -10,10 +9,10 @@ export class FoundationAccessEngine {
    * Completely backward compatible with legacy flat roles ('owner', 'manager', 'agent').
    */
   public static async resolveContext(): Promise<IdentityContext> {
-    const defaultIdentity = await kernel.identity();
+    const defaultIdentity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     
     // Resolve profile details
-    const profiles = await kernel.query('profiles', {
+    const profiles = await /* @todo fix */ ctx.db.select().from('profiles', {
       filters: { id: defaultIdentity.userId }
     });
     
@@ -23,7 +22,7 @@ export class FoundationAccessEngine {
     }
 
     // Attempt to retrieve fine-grained organization staff assignment
-    const assignments = await kernel.query('staff_assignments', {
+    const assignments = await /* @todo fix */ ctx.db.select().from('staff_assignments', {
       filters: { profile_id: defaultIdentity.userId }
     });
 
@@ -35,7 +34,7 @@ export class FoundationAccessEngine {
 
     if (primaryAssignment) {
       // Fetch branch scope
-      const branches = await kernel.query('branches', {
+      const branches = await /* @todo fix */ ctx.db.select().from('branches', {
         filters: { id: primaryAssignment.branch_id }
       });
       const branchObj = branches[0] as any;
@@ -49,14 +48,14 @@ export class FoundationAccessEngine {
       }
 
       // Fetch permissions bound to role
-      const rolesAndPerms = await kernel.query('role_permissions', {
+      const rolesAndPerms = await /* @todo fix */ ctx.db.select().from('role_permissions', {
         filters: { role_id: primaryAssignment.role_id }
       });
 
       // Fetch literal permission details
       if (rolesAndPerms.length > 0) {
         const pIds = rolesAndPerms.map((rp: any) => rp.permission_id);
-        const permsList = await kernel.query('permissions', {
+        const permsList = await /* @todo fix */ ctx.db.select().from('permissions', {
           filters: { id: pIds }
         });
 
@@ -172,7 +171,7 @@ export class FoundationAccessEngine {
     permissionAction: string
   ): Promise<boolean> {
     try {
-      const overrides = await kernel.query('emergency_override_requests', {
+      const overrides = await /* @todo fix */ ctx.db.select().from('emergency_override_requests', {
         filters: { branch_id: branchId, override_status: 'active' }
       });
 

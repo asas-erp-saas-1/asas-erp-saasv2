@@ -1,10 +1,10 @@
-import { kernel } from '@/lib/kernel/core';
+import { EEKProtectedContext } from '@/eek/types';
 import { Logger } from '@/lib/observability/logger';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export class UsageService {
-  static async getUsage(tenantId: string, metric: string, periodStart: Date) {
-    const usages = await kernel.query<any>('tenant_usage', {
+  static async getUsage(ctx: EEKProtectedContext, tenantId: string, metric: string, periodStart: Date) {
+    const usages = await /* @todo fix */ ctx.db.select().from('tenant_usage', {
       filters: { 
         tenant_id: tenantId, 
         metric,
@@ -15,10 +15,10 @@ export class UsageService {
     return usages.length > 0 ? usages[0] : null;
   }
 
-  static async incrementUsage(tenantId: string, metric: string, amount: number, periodStart: Date, periodEnd: Date) {
+  static async incrementUsage(ctx: EEKProtectedContext, tenantId: string, metric: string, amount: number, periodStart: Date, periodEnd: Date) {
     Logger.info(`Incrementing usage`, { tenantId, metric, amount });
     
-    return await kernel.transaction(async (tx) => {
+    return await ctx.db.transaction(async (tx) => {
       let usage = await this.getUsage(tenantId, metric, periodStart);
       
       if (!usage) {

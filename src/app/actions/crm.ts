@@ -1,7 +1,8 @@
 'use server'
 
-import { withActionEEK } from '@/eek/withActionEEK'
-import { createClient } from '@/lib/supabase/server'
+import { withActionEEK } from '@/eek/withActionEEK';
+import { deals, clients } from '@/db/schema';
+import { eq, desc, and } from 'drizzle-orm';
 import { initializeEventKernel } from '@/lib/db/eventKernel'
 import { revalidatePath } from 'next/cache'
 
@@ -22,28 +23,22 @@ export const fetchActiveDeals = withActionEEK({
   resource: 'deals',
   action: 'read',
   handler: async (ctx, context?: string): Promise<DealWithClient[]> => {
-    const supabase = await createClient()
-
-    // RLS inherently filters by the user's agency. 
-    // We perform the query to fetch deals and their associated client data.
-    const { data: deals, error } = await supabase
-      .from('deals')
-      .select(`
-        id,
-        stage,
-        agreed_price,
-        agency_id,
-        client:clients (
-          first_name,
-          last_name
-        )
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Failed to fetch active deals:', error);
-      throw new Error('Failed to fetch deals from database');
-    }
+    const dealsResult = await ctx.db.select({
+      id: deals.id,
+      stage: deals.status,
+      agreed_price: deals.agreedPrice,
+      agency_id: deals.organizationId,
+      client: {
+        first_name: clients.firstName,
+        last_name: clients.lastName
+      }
+    })
+    .from(deals)
+    .leftJoin(clients, eq(deals.clientId, clients.id))
+    .where(eq(deals.organizationId, ctx.organizationId))
+    .orderBy(desc(deals.createdAt));
+    
+    const dealsData = dealsResult;
     
     ctx.audit.logAudit({
        organizationId: ctx.organizationId,
@@ -54,7 +49,7 @@ export const fetchActiveDeals = withActionEEK({
     });
 
     // Transform the response to match the DealWithClient interface
-    return deals.map((d: any) => ({
+    return dealsData.map((d: any) => ({
       id: d.id,
       stage: d.stage,
       agreed_price: d.agreed_price,
@@ -71,28 +66,14 @@ export const updateDealStage = withActionEEK({
   resource: 'deals',
   action: 'write',
   handler: async (ctx, input: { dealId: string, newStage: DealStage, agencyId: string }) => {
-    const supabase = await createClient()
-    
-    // 1. Get the current user to attribute the action
-    const { data: { user } } = await supabase.auth.getUser()
+    const oldDealResult = await ctx.db.select({ stage: deals.status }).from(deals).where(and(eq(deals.id, Number(input.dealId)), eq(deals.organizationId, ctx.organizationId))).limit(1);
+    const oldDeal = oldDealResult[0];
 
-    // 2. Fetch old state for the event bus
-    const { data: oldDeal } = await supabase
-      .from('deals')
-      .select('stage')
-      .eq('id', input.dealId)
-      .single();
-
-    // 3. Update the deal stage
-    const { error: updateError } = await supabase
-      .from('deals')
-      .update({ stage: input.newStage })
-      .eq('id', input.dealId);
-
-    if (updateError) {
-      console.error('Failed to update deal stage:', updateError);
+    const updateResult = await ctx.db.update(deals).set({ status: input.newStage }).where(and(eq(deals.id, Number(input.dealId)), eq(deals.organizationId, ctx.organizationId))).returning();
+    if (updateResult.length === 0) {
       throw new Error('Could not update deal stage');
     }
+    const user = { id: ctx.session.user.id };
     
     ctx.audit.logAudit({
        organizationId: ctx.organizationId,

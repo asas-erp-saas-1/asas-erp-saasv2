@@ -7,14 +7,14 @@ import { LedgerService } from "./ledger";
 import { EEKProtectedContext } from "./types";
 import { v4 as uuidv4 } from "uuid";
 
-interface EEKRouteConfig<T = any> {
+interface EEKRouteConfig {
   resource: string;
   action: ResourceAction;
-  handler: (ctx: EEKProtectedContext, req: NextRequest) => Promise<NextResponse<T>>;
+  handler: (ctx: EEKProtectedContext, req: NextRequest | any, params?: any) => Promise<NextResponse | Response>;
 }
 
-export function withEEK<T = any>({ resource, action, handler }: EEKRouteConfig<T>) {
-  return async (req: NextRequest): Promise<NextResponse> => {
+export function withEEK({ resource, action, handler }: EEKRouteConfig) {
+  return async (req: NextRequest, context?: any): Promise<NextResponse | Response> => {
     const requestId = uuidv4();
     try {
       // 1. Authenticate
@@ -34,7 +34,7 @@ export function withEEK<T = any>({ resource, action, handler }: EEKRouteConfig<T
       };
 
       // 4. Execute safe handler
-      return await handler(ctx, req);
+      return await handler(ctx, req, context);
     } catch (error: any) {
       if (error.message.startsWith("UNAUTHORIZED")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

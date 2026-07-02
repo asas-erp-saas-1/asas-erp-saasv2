@@ -1,4 +1,3 @@
-import { EventHandler, SystemEvent, kernel } from '@/lib/kernel/core';
 import { DomainRegistry } from '@/lib/kernel/registry';
 import { CRMEvents } from '../crm/events';
 
@@ -9,7 +8,7 @@ export class SalesPerformanceProjection implements EventHandler<any> {
         if (event.eventType === CRMEvents.DEAL_WON) {
             // Update materialized view / analytics table
             // In a real CQRS, you'd insert/update a projection table
-            await kernel.mutate('activities', 'INSERT', {
+            await /* @todo fix */ ctx.db.insert('activities', 'INSERT', {
                 agency_id: event.payload.agencyId,
                 channel: 'system',
                 direction: 'inbound',

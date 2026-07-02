@@ -1,17 +1,16 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
 import { attendance, users } from '@/db/schema';
 import { desc, eq, sql, and } from 'drizzle-orm';
 import { ErrorTracker } from '@/lib/observability/errors';
-import { kernel } from '@/lib/kernel/core';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
@@ -22,7 +21,7 @@ export async function GET(request: Request) {
        conditions.push(eq(attendance.userId, Number(userId)));
     }
 
-    const query = db.select({
+    const query = ctx.db.select({
       id: attendance.id,
       userId: attendance.userId,
       date: attendance.date,
@@ -43,7 +42,7 @@ export async function GET(request: Request) {
     const results = await query.orderBy(desc(attendance.date)).limit(limit);
 
     // Calculate stats
-    const statsQuery = await db.select({
+    const statsQuery = await ctx.db.select({
        totalEmployees: sql`count(distinct ${attendance.userId})`.mapWith(Number),
        present: sql`count(*) filter (where ${attendance.status} = 'present' or ${attendance.status} = 'remote')`.mapWith(Number),
        onSite: sql`count(*) filter (where ${attendance.status} = 'present' and ${attendance.location} is not null)`.mapWith(Number),
@@ -67,15 +66,16 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'GET /api/attendance' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
 
-export async function POST(request: Request) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, request: Request) => {
   try {
-    const identity = await kernel.identity();
-    if (!identity || identity.tenantId === 'unknown') {
-       return NextResponse.json({ error: 'Unauthorized or missing tenant context.' }, { status: 401 });
-    }
-    const orgId = identity.tenantId as number;
+    
+    const orgId = ctx.organizationId;
 
     const body = await request.json();
     const { userId, status, location } = body;
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
     }
 
-    const record = await db.insert(attendance).values({
+    const record = await ctx.db.insert(attendance).values({
       organizationId: orgId,
       userId: Number(userId),
       date: new Date(),
@@ -98,4 +98,5 @@ export async function POST(request: Request) {
     ErrorTracker.captureError(error, { context: 'POST /api/attendance' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

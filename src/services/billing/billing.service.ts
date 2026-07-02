@@ -1,12 +1,12 @@
-import { kernel } from '@/lib/kernel/core';
+import { EEKProtectedContext } from '@/eek/types';
 import { Logger } from '@/lib/observability/logger';
 
 export type PlanType = 'basic' | 'pro' | 'elite';
 export type InvoiceStatus = 'draft' | 'open' | 'paid' | 'uncollectible' | 'void';
 
 export class BillingService {
-  static async getSubscription(tenantId: string) {
-    const subs = await kernel.query<any>('agencies', {
+  static async getSubscription(ctx: EEKProtectedContext, tenantId: string) {
+    const subs = await /* @todo fix */ ctx.db.select().from('agencies', {
       filters: { id: tenantId },
       orderBy: { column: 'created_at', ascending: false },
       limit: 1
@@ -14,9 +14,9 @@ export class BillingService {
     return subs.length > 0 ? subs[0] : null;
   }
 
-  static async generateDraftInvoice(tenantId: string, amount: number, description: string) {
+  static async generateDraftInvoice(ctx: EEKProtectedContext, tenantId: string, amount: number, description: string) {
     Logger.info('Generating draft invoice', { tenantId, amount });
-    return await kernel.mutate<any>('invoices', 'INSERT', {
+    return await ctx.db.insert('invoices', 'INSERT', {
       amount,
       description,
       status: 'draft',
@@ -25,26 +25,26 @@ export class BillingService {
     });
   }
 
-  static async finalizeInvoice(invoiceId: string, dueDate: Date) {
+  static async finalizeInvoice(ctx: EEKProtectedContext, invoiceId: string, dueDate: Date) {
     Logger.info('Finalizing invoice (draft -> open)', { invoiceId });
-    return await kernel.mutate<any>('invoices', 'UPDATE', {
+    return await ctx.db.insert('invoices', 'UPDATE', {
       status: 'open',
       due_date: dueDate.toISOString(),
       updated_at: new Date().toISOString()
     }, { id: invoiceId, status: 'draft' });
   }
 
-  static async markInvoicePaid(invoiceId: string) {
+  static async markInvoicePaid(ctx: EEKProtectedContext, invoiceId: string) {
     Logger.info('Marking invoice as paid', { invoiceId });
-    return await kernel.mutate<any>('invoices', 'UPDATE', {
+    return await ctx.db.insert('invoices', 'UPDATE', {
       status: 'paid',
       paid_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }, { id: invoiceId });
   }
 
-  static async chargeMonthly(tenantId: string) {
-    await kernel.transaction(async (tx) => {
+  static async chargeMonthly(ctx: EEKProtectedContext, tenantId: string) {
+    await ctx.db.transaction(async (tx) => {
       const sub = await this.getSubscription(tenantId);
       if (!sub) return;
 

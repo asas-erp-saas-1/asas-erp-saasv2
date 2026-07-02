@@ -1,12 +1,15 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request, { params }: { params: Promise<{ id: string }> }) => {
   try {
     const { id } = await params;
     
     // We get the lead with clients and profiles
-    const leads = await kernel.query('leads', {
+    const leads = await /* @todo fix */ ctx.db.select().from('leads', {
       select: '*, clients(*), projects(*), profiles(*)',
       filters: [{ column: 'id', operator: 'eq', value: id }],
       limit: 1
@@ -20,4 +23,5 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

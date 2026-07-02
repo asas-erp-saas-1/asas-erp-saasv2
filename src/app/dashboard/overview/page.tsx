@@ -1,9 +1,8 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { createClient } from '@/lib/supabase/server';
-import { kernel } from '@/lib/kernel/core';
 import { redirect } from 'next/navigation';
 import { CommandCenterGlobal } from '@/modules/dashboard/components/CommandCenterGlobal';
+import { withPageEEK } from '@/eek/withPageEEK';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,24 +11,14 @@ export const metadata: Metadata = {
   description: 'Enterprise Real Estate Operating System',
 }
 
-export default async function OverviewPage() {
-  const supabase = await createClient();
-  let identity;
-
-  try {
-    identity = await kernel.identity();
-  } catch (error: any) {
-    if (error?.message?.includes('Tenant isolation failure')) {
-      redirect('/onboarding');
-    } else {
-      redirect('/login');
-    }
+export default withPageEEK({
+  resource: 'dashboard',
+  action: 'read',
+  handler: async (ctx) => {
+    return (
+      <div className="flex flex-col gap-8 pb-10">
+        <CommandCenterGlobal />
+      </div>
+    );
   }
-
-  // The actual production metrics will be wired here in the future
-  return (
-    <div className="flex flex-col gap-8 pb-10">
-      <CommandCenterGlobal />
-    </div>
-  );
-}
+});

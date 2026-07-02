@@ -1,13 +1,15 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
 import { documents } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { ErrorTracker } from "@/lib/observability/errors";
-import { kernel } from "@/lib/kernel/core";
 
-export async function GET(req: NextRequest) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     const { searchParams } = new URL(req.url);
     const entityType = searchParams.get('entityType');
     const entityId = searchParams.get('entityId');
@@ -32,11 +34,15 @@ export async function GET(req: NextRequest) {
     ErrorTracker.captureError(error, { context: "GET /api/documents" });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
 
-export async function DELETE(req: NextRequest) {
+export const DELETE = withEEK({
+  resource: 'system',
+  action: 'delete',
+  handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
@@ -57,4 +63,5 @@ export async function DELETE(req: NextRequest) {
     ErrorTracker.captureError(error, { context: "DELETE /api/documents" });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

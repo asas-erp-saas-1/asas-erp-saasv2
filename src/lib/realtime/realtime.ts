@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+/* EEK BYPASS REMOVED */
 
 // Server-side realtime broadcaster (trusted client)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';

@@ -1,15 +1,17 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
 import { clients, properties, leads, deals } from '@/db/schema';
 import { eq, or, ilike, and, lte, gte } from 'drizzle-orm';
-import { kernel } from '@/lib/kernel/core';
 import { GoogleGenAI } from '@google/genai';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: NextRequest) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await kernel.identity();
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id });
     const { searchParams } = new URL(req.url);
     const q = searchParams.get('q');
 
@@ -19,7 +21,7 @@ export async function GET(req: NextRequest) {
 
     const results: any[] = [];
     const lowerQ = `%${q.toLowerCase()}%`;
-    const tenantCondition = eq(clients.organizationId, identity.tenantId);
+    const tenantCondition = eq(clients.organizationId, ctx.organizationId);
 
     // AI Semantic Extraction (Wave 8 Intelligence)
     let aiParsedFilters: any = null;
@@ -44,7 +46,7 @@ If it's not a property search, set isPropertySearch false. No markdown blocks.`,
 
     if (aiParsedFilters && aiParsedFilters.isPropertySearch) {
        // Semantic Property Search
-       const propertyConditions = [eq(properties.organizationId, identity.tenantId)];
+       const propertyConditions = [eq(properties.organizationId, ctx.organizationId)];
        
        if (aiParsedFilters.location) {
          propertyConditions.push(ilike(properties.location, `%${aiParsedFilters.location}%`));
@@ -56,7 +58,7 @@ If it's not a property search, set isPropertySearch false. No markdown blocks.`,
          propertyConditions.push(ilike(properties.type, `%${aiParsedFilters.propertyType}%`));
        }
 
-       const matchedProps = await db.select().from(properties).where(and(...propertyConditions)).limit(10);
+       const matchedProps = await ctx.db.select().from(properties).where(and(...propertyConditions)).limit(10);
        for (const item of matchedProps) {
          results.push({
            id: item.id,
@@ -73,9 +75,9 @@ If it's not a property search, set isPropertySearch false. No markdown blocks.`,
 
     // Standard Lexical Search
     const [fetchedClients, fetchedProperties, fetchedLeads] = await Promise.all([
-      db.select().from(clients).where(and(tenantCondition, or(ilike(clients.firstName, lowerQ), ilike(clients.lastName, lowerQ), ilike(clients.phone, lowerQ), ilike(clients.email, lowerQ)))).limit(5),
-      db.select().from(properties).where(and(eq(properties.organizationId, Number(identity.tenantId)), or(ilike(properties.title, lowerQ), ilike(properties.location, lowerQ)))).limit(5),
-      db.select().from(leads).where(and(eq(leads.organizationId, Number(identity.tenantId)), ilike(leads.status, lowerQ))).limit(5)
+      ctx.db.select().from(clients).where(and(tenantCondition, or(ilike(clients.firstName, lowerQ), ilike(clients.lastName, lowerQ), ilike(clients.phone, lowerQ), ilike(clients.email, lowerQ)))).limit(5),
+      ctx.db.select().from(properties).where(and(eq(properties.organizationId, Number(ctx.organizationId)), or(ilike(properties.title, lowerQ), ilike(properties.location, lowerQ)))).limit(5),
+      ctx.db.select().from(leads).where(and(eq(leads.organizationId, Number(ctx.organizationId)), ilike(leads.status, lowerQ))).limit(5)
     ]);
 
     for (const item of fetchedClients) {
@@ -112,4 +114,5 @@ If it's not a property search, set isPropertySearch false. No markdown blocks.`,
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});

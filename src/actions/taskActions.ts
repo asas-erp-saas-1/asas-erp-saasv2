@@ -1,7 +1,7 @@
 'use server'
 
-import { withActionEEK } from '@/eek/withActionEEK'
-import { kernel } from '@/lib/kernel/core'
+import { withActionEEK } from '@/eek/withActionEEK';
+import { projectTasks } from '@/db/schema';
 import { revalidatePath } from 'next/cache'
 
 interface CreateTaskInput {
@@ -22,25 +22,22 @@ export const createTaskAction = withActionEEK({
       // Assign to the user creating the task if not explicitly assigned
       const assignee = data.assigned_to || String(ctx.session.user.id)
 
-      const task = await kernel.mutate<any>('tasks', 'INSERT', {
-        agency_id: ctx.organizationId,
-        title: data.title,
-        description: data.description || null,
+      const taskResult = await ctx.db.insert(projectTasks).values({
+        organizationId: ctx.organizationId,
+        name: data.title,
         priority: data.priority,
-        due_date: data.due_date || null,
-        assigned_to: assignee,
-        created_by: ctx.session.user.id,
-        lead_id: data.lead_id || null,
-        deal_id: data.deal_id || null,
-        status: 'pending', // default status
-        is_automated: false
-      })
+        dueDate: data.due_date ? new Date(data.due_date) : null,
+        assigneeId: assignee ? Number(assignee) : null,
+        status: 'todo',
+        projectId: Number(data.deal_id || data.lead_id || 1) // Fallback for schema mismatch
+      }).returning();
+      const task = taskResult[0];
       
       ctx.audit.logAudit({
          organizationId: ctx.organizationId,
          userId: ctx.session.user.id,
          action: 'ACTION_CREATE_TASK',
-         entityType: 'tasks',
+         entityType: 'projectTasks',
          entityId: String(task.id),
          newData: task
       });

@@ -64,18 +64,23 @@ export const POST = withEEK({
         location: payload.location || null,
       };
 
-      const property = await ctx.db.insert(properties).values(data).returning();
+      const propertyResult = await ctx.db.insert(properties).values(data).returning();
+      const property = propertyResult[0];
       
+      if (!property) {
+        return NextResponse.json({ error: 'Failed to create property' }, { status: 500 });
+      }
+
       ctx.audit.logAudit({
          organizationId: ctx.organizationId,
          userId: ctx.session.user.id,
          action: 'CREATE_PROPERTY',
          entityType: 'properties',
-         entityId: String(property[0].id),
-         newData: property[0]
+         entityId: String(property.id),
+         newData: property
       });
       
-      return NextResponse.json({ data: property[0] }, { status: 201 });
+      return NextResponse.json({ data: property }, { status: 201 });
     } catch (error: any) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

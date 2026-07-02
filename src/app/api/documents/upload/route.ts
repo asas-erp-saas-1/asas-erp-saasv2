@@ -1,13 +1,15 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextRequest, NextResponse } from "next/server"
 import { promises as fs } from "fs"
 import { join } from "path"
-import { db } from "@/db"
 import { documents } from "@/db/schema"
-import { kernel } from "@/lib/kernel/core"
 
-export async function POST(req: NextRequest) {
+export const POST = withEEK({
+  resource: 'system',
+  action: 'write',
+  handler: async (ctx, req: NextRequest) => {
   try {
-    const identity = await kernel.identity()
+    const identity = await { tenantId: ctx.organizationId, userId: ctx.session.user.id })
     const { filename, category, dataUrl, dealId, portalUpload, entityType } = await req.json()
 
     const actualEntityType = entityType || 'deal'
@@ -92,4 +94,5 @@ export async function POST(req: NextRequest) {
     console.error("Document Upload Router Error:", error)
     return NextResponse.json({ error: error.message || "Erreur de téléversement" }, { status: 500 })
   }
-}
+  }
+});

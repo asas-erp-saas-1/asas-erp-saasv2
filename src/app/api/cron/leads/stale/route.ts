@@ -1,10 +1,13 @@
+import { withEEK } from '@/eek/withEEK';
 import { NextResponse } from 'next/server';
-import { kernel } from '@/lib/kernel/core';
 import { ErrorTracker } from '@/lib/observability/errors';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withEEK({
+  resource: 'system',
+  action: 'read',
+  handler: async (ctx, request: Request) => {
   try {
     const authHeader = request.headers.get('Authorization');
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -28,4 +31,5 @@ export async function GET(request: Request) {
     ErrorTracker.captureError(error, { context: 'Cron /leads/stale' });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+  }
+});
