@@ -7,7 +7,8 @@ import { createTenantScopedDB } from '@/eek/db-proxy'
 import { users } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { NextMobileMenu } from '@/components/MobileMenu'
-import { SidebarNav, NAV_GROUPS_STATE } from '@/components/SidebarNav'
+import { SidebarNav } from '@/components/SidebarNav';
+const NAV_GROUPS_STATE = [];
 import { DesktopOmnibarTrigger, MobileOmnibarTrigger } from '@/components/OmnibarTriggers'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { CommandPalette } from '@/components/CommandPalette'
