@@ -1,12 +1,9 @@
-// src/app/layout.tsx
 import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { env } from '@/lib/env'
-
 import { clsx } from 'clsx'
-
-
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,36 +23,31 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 })
 
-// Validate env on start
-console.log('[ASAS] Booting application in', env.NODE_ENV);
+console.log('[ASAS] Booting application in', env.NODE_ENV)
 
 export const metadata: Metadata = {
-  title: 'ASAS RE-OS — Le Système d\'Exploitation Immobilier',
-  description: 'Un ERP/CRM ultra-performant conçu spécifiquement pour les agences immobilières modernes.',
+  title: 'ASAS RE-OS — Real Estate Enterprise Operating System',
+  description: 'ERP, CRM, promotion immobilière, finance, construction et intelligence opérationnelle dans une plateforme unifiée.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
   },
-};
+}
 
 export const viewport: Viewport = {
-  themeColor: '#0F1113',
+  themeColor: '#081426',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning className={clsx(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
-      <body className="bg-asas-sand dark:bg-[#0B0C0E] text-asas-charcoal dark:text-asas-sand antialiased font-sans flex flex-col min-h-screen selection:bg-asas-gold/30">
-        
-          
-          
+      <body className="min-h-screen bg-asas-sand font-sans text-asas-charcoal antialiased selection:bg-asas-gold/30 dark:bg-asas-charcoal dark:text-asas-sand">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
-        
+        </ThemeProvider>
       </body>
     </html>
   )
