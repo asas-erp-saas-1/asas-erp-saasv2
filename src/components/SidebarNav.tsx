@@ -3,18 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
-import {
-  Building2, DollarSign, CheckSquare, BarChart2, Settings,
-  Users, Handshake, LayoutGrid, UserSquare2, Calendar as CalendarIcon,
-  Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator,
-  Power, Clock, ShieldAlert, Cloud, Webhook, Star, Search,
-} from 'lucide-react'
+import { Building2, DollarSign, Settings, Users, Handshake, LayoutGrid, UserSquare2, Calendar as CalendarIcon, Zap, Award, ShoppingCart, Receipt, Calculator, Clock, ShieldAlert, Webhook, Star, Search, Grid } from 'lucide-react'
 import type { NavigationGroup } from '@/config/navigation'
 
 const ICONS: Record<string, any> = {
-  LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings,
-  UserSquare2, CalendarIcon, Zap, Award, Megaphone, ShoppingCart, Receipt, Grid, Calculator,
-  Power, Clock, ShieldAlert, Cloud, Webhook, Star, Search,
+  LayoutGrid, Users, Handshake, Building2, DollarSign, Settings,
+  UserSquare2, CalendarIcon, Zap, Award, ShoppingCart, Receipt, Grid, Calculator,
+  Clock, ShieldAlert, Webhook, Star, Search,
 }
 
 type SideBarNavProps = {
@@ -29,17 +24,13 @@ export function SidebarNav({ navGroups, role }: SideBarNavProps) {
     <div className="flex-1 overflow-y-auto px-4 py-3 custom-scrollbar" aria-label="Navigation principale">
       {navGroups.map((navGroup) => {
         if (navGroup.roles && !navGroup.roles.includes(role)) return null
-
-        const visibleItems = navGroup.items
-        if (!visibleItems.length) return null
+        if (!navGroup.items.length) return null
 
         return (
           <section key={navGroup.group} className="mb-6 last:mb-2">
-            <p className="mb-2 px-3 text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">
-              {navGroup.group}
-            </p>
+            <p className="mb-2 px-3 text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">{navGroup.group}</p>
             <nav className="space-y-0.5">
-              {visibleItems.map(({ href, label, iconName, description }) => {
+              {navGroup.items.map(({ href, label, iconName, description }) => {
                 const Icon = ICONS[iconName] || LayoutGrid
                 const isActive = pathname === href || pathname.startsWith(`${href}/`)
 
@@ -56,17 +47,9 @@ export function SidebarNav({ navGroups, role }: SideBarNavProps) {
                         : 'border-transparent text-white/55 hover:border-white/[0.06] hover:bg-white/[0.045] hover:text-white'
                     )}
                   >
-                    <span
-                      aria-hidden="true"
-                      className={clsx(
-                        'absolute left-0 top-1/2 w-0.5 -translate-y-1/2 rounded-r-full bg-asas-gold transition-all duration-200',
-                        isActive ? 'h-5 opacity-100' : 'h-0 opacity-0 group-hover:h-4 group-hover:opacity-70'
-                      )}
-                    />
+                    <span aria-hidden="true" className={clsx('absolute left-0 top-1/2 w-0.5 -translate-y-1/2 rounded-r-full bg-asas-gold transition-all duration-200', isActive ? 'h-5 opacity-100' : 'h-0 opacity-0 group-hover:h-4 group-hover:opacity-70')} />
                     <Icon className={clsx('h-[17px] w-[17px] shrink-0 transition-colors', isActive ? 'text-asas-gold' : 'text-white/35 group-hover:text-asas-gold')} strokeWidth={isActive ? 2 : 1.7} />
-                    <span className={clsx('truncate text-[12px] tracking-wide', isActive ? 'font-semibold' : 'font-medium')}>
-                      {label}
-                    </span>
+                    <span className={clsx('truncate text-[12px] tracking-wide', isActive ? 'font-semibold' : 'font-medium')}>{label}</span>
                   </Link>
                 )
               })}
