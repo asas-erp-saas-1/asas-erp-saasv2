@@ -90,7 +90,7 @@ export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any
                     return (
                       <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className={clsx('group flex items-center justify-between rounded-xl border px-3.5 py-3 transition active:scale-[0.99]', isActive ? 'border-asas-gold/20 bg-asas-gold/10 text-white' : 'border-transparent text-white/60 hover:border-white/10 hover:bg-white/5 hover:text-white')}>
                         <span className="flex items-center gap-3">
-                          <Icon className={clsx('h-4.5 w-4.5', isActive ? 'text-asas-gold' : 'text-white/35 group-hover:text-asas-gold')} />
+                          <Icon className={clsx('h-[18px] w-[18px]', isActive ? 'text-asas-gold' : 'text-white/35 group-hover:text-asas-gold')} />
                           <span className="text-[11px] font-semibold tracking-wide">{item.label}</span>
                         </span>
                         {isActive && <ChevronRight className="h-4 w-4 text-asas-gold/50" />}
