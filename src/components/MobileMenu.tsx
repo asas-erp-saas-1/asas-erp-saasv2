@@ -2,231 +2,123 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, Users, Handshake, Building2, DollarSign, CheckSquare, BarChart2, Settings, LogOut, Menu, X, ChevronRight, Calendar } from 'lucide-react'
+import { LayoutGrid, Users, Handshake, Building2, DollarSign, Settings, LogOut, Menu, X, ChevronRight, Calendar, Zap, Star, UserSquare2, Grid, Calculator, Receipt, ShoppingCart, ShieldAlert, Award, Webhook, Clock, Search } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
-
 import { ThemeToggle } from './ThemeToggle'
+import { DASHBOARD_NAVIGATION } from '@/config/navigation'
 
-const NAV_GROUPS = [
-  {
-    group: "Command Center",
-    items: [
-      { href: '/dashboard/overview',   label: 'Action Inbox',       Icon: LayoutGrid },
-      { href: '/dashboard/tasks',      label: 'Tâches',             Icon: CheckSquare },
-      { href: '/dashboard/calendar',   label: 'Agenda',             Icon: Calendar },
-    ]
-  },
-  {
-    group: "Commercial & CRM",
-    items: [
-      { href: '/dashboard/leads',      label: 'Pipeline Leads',     Icon: Users },
-      { href: '/dashboard/deals',      label: 'Transactions',       Icon: Handshake },
-      { href: '/dashboard/clients',    label: 'Base Clients',       Icon: Users },
-    ]
-  },
-  {
-    group: "Chantier & Promotion",
-    items: [
-      { href: '/dashboard/projects',   label: 'Programmes',         Icon: Building2 },
-      { href: '/dashboard/properties', label: 'Biens (Unités)',     Icon: Building2 },
-    ]
-  },
-  {
-    group: "Finance & Back-Office",
-    items: [
-      { href: '/dashboard/finance',    label: 'Finance & Trésorerie', Icon: DollarSign },
-      { href: '/dashboard/agents',     label: 'Classement Agents',  Icon: Users },
-    ],
-    roles: ['owner', 'admin', 'finance']
-  },
-  {
-    group: "Intelligence & Settings",
-    items: [
-      { href: '/dashboard/metrics',    label: 'Statistiques',       Icon: BarChart2 },
-      { href: '/dashboard/settings',   label: 'Paramètres',         Icon: Settings },
-    ],
-    roles: ['owner', 'admin']
-  }
-]
+const ICONS: Record<string, any> = {
+  LayoutGrid, Users, Handshake, Building2, DollarSign, Settings, CalendarIcon: Calendar,
+  Zap, Star, UserSquare2, Grid, Calculator, Receipt, ShoppingCart, ShieldAlert, Award, Webhook, Clock, Search,
+}
 
 export function NextMobileMenu({ profile, initial, roleDisplay }: { profile: any, initial: string, roleDisplay: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const role = profile?.role || 'agent'
-  
-  // We no longer need filteredNav as we map NAV_GROUPS directly
 
-  // Determine bottom nav based on role
-  const BOTTOM_NAV = role === 'agent' ? [
-    { href: '/dashboard/overview', label: 'Tâches', Icon: CheckSquare },
-    { href: '/dashboard/leads', label: 'Leads', Icon: Users },
-    { href: '/dashboard/deals', label: 'Deals', Icon: Handshake },
-    { href: '/dashboard/properties', label: 'Biens', Icon: Building2 },
-  ] : [
-    { href: '/dashboard/overview', label: 'Vue', Icon: LayoutGrid },
-    { href: '/dashboard/leads', label: 'Leads', Icon: Users },
-    { href: '/dashboard/finance', label: 'Finance', Icon: DollarSign },
-    { href: '/dashboard/metrics', label: 'Stats', Icon: BarChart2 },
-  ];
+  useEffect(() => setMounted(true), [])
 
-  if (!mounted) return null;
+  const bottomNav = role === 'agent'
+    ? [
+        { href: '/dashboard/overview', label: 'Vue', Icon: LayoutGrid },
+        { href: '/dashboard/leads', label: 'Leads', Icon: Users },
+        { href: '/dashboard/deals', label: 'Deals', Icon: Handshake },
+        { href: '/dashboard/properties', label: 'Biens', Icon: Building2 },
+      ]
+    : [
+        { href: '/dashboard/overview', label: 'Vue', Icon: LayoutGrid },
+        { href: '/dashboard/leads', label: 'Leads', Icon: Users },
+        { href: '/dashboard/finance', label: 'Finance', Icon: DollarSign },
+        { href: '/dashboard/intelligence', label: 'Intel', Icon: Zap },
+      ]
+
+  if (!mounted) return null
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9000] bg-white dark:bg-[#141618]/95 backdrop-blur-3xl border-t border-asas-silver/20 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300">
-        <nav className="flex items-center justify-around px-2 h-[calc(68px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
-          {BOTTOM_NAV.map(({ href, label, Icon }) => {
-            const isActive = pathname.startsWith(href)
+      <div className="fixed bottom-0 left-0 right-0 z-[9000] border-t border-white/10 bg-[#081426]/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.45)] backdrop-blur-2xl md:hidden">
+        <nav className="flex h-[68px] items-center justify-around px-1" aria-label="Navigation mobile">
+          {bottomNav.map(({ href, label, Icon }) => {
+            const isActive = pathname === href || pathname.startsWith(`${href}/`)
             return (
-              <Link
-                key={href}
-                href={href}
-                className={clsx(
-                  "flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-200 active:scale-95 relative",
-                  isActive ? "text-asas-gold" : "text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand"
-                )}
-              >
-                {isActive && (
-                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-asas-gold shadow-[0_0_10px_rgba(199,161,90,0.5)]"></div>
-                )}
-                <Icon 
-                  className="w-[22px] h-[22px] mb-0.5 transition-all duration-200" 
-                  strokeWidth={isActive ? 2 : 1.5} 
-                />
-                <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
+              <Link key={href} href={href} className={clsx('relative flex h-full w-full flex-col items-center justify-center gap-1 transition active:scale-95', isActive ? 'text-asas-gold' : 'text-white/45 hover:text-white')}>
+                {isActive && <span className="absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 bg-asas-gold shadow-[0_0_10px_rgba(199,161,90,0.7)]" />}
+                <Icon className="h-[21px] w-[21px]" strokeWidth={isActive ? 2.2 : 1.7} />
+                <span className="text-[9px] font-bold uppercase tracking-[0.14em]">{label}</span>
               </Link>
             )
           })}
-          
-          <button
-            type="button"
-            onClick={() => setIsOpen(true)}
-            className="flex flex-col items-center justify-center w-full h-full space-y-1 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand transition-all duration-200 active:scale-95 relative cursor-pointer"
-          >
-            {isOpen && (
-              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-asas-gold shadow-[0_0_10px_rgba(199,161,90,0.5)]"></div>
-            )}
-            <div className={clsx("flex flex-col items-center space-y-1", isOpen ? "text-asas-gold" : "")}>
-              <Menu className="w-[22px] h-[22px] mb-0.5 transition-all duration-200" strokeWidth={isOpen ? 2 : 1.5} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Menu</span>
-            </div>
+          <button type="button" onClick={() => setIsOpen(true)} aria-label="Ouvrir le menu" className={clsx('flex h-full w-full flex-col items-center justify-center gap-1 text-white/45 transition active:scale-95 hover:text-white', isOpen && 'text-asas-gold')}>
+            <Menu className="h-[21px] w-[21px]" />
+            <span className="text-[9px] font-bold uppercase tracking-[0.14em]">Menu</span>
           </button>
         </nav>
       </div>
 
-      {/* Backdrop */}
-      <div 
-        onClick={() => setIsOpen(false)}
-        className={clsx(
-          "md:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[9998] transition-opacity duration-300",
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        )}
-      />
+      <div onClick={() => setIsOpen(false)} aria-hidden="true" className={clsx('fixed inset-0 z-[9998] bg-black/75 backdrop-blur-sm transition-opacity md:hidden', isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0')} />
 
-      {/* Sheet */}
-      <div
-        className={clsx(
-          "md:hidden fixed inset-x-0 bottom-0 z-[9999] bg-white/95 dark:bg-[#141618]/95 backdrop-blur-3xl rounded-t-sm border-t border-asas-silver/20 flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.7)] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-          isOpen ? "translate-y-0" : "translate-y-full"
-        )}
-        style={{ 
-          top: '12%',
-          paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)' 
-        }}
-      >
-        {/* iOS Sheet Drag Handle Indicator */}
-        <div className="w-full flex justify-center pt-4 pb-2 shrink-0">
-          <div className="w-12 h-1.5 bg-asas-silver/20 rounded-sm"></div>
-        </div>
+      <section className={clsx('fixed inset-x-0 bottom-0 z-[9999] flex flex-col overflow-hidden rounded-t-3xl border-t border-white/10 bg-[#0A1629]/98 shadow-[0_-24px_70px_rgba(0,0,0,0.65)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] md:hidden', isOpen ? 'translate-y-0' : 'translate-y-full')} style={{ top: '8%', paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)' }} aria-label="Menu principal">
+        <div className="flex w-full justify-center py-3"><div className="h-1.5 w-12 rounded-full bg-white/15" /></div>
 
-        <div className="px-6 pb-5 pt-1 flex items-center justify-between border-b border-asas-silver/20 shrink-0">
+        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-5 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-asas-gold" strokeWidth={1.5} />
-            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-asas-gold/25 bg-white/5"><Building2 className="h-5 w-5 text-asas-gold" /></div>
             <div>
-              <p className="font-bold text-asas-charcoal dark:text-asas-sand tracking-widest leading-none text-xl font-display uppercase">ASAS<span className="text-asas-silver mx-2 font-sans font-light">|</span>أساس</p>
-              <p className="text-[9px] uppercase font-bold tracking-[0.25em] text-asas-gold/90 leading-tight mt-0.5">OS Mobile</p>
+              <p className="font-display text-xl font-bold tracking-tight text-white">ASAS <span className="font-light text-white/20">|</span> <span className="text-asas-gold">أساس</span></p>
+              <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-white/40">Enterprise OS</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <ThemeToggle />
-            <button 
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="p-2 text-asas-silver hover:text-asas-charcoal dark:hover:text-asas-sand rounded-sm bg-asas-sand/50 dark:bg-black/10 hover:bg-asas-silver/10 transition-colors active:scale-95 cursor-pointer"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <button type="button" onClick={() => setIsOpen(false)} aria-label="Fermer le menu" className="rounded-xl p-2.5 text-white/50 transition hover:bg-white/5 hover:text-white"><X className="h-5 w-5" /></button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-6 custom-scrollbar overscroll-contain">
-            {NAV_GROUPS.map((navGroup) => {
-              if (navGroup.roles && !navGroup.roles.includes(role)) return null;
-              return (
-                <div key={navGroup.group} className="mb-4">
-                  <p className="text-[9px] font-bold text-asas-silver uppercase tracking-widest mb-2 px-2">{navGroup.group}</p>
-                  <div className="flex flex-col gap-1">
-                    {navGroup.items.map(({ href, label, Icon }) => {
-                      const isActive = pathname.startsWith(href)
-                      return (
-                        <Link 
-                          key={href} 
-                          href={href}
-                          onClick={() => setIsOpen(false)}
-                          className={clsx(
-                            "flex items-center justify-between px-4 py-4 text-[10px] font-bold tracking-widest uppercase rounded-sm transition-all relative overflow-hidden group active:scale-[0.98]",
-                            isActive 
-                              ? "text-asas-charcoal dark:text-asas-sand bg-asas-gold/10 border border-asas-gold/20 shadow-[0_0_15px_rgba(199,161,90,0.05)]" 
-                              : "text-asas-charcoal/60 dark:text-asas-silver bg-asas-sand/50 dark:bg-white/5 hover:bg-asas-silver/10 hover:text-asas-charcoal dark:hover:text-asas-sand border border-transparent"
-                          )}
-                        >
-                          <div className="flex items-center gap-4 relative z-10">
-                            <Icon className={clsx("h-5 w-5 transition-colors", isActive ? "text-asas-gold" : "text-asas-silver group-hover:text-asas-charcoal dark:group-hover:text-asas-sand")} strokeWidth={isActive ? 2 : 1.5} />
-                            <span>{label}</span>
-                          </div>
-                          {isActive && <ChevronRight className="w-5 h-5 text-asas-gold/50" />}
-                        </Link>
-                      )
-                    })}
-                  </div>
+        <div className="flex-1 overflow-y-auto px-4 py-5 custom-scrollbar">
+          {DASHBOARD_NAVIGATION.map((group) => {
+            if (group.roles && !group.roles.includes(role)) return null
+            return (
+              <div key={group.group} className="mb-6">
+                <p className="mb-2 px-2 text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">{group.group}</p>
+                <div className="space-y-1">
+                  {group.items.map((item) => {
+                    const Icon = ICONS[item.iconName] || LayoutGrid
+                    const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+                    return (
+                      <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className={clsx('group flex items-center justify-between rounded-xl border px-3.5 py-3 transition active:scale-[0.99]', isActive ? 'border-asas-gold/20 bg-asas-gold/10 text-white' : 'border-transparent text-white/60 hover:border-white/10 hover:bg-white/5 hover:text-white')}>
+                        <span className="flex items-center gap-3">
+                          <Icon className={clsx('h-4.5 w-4.5', isActive ? 'text-asas-gold' : 'text-white/35 group-hover:text-asas-gold')} />
+                          <span className="text-[11px] font-semibold tracking-wide">{item.label}</span>
+                        </span>
+                        {isActive && <ChevronRight className="h-4 w-4 text-asas-gold/50" />}
+                      </Link>
+                    )
+                  })}
                 </div>
-              )
-            })}
-          <div className="h-6"></div> {/* Extra space at bottom of scroll list */}
+              </div>
+            )
+          })}
         </div>
 
-        <div className="border-t border-asas-silver/20 px-6 py-5 bg-transparent shrink-0">
-          <Link href="/dashboard/profile" onClick={() => setIsOpen(false)} className="flex items-center justify-between gap-3 mb-4 group cursor-pointer active:scale-[0.98] transition-transform">
-            <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-10 h-10 rounded-sm bg-asas-navy border border-asas-silver/20 flex items-center justify-center text-asas-sand font-bold shrink-0 shadow-sm relative group-hover:border-asas-gold/40 transition-colors">
-                {initial}
-                <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-asas-emerald rounded-sm border-2 border-white dark:border-[#141618]"></div>
-              </div>
-              <div className="overflow-hidden">
-                <p className="text-[10px] font-bold text-asas-charcoal dark:text-asas-sand uppercase tracking-widest truncate leading-tight group-hover:text-asas-gold transition-colors">{profile?.full_name}</p>
-                <p className="text-[9px] text-asas-silver uppercase tracking-widest truncate font-bold">{roleDisplay}</p>
-              </div>
+        <div className="shrink-0 border-t border-white/10 px-5 py-4">
+          <Link href="/dashboard/profile" onClick={() => setIsOpen(false)} className="mb-3 flex items-center gap-3 rounded-xl p-2 transition hover:bg-white/5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-[#051121] font-bold text-asas-gold">{initial}</div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-white">{profile?.full_name}</p>
+              <p className="mt-0.5 truncate text-[10px] uppercase tracking-widest text-white/35">{roleDisplay}</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-asas-silver group-hover:text-asas-gold transition-colors shrink-0" />
+            <ChevronRight className="h-4 w-4 text-white/25" />
           </Link>
-          
           <form action="/auth/signout" method="post">
-            <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[10px] uppercase font-bold tracking-widest text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/20 rounded-sm transition-all active:scale-[0.98] cursor-pointer">
-              <LogOut className="h-4 w-4" strokeWidth={2} /> Déconnexion
+            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-400/15 bg-red-400/5 px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-red-300 transition hover:bg-red-400/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300/50">
+              <LogOut className="h-4 w-4" /> Déconnexion
             </button>
           </form>
         </div>
-      </div>
+      </section>
     </>
   )
 }
-
